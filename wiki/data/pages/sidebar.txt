@@ -1,0 +1,46 @@
+=== О базе регистрации ===
+
+  * [[about:terms|Термины и определения]]
+  * [[about:technology|Архитектура системы]]
+  * [[about:interface|Описание интерфейса]]
+  * [[about:install|Установка тонкого клиента]]
+  * [[about:questions|Вопросы и ответы]]
+
+=== Основные действия ===
+
+  * [[main:newevent|Создание мероприятия]]
+  * [[main:search|Поиск участника в базе]]
+  * [[main:newmember|Добавление участника]]
+  * [[main:registry|Регистрация участника]]
+  * [[objects:documents:reglist|Список регистрации]]
+  * [[main:habitat|Изменение места жительства]]
+  * [[main:newlocality|Новый населённый пункт]]
+  * [[main:placing|Размещение участников]]
+
+----
+
+=== Справочники ===
+
+  * [[objects:catalogs:event|Архив мероприятий]]
+  * [[objects:catalogs:member|Картотека участников]]
+  * [[objects:catalogs:locality|Населённые пункты]]
+  * [[objects:catalogs:area|Географические области]]
+  * [[objects:catalogs:region|Регионы работы]]
+
+=== Документы ===
+
+  * [[objects:documents:regform|Бланк регистрации]]
+  * [[objects:documents:ticket|Приходный ордер]]
+  * [[objects:documents:voucher|Расходный ордер]]
+
+=== Обновления ===
+
+  * [[update:lastupdate|Последние обновления]]
+  * [[update:allupdate|Все обновления]]
+
+----
+
+[[start|Главная страница]]\\ 
+[[topic|Тематический указатель]]\\ 
+[[wiki:syntax|Справка по синтаксису]]\\ 
+[[playground:playground|Песочница]]

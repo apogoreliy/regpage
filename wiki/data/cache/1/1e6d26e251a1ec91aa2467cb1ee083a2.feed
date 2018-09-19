@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://wiki.reg-page.ru/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://wiki.reg-page.ru/feed.php">
+        <title>1С:Регистрация</title>
+        <description></description>
+        <link>http://wiki.reg-page.ru/</link>
+        <image rdf:resource="http://wiki.reg-page.ru/lib/tpl/dokuwiki/images/favicon.ico" />
+       <dc:date>2015-06-19T23:28:48+03:00</dc:date>
+        <items>
+            <rdf:Seq>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://wiki.reg-page.ru/lib/tpl/dokuwiki/images/favicon.ico">
+        <title>1С:Регистрация</title>
+        <link>http://wiki.reg-page.ru/</link>
+        <url>http://wiki.reg-page.ru/lib/tpl/dokuwiki/images/favicon.ico</url>
+    </image>
+</rdf:RDF>
