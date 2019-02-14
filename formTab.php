@@ -11,7 +11,7 @@
 <div class="edit-member-form">
 <div class="controls">
     <div class="control-group row-fluid">
-        <label class="span12">ФИО<sup>*</sup>
+        <label class="span12">ФИО<sup>*</sup> 
         <span class="example">Пример: Орлов Пётр Иванович</span></label>
         <input class="span12 emName" tooltip="tooltipName" type="text" maxlength="70" valid="required" placeholder="Фамилия Имя Отчество">
         <i class="icon-pencil unblock-input" style="display: none;"></i>
@@ -19,7 +19,7 @@
     <div class="control-group row-fluid" style="width: 48%">
         <label class="span12">Дата рождения<?php e('<sup>*</sup>'); ?></label>
         <input class="span12 emBirthdate datepicker" type="text"  maxlength="10" placeholder="ДД.ММ.ГГГГ" valid="<?php e ('required, '); ?>date">
-    </div>
+    </div>      
     <div class="control-group row-fluid" style="width: 48%; float: right;">
         <label class="span12">Пол<sup>*</sup></label>
         <select class="span12 emGender" valid="required">
@@ -27,7 +27,7 @@
             <option value='male'>MУЖ</option>
             <option value='female'>ЖЕН</option>
         </select>
-    </div>
+    </div>    
     <div class="control-group row-fluid" style="width: 48%;">
         <label class="span12">Гражданство<sup>*</sup></label>
         <select class="span12 emCitizenship" valid="required">
@@ -46,23 +46,23 @@
     </div>
 </div>
 <div class="controls">
-    <?php if ($isGuest || $indexPage) { ?>
+    <?php if ($isGuest || $indexPage) { ?>        
     <div style="margin-bottom: 10px" class="control-group row-fluid">
         <label class="span12">Населенный пункт<sup>*</sup></label>
         <div class="localityControlGroup">
             <input style="margin-bottom: 0" class="span12 locality-autocomplete emNewLocality" type="text" maxlength="50" valid="required">
             <i class="icon-pencil unblock-input" style="display: none; margin-top: -22px; margin-left: 0; margin-right: 10px; float: right;"></i>
             <span style="margin-left: 0" class="example">Введите название. Если ваш населённый пункт появится в списке, выберите его</span>
-        </div>
+        </div>        
     </div>
-    <?php } else { ?>
-    <div class="control-group row-fluid">
+    <?php } else { ?>    
+    <div class="control-group row-fluid">    
         <label class="span12">Населенный пункт<sup>*</sup></label>
         <div class="localityControlGroup">
-            <select class="span12 emLocality" valid="required" >
-            </select>
+            <select class="span12 emLocality" valid="required" >                
+            </select>                       
         </div>
-    </div>
+    </div>    
     <div style="margin-bottom: 10px; color: cadetblue;">
         <span class="handle-new-locality">Вашего населённого пункта нет в списке?</span>
     </div>
@@ -71,28 +71,28 @@
         <i class="icon-pencil unblock-input" style="display: none"></i>
     </div>
     <?php } ?>
-
+    
     <div class="control-group row-fluid address_block">
         <label class="span12">Почтовый адрес<?php e('<sup>*</sup>'); ?><span class="example">Пример: Россия, 180000, Псковская обл., г. Псков, ул. Труда 5, кв. 6</span></label>
         <input class="span12 emAddress" type="text" maxlength="150" <?php e('valid="required"'); ?>>
-    </div>
+    </div>     
     <div class="control-group row-fluid">
         <label class="span12">Email<?php g('<sup id="supEmailRequred">*</sup>'); ?></label>
         <input class="span12 emEmail" type="email" maxlength="50" valid="<?php /* e */ g('required, '); ?>email">
     </div>
-    <div class="control-group row-fluid">
+    <div class="control-group row-fluid">    
         <label class="span12">Мобильный телефон <span class="example">Если имеется несколько номеров, укажите их через запятую</span></label>
         <input class="span12 emCellPhone" type="text" maxlength="50" placeholder="+XXXXXXXXXX" tooltip="tooltipCellphone">
     </div>
-
+    
     <?php //if (!$noEvent) {?>
     <!--<div class="control-group row-fluid">
         <label class="span12">Мобильный врем. <a href="#" id="tooltipTempPhone" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Номер телефона на время проведения мероприятия. Можно не заполнять, если используется основной мобильный номер" tabindex="-1"><i class="icon-question-sign"></i></a></label>
         <input class="span12 emTempPhone" type="text" maxlength="50" placeholder="+XXXXXXXXXX" tooltip="tooltipTempPhone">
     </div>-->
-    <?php //} ?>
+    <?php //} ?>    
     <?php if (!$isGuest && !$indexPage) { ?>
-    <div class="control-group row-fluid">
+    <div class="control-group row-fluid">        
         <label class="span12"><?php g ('&nbsp;','Категория'.($noEvent ? '' : '<sup>*</sup>')); ?></label>
         <select class="span12 emCategory" valid="required" <?php //e('valid="required"');?>>
             <option value='_none_' selected>&nbsp;</option>
@@ -149,10 +149,10 @@
         <div class="control-group row-fluid">
             <label class="span12">Фамилия и имя латинскими буквами (как указано в загранпаспорте)<?php e('<sup>*</sup>'); ?></label>
                 <input class="span12 emDocumentNameTp" type="text" maxlength="150" <?php e('valid="required"');?>>
-        </div>
+        </div>    
     </div>
 <?php if($noEvent) { echo '</div>'; } ?>
-
+    
 <?php if(!$noEvent){ ?>
 <div class="controls tp-passport-info" style="display: none">
     <div class="control-group row-fluid">
@@ -163,11 +163,11 @@
             <option value="2">Хороший уровень</option>
         </select>
     </div>
-</div>
+</div>    
 <div class="controls ">
     <div class="control-group row-fluid " style="width: 48%;">
         <label class="span12">Дата приезда<sup>*</sup> <a href="#" class="tooltipArrDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-        <input class="span12 emArrDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required,ddmm">
+        <input class="span12 emArrDate datepicker-form" readonly type="text" maxlength="5" readonly placeholder="ДД.ММ" valid="required,ddmm">
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
         <label class="span12">Время <a href="#" id="tooltipArr" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Время приезда к месту проведения конференции (с учётом времени на дорогу от вокзала/аэропорта)" tabindex="-1"><i class="icon-question-sign"></i></a></label>
@@ -175,7 +175,7 @@
     </div>
     <div class="control-group row-fluid " style="width: 48%;">
         <label class="span12">Дата отъезда<sup>*</sup> <a href="#" class="tooltipDepDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-        <input class="span12 emDepDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required,ddmm">
+        <input class="span12 emDepDate datepicker-form" readonly type="text" maxlength="5" readonly placeholder="ДД.ММ" valid="required,ddmm">
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
         <label class="span12">Время <a href="#" id="tooltipDep" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Время отъезда от места проведения конференции, а не от вокзала" tabindex="-1"><i class="icon-question-sign"></i></a></label>
@@ -204,7 +204,7 @@
             <option value="1">НУЖНА</option>
             <option value="0" selected>НЕ НУЖНА</option>
         </select>
-    </div>
+    </div>   
     <div class="control-group row-fluid" style="width: 22%; margin-left: 5%;">
         <label class="span12">Номер</label>
         <input class="span12 emAvtomobileNumber" type="text" maxlength="10" valid="required"/>
@@ -231,14 +231,14 @@
         <label class="span12">Информация об отъезде</label>
         <input class="span12 emFlightNumDep" placeholder="Номер поезда или авиарейс и авиакомпания" type="text" maxlength="30" >
     </div>
-    <div class="control-group row-fluid">
+    <div class="control-group row-fluid">        
         <label class="span12">Гостиница и количество мест в гостинице.<a href="#" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Пример: 'Sachsen Park Hotel (2-мест.)'" tabindex="-1"><i class="icon-question-sign"></i></a></label>
         <input class="span12 emFlightNote" type="text" maxlength="100">
     </div>
 </div>
 <div class="controls grpTransport">
     <div class="control-group row-fluid grpTransport">
-        <label class="span12" id="lblTransport"><span class="transportText"></span><sup>*</sup>
+        <label class="span12" id="lblTransport"><span class="transportText"></span><sup>*</sup> 
             <span class="example"></span></label>
         <select class="span12 emTransport" valid="required">
             <option value='_none_' selected>&nbsp;</option>
@@ -272,17 +272,17 @@
         <label class="span12 label-currency">Валюта</label>
         <select class="span12 emCurrency">
             <option value='_none_' selected>&nbsp;</option>
-            <?php
+            <?php 
                 foreach (db_getCurrencies() as $key => $val) {
                     echo "<option value='$key'>". htmlspecialchars($val)."</option>";
-                }
-            ?>
+                }            
+            ?>           
         </select>
     </div>
 </div>
 <div class="controls service-block">
     <div class="control-group row-fluid" style="width: 48%;">
-        <label class="span12">Служение</label>
+        <label class="span12">Служение</label>        
         <select class="span12 emService">
             <option value='_none_' selected>&nbsp;</option>
             <?php foreach (db_getServices() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
@@ -294,7 +294,7 @@
                 <option value="0">---</option>
                 <option value="1">РЕКОМЕНДУЕТСЯ</option>
             </select>
-    </div>
+    </div>    
 </div>
 <div class="controls">
     <div class="control-group row-fluid">
@@ -303,7 +303,7 @@
             <option value='_none_' selected>&nbsp;</option>
             <?php foreach (db_getStatuses() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
         </select>
-    </div>
+    </div>        
 </div>
 <?php } } ?>
 <?php if($noEvent && !$isGuest && !$indexPage){ ?>
@@ -335,17 +335,17 @@
             <?php //foreach ($colleges as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
         </select>-->
     </div>
-
+    
     <div class="control-group row-fluid" style="width: 48%">
         <label class="span12">Год поступления</label>
         <input class="span12 emCollegeStart" type="text" placeholder="ГГГГ" maxlength="4" >
     </div>
-
+    
     <div class="control-group row-fluid" style="width: 48%; float: right">
         <label class="span12">Год окончания</label>
         <input class="span12 emCollegeEnd" type="text" placeholder="ГГГГ" maxlength="4" >
     </div>
-
+    
     <div class="control-group row-fluid">
         <label class="span12">Примечание об учебном заведении</label>
         <input class="span12 emCollegeComment" type="text" maxlength="100" >
@@ -357,7 +357,7 @@ if ($noEvent) { ?>
         <div class="control-group row-fluid">
             <label class="span12">Комментарий администратора <span class="example">(виден только администраторам)</span></label>
             <input class="span12 emComment" type="text">
-        </div>
+        </div>                
     </div>
 <?php } else  {
 if(!$isGuest && !$indexPage){
@@ -385,7 +385,7 @@ if(!$isGuest && !$indexPage){
     <div class="control-group row-fluid">
         <label class="span12 emTransAmountLabel">Не хватает на дорогу <a href="#" id="tooltipTransAmount" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Введите сумму в гривнах" tabindex="-1"><i class="icon-question-sign"></i></a></label>
         <input type="text" class="emTransAmount span12">
-    </div>
+    </div>    
 </div>
 <div class="controls">
     <div class="control-group row-fluid">
@@ -394,7 +394,7 @@ if(!$isGuest && !$indexPage){
     </div>
 </div>
     <?php } ?>
-<div class="controls">
+<div class="controls">    
     <div class="control-group row-fluid">
         <label class="span12 ">Комментарий участника</label>
         <input class="span12 emUserComment" type="text">
@@ -404,7 +404,7 @@ if(!$isGuest && !$indexPage){
 <div class="controls">
     <div class="control-group row-fluid">
         <input id="terms-use-checkbox" type="checkbox" style="float: left; margin-top: 3px;">
-        <label for="terms-use-checkbox" class="" style="margin-left: 5px;">подтверждаю согласие на обработку моих персональных данных</label>
+        <label for="terms-use-checkbox" class="" style="margin-left: 5px;">подтверждаю согласие на обработку моих персональных данных</label>    
     </div>
 </div>
 <?php } ?>
