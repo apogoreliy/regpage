@@ -8,6 +8,13 @@ if (!$adminId)
     exit;
 }
 
+if(isset($_GET['downloadExcelData'])){
+    $res = db_downloadExcelData($_POST['members']);
+
+    echo json_encode(["result" =>$res]);
+    exit();
+}
+
 if (isset ($_GET['sortedFields']['sort_field']))
 {
     $_SESSION['sort_field-members']=$_GET ['sortedFields']['sort_field'];
@@ -66,6 +73,51 @@ if(isset($_GET['set_attend_meeting'])){
     echo json_encode(["result" => db_setAttendMeeting($_POST['value'], $_POST['memberId'])]);
     exit();
 }
+
+if(isset($_GET['add_filter'])){
+    db_addFilter($_GET['filter_name'], $adminId);
+    
+    echo json_encode(["filters" => db_getAdminFilters($adminId)]);
+    exit();
+}
+
+if(isset($_GET['get_filters'])){
+    echo json_encode(["filters" => db_getAdminFilters($adminId)]);
+    exit();
+}
+
+if(isset($_GET['show_filter'])){
+    echo json_encode(["filters" => db_getAdminFilters($adminId)]);
+    exit();
+}
+
+if(isset($_GET['save_filter_localities'])){
+    db_saveFilterLocalities($_GET['filter_id'], $_GET['filter_localities']);
+
+    echo json_encode(["filters" => db_getAdminFilters($adminId)]);
+    exit();
+}
+
+if(isset($_GET['save_filter'])){
+    db_saveFilter($_GET['filter_id'], $_GET['filter_name']);
+
+    echo json_encode(["filters" => db_getAdminFilters($adminId)]);
+    exit();
+}
+
+if(isset($_GET['remove_filter'])){
+    db_removeFilter($_GET['filter_id']);
+
+    echo json_encode(["filters" => db_getAdminFilters($adminId)]);
+    exit();
+}
+
+if(isset($_GET['get_localities'])){
+
+    echo json_encode(["localities" => db_getAdminLocalitiesWithFilters($adminId)]);
+    exit();
+}
+
 
 if(isset($_GET['remove'])){
     db_removeMember($_POST['memberId']);

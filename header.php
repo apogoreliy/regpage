@@ -14,6 +14,8 @@ include_once "preheader.php";
     <meta name="author" content="">
     <meta http-equiv="Expires" content="Wed, 06 Sep 2017 16:35:12 GMT">
     <meta http-equiv="Pragma" content="no-cache">
+    <!--<meta name="yandex-verification" content="56dd8d3e07b017d1" />-->
+    <meta name="mailru-domain" content="z83V20hFDKLekMbc" />
 
     <link href="favicon.ico" rel="shortcut icon" />
 

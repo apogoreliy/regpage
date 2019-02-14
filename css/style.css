@@ -119,6 +119,10 @@ a {
 }
 */
 
+#modalStatistic .text-align{
+    text-align: right;
+}
+
 .modal-edit-member .controls-row input, .modal-edit-member .controls-row select, 
 .modal-edit-member .controls-row textarea, .modal-edit-member .controls-row div[class*="span"],
 .modal-edit-member .controls-row label {
@@ -859,8 +863,8 @@ input.error, .control-group.error select, textarea.error {
     display: inline-block;
     border-bottom: 1px solid #DDD;
     width: 100%;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 .list-events > div:hover, .hidden-events-list > div:hover{
     cursor: pointer;
@@ -1205,6 +1209,73 @@ input.error, .control-group.error select, textarea.error {
 .check-member:hover{
     cursor: pointer;
 }
+
+.filter_name_field, .save_filter_name{
+    display: none;
+}
+
+.add-filter{
+    color: #ddd; 
+    margin-top: 5px; 
+    margin-left: 5px;
+    position: absolute;
+}
+
+.add-filter:hover{
+    cursor: pointer;
+    color: green;
+}
+
+.filters_list{
+    border-top: 1px solid #dadada;
+}
+
+.filter_item{
+    border-bottom: 1px solid #dadada;
+    height: 30px;
+    margin-top: 5px;
+}
+
+.filter_item:hover{
+    cursor: pointer;
+}
+
+.save_filter_name{
+    margin-left: 5px;
+}
+
+.show_filter, .remove_filter, .edit_filter, .save_filter_name{
+    color: #ddd;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.show_filter:hover{
+    cursor: pointer;
+    color: blue;
+}
+
+.remove_filter:hover{
+    cursor: pointer;
+    color: red;
+}
+
+.edit_filter:hover, .save_filter_name:hover{
+    cursor: pointer;
+    color: green;
+}
+
+.download-checkboxes-first-column, .search-checkbox-first-column{
+    width: 40%; 
+    float: left;
+}
+.user_setting_span{
+    color: #AAA;
+    font-weight: normal;
+    font-size: 12px;
+    margin-left: 0;
+}
+
 /*** RESPONSIVENESS ***/
 
 /* Large Desktop */
@@ -1663,5 +1734,8 @@ input.error, .control-group.error select, textarea.error {
     }
     .modal-body .scroll-up{
         bottom: 80px; 
+    }
+    .download-checkboxes-first-column, .search-checkbox-first-column{
+        width: 100%;
     }
 }

@@ -1,12 +1,11 @@
 <?php 
-    # include_once "preheader.php";
-    
     include_once "header.php";
     $indexPage = true;
 
-    if ($memberId) db_logoutAdmin ($memberId);
+    // if ($memberId) db_logoutAdmin ($memberId);
     $memberId = db_getMemberIdBySessionId (session_id());
-    $isGuest = true;
+    $isGuest= isset($memberId) ? NULL : true;  
+
     $isLink=false;
     $isInvited = false;
     include_once 'modals.php';
@@ -64,12 +63,12 @@
         <label class="control-label" for="login">Логин</label>
         <input type="text" id="login" name="login" placeholder="Email">
         <label class="control-label" for="password">Пароль</label>
-        <input type="password" id="password" name="password">
+        <input type="password" id="password" name="password" maxlength="15">
         <!--<div id="passRec" style="display:none"><a href="/passrec">Забыли пароль?</a></div>-->
         <div id="loginError" class="alert alert-error" style="display:none">Неверно введены логин или пароль</div>
         <div id="emailError" class="alert alert-error" style="display:none">Логином должен быть корректный email</div>
         <div id="ajaxError" class="alert alert-error" style="display:none">Ошибка сервера. Обратитесь к разработчикам.</div>
-        <div id="passLengthError" class="alert alert-error" style="display:none">Длинна пароля должна быть не меньше 5 символов</div>
+        <div id="passLengthError" class="alert alert-error" style="display:none">Длинна пароля должна быть не меньше 5 и не больше 15 символов</div>
         <div><a href="/passrec">Забыли пароль?</a></div>
         <button type="submit" id="loginFormBtn" class="btn btn-large btn-primary">Войти</button>        
     </form>
@@ -249,7 +248,7 @@ $("#loginFormBtn").click (function (e){
         return;
     }    
     
-    if(password.length < 5){   
+    if(password.length < 5 || password.length > 15){   
         $("#passLengthError").show ();
         e.stopPropagation();
         e.preventDefault();

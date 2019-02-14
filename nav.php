@@ -82,11 +82,10 @@ switch ($h) {
             </ul>
         </div>
 
-        <span class="btn fa fa-envelope-o fa-lg send-message-support-phone" style="float: right;" data-toggle="modal" data-target="#messageAdmins" title="Отправить сообщение службе поддержки" aria-hidden="true"></span>
+        <!-- <span class="btn fa fa-envelope-o fa-lg send-message-support-phone" style="float: right;" data-toggle="modal" data-target="#messageAdmins" title="Отправить сообщение службе поддержки" aria-hidden="true"></span> -->
         <?php if(strpos ($s,"/reg")!==FALSE){ ?> 
             <span class="btn fa fa-envelope fa-lg send-message-regteam" tabindex="-1" style="float: right; margin-right: 10px;" title="Отправить сообщение команде регистрации" data-toggle="modal" data-target="#modalEventSendMsg"></span>
         <?php } ?>        
-        
         <div class="nav-collapse collapse">            
             <ul class="nav">   
             <?php 
@@ -174,24 +173,29 @@ switch ($h) {
                 
                 echo '<li class="btn-group">
                         <a class="user-name-field dropdown-toggle" data-toggle="dropdown"'; 
-                            echo count(db_getAdminAccess ($memberId))>0 ? 'title="Область регистрации: '.htmlspecialchars (implode (", ", db_getAdminAccess ($memberId))).'"' : '';
+                            //echo count(db_getAdminAccess ($memberId))>0 ? 'title="Область регистрации: '.htmlspecialchars (implode (", ", db_getAdminAccess ($memberId))).'"' : '';
                             echo 'href="#"><span class="user-name">'.$_name.'</span>
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li';
                         if (strpos ($s,'/profile')!==FALSE) echo ' class="active"';
-                        echo '><a href="/profile">Профиль</a></li>';                            
-                        // echo'<li><a href="/login">Выйти</a></li>
-                        echo'<li><a href="/">Выйти</a></li>
+                        echo '><a href="/profile">Профиль</a></li>'; 
+                        
+                        $access_areas = db_getAdminAccess ($memberId);
+
+                        if($access_areas && count($access_areas) > 0){
+                            echo '<li';
+                            if (strpos ($s,'/settings')!==FALSE) echo ' class="active"';
+                            echo '><a href="/settings">Настройки</a></li>';   
+                        }                                                
+                        echo'<li><a href="/" class="logout">Выйти</a></li>
                         </ul>
                     </li>';
             }
             else {
                 echo '<li ';
                 if (strpos ($s,"/index")!==FALSE) echo 'class="active"'; 
-                // if (strpos ($s,"/login")!==FALSE) echo 'class="active"'; 
-                //echo '><a href="/login">Войти</a></li>';       
                 echo '><a href="/index">Войти</a></li>';       
                 echo '<li ';
                 if (strpos ($s,"/signup")!==FALSE) echo 'class="active"'; 
@@ -206,6 +210,21 @@ switch ($h) {
 
 </div>
 <script>
+    $('.logout').click(function(e){        
+        e.preventDefault();
+
+        var memberId = '<?php echo $memberId; ?>';
+
+        $.get('ajax/login.php?logout', {memberId: memberId})
+        .done (function() {
+            window.location = "/";
+        })
+        .fail(function() {
+            window.location = "/";
+        })
+
+    });
+
     $('.btn-navbar').click(function(){
         if($('.nav-collapse').hasClass('in')){            
             $('.show-name-list').css('display','inline');

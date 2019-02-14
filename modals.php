@@ -95,11 +95,7 @@
             <h3>Статистика</h3>
             <h5></h5>
         </div>
-        <div class="modal-body"><div id="showStatistic"></div></div>
-        <div class="modal-footer">
-            <span class="count-localities"></span>
-            <button class="btn statOk" data-dismiss="modal" aria-hidden="true">ОK</button>
-        </div>
+        <div class="modal-body"><div id="showStatistic"></div></div>        
     </div>
 </div>
 
@@ -333,69 +329,87 @@
         <h3 id="documentItemsTitle">Выберите необходимые данные</h3>
     </div>
     <div class="modal-body">
-        <div>
-            <input type="checkbox" data-download="locality" id="download-city">
-            <label for="download-city">Город</label>
+        <div style="margin-bottom: 10px;">
+            <input type="checkbox" id="check-all-download-checkboxes">
+            <label for="check-all-download-checkboxes">Установить все флажки / Снять все флажки</label>
         </div>
-        <div>
-            <input type="checkbox" data-download="cell_phone" id="download-phone">
-            <label for="download-phone">Телефон</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="email" id="download-email">
-            <label for="download-email">Email</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="birth-date" id="download-birth-date">
-            <label for="download-birth-date">Дата рождения</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="age" id="download-age">
-            <label for="download-age">Возраст</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="school" id="download-school">
-            <label for="download-school">Школа</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="school_start" id="download-school_start">
-            <label for="download-school_start">Год начала учебы в школе</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="school_end" id="download-school_end">
-            <label for="download-school_end">Год окончания учебы в школе</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="school_level" id="download-school_level">
-            <label for="download-school_level">Класс</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="school_comment" id="download-school_comment">
-            <label for="download-school_comment">Примечание о школе</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="college" id="download-college">
-            <label for="download-college">Вуз</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="college_start" id="download-college_start">
-            <label for="download-college_start">Год начала учебы в вузе</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="college_end" id="download-college_end">
-            <label for="download-college_end">Год окончания учебы в вузе</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="college_level" id="download-college_level">
-            <label for="download-college_level">Курс</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="college_comment" id="download-college_comment">
-            <label for="download-college_comment">Примечание о вузе</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="comment" id="download-comment">
-            <label for="download-comment">Комментарий</label>
+        <div class="download-checkboxes">
+            <div class="download-checkboxes-first-column">
+                <div>
+                    <input type="checkbox" data-download="locality" id="download-city">
+                    <label for="download-city">Город</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="cell_phone" id="download-phone">
+                    <label for="download-phone">Телефон</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="email" id="download-email">
+                    <label for="download-email">Email</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="birth-date" id="download-birth-date">
+                    <label for="download-birth-date">Дата рождения</label>
+                </div>            
+                <div>
+                    <input type="checkbox" data-download="age" id="download-age">
+                    <label for="download-age">Возраст</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="male" id="download-male">
+                    <label for="download-male">Пол</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="attend_meeting" id="download-attend_meeting">
+                    <label for="download-attend_meeting">Посещает собрание</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="comment" id="download-comment">
+                    <label for="download-comment">Комментарий</label>
+                </div>
+            </div>
+            <div style="display: inline-block;">
+                <div>
+                    <input type="checkbox" data-download="school" id="download-school">
+                    <label for="download-school">Школа</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="school_start" id="download-school_start">
+                    <label for="download-school_start">Год начала учебы в школе</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="school_end" id="download-school_end">
+                    <label for="download-school_end">Год окончания учебы в школе</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="school_level" id="download-school_level">
+                    <label for="download-school_level">Класс</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="school_comment" id="download-school_comment">
+                    <label for="download-school_comment">Примечание о школе</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="college" id="download-college">
+                    <label for="download-college">Вуз</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="college_start" id="download-college_start">
+                    <label for="download-college_start">Год начала учебы в вузе</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="college_end" id="download-college_end">
+                    <label for="download-college_end">Год окончания учебы в вузе</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="college_level" id="download-college_level">
+                    <label for="download-college_level">Курс</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="college_comment" id="download-college_comment">
+                    <label for="download-college_comment">Примечание о вузе</label>
+                </div>            
+            </div>
         </div>
     </div>
     <div class="modal-footer">

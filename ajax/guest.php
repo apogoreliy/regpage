@@ -46,8 +46,8 @@ if (isset ($_GET ['restore']))
     exit;
 }
 if (isset ($_POST ['event'])){
-    $adminId = db_getMemberIdBySessionId (session_id());
-    $memberId=db_setEventMember ($adminId ? $adminId : '', $_GET, $_POST);   
+    $adminId = db_getMemberIdBySessionId (session_id());    
+    $memberId=db_setEventMember ($adminId ? $adminId : '', $_GET, $_POST); 
     $link = db_getPermalink ($memberId, $_POST ['event']);                   
     $messages = db_getEventMessages ($_POST ['event']);
     echo json_encode(array ("permalink"=>$link, "messages"=>$messages));

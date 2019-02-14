@@ -2,7 +2,7 @@
     include_once "header.php"; 
     global $appRootPath;
 
-    //$indexPage = true;
+    $indexPage = true;
     $isGuest= isset($memberId) ? NULL : true;
     $isUserWithRights = db_isAdmin($memberId) ? 1 : 0 ;   
     $adminEvents = implode(',', db_getAdminEventsRespForReg($memberId));
@@ -148,14 +148,13 @@ else if (isset ($_SESSION["logged-in"])){
     </div>
 </div>
 <!-- Edit Member Modal -->    
-<!--
-<div id="modalEditMember" data-width="600" class="modal-edit-member modal hide<?php //if ($isLink || $isInvited) echo ' fade'; ?>" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-labelledby="editMemberEventTitle">
+<div id="modalEditMember" data-width="600" class="modal-edit-member modal hide<?php if ($isLink || $isInvited) echo ' fade'; ?>" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-labelledby="editMemberEventTitle">
     <div class="modal-header">
         <button type="button" class="close close-form" data-dismiss="modal" aria-hidden="true">x</button>
         <h4 class="editMemberEventTitle"></h4>
         <a style="margin-left: 0;" id="lnkEventInfo">Информация о мероприятии</a>
         <div style="margin-top: 10px;">
-        <?php /*
+        <?php
            if ($isLink){
                echo '<span class="footer-status"><span class="eventMemberStatus"></span>';
                if ($info["regstate_key"] && $info["regstate_key"]!='05' && $info["regstate_key"]!='03') 
@@ -164,19 +163,17 @@ else if (isset ($_SESSION["logged-in"])){
                   echo '&nbsp;<a href="#" id="lnkRestoreReg">Возобновить регистрацию</a>';
                echo '</span>'; 
            } 
-           */
         ?>
         </div>
     </div>
     <div class="modal-body">
-        <?php //require_once 'formTab.php'; ?>
+        <?php require_once 'formTab.php'; ?>
     </div>
     <div class="modal-footer">        
         <button class="btn btn-primary disable-on-invalid" id="btnDoRegisterGuest">Отправить данные</button>
         <button class="btn" id="btnCancelChanges">Отмена</button>
     </div>
 </div>
--->
 
 <?php include_once "modals.php"; ?>
 
@@ -1127,11 +1124,13 @@ $(document).ready(function(){
             showError("Необходимо заполнить все обязательные поля, выделенные розовым фоном!", true);
             return;
         }
-        var form = $('#modalEditMember'), self = this, fieldsValue = getValuesRegformFields(form, true, true);
+        
+        var form = $('#modalEditMember'), self = this, fieldsValue = getValuesRegformFields(form, true, false);
+        
         if(!fieldsValue.termsUse){
             showError("Необходимо дать согласие на обработку персональных данных", true);
             return;
-        }               
+        }        
         
         $.post("/ajax/guest.php", fieldsValue)
         .done (function(data){
@@ -1145,7 +1144,7 @@ $(document).ready(function(){
                 <?php if(!isset($memberId)){?>
                     showSuccessMessage (<?php echo $isLink ? "data.messages.save_message, null" : "data.messages.reg_message, data.permalink"; ?>);
                 <?php }else{ ?>
-                    window.location = '/';
+                    window.location = '/main';
                 <?php } ?>
             }  
         });

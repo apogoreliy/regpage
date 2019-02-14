@@ -211,23 +211,22 @@ $(document).ready(function(){
     <form class="form-signup">
         <div class="alert alert-warning" style="width: 100%; padding: 10px 7px 10px 10px; margin-bottom: 10px;">
             <span class="close" data-dismiss="alert" style="right: 0">&times;</span>
-            <span>Создавайте учётную запись только для себя.
-                Для регистрации кого-то другого, <a href="#" data-toggle="modal" data-target="#messageAdmins" aria-hidden="true">напишите в службу поддержки.</a>
+            <span>Создавайте учётную запись только для себя. По всем вопросам обращайтесь в службу поддержки через чат (в правом нижнем углу экрана)</a>
             </span>
         </div>
         <label class="control-label" for="login">Логин</label>
         <input type="text" class="login" name="login" placeholder="Email" valid="required">
         
         <label class="control-label" for="password">Пароль</label>
-        <input type="password" class="password" name="password" valid="required" placeholder="Введите пароль">
+        <input type="password" class="password" name="password" valid="required" placeholder="Придумайте пароль" maxlength="15">
         
         <label class="control-label" for="password">Подтверждение пароля</label>
-        <input type="password" class="passwordConfirm" valid="required" placeholder="Повторите пароль" name="passwordConfirm">
+        <input type="password" class="passwordConfirm" valid="required" placeholder="Повторите пароль" name="passwordConfirm" maxlength="15">
         
         <div id="loginError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Учетная запись с таким логином уже существует. <a href="/login">Войти</a>?</div>
         <div id="emailError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Логином должен быть корректный email</div>
         <div id="passError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Пароли не соответствуют друг другу</div>
-        <div id="passLengthError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Длинна пароля должна быть не меньше 5 символов</div>
+        <div id="passLengthError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Длинна пароля должна быть не меньше 5 символов и не больше 15 символов</div>
         <div id="ajaxError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Ошибка сервера. Обратитесь к разработчикам.</div>
         <div class="alert alert-info" style="width: 100%; padding: 10px 7px 10px 10px; margin-bottom: 0;">
             <span class="close" data-dismiss="alert" style="right: 0">&times;</span>
@@ -311,8 +310,8 @@ $("#loginFormBtn").click (function (e){
     }   
     else{
         $("#emailError").hide ();
-    }            
-    
+    }                
+
     if(password !== passwordConfirm){
         $('.password').focus();
         $("#passError").show ();        
@@ -324,7 +323,7 @@ $("#loginFormBtn").click (function (e){
         $("#passError").hide ();
     }          
     
-    if(password.length < 5){   
+    if(password.length < 5 || password.length > 15){   
         $("#passLengthError").show ();
         e.stopPropagation();
         e.preventDefault();

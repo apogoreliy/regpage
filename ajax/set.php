@@ -26,21 +26,29 @@ if (isset ($_POST ['message']) && isset ($_POST ['event']) && isset ($_POST ['na
     $email = db_getTeamEmail ($_POST ['event']);
     $adminId = db_getMemberIdBySessionId (session_id());
     $locality = db_getMemberLocality($adminId);
-    if ($locality) $locality = "\r\n\r\nНаселённый пункт отправителя: $locality";
+    $locality = $locality ? "\r\n\r\nНаселённый пункт отправителя: $locality" : "";
+    $error = null;
+
+    $message = stripslashes ($_POST ['message']).$locality;
     
     if ($email){
-        header("Content-Type: text/plain; charset=utf-8");
         $from_name = stripslashes ($_POST ['name']);
         $from_email = stripslashes ($_POST ['email']);
-        $headers = "From: $from_name<$from_email>\r\nReply-To: $from_name<$from_email>\r\n";
         $arrEmails = explode(',', $email);
         foreach ($arrEmails as $value) {
-            EMAILS::sendEmail ($value, "Сообщение с сайта reg-page.ru - ".($from_name), (stripslashes ($_POST ['message'])).$locality, $from_email);
-        }
-        exit;
+            $res = EMAILS::sendEmail ($value, "Сообщение с сайта reg-page.ru: ".($from_name), $message, $from_email);
+            if($res != null){
+                $error = $res;
+            }
+        }        
     }
     else
         $error = "Сообщение не может быть послано, т.к. адрес команды регистрации не определен";
+
+    if($error == null){
+        echo json_encode(["result"=>true]);
+        exit;
+    }
 }
 
 if (isset ($_POST ['message']) && isset($_POST ['event']) && isset ($_POST ['name']) && isset ($_POST ['email']) && isset ($_POST['admins']))
@@ -63,7 +71,7 @@ if (isset ($_POST ['message']) && isset($_POST ['event']) && isset ($_POST ['nam
         header("Content-Type: text/plain; charset=utf-8");
         $from_name = stripslashes ($_POST ['name']);
         $from_email = stripslashes ($_POST ['email']);
-        $headers = "From: $from_name<$from_email>\r\nReply-To: $from_name<$from_email>\r\n";
+        // $headers = "From: $from_name<$from_email>\r\nReply-To: $from_name<$from_email>\r\n";
         $arrEmails = explode(',', $email);
         foreach ($arrEmails as $value) {
             EMAILS::sendEmail (stripslashes ($value), "Сообщение с сайта reg-page.ru - ".($from_name), (stripslashes ($_POST ['message'])).$locality."\n".$infoEvent."\n"."Страница: ".($_POST["admins"]), $from_email);

@@ -2,6 +2,7 @@
 include_once '../db.php';
 include_once '../PHPExcel.php';
 include_once '../PHPExcel/IOFactory.php';
+include_once '../FirePHP.class.php';
 
 if(isset($_GET['file'])) {
     $fileSearch = basename($_GET['file']);
@@ -275,7 +276,7 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
     $active_sheet->getColumnDimension('A')->setWidth(4);
     $active_sheet->getColumnDimension('B')->setWidth(40);
 
-    $ind_count = 'C';
+    $ind_count = 'B';
     for ($d=0; $d < $fieldsCount; $d++) {
         $active_sheet->getColumnDimension($ind_count)->setWidth(30);
         $ind_count ++;
@@ -310,7 +311,7 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
         ->setCellValue('A1', '№')
         ->setCellValue('B1', 'Участник');
 
-    $ind = 'C';
+    $ind = 'B';
     for ($d=0; $d < $fieldsCount; $d++) {
         switch ($fields[$d]) {
             case 'locality':
@@ -327,6 +328,12 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
                 break;
             case 'age':
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Возраст');
+                break;
+            case 'male':
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Пол');
+                break;
+            case 'attend_meeting':
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Посещает собрание');
                 break;
             case 'school':
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Школа');
@@ -375,7 +382,7 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
                 ->setCellValue("A$i", $num)
                 ->setCellValue("B$i", $membersAll[$m]['name']);
 
-            $ind = 'C';
+            $ind = 'B';
             foreach ($fields as $d) {
                 switch ($d) {
                     case 'locality':
@@ -392,6 +399,7 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
                         break;
                     case 'age':
                         $birthDate = (int)$membersAll[$m]['age'];
+                        /*
                         $suffix = '';
 
                         if($membersAll[$m]['age']){
@@ -404,10 +412,18 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
                                 $suffix = " года";
                             }
                         }
+                        */
 
-                        $birthDate = $membersAll[$m]['age'] ? $birthDate.$suffix : 'Не указан';
+                        $birthDate = $birthDate ? $birthDate : 'Не указан';
+                        // $birthDate = $membersAll[$m]['age'] ? $birthDate.$suffix : 'Не указан';
                         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $birthDate);
-                        break;                    
+                        break;   
+                    case 'male':  
+                        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['male'] == 1 ? "Брат" : "Сестра");
+                        break;  
+                    case 'attend_meeting':  
+                        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['attend_meeting'] == 1 ? "Посещает" : "");
+                        break;             
                     case 'school':
                         $category = $membersAll[$m]['category_key'];
                         $age = (int)$membersAll[$m]['age'];
@@ -1105,6 +1121,128 @@ else if (isset($_POST ['list']) && ($_POST['page'] == 'meeting_general')) {
 
     $filename = $file.'.xlsx';
     echo $filename;
+}
+else if(isset($_GET['upload_file'])){   
+    if ( 0 < $_FILES['file']['error'] ) {
+        echo json_encode(array ("res"=>'error'));
+    }
+    else {        
+        $path_to_file = $_FILES['file']['name'];
+        move_uploaded_file($_FILES['file']['tmp_name'], $path_to_file);
+        $res = handle_excel_file($path_to_file, $_GET['admin_id']);
+        unlink ($path_to_file);
+
+        echo json_encode(array ("res"=>$res));
+    }        
+    exit;
+}
+
+function handle_excel_file($path_to_file, $adminId){    
+    $objPHPExcel = PHPExcel_IOFactory::load($path_to_file);
+
+    //$list = [];
+    try{
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+            $worksheetTitle     = $worksheet->getTitle();
+            $highestRow         = $worksheet->getHighestRow(); // e.g. 10
+            $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+            $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+            $nrColumns = ord($highestColumn) - 64;
+
+            $desiredFields = ['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения', 'Местность', 'Состояние', 'Трапеза', 'Дата крещения'];
+            $nameFields = ['Фамилия', 'Имя', 'Отчество']; 
+            $desiredFieldIndexes = [];
+
+            for ($row = 1; $row <= $highestRow; ++ $row) {
+                $row_data = [];
+                $member = [];
+                $fullMemberName = [];
+
+                for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+                    $cell = $worksheet->getCellByColumnAndRow($col, $row);
+                    $val = $cell->getValue();
+
+                    if($row == 1 and in_array(trim($val), $desiredFields)){                        
+                        $desiredFieldIndexes[$col] = $val;
+                    }
+                    else if(array_key_exists ($col, $desiredFieldIndexes)){
+                        if(in_array($desiredFieldIndexes[$col], $nameFields)){                            
+                            array_push($fullMemberName, $val);
+                        }
+                        $member[$desiredFieldIndexes[$col]] = $val;
+                    }
+                }
+                
+                if(count($member) > 0){
+                    $member['ФИО'] = join($fullMemberName, ' ');
+                    handleMember($member, $adminId);
+                }                
+            }            
+        }
+        return true;
+    }
+    catch (Exception $e){
+        return false;
+    }
+}
+
+function handleMember($member, $adminId){
+    $name = null;
+    $locality_key = null;
+    $locality_name = null;
+    $gender = null; 
+    $birth_date = null; 
+    $category_key = null;
+    $attend_meeting = null;
+    $baptize_date = null;
+
+    foreach ($member as $key => $value) {
+        if($key == 'ФИО'){
+            $name = $value;
+        }
+        else if($key == 'Местность'){
+            $locality_key = db_getLocalityKeyByName($value);
+            if($locality_key == null){
+                $locality_name = $value;
+            }
+        }
+        else if($key == 'Пол'){
+            $gender = $value == 'сестра' || $value == 'Сестра' ? 0 : 1;
+        }
+        else if($key == 'Дата крещения'){
+            $baptize_date = trim($value) ? strftime("%Y-%m-%d",strtotime ($value)) : null;
+        }
+        else if($key == 'Дата рождения'){
+            $birth_date = trim($value) ? strftime("%Y-%m-%d",strtotime ($value)): null;
+        }
+        else if($key == 'Состояние'){
+            if($value == 'В церковной жизни'){
+                $age = getAge($member['Дата рождения']);
+                if($age < 17){
+                    $category_key = 'SC';
+                }   
+                else{
+                    $category_key = 'SN';
+                }                             
+            }
+            else if($value == 'Остыл' || $value == 'Контакт'){
+                $category_key = 'BL';
+            }
+            else if($value == 'ПВОМ'){
+                $category_key = 'FT';
+            }
+            else{
+                $category_key = 'OT';
+            }
+        }
+        else if($key == 'Трапеза'){
+            $attend_meeting = $value == 'да' || $value == 'Да' || $value == 1 || $value == '1' ? 1 : 0;
+        }
+        $citizenship = 'UA';
+    }
+    
+    db_addNewMember ($name, $locality_key, $gender, $birth_date, $category_key, $attend_meeting, $locality_name, $citizenship, 
+        $baptize_date, $adminId);
 }
 
 function add($a, $b) {

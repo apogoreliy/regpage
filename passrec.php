@@ -39,7 +39,7 @@
                     "<p>Команда сайта регистрации</p>";
             
             $title = "Восстановление пароля для сайта регистрации reg-page.ru";
-            $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\nFrom: REG-PAGE<admin@reg-page.ru>\r\nReply-To: REG-PAGE<admin@reg-page.ru>\r\n";
+            $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\nFrom: REG-PAGE<info@reg-page.ru>\r\nReply-To: REG-PAGE<info@reg-page.ru>\r\n";
             
             EMAILS::sendEmail(htmlspecialchars($email), $title, $body);
             //mail(htmlspecialchars($email), $title, $body, $headers);

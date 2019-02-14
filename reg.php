@@ -1,11 +1,11 @@
 <?php
     include_once "header.php";
     include_once "nav.php";
-    include_once "modals.php";    
+    include_once "modals.php";
     include_once "bulkEditModal.php";
 
     global $appRootPath;
-    
+
     $hasMemberRightToSeePage = count(db_getAdminLocalities($memberId))>0 || db_hasAdminFullAccess($memberId);
     if(!$hasMemberRightToSeePage){
         die();
@@ -15,13 +15,17 @@
     $countries2 = db_getCountries(false);
     $selectedEventId = isset($_COOKIE['eventChoose']) ? $_COOKIE['eventChoose'] : false ;
     $adminCountry = db_getAdminCountry($memberId);
+
+    $user_settings = db_getUserSettings($memberId);
+
+    $userSettings = implode (',', $user_settings);
 ?>
 
 <div class="container">
     <div class="aditional-menu">
         <a class="btn btn-primary disabled chk-dep chk-register role-admin" type="button"><i class="fa fa-check icon-white" title="Зарегистрировать"></i> <span class="hide-name">Зарегистрировать</span></a>
         <a class="btn btn-primary disabled chk-dep chk-bulkedit role-edit" type="button"><i class="fa fa-list icon-white" title="Изменить"></i> <span class="hide-name">Изменить</span></a>
-        <a class="btn btn-danger disabled chk-dep chk-remove role-edit" type="button"><i class="fa fa-ban icon-white" title="Отменить"></i> <span class="hide-name">Отменить</span></a>        
+        <a class="btn btn-danger disabled chk-dep chk-remove role-edit" type="button"><i class="fa fa-ban icon-white" title="Отменить"></i> <span class="hide-name">Отменить</span></a>
         <?php if($event->web == 1){ ?>
         <a class="btn btn-warning disabled chk-dep filter-icons bulkedit-prove" type="button"><i class="fa fa-asterisk" aria-hidden="true" title="Подтвердить"></i> <span class="hide-name">Подтвердить</span></a>
         <a class="btn btn-danger disabled chk-dep filter-icons bulkedit-prove" type="button"><i class="fa fa-asterisk" aria-hidden="true" title="Отметить прибытие"></i> <span class="hide-name">Отметить прибытие</span></a>
@@ -62,7 +66,7 @@
         </select>
     <?php
     $activeIsSet = false;
-    
+
     echo '<span style="margin-left:10px;" class="close-event-registration"></span>';
 
     foreach ($events as $index=>$event) {
@@ -77,7 +81,7 @@
         data-regend="<?php echo $event->regend_date; ?>" data-event_type="<?php echo $event->event_type; ?>" data-private="<?php echo $event->private; ?>" data-access="<?php echo $memberId == $event->admin_access ? 1: 0 ; ?>"
         data-show-locality-field="<?php echo $showLocalityField ? 1 : 0; ?>"
         data-need_flight="<?php echo $event->need_flight; ?>" data-need_tp="<?php echo $event->need_tp; ?>"
-        >                
+        >
         <div>
         <div class="btn-toolbar">
             <a class="btn btn-success event-add-member role-edit" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
@@ -146,7 +150,7 @@
                 <input type="text"  class="controls search-text" placeholder="Введите текст">
                 <i class="icon-remove clear-search"></i>
             </div>
-            </div>            
+            </div>
         </div>
         <div class="desctopVisible">
             <div id="statReg">
@@ -161,7 +165,10 @@
                                     }
                                 ?>
                             <th class="hide-tablet">Телефон</th>
+
+                            <?php if(in_array(4, $user_settings)) {?>
                             <th class="hide-tablet"><a id="sort-service" href='#' title="сортировать">Служение</a>&nbsp;<i class="<?php echo $sort_field=='serving' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                            <?php } ?>
                             <th>Даты</th>
                             <th><a id="sort-regstate" href="#" title="сортировать">Состояние</a>&nbsp;<i class="<?php echo $sort_field=='regstate' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         </tr>
@@ -269,7 +276,7 @@
             require_once 'formTab.php';
         ?>
     </div>
-    <div class="modal-footer">        
+    <div class="modal-footer">
         <button class="btn btn-primary disable-on-invalid role-admin" id="btnDoRegisterMember"><i class="icon-ok icon-white"></i> Зарегистрировать</button>
         <button class="btn btn-info disable-on-invalid role-edit" id="btnDoSaveMember">Сохранить</button>
         <button class="btn close-form" data-dismiss="modal" aria-hidden="true">Отменить</button>
@@ -371,126 +378,125 @@
 </div>
 
 <!-- Change Document Items To Download Modal -->
-<div id="modalDownloadItems" class="modal hide fade" data-width="350" tabindex="-1" role="dialog" aria-labelledby="regEndedTitle" aria-hidden="true">
+<div id="modalDownloadItems" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="regEndedTitle" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close cancelDownloadItems" data-dismiss="modal" aria-hidden="true">x</button>
         <h4 id="documentItemsTitle">Выберите необходимые данные</h4>
     </div>
     <div class="modal-body">
-        <div>
-            <input type="radio" id="check-all">
-            <label for="check-all">Установить все флажки</label>
+        <div style="margin-bottom: 10px;">
+            <input type="checkbox" id="check-all">
+            <label for="check-all">Установить все флажки / Снять все флажки</label>
         </div>
-        <div>
-            <input type="radio" id="uncheck-all">
-            <label for="uncheck-all">Снять все флажки</label>
-        </div>
-        <div class="translate">
-            <input type="checkbox" id="download-translate">
-            <label for="download-translate">Переводить на английский</label>
-        </div>
-        <hr/>
         <div class="search-checkbox">
-        <div>
-            <input type="checkbox" data-download="birth_date" id="download-birth-date">
-            <label for="download-birth-date">Дата рождения</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="locality" id="download-city">
-            <label for="download-city">Город</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="region" id="download-region">
-            <label for="download-region">Область</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="country" id="download-country">
-            <label for="download-country">Страна</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="post" id="download-post">
-            <label for="download-post">Почтовый адрес</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="service" id="download-service">
-            <label for="download-service">Служение</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="coord" id="download-coord">
-            <label for="download-coord">Координатор</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="cell_phone" id="download-phone">
-            <label for="download-phone">Телефон</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="email" id="download-email">
-            <label for="download-email">Email</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="arr_date" id="download-arr-dep-date">
-            <label for="download-arr-dep-date">Даты приезда и отъезда</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="arr_time" id="download-arr-dep-time">
-            <label for="download-arr-dep-time">Время приезда и отъезда</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="regstate" id="download-reg-state">
-            <label for="download-reg-state">Состояние регистрации</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="document" id="download-document">
-            <label for="download-document">Паспортные данные</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="tp" id="download-tp">
-            <label for="download-tp">Данные загранпаспорта</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="english" id="download-english">
-            <label for="download-english">Уровень английского</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="flight-arr" id="download-flight-arr">
-            <label for="download-flight-arr">Авиарейс прибытия</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="flight-dep" id="download-flight-dep">
-            <label for="download-flight-dep">Авиарейс вылета</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="visa" id="download-visa">
-            <label for="download-visa">Виза</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="accom" id="download-accom">
-            <label for="download-accom">Размещение</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="transport" id="download-transport">
-            <label for="download-transport">Поездка (транспорт)</label>
-        </div>
-        <div class="custom-download-item">
-            <input type="checkbox" data-download="custom_item" id="download-custom_item">
-            <label for="download-custom_item"></label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="hotel" id="download-hotel">
-            <label for="download-hotel">Гостиница</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="admin-comment" id="download-admin-comment">
-            <label for="download-admin-comment">Комментарий администратора</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="comment" id="download-comment">
-            <label for="download-comment">Комментарий участника</label>
-        </div>
-        <div>
-            <input type="checkbox" data-download="paid" id="download-paid">
-            <label for="download-paid">Внесённый взнос</label>
-        </div>
+            <div class="search-checkbox-first-column">
+                <div class="translate">
+                    <input type="checkbox" id="download-translate">
+                    <label for="download-translate">Переводить на английский</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="birth_date" id="download-birth-date">
+                    <label for="download-birth-date">Дата рождения</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="locality" id="download-city">
+                    <label for="download-city">Город</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="region" id="download-region">
+                    <label for="download-region">Область</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="country" id="download-country">
+                    <label for="download-country">Страна</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="post" id="download-post">
+                    <label for="download-post">Почтовый адрес</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="service" id="download-service">
+                    <label for="download-service">Служение</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="coord" id="download-coord">
+                    <label for="download-coord">Координатор</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="cell_phone" id="download-phone">
+                    <label for="download-phone">Телефон</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="email" id="download-email">
+                    <label for="download-email">Email</label>
+                </div>
+            </div>
+            <div style="display: inline-block;">
+                <div>
+                    <input type="checkbox" data-download="arr_date" id="download-arr-dep-date">
+                    <label for="download-arr-dep-date">Даты приезда и отъезда</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="arr_time" id="download-arr-dep-time">
+                    <label for="download-arr-dep-time">Время приезда и отъезда</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="regstate" id="download-reg-state">
+                    <label for="download-reg-state">Состояние регистрации</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="document" id="download-document">
+                    <label for="download-document">Паспортные данные</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="tp" id="download-tp">
+                    <label for="download-tp">Данные загранпаспорта</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="english" id="download-english">
+                    <label for="download-english">Уровень английского</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="flight-arr" id="download-flight-arr">
+                    <label for="download-flight-arr">Авиарейс прибытия</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="flight-dep" id="download-flight-dep">
+                    <label for="download-flight-dep">Авиарейс вылета</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="visa" id="download-visa">
+                    <label for="download-visa">Виза</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="accom" id="download-accom">
+                    <label for="download-accom">Размещение</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="transport" id="download-transport">
+                    <label for="download-transport">Поездка (транспорт)</label>
+                </div>
+                <div class="custom-download-item">
+                    <input type="checkbox" data-download="custom_item" id="download-custom_item">
+                    <label for="download-custom_item"></label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="hotel" id="download-hotel">
+                    <label for="download-hotel">Гостиница</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="admin-comment" id="download-admin-comment">
+                    <label for="download-admin-comment">Комментарий администратора</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="comment" id="download-comment">
+                    <label for="download-comment">Комментарий участника</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="paid" id="download-paid">
+                    <label for="download-paid">Внесённый взнос</label>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -504,11 +510,11 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h4 class="editMemberEventTitleService">Отменить прибытие?</h4>
-    </div>    
-    <div class="modal-body">
-        
     </div>
-    <div class="modal-footer">    
+    <div class="modal-body">
+
+    </div>
+    <div class="modal-footer">
         <button class="btn btn-danger reject-attended" data-dismiss="modal" aria-hidden="true">Да</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Нет</button>
     </div>
@@ -519,11 +525,11 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h4>Сохранение изменений</h4>
-    </div>    
+    </div>
     <div class="modal-body">
         Некоторые данные были изменены. Вы действительно хотите отменить эти изменения?
     </div>
-    <div class="modal-footer">    
+    <div class="modal-footer">
         <button class="btn btn-danger confirm-save-changes" data-dismiss="modal" aria-hidden="true">Да</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Нет</button>
     </div>
@@ -555,7 +561,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3>Полное содержание письма</h3>
     </div>
-    <div class="modal-body">        
+    <div class="modal-body">
     </div>
     <div class="modal-footer">
         <button class="btn " data-dismiss="modal" aria-hidden="true">Ok</button>
@@ -568,13 +574,13 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3>Пригласить пользователя</h3>
     </div>
-    <div class="modal-body">       
+    <div class="modal-body">
         <div class="invited-users">
-            
+
         </div>
         <input style="width: 100%; padding: 5px 0 5px 5px;" type="text" class="invite-name" placeholder="Введите имя">
         <div class="available-invited-users">
-            
+
         </div>
     </div>
     <div class="modal-footer">
@@ -585,9 +591,9 @@
 
 <!-- Users Emails Modal -->
 <div id="modalShowResponseAfterInviteMembers" data-width="600" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-body">       
+    <div class="modal-body">
         <div class="response">
-            
+
         </div>
     </div>
     <div class="modal-footer">
@@ -597,8 +603,10 @@
 
 <script>
     $(document).ready (function (){
+        window.user_settings = "<?php echo $userSettings; ?>".split(',');
+
         setAdminRole();
-        // data-close_registration="'+m.close_registration+'" data-stop_registration="'+m.stop_registration+'"  
+        // data-close_registration="'+m.close_registration+'" data-stop_registration="'+m.stop_registration+'"
         <?php
         list ($adminName, $adminEmail) = db_getMemberNameEmail ($memberId);
         echo '$("#sendMsgName, #sendLetterName").val("'.htmlspecialchars($adminName).'"); $("#sendMsgEmail, #sendLetterEmail").val("'.htmlspecialchars($adminEmail).'");';
@@ -607,27 +615,27 @@
         $("#sendMsgName, #sendMsgEmail, #sendMsgNameAdmin, #sendMsgEmailAdmin").keyup();
 
         $('.tab-content').addClass($(document).width()<980 ? 'phone' : 'desc');
-        
+
         var eventIdInit = $("#events-list").val();
         if(eventIdInit){
             checkStopEventRegistration(eventIdInit);
             loadDashboard(eventIdInit);
         }
-        
+
         handleControlButtons();
     });
-    
+
     $('.searchMemberToAdd').keyup(function(){
        loadMembersList ();
     });
-    
+
     $('.filter-arrived').click(function(){
         var element = $(this);
         element.hasClass('active') ? element.removeClass('active') : element.addClass('active');
         element.siblings().removeClass('active');
         loadDashboard();
     });
-    
+
     $('.filter-regstate').change(function(){
         filterMembers();
     });
@@ -689,7 +697,7 @@
             });
         }
         else{
-            checkFilter.hide();            
+            checkFilter.hide();
             $(".membersTable tbody").html("");
             $(".membersTable").hide();
         }
@@ -759,7 +767,7 @@
     }
 
     $(".chk-invite").click(function(){
-        if($('.close-event-registration').children().length > 0){
+        if($('.registration-closed').children().length > 0){
             showModalHintWindow("<strong>Онлайн-регистрация на это мероприятие закрыта.<br>По всем вопросам <a href='' data-toggle='modal' data-target='#modalEventSendMsg'>обращайтесь к команде регистрации.</a> </strong>");
         }
         else{
@@ -768,24 +776,24 @@
             modal.find('.available-invited-users').html('');
             modal.modal('show');
             setTimeout(function(){ modal.find('.invite-name').focus} , 500);
-        }        
+        }
     });
-    
+
     $(".invite-name").keyup(function(e){
         e.stopPropagation();
         var value = $(this).val().trim();
         var modal = $("#modalInviteUser");
-        
+
         $.post('/ajax/get.php?get_users_to_invite', {name : value})
         .done(function(data){
             var users = data.users, usersArr = [];
-    
+
             for(var i in users){
                 usersArr.push('<div class="available-user" data-name="'+users[i].name+'" data-locality="'+users[i].locality +'" data-member="'+users[i].id+'" >'+users[i].name+' ('+users[i].locality +') <i style="color:green;" class="fa fa-plus"></i></div>');
             }
-            
+
             modal.find('.available-invited-users').html(usersArr.join(''));
-            
+
             $(".available-user").click(function(e){
                 e.stopPropagation();
                 var memberId = $(this).attr('data-member'),
@@ -795,48 +803,48 @@
             });
         });
     });
-    
+
     function buildInvitedUsers(user, toRemove = false){
         var modal = $("#modalInviteUser"), usersArr = [];
-                
+
         modal.find(".invited-users div").each(function(){
             var memberId = $(this).attr('data-member'),
                 locality = $(this).attr('data-locality'),
                 name = $(this).attr('data-name');
-            
+
             if(toRemove && memberId === user){
                 return;
             }
             else{
                 usersArr.push('<div class="invited-user" data-name="'+name+'" data-locality="'+locality +'" data-member="'+memberId+'" >'+name+' ('+locality +') <i style="color:red;" class="fa fa-minus"></i></div>');
-            }                    
-        });        
-        
+            }
+        });
+
         if(!toRemove){
             usersArr.push('<div class="invited-user" data-name="'+user.name+'" data-locality="'+user.locality +'" data-member="'+user.id+'" >'+user.name+' ('+user.locality +') <i style="color:red;" class="fa fa-minus"></i></div>');
         }
-        
+
         modal.find(".invited-users").html(usersArr.join(''));
         modal.find(".invite-name").val('');
         modal.find('.available-invited-users').html('');
-        
+
         $(".invited-user").click(function(e){
             e.stopPropagation();
             var memberId = $(this).attr('data-member');
             buildInvitedUsers(memberId, true);
         });
     }
-    
+
     $(".btn-invite-member").click(function(){
         var modal = $("#modalInviteUser"),
-            usersArr = [], 
+            usersArr = [],
             event = $("#events-list").val(),
             showAdminName = false;
-                
+
         modal.find(".invited-users div").each(function(){
             usersArr.push($(this).attr('data-member'));
-        });   
-        
+        });
+
         if(usersArr.length === 0){
             showError("Не выбран ни один человек для приглашения");
         }
@@ -844,11 +852,11 @@
             $.post('/ajax/set.php?invite_users', {users : usersArr.join(','), event : event, showAdminName : showAdminName})
             .done(function(data){
                 modal.modal('hide');
-                
+
                 var result = data.result, text = '';
-                
+
                 if(result.alreadyAddedArr.length>0){
-                    text = text + "<div style='margin-top:10px;'>" + 
+                    text = text + "<div style='margin-top:10px;'>" +
                     "<div>Эти люди уже добавлены на мероприятие:</div>" + result.alreadyAddedArr.join('<br>') + "</div>";
                 }
                 else if(result.emptyEmailArr.length>0){
@@ -867,19 +875,19 @@
                     text = text + "<div style='margin-top:10px;'>"+
                     "<div>Эти люди приглашены для регистрации на мероприятие:</div>"+result.sendEmailsArr.join('<br/>')+ "</div>";
                 }
-                
-                showResponseAfterInviteMembers(text);                
+
+                showResponseAfterInviteMembers(text);
             });
         }
     });
-    
+
     function showResponseAfterInviteMembers(text){
         var modal = $("#modalShowResponseAfterInviteMembers");
-        
+
         modal.find('.response').html(text);
         modal.modal('show');
     }
-    
+
     $('.search-text').bind("paste keyup", function(event){
         event.stopPropagation();
         var eventId = $("#events-list").val();
@@ -970,7 +978,7 @@
         var request = getRequestFromFilters(setFiltersForRequest(eventId));
 
         $.getJSON('/ajax/dashboard.php?event='+eventId+request)
-        .done (function(data) {           
+        .done (function(data) {
             refreshEventMembers (eventId, data.members, data.localities);
         });
     }
@@ -978,8 +986,8 @@
     $(".statService").click(function(e){
         e.stopPropagation();
         var eventName = $("#events-list option:selected").text(),
-            states = [], localities = [], 
-            countParking = 0, countTransport = 0, 
+            states = [], localities = [],
+            countParking = 0, countTransport = 0,
             countAccomSisters = 0, countAccomBrothers = 0,
             countBrothers = 0, countSisters = 0,
             locality, state, male, accom, transport, parking;
@@ -991,27 +999,27 @@
             accom = $(this).attr("data-accom");
             transport = $(this).attr("data-transport");
             parking = $(this).attr("data-parking");
-            
+
             if(parking === '1'){
                 countParking++;
             }
-            
+
             if(transport === '1'){
                 countTransport++;
             }
-            
+
             if(accom === '1' && male === '1' && state === '04'){
                 countAccomBrothers++;
             }
-            
+
             if(accom === '1' && male === '0' && state === '04'){
                 countAccomSisters++;
             }
-            
+
             if(male === '1' && state === '04'){
                 countBrothers++;
             }
-            
+
             if(male === '0' && state === '04'){
                 countSisters++;
             }
@@ -1026,12 +1034,12 @@
     $('.aid-statistic').click(function(){
         var eventId = $("#events-list").val();
         var eventName = $("#events-list option:selected").text();
-       
+
         $.getJSON('/ajax/get.php', { eventIdAid: eventId})
             .done (function(data) {
                 getAidInfo (data.members, eventName, eventId);
             });
-    });    
+    });
 
     if($(document).width()<768){
         $("[data-sort]").click(function(){
@@ -1046,7 +1054,7 @@
         var phoneRows = [];
 
         buildFilterLocalitiesList(eventId, localities);
-        
+
         var showLocalityField = $("#eventTab-"+eventId).attr("data-show-locality-field") ===  '1';
 
         for (var i in members){
@@ -1081,21 +1089,39 @@
             var htmlService = m.service ? '<i class="fa fa-wrench" title="'+he(m.service)+'" aria-hidden="true"></i>' :'';
             var coordFlag = m.coord == '1' ? '<i title="Координатор" class="fa fa-random" aria-hidden="true"></i>' : '';
 
-            var dataItems = 'data-accom="'+m.accom+'" data-transport="'+m.transport+'" data-male="'+m.male+'" '+ 
+            var dataItems = 'data-accom="'+m.accom+'" data-transport="'+m.transport+'" data-male="'+m.male+'" '+
                     'data-parking="'+m.parking+'" data-regstate="'+m.regstate+'" data-prepaid="'+m.prepaid+'" data-locality="'+he(m.locality)+'"' +
                     'data-attended="'+m.attended+'" data-aid_paid="'+(m.aid_paid || 0)+'" data-paid="'+m.paid+'" '+
                     'data-place="'+(m.place || "") +'" data-service="'+m.service_key+'" data-coord="'+m.coord+'" data-mate="'+m.mate_key+'" '+
                     'data-aid_amount="'+m.contr_amount+'" data-comment="'+he(m.admin_comment.length > 0 ? 1 : 0)+'" data-currency="'+(m.currency || '') +'"';
+            // console.log(m);
+
+            // Cut the m.region string. Roman's code ver 5.0.1
+            if (m.region =='--') {
+              m.region = m.country;
+            } else {
+              m.region = m.region.substring(0, m.region.indexOf(" ("));
+              m.region += ', ';
+              m.region += m.country;
+            }
 
             tableRows.push('<tr class="regmem-'+m.id+'" '+ dataItems +' >'+
                 '<td class="style-checkbox"><input type="checkbox"></td>'+
-                '<td class="style-name mname '+(m.male==1?'male':'female')+'">' + he(m.name) + '</td>' +
-                (showLocalityField ? '<td class=style-city>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') + '</td>' : '') +
-                '<td class="style-cell hide-tablet">' + he(m.cell_phone) + '</td>' +
-                '<td class="style-serv hide-tablet">' + (m.service ? he(m.service) : '') + ( m.coord == '1' ? '<div>Координатор</div>' : '') + '</td>' +
+                '<td class="style-name mname '+(m.male==1?'male':'female')+'">' + he(m.name) +
+                (in_array(1, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.category_name+'</span>' : '') +
+                '</td>' +
+                (showLocalityField ? '<td class=style-city>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
+                (in_array(2, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+(m.region || m.country)+'</span>' : '') +
+                    '</td>' : '') +
+                '<td class="style-cell hide-tablet">' + he(m.cell_phone) +
+                (in_array(3, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.email+'</span>' : '') +
+                '</td>' +
+
+                (in_array(4, window.user_settings) ? '<td class="style-serv hide-tablet">' + (m.service ? he(m.service) : '') + ( m.coord == '1' ? '<div>Координатор</div>' : '') + '</td>' : '') +
+
                 '<td class="style-date"><span class="arrival" data-date="' + he(m.arr_date) + '" data-time="' + he(m.arr_time) + '">' + formatDDMM( m.arr_date) + '</span> - '+
                 '<span class="departure" data-date="' + he(m.dep_date) + '" data-time="' + he(m.dep_time) + '">'+ formatDDMM(m.dep_date) + '</span><br>'+htmlPlace + ' ' +htmlPlaceFlag+'</td>'+
-                '<td>' + htmlLabelByRegState(m.regstate, m.web) + 
+                '<td>' + htmlLabelByRegState(m.regstate, m.web) +
                 '<ul class="regstate-list-handle">'+ htmlListItemsByRegstate(m.regstate, m.attended) + '</ul>'+
                 "<div class='regmem-icons'>"+ htmlEmail + htmlChanged + htmlEditor + '</div></td>'
                 + '</tr>'
@@ -1103,15 +1129,20 @@
 
             phoneRows.push ('<tr class="regmem-'+m.id+'" '+ dataItems +' >'+
                 '<td class="arrival" data-date="' + he( m.arr_date) + '" data-time="' + he(m.arr_time) + '"><input type="checkbox"></td>'+
-                '<td class="departure" data-date="' + he(m.dep_date) + '" data-time="' + he(m.dep_time) + '"><span class="mname '+(m.male==1?'male':'female')+'">' + he(m.name) + "</span> " +
-                (showLocalityField ? '<div>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') + '</div>' : '') +
-                '<div><span>'+ he(m.cell_phone) + '</span>'+ (m.cell_phone && m.email ? ', ' :' ' )+'<span>'+ he(m.email)+'</span></div>'+
-                '<div><span>' + he(m.service) + '</span></div>' +
-                '<div><span class="arrival" data-date="' + he(m.arr_date) + '" data-time="' + he(m.arr_time) + '">' + 
+                '<td class="departure" data-date="' + he(m.dep_date) + '" data-time="' + he(m.dep_time) + '"><span class="mname '+(m.male==1?'male':'female')+'">' + he(m.name) +
+(in_array(1, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.category_name+'</span>' : '') +
+                "</span> " +
+                (showLocalityField ? '<div>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +(in_array(2, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+(m.region || m.country)+'</span>' : '') +
+                    '</div>' : '') +
+                '<div><span>'+ he(m.cell_phone) + '</span>'+ (m.cell_phone && m.email ? ', ' :' ' )+
+                (in_array(3, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.email+'</span>' : '') +
+                '</div>'+
+                (in_array(4, window.user_settings) ? '<div><span>' + he(m.service) + '</span></div>' : '') +
+                '<div><span class="arrival" data-date="' + he(m.arr_date) + '" data-time="' + he(m.arr_time) + '">' +
                 formatDDMM(m.arr_date) + '</span>'+
                 '<span class="departure" data-date="' + he(m.dep_date) + '" data-time="' + he(m.dep_time) + '">'+ ' - '+formatDDMM(
                     m.dep_date) + '</span>'+ htmlPlace + ' ' +htmlPlaceFlag + '</div>'+
-                '<span>' + htmlLabelByRegState(m.regstate, m.web) + 
+                '<span>' + htmlLabelByRegState(m.regstate, m.web) +
                 '<ul class="regstate-list-handle">'+ htmlListItemsByRegstate(m.regstate, m.attended) + '</ul>'+
                 " <span class='regmem-icons'>" + coordFlag + htmlService + htmlEmail + htmlChanged + htmlEditor + '</span></span>'
                 + '</td></tr>');
@@ -1187,7 +1218,7 @@
 
                 var custom_input = modal.find('.custom-download-item'),
                     custom_list_item = $('.tab-pane.active').attr('data-custom_list_item');
-                
+
                 if(custom_list_item){
                     custom_input.show();
                     custom_input.find('label').text(custom_list_item)
@@ -1212,21 +1243,21 @@
 
             modal.modal('show');
         });
-        
+
         $(".btnHandleRegstate").unbind('click');
         $(".btnHandleRegstate").click(function(e){
             e.stopPropagation();
             var thisSibling = $(this).siblings('.regstate-list-handle');
 
             if(thisSibling.css('display') === 'block'){
-                    thisSibling.css('display', 'none'); 
+                    thisSibling.css('display', 'none');
             }
             else{
                 $('.regstate-list-handle').each(function(){
                     if(thisSibling !== $(this))
-                        $(this).css('display', 'none'); 
+                        $(this).css('display', 'none');
                });
-               thisSibling.css('display', 'block');                
+               thisSibling.css('display', 'block');
             }
         });
 
@@ -1237,7 +1268,7 @@
 
            $('.regstate-list-handle').css('display', 'none');
 
-           var request = getRequestFromFilters(setFiltersForRequest(eventId)); 
+           var request = getRequestFromFilters(setFiltersForRequest(eventId));
 
            $.getJSON('/ajax/set.php?set_state'+request, {event:eventId,  memberId: memberId, setstate: setstate })
            .done (function(data) {
@@ -1249,7 +1280,7 @@
             e.stopPropagation();
             var memberId = $(this).parents('tr').attr('class').replace(/^regmem-/,''),
                 eventId = $("#events-list").val();
-                
+
             $.post('/ajax/get.php?get_user_emails', {memberId:memberId, eventId:eventId}).done(function(data){
                 if(data.emails){
                     buildUserEmailsList(data.emails);
@@ -1259,51 +1290,51 @@
                 }
             });
         });
-    }        
+    }
 
     function buildUserEmailsList(emails){
         var modal = $("#modalUserEmails"), list = [], item;
-        
+
         for (var i in emails){
             item = emails[i];
             list.push('<div style="min-height: 25px; height:auto; padding-top: 5px; border-bottom: 1px solid #eee; display: flow-root" data-id="'+item.id+'">'+
                         '<span class="span1">'+formatDDMM(item.date)+'</span>'+
-                        '<span class="span5"><strong>'+he(item.subject)+'</strong></span>'+                    
+                        '<span class="span5"><strong>'+he(item.subject)+'</strong></span>'+
                         '<span class="span2">'+he(item.sender)+'</span>'+
-                        '<span class=" showEmaildetails show-message-details" style="float:right"><i class="fa fa-chevron-down" title="Показать подробности содержания" aria-hidden="true"></i></td>'+                        
+                        '<span class=" showEmaildetails show-message-details" style="float:right"><i class="fa fa-chevron-down" title="Показать подробности содержания" aria-hidden="true"></i></td>'+
                     '</div>'+
                     '<div style="border-bottom:1px solid #eee; padding: 5px 20px 10px 20px; display:none;" data-detail="'+item.id+'">'+(item.body)+'</div>');
         }
-        
+
         modal.find('.emails-list').html(list.join(''));
         modal.modal('show');
-        
+
         $("#modalUserEmails .emails-list div").click(function(){
             var showDetails = $(this).find('.showEmaildetails').hasClass('show-message-details'),
                 emailId = $(this).attr('data-id');
-            
+
             if(showDetails){
-                $(this).find('.showEmaildetails').removeClass('show-message-details').addClass('hide-message-details').html('<i class="fa fa-chevron-up" title="Скрыть подробности содержания" aria-hidden="true"></i>');                
+                $(this).find('.showEmaildetails').removeClass('show-message-details').addClass('hide-message-details').html('<i class="fa fa-chevron-up" title="Скрыть подробности содержания" aria-hidden="true"></i>');
                 $(this).parents('#modalUserEmails').find('div[data-detail="'+emailId+'"]').show();
             }
             else{
-                $(this).find('.showEmaildetails').addClass('show-message-details').removeClass('hide-message-details').html('<i class="fa fa-chevron-down" title="Показать подробности содержания" aria-hidden="true"></i>'); 
+                $(this).find('.showEmaildetails').addClass('show-message-details').removeClass('hide-message-details').html('<i class="fa fa-chevron-down" title="Показать подробности содержания" aria-hidden="true"></i>');
                 $(this).parents('#modalUserEmails').find('div[data-detail="'+emailId+'"]').hide();
             }
-            
+
             //$("#modalUserEmailBodyDetailed").modal('show');
         });
     }
-    
+
     $(document).click(function(){
-        $('.regstate-list-handle').css('display', 'none'); 
+        $('.regstate-list-handle').css('display', 'none');
     });
-     
+
     function getDataToDownload(item, eventId, eventType, fields, needTranslate){
         $.getJSON('/ajax/dashboard.php', {event : eventId})
         .done(function(data){
            downloadMembersList(item, data.members.length, data.members, eventType, fields, needTranslate);
-        });        
+        });
     }
 
     $("#check-all").click(function(){
@@ -1351,7 +1382,7 @@
         else
            tabPane.find (".chk-dep").addClass ("disabled");
     }
-    
+
     function updateTabPaneAdditionalButtons(tabPane){
         if (tabPane.find ("tr[class|='regmem'] input[type='checkbox']:checked").length>0)
            $('.aditional-menu').find (".chk-dep").removeClass ("disabled");
@@ -1413,7 +1444,7 @@
     });
 
     function saveMember (doRegister) {
-        var elem =$('#btnDoSaveMember'), 
+        var elem =$('#btnDoSaveMember'),
             el = $('#modalEditMember');
             //el = $('#modalEditMember').find($(document).width() > 980 ? '.desctop-visible' : '.tablets-visible');
         if ((elem.hasClass ("disable-on-invalid") || doRegister) && el.find(".emLocality").val () == "_none_" && el.find(".emNewLocality").val().trim().length==0) {
@@ -1457,7 +1488,7 @@
     $("table.reg-list th input[type='checkbox']").click (function (){
         $(this).parents("table").find("tr[class|='regmem'] input[type='checkbox']").prop('checked', $(this).is(':checked'));
         updateTabPaneButtons ($(this).parents('div.tab-pane'));
-    });    
+    });
 
     $('#modalAddMembers').on('hide', function (){
         $("#selAddMemberLocality, #selAddMemberCategory").val('_all_');
@@ -1503,12 +1534,12 @@
 
         setCookieNew("eventChoose", eventId);
 
-        checkStopEventRegistration(eventId);        
+        checkStopEventRegistration(eventId);
 
-        if ($("#eventTab-"+eventId+" table").text ().indexOf("Загрузка")!=-1){            
+        if ($("#eventTab-"+eventId+" table").text ().indexOf("Загрузка")!=-1){
             loadDashboard (eventId);
         }
-        else{            
+        else{
             handleControlButtons();
         }
         setAdminRole();
@@ -1518,11 +1549,16 @@
         $.post('/ajax/event.php?check_stop_reg', {eventId: eventId})
         .done(function(data){
             var text = '';
-            if(data.res.close_registration === '1' || data.res.stop_registration === '1'){
-                text = 'Регистрация закрыта';
-            } 
+            if (parseInt(data.res.participants_count) > 0){
+                if(data.res.close_registration === '1' || parseInt(data.res.count_members) >= parseInt(data.res.participants_count)){
+                    text = "<span class='label label-important registration-closed'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Регистрация закрыта</a></span>";
+                }
+                else{
+                    text = "<span class='label label-info'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Осталось мест — "+ (parseInt(data.res.participants_count) - parseInt(data.res.count_members))+"</a></span>";
+                }
+            }
 
-            $(".close-event-registration").html(text ? "<span class='label label-important'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>" + text + "</a></span>" : "");
+            $(".close-event-registration").html(text);
         });
     }
 
@@ -1607,15 +1643,15 @@
     }
 
     $(".event-add-member").click (function (){
-        if($('.close-event-registration').children().length > 0){
+        if($('.registration-closed').children().length > 0){
             var access = $(this).parents('.tab-pane.active').attr('data-access');
 
-            if(access === "1"){
+            if(access === '1'){
                 $("#modalHandleCloseEvent").modal('show');
             }
             else{
                 showModalHintWindow("<strong>Онлайн-регистрация на это мероприятие закрыта.<br>По всем вопросам <a href='' data-toggle='modal' data-target='#modalEventSendMsg'>обращайтесь к команде регистрации.</a> </strong>");
-            }            
+            }
         }
         else if (checkForRegEnd ('event-add-member')) $('#modalAddMembers').modal('show');
     });
@@ -1706,33 +1742,33 @@
 
             if (mate===null) memberId=$(this).attr ('class').replace(/^regmem-/,'');
             else if (memberId!=$(this).attr ('class').replace(/^regmem-/,'')) memberId="_none_";
-            
+
             if (attended===null) attended=$(this).attr('data-attended');
-            else if (attended !== $(this).attr('data-attended')) attended= "_none_";    
-            
+            else if (attended !== $(this).attr('data-attended')) attended= "_none_";
+
             if (place===null) place=$(this).attr('data-place');
-            else if (place !== $(this).attr('data-place')) place= ""; 
-             
+            else if (place !== $(this).attr('data-place')) place= "";
+
             if (prepaid===null) prepaid=$(this).attr('data-prepaid');
             else if (prepaid !== $(this).attr('data-prepaid')) prepaid= "";
-             
+
             if (aidpaid===null) aidpaid=parseInt($(this).attr('data-aid_paid'));
             else if (aidpaid !== $(this).attr('data-aid_paid')) aidpaid= "";
-             
+
             if (aidneed===null) parseInt(aidneed=$(this).attr('data-aid_amount'));
             else if (aidneed !== $(this).attr('data-aid_amount')) aidneed= "";
-             
+
             if (currency===null) currency=$(this).attr('data-currency');
             else if (currency !== $(this).attr('data-currency')) currency= "";
-            
+
             if (paid===null) paid=$(this).attr('data-paid');
             else if (paid !== $(this).attr('data-paid')) paid= "";
         });
 
-        if ($("div.tab-pane.active").data ("transport")=='1') {  
+        if ($("div.tab-pane.active").data ("transport")=='1') {
             var needFlight = $("div.tab-pane.active").data ("need_flight")=='1';
             var needTp = $("div.tab-pane.active").data ("need_tp")=='1';
-    
+
             $(".transportText").text( needFlight ? "Поездка" : "Транспорт");
             $(".transportHint").attr("title", needFlight ? "Групповая поездка до или после мероприятия" : "Для проезда от места проживания к залу собраний");
             $(".beGrpTransport, .beLblTransport").css('display', 'block');
@@ -1765,25 +1801,25 @@
 
             $(".beMate").html (emMateHtml).val (mate);
         }
-        
+
         $(".emPlace").val(place);
         $(".emPaid").val(paid>0 ? paid: '');
         $(".emPrepaid").val(prepaid > 0 ? prepaid + (currency ?' ('+currency+')' : '' ) : '');
         $(".emAidpaid").val(parseInt(aidneed) > 0 ? ( aidpaid >= aidneed ? aidneed : '' ) : '');
         $(".emAttended").val(attended);
- 
+
         var el = $(".tab-pane.active");
         $(".beTooltipArrDate").attr('title', "Начало "+formatDDMM (el.data ("start"))).tooltip('fixTitle');
         $(".beTooltipDepDate").attr('title', "Конец "+formatDDMM (el.data ("end"))).tooltip('fixTitle');
         var eventId = $("#events-list").val();
-        
+
         $.post('/ajax/get.php?check_event', {event: eventId})
         .done(function(data){
             data.service ? $('#modalBulkEditor .service-admin-fields').css('display','block') : $('#modalBulkEditor .service-admin-fields').css('display','none');
             data.result ? $('#modalBulkEditor .show-admin-fields').css('display','block') : $('#modalBulkEditor .show-admin-fields').css('display','none');
             handleBulkModalFormFields(data.event);
             $('#modalBulkEditor').modal('show');
-        });        
+        });
     }
 
     function handleBulkModalFormFields(event){
@@ -1816,10 +1852,10 @@
         }
 
     }
-    
+
     function handleCheckedMembers(){
          var alreadyArrivedNames = [], alreadyArrivedIds = [], notArrivedIds = [];
-         
+
          if($(document).width() > 980) {
              $("div.tab-pane.active tr[class|='regmem'] input[type='checkbox']:checked").parent("td").siblings("td[class*='mname']").each(function () {
                  if($(this).parents("tr").attr('data-attended') === '1'){
@@ -1842,43 +1878,43 @@
                  }
              });
          }
-         
+
          return {alreadyArrivedNames : alreadyArrivedNames, alreadyArrivedIds : alreadyArrivedIds, notArrivedIds : notArrivedIds};
      }
-     
+
      $(".bulkedit-arrived").click(function(){
          var eventId = $("#events-list").val();
-                 
+
          var res = handleCheckedMembers();
          if($(this).hasClass('disabled') || (res.alreadyArrivedIds.length === 0 && res.notArrivedIds.length === 0)){
              return;
          }
-         
+
          if(res.alreadyArrivedNames.length > 0){
              $("#modalHandleMemberAttended .modal-body").html(res.alreadyArrivedNames.join(', '));
              $("#modalHandleMemberAttended").modal('show');
              return;
          }
-         
+
          setAttendedToMembers(eventId, res.notArrivedIds);
      });
-     
+
      $('.reject-attended').click(function(){
          var res = handleCheckedMembers(), eventId = $("#events-list").val();
          setAttendedToMembers(eventId, res.notArrivedIds, res.alreadyArrivedIds);
      });
-     
+
      function setAttendedToMembers(eventId, notArrivedIds, alreadyArrivedIds=false){
          var request = getRequestFromFilters(setFiltersForRequest(eventId));
-         
+
          $.getJSON('/ajax/set.php?set_attended_members'+request, {
-             event: eventId, 
+             event: eventId,
              set_attended_members: notArrivedIds.length > 0 ? notArrivedIds.join(',') : null,
              dismiss_attended_members: alreadyArrivedIds && alreadyArrivedIds.length > 0 ? alreadyArrivedIds.join(',') : null
          })
          .done (function(data) {
              refreshEventMembers (eventId, data.members, data.localities);
-             if (data.invalid && data.invalid.length>0) 
+             if (data.invalid && data.invalid.length>0)
                 alert("Следующие участники не были зарегистрированы:\n\n"+data.invalid.toString().replace(/,/g,'\n')+"\n\nПроверьте правильность заполнения всех полей!", false);
          });
      }
@@ -1886,7 +1922,7 @@
     function handleBulkModalFull(that){
         if ($(that).hasClass('disabled')) return;
 
-        var ids = handleCheckedMembers().checked, 
+        var ids = handleCheckedMembers().checked,
             event = $("#events-list").val(),
             request = getRequestFromFilters(setFiltersForRequest(event));
 
@@ -2050,16 +2086,16 @@
         $("#sendLetterName").text ($('#events-list option:selected').text());
         $("#sendLetterText").val(text);
         $("#sendLetterTopic").val('Сообщение с сайта reg-page.ru');
-        
+
         var eventId = $("#events-list").val();
-        
+
         $.post('/ajax/get.php?get_team_email', {eventId : eventId})
         .done(function(data){
             if(data.email){
                 $("#sendLetterEmail").val(data.email);
-            }            
+            }
             $("#modalSendLetter").modal('show');
-        });        
+        });
     }
 
     $("#btnDoSendLetter").click (function (){
@@ -2082,18 +2118,18 @@
             type: window.letterIsInvitation ? "invitation" : "letter",
             subject : $("#sendLetterTopic").val()
         },function(data){
-    /* 
+    /*
             messageBox ((window.letterIsInvitation ?
                 (ids.length>1 ? 'Приглашения поставлены' : 'Приглашение поставлено') :
                 (ids.length>1 ? 'Сообщения поставлены' : 'Сообщение поставлено')) + ' в очередь на отправку <br/>и будет отправлено в течение нескольких минут', $('#modalSendLetter')
             );
     */
-        
+
             showHint((window.letterIsInvitation ?
                 (ids.length>1 ? 'Приглашения поставлены' : 'Приглашение поставлено') :
                 (ids.length>1 ? 'Сообщения поставлены' : 'Сообщение поставлено')) + ' в очередь на отправку и будет отправлено в течение нескольких минут');
             $("#modalSendLetter").modal('hide');
-            
+
             refreshEventMembers (eventId, data.members, data.localities);
         });
     });
@@ -2103,9 +2139,11 @@
         var eventId = $("#events-list").val();
         $.ajax({type: "POST", url: "/ajax/set.php", data: {event: eventId, message: $("#sendMsgText").val(), name:$("#sendMsgName").val(), email:$("#sendMsgEmail").val()}})
          .done (function(data) {
-             messageBox ('Ваше сообщение отправлено команде регистрации', $('#modalEventSendMsg'));
-             closeMessageBox();
-             setTimeout(closePopup, 3000);
+            if (data.result){
+                messageBox ('Ваше сообщение отправлено команде регистрации', $('#modalEventSendMsg'));
+                closeMessageBox();
+                setTimeout(closePopup, 3000);
+            }
          });
     });
 
@@ -2132,16 +2170,16 @@
         icon.attr ("class", icon.hasClass("icon-chevron-down") ? "icon-chevron-up" : "icon-chevron-down");
         loadDashboard ();
     });
-    
+
     $(document).keyup(function(e) {
-        if (e.keyCode === 27) { 
+        if (e.keyCode === 27) {
             var modal = $("#modalEditMember");
             if (modal.data('modal') && modal.data('modal').isShown){
                 //var memberEventData = parseEventMemberDataToCheckChanges(getValuesRegformFields(form));
-                var memberId = $("#modalEditMember").attr('data-member_id'), 
+                var memberId = $("#modalEditMember").attr('data-member_id'),
                     eventId = $("#events-list").val(),
                     dataFields = getValuesRegformFields(modal);
-                
+
                 $.getJSON('/ajax/get.php?check_changes', {dataFields : dataFields, member: memberId, event: eventId})
                 .done (function(data){
                     if(data.result){
@@ -2153,7 +2191,7 @@
             }
         }
    });
-   
+
     $(".confirm-save-changes").click(function(){
         $('#modalEditMember').modal('hide');
     });

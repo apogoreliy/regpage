@@ -1,7 +1,9 @@
 <?php
 include_once "header.php";
 include_once "nav.php";
-
+//Roman's code ver 5.0.1
+$user_settings = db_getUserSettings($memberId);
+$userSettings = implode (',', $user_settings);
 
 $sort_field = isset ($_COOKIE['sort_field_youth']) ? $_COOKIE['sort_field_youth'] : 'name';
 $sort_type = isset ($_COOKIE['sort_type_youth']) ? $_COOKIE['sort_type_youth'] : 'asc';
@@ -32,7 +34,7 @@ include_once "modals.php";
 			<div class="btn-toolbar">
 				<div class="btn-group">
 					<a class="btn btn-success add-member" data-locality="<?php echo $adminLocality; ?>" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
-				</div>				
+				</div>
 				<div class="btn-group">
 					<a class="btn dropdown-toggle btnDownloadMembers" data-toggle="dropdown" href="#" title="Скачать список">
 						<i class="fa fa-download"></i> Скачать<span class="hide-name"></span>
@@ -47,15 +49,15 @@ include_once "modals.php";
 					<a class="btn openCollegesModal" href="#">
 						<i class="fa fa-university"></i> <span class="hide-name">Учебные заведения</span>
 					</a>
-				</div>      
+				</div>
 				<div class="btn-group">
 					<a type="button" class="btn btn-default search"><i class="icon-search" title="Поле поиска"></i></a>
 					<span class="not-display" data-toggle="1">
 						<input type="text"  class="controls search-text" placeholder="Введите текст">
 						<i class="icon-remove admin-list clear-search"></i>
-					</span>   
-				</div>				
-				<div style="margin-top: 10px;">       
+					</span>
+				</div>
+				<div style="margin-top: 10px;">
 				<?php if (!$singleCity) { ?>
 				<div class="btn-group">
 					<select id="selMemberLocality" class="span3">
@@ -64,7 +66,7 @@ include_once "modals.php";
 								echo "<option value='$id' ". ($id==$selMemberLocality ? 'selected' : '') ." >".htmlspecialchars ($name)."</option>";
 						} ?>
 					</select>
-				</div>				
+				</div>
 				<?php } ?>
 				<div class="btn-group">
 					<select id="selMemberCategory" class="span2">
@@ -73,7 +75,7 @@ include_once "modals.php";
 						<option value='ST' >Студенты</option>
 						<option value='SN' >Святые в церковной жизни</option>
 						<option value='BL' >Верующие</option>
-					</select>     
+					</select>
 				</div>
 				<div class="btn-group">
 					<select id="selMemberAge" class="span2">
@@ -92,7 +94,7 @@ include_once "modals.php";
 						<option value='21' >21 и старше</option>
 						<option value='22' >22 и старше</option>
 						<option value='23' >23 и старше</option>
-					</select>     
+					</select>
 				</div>
 				<div class="btn-group">
 					<select id="selMemberCollegeEnd" class="span2">
@@ -102,7 +104,7 @@ include_once "modals.php";
 								echo "<option value='$key'>$key</option>";
 							}
 						?>
-					</select>     
+					</select>
 				</div>
 				<div class="btn-group">
 					<select id="selMemberSchoolEnd" class="span2">
@@ -112,8 +114,8 @@ include_once "modals.php";
 								echo "<option value='$key'>$key</option>";
 							}
 						?>
-					</select>     
-				</div>				
+					</select>
+				</div>
 			</div>
 			</div>
 			<div class="desctopVisible">
@@ -122,7 +124,7 @@ include_once "modals.php";
 					<tr>
 						<th><a id="sort-name" href="#" title="сортировать">Ф.И.О.</a>&nbsp;
 							<i class="<?php echo $sort_field=='name' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
-						</th>						
+						</th>
 						<th><a id="sort-locality" href="#" title="сортировать">Город</a>&nbsp;
 							<i class="<?php echo $sort_field=='locality' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
 						</th>
@@ -131,10 +133,10 @@ include_once "modals.php";
 						</th>
 						<th><a id="sort-college" href="#" title="сортировать">Учебное заведение</a>&nbsp;
 							<i class="<?php echo $sort_field=='college' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?> "></i>
-						</th>				
+						</th>
 						<th><a id="sort-age" href="#" title="сортировать">Возраст</a>&nbsp;
 							<i class="<?php echo $sort_field=='age' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
-						</th>		
+						</th>
 						<th><a id="sort-attend_meeting" href="#" title="Посещает собрания">С</a>&nbsp;<i class="<?php echo $sort_field=='attend_meeting' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
 						<th>&nbsp;</th>
 						<th>&nbsp;</th>
@@ -189,7 +191,10 @@ include_once "modals.php";
 </div>
 <script>
 	$(document).ready(function(){
-		loadYouthList();           
+		//Roman's code ver 5.0.1
+		window.user_settings = "<?php echo $userSettings; ?>".split(',');
+
+		loadYouthList();
 
 		$(".clear-college").click(function(e){
 			e.stopPropagation();
@@ -234,12 +239,12 @@ include_once "modals.php";
 
 		$(".add-member").click(function(){
 			var adminLocality = $(this).attr('data-locality');
-			
+
 			$.getJSON('/ajax/get.php?get_member_localities').done(function(data){
 				fillEditMember ('', {need_passport : "1", need_tp : "1", locality_key : adminLocality}, data.localities);
 				$('#modalEditMember #btnDoSaveMember').addClass('create');
 				$('#modalEditMember').modal('show');
-			});        
+			});
 		});
 
 		$(".btnDownloadMembers").click(function(event){
@@ -248,24 +253,24 @@ include_once "modals.php";
 				$(this).prop('checked', true);
 			});
 		});
-		
+
 		$(".btnShowStatistic").click(function(e){
 			e.stopPropagation();
 			var isTabletMode = $(document).width()<786,
 				filterLocality = $('#selMemberLocality option:selected').text(),
 				filterAge = $('#selMemberAge').val(),
 				localitiesByFilter = [], countMembers = 0, countScholars = 0, countStudents = 0;
-				
+
 			$(".members-list " + ( isTabletMode ? " #membersPhone " : " #members " ) + " tbody tr").each(function(){
 				if($(this).css('display') !== 'none'){
 					countMembers ++;
-					
+
 					var locality = $(this).attr('data-locality'), category = $(this).attr('data-category');
-					
+
 					if(!in_array(locality, localitiesByFilter)){
 						localitiesByFilter.push(locality);
 					}
-					
+
 					switch (category){
 						case 'SC': countScholars++; break;
 						case 'ST': countStudents++; break;
@@ -274,9 +279,9 @@ include_once "modals.php";
 			});
 
 			$("#modalStatistic h5").text('');
-			var statistic =                 
+			var statistic =
 					( countScholars >0 ? "<div>Школьники — "+countScholars+"</div>" : "" ) +
-					( countStudents >0 ? "<div>Студенты — "+countStudents+"</div>" : "" )+                                        
+					( countStudents >0 ? "<div>Студенты — "+countStudents+"</div>" : "" )+
 					"<div>Всего человек в списке — "+countMembers+"</div>";
 
 			$("#modalStatistic").find(".modal-header h3").html("Статистика" + (filterLocality === 'Все местности' ? "" : ' <span style="font-size:16px;">(' + filterLocality + ')</span> '));
@@ -284,7 +289,7 @@ include_once "modals.php";
 			$("#modalStatistic").find(".modal-footer").html("<div style='float:left;'><strong>Количество местностей — "+localitiesByFilter.length+"</strong></div><div>Статистика выводится для возраста "+filterAge+" лет и старше</div>");
 			$("#modalStatistic").modal('show');
 		});
-		
+
 		$("#remove-member").click(function (event) {
 			event.stopPropagation();
 			var reason = $('.removeMemberReason').val();
@@ -315,7 +320,7 @@ include_once "modals.php";
 
 	        loadYouthList();
 	    });
-	});    					
+	});
 
 	function removeMember(memberId){
 		$.post('/ajax/youth.php?remove', {
@@ -326,7 +331,7 @@ include_once "modals.php";
 			refreshYouthList(data.members);
 		});
 	}
-	
+
 	function downloadMembersListExel(members, checkedFields){
 		var doc = '&document=', filteredMembers = filterMembers(), membersArr = [];
 
@@ -340,7 +345,7 @@ include_once "modals.php";
 				membersArr.push(member);
 			}
 		}
-		
+
 		var  req = "&memberslength="+membersArr.length+"&adminId="+window.adminId+"&page=members";
 
 		$.ajax({
@@ -355,7 +360,7 @@ include_once "modals.php";
 				}, 10000);
 			}
 		});
-	}    		
+	}
 
 	function handleMember(member, active, reason, searchText) {
 		$.getJSON('/ajax/youth.php', {
@@ -384,7 +389,7 @@ include_once "modals.php";
 
 		for (var i in members){
 			var m = members[i];
-
+			//console.log(m);
 			// *** last editor
 			var notMe = (m.admin_key && m.admin_key!=window.adminId);
 			// if the author is same for reg and mem records is was decided to show it only once
@@ -392,12 +397,12 @@ include_once "modals.php";
 			var htmlEditor = notMe ? '<i class="icon-user" title="Последние изменения: '+editor+'"></i>': '';
 
 			// *** changes processed
-			var htmlChanged = (m.changed > 0 ? '<i class="icon-pencil" title="Изменения еще не обработаны"></i>' : '');            
+			var htmlChanged = (m.changed > 0 ? '<i class="icon-pencil" title="Изменения еще не обработаны"></i>' : '');
 
-			var age = getAgeWithSuffix(parseInt(m.age), m.age), 	
-				memberInfo = '',			
-				memberSchoolOrCollegeDegree = getMemberSchoolOrCollegeDegree(m.category_key, age, m.college_start, m.college_end, m.school_start, m.school_end); 
-			var dataFields = 'data-id="'+m.id+'" data-category="'+m.category_key+'" data-age="'+parseInt(m.age)+'" data-locality="'+m.locality_key+'" data-school_end="'+m.school_end+'" data-college_end="'+m.college_end+'" ' ;  
+			var age = getAgeWithSuffix(parseInt(m.age), m.age),
+				memberInfo = '',
+				memberSchoolOrCollegeDegree = getMemberSchoolOrCollegeDegree(m.category_key, age, m.college_start, m.college_end, m.school_start, m.school_end);
+			var dataFields = 'data-id="'+m.id+'" data-category="'+m.category_key+'" data-age="'+parseInt(m.age)+'" data-locality="'+m.locality_key+'" data-school_end="'+m.school_end+'" data-college_end="'+m.college_end+'" ' ;
 
 			var rowStyle = m.category_key == 'SC' && m.college ? ' style="color: red;" ' : '',
 				cellPhones = m.cell_phone.split(','),cellPhonesStr = '';
@@ -425,12 +430,21 @@ include_once "modals.php";
 					memberInfo = "Святые в церковной жизни";
 					break;
 			}
-
+			//console.log(m);
+			// Cut the m.region string. Roman's code ver 5.0.0
+			if (m.region =='--') {
+				m.region = m.country;
+			} else {
+				m.region = m.region.substring(0, m.region.indexOf(" ("));
+				m.region += ', ';
+				m.region += m.country;
+			}
 			tableRows.push('<tr ' + dataFields +' class="'+(m.active==0?'inactive-member':'member-row')+'">'+
 				'<td>' + he(m.name) + '<div style="margin-left:0" class="example">'+memberInfo + memberSchoolOrCollegeDegree+'</div></td>' +
-				'<td>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') + '</td>' +
+				'<td>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
+				(in_array(7, window.user_settings) ? '<br/>' + '<span class="user_setting_span">'+(m.region || m.country) + '</span>' : '') + '</td>' +
 				'<td>' + cellPhonesStr+ '</td>' +
-				'<td '+ rowStyle +'>' + ( he(m.college) ? he(m.college) : "" ) + 
+				'<td '+ rowStyle +'>' + ( he(m.college) ? he(m.college) : "" ) +
 				'<div style="margin-left: 0;" class="example">'+( he(m.college_locality) ? he(m.college_locality) : "" ) +'</div></td>' +
 				'<td>' + age + '</td>' +
 				'<td><input type="checkbox" class="check-meeting-attend" '+ (m.attend_meeting == 1 ? "checked" : "") +' /></td>' +
@@ -445,10 +459,9 @@ include_once "modals.php";
 				'<span style="color: #006">' + he(m.name) + '</span>'+
 				'<div>' + m.cell_phone + '</div>' +
 				'<div>' + ' <span style="margin-left:0" class="example">'+memberInfo + memberSchoolOrCollegeDegree+'</span></div>'+
-				'<div>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') + '</div>' +
+				'<div>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') + ', ' + age +'</div>' + (in_array(7, window.user_settings) ? '<span class="user_setting_span">'+(m.region || m.country) + '</span>' : '') +
 				'<div '+rowStyle+'>'+ (he(m.college) ? he(m.college) : "") + '<span>'+ ( he(m.college_locality) ? ' (' + he(m.college_locality) + ')' : "" ) +'</span></div>'+
-				'<div>'+ age + '</div>'+
-				'<div>Посещает собрание: <input type="checkbox" class="check-meeting-attend" '+ (m.attend_meeting == 1 ? "checked" : "") +' /></div>'+
+				'<div>Посещает собрания: <input type="checkbox" class="check-meeting-attend" '+ (m.attend_meeting == 1 ? "checked" : "") +' /></div>'+
 				'</td>' +
 				'</tr>'
 			);
@@ -456,10 +469,10 @@ include_once "modals.php";
 
 		$(".desctopVisible tbody").html (tableRows.join(''));
 		$(".show-phone tbody").html (phoneRows.join(''));
-		
+
 		$(".member-row").unbind('click');
 		$(".member-row").click (function () {
-			var memberId = $(this).attr('data-id');      
+			var memberId = $(this).attr('data-id');
 
 			$.getJSON('/ajax/get.php', { member: memberId })
 				.done (function(data) {
@@ -476,7 +489,7 @@ include_once "modals.php";
 
 			if($(this).hasClass('icon-trash')){
 				window.removeMemberId = $(this).parents('tr').attr('data-id');
-				
+
 				$.post('/ajax/members.php?is_member_in_reg', {
 					memberId : window.removeMemberId
 				})
@@ -508,7 +521,7 @@ include_once "modals.php";
                     checkedFields.push($(this).attr('data-download'));
                 }
             });
-            
+
             downloadMembersListExel(members, checkedFields);
             checkedFields = [];
         });
@@ -528,9 +541,9 @@ include_once "modals.php";
                     showModalHintWindow("<strong>"+data.result+"</strong>");
                 }
             });
-        }); 
+        });
 
-		filterMembers();                
+		filterMembers();
 	}
 
 	function getMemberSchoolOrCollegeDegree(category, age, collegeStart, collegeEnd, schoolStart, schoolEnd){
@@ -538,13 +551,13 @@ include_once "modals.php";
 
 		if(category === 'SC'){
 			var classLevel = schoolStart && schoolStart.length === 4 ? currentYear - schoolStart + 1 : '';
-			return classLevel ? classLevel > 0 && classLevel < 12 ? ','+classLevel+' класс' : '' : age >= 7 ? age - 6 : '';   
+			return classLevel ? classLevel > 0 && classLevel < 12 ? ','+classLevel+' класс' : '' : age >= 7 ? age - 6 : '';
 		}
 		else{
 			var startCollege = collegeStart && collegeStart.length === 4 ? parseInt(collegeStart) : '' ;
 			var endCollege = collegeEnd && collegeEnd.length === 4 ? parseInt(collegeEnd) : '' ;
 			var courseLevel = startCollege ? currentYear - startCollege + 1 : '';
-			
+
 			if(startCollege && endCollege){
 				if(currentYear < startCollege){
 					courseLevel = "планирует поступить";
@@ -565,7 +578,7 @@ include_once "modals.php";
 		}
 	}
 
-	function saveMember (){                
+	function saveMember (){
 		if ($("#btnDoSaveMember").hasClass ("disable-on-invalid") && $(".emLocality").val () == "_none_" && $(".emNewLocality").val().trim().length==0)
 		{
 			showError("Необходимо выбрать населенный пункт из списка или если его нет, то указать его название");
@@ -575,21 +588,21 @@ include_once "modals.php";
 		}
 
 		var el = $('#modalEditMember'), data = getValuesRegformFields(el);
-		
+
 		if(!data.name || !data.gender || !data.citizenship_key || !data.category_key){
 			showError("Необходимо заполнить все поля выделенные розовым цветом.");
 			return;
 		}
-		
+
 		$.post("/ajax/youth.php?update_member="+window.currentEditMemberId+($("#btnDoSaveMember").hasClass('create') ? "&create=true" : ""), data)
 		.done (function(data) {
 			refreshYouthList(data.members);
 			$('#modalEditMember').modal('hide');
 		});
-	}  
+	}
 
 	function filterMembers(){
-		var isTabletMode = $(document).width()<786, 
+		var isTabletMode = $(document).width()<786,
 			localityFilter = $("#selMemberLocality").val(),
 			categoryFilter = $("#selMemberCategory").val(),
 			collegeEndFilter = $("#selMemberCollegeEnd").val(),
@@ -597,20 +610,20 @@ include_once "modals.php";
 			ageFilter = $("#selMemberAge").val(),
 			text = $('.search-text').val().trim().toLowerCase(),
 			filteredMembers = [];
-		
+
 		$(".members-list " + ( isTabletMode ? " #membersPhone " : " #members " ) + " tbody tr").each(function(){
-			var memberLocality = $(this).attr('data-locality'), 
+			var memberLocality = $(this).attr('data-locality'),
 				memberCategory = $(this).attr('data-category'),
 				memberAge = parseInt($(this).attr('data-age')),
 				memberSchoolEnd = $(this).attr('data-school_end'),
 				memberCollegeEnd = $(this).attr('data-college_end'),
 				memberName = $(this).find('td').first().text().toLowerCase(),
-				memberKey = $(this).attr('data-id');                       
-			
+				memberKey = $(this).attr('data-id');
+
 			if(
-			((localityFilter === '_all_' || localityFilter === undefined) && categoryFilter === '_all_' && text === '' && ageFilter === '_all_' && schoolEndFilter === '_all_'  && collegeEndFilter === '_all_' ) || 
-			(   
-				(memberLocality === localityFilter || localityFilter === '_all_' || localityFilter === undefined) && 
+			((localityFilter === '_all_' || localityFilter === undefined) && categoryFilter === '_all_' && text === '' && ageFilter === '_all_' && schoolEndFilter === '_all_'  && collegeEndFilter === '_all_' ) ||
+			(
+				(memberLocality === localityFilter || localityFilter === '_all_' || localityFilter === undefined) &&
 				(memberCategory === categoryFilter || categoryFilter === '_all_') &&
 				(memberSchoolEnd === schoolEndFilter || schoolEndFilter === '_all_') &&
 				(memberCollegeEnd === collegeEndFilter || collegeEndFilter === '_all_') &&
@@ -624,7 +637,7 @@ include_once "modals.php";
 				$(this).hide();
 			}
 		});
-		
+
 		return filteredMembers;
 	}
 

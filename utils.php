@@ -3,6 +3,7 @@
 require_once ("class.smtp.php");
 require_once ("class.phpmailer.php");
 require_once ("config.php");
+require_once ("FirePHP.class.php");
 
 class UTILS
 {
@@ -136,7 +137,7 @@ class UTILS
                 
         $subject = "Создание учётной записи на сайте регистрации reg-page.ru";
 
-        EMAILS::sendEmail($email, $subject, $htmlText, 'admin@reg-page.ru', 'Сайт регистрации');
+        EMAILS::sendEmail($email, $subject, $htmlText, 'info@reg-page.ru', 'Сайт регистрации');
     }
     
     static function sendConfirmationEmailToChangeLogin($email, $memberId){  
@@ -155,7 +156,7 @@ class UTILS
 
             $subject = "Изменение логина на сайте регистрации reg-page.ru";
 
-            EMAILS::sendEmail($email, $subject, $htmlText, 'admin@reg-page.ru', 'Сайт регистрации');
+            EMAILS::sendEmail($email, $subject, $htmlText, 'info@reg-page.ru', 'Сайт регистрации');
             return true;
         }
         else{
@@ -182,31 +183,32 @@ class UTILS
 }
 
 class EMAILS
-{
+{    
     static function sendEmail ($to, $subject, $htmlText, $replyTo=null, $fromName=null, $images=null, $headers=null)
     {        
         $mail = new PHPMailer;
         //$mail->SMTPDebug = 2;                               // Enable verbose debug output        
-        
+        /*
         $mail->isSMTP();                                      // Set mailer to use SMTP
         $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        */
+        
         $mail->CharSet = "UTF-8";
-        $mail->Encoding = "base64";
-
+        $mail->Encoding = "base64";        
         /* MailGun */
+        /*
         $mail->Port = 587;                                     // TCP port to connect to
         $mail->Host = 'smtp.mailgun.org';                      // Specify main and backup SMTP servers
-        $mail->Username = 'admin@reg-page.ru';
+        $mail->Username = 'info@reg-page.ru';
         $mail->Password = 'sdf3223@sfsdas2434SD23mlc2';
-        
-        $mail->SMTPSecure = 'tls';                             // Enable SSL encryption, `tls` also accepted                
+        */
+        //$mail->SMTPSecure = 'tls';                             // Enable SSL encryption, `tls` also accepted                
 
         $mail->addAddress($to); // Add a recipient
-        //$mail->setFrom('admin@reg-page.ru', 'Regpage');
-        $_replyTo = $replyTo ? $replyTo : 'admin@reg-page.ru';
-        $mail->setFrom($_replyTo, $fromName ? $fromName: 'Regpage');
+        // $mail->setFrom('info@reg-page.ru', 'Regpage');
+        $_replyTo = $replyTo ? $replyTo : 'info@reg-page.ru'; // 'info@reg-page.ru'
+        $mail->setFrom('info@reg-page.ru', $fromName ? $fromName: 'Regpage');
         $mail->addReplyTo($_replyTo, $fromName ? $fromName : 'Regpage');
-        //$mail->addReplyTo($replyTo ? $replyTo : 'admin@reg-page.ru', 'Regpage');
         $mail->isHTML(true);                                  // Set email format to HTML
         
         $mail->SMTPOptions = array(
@@ -225,13 +227,14 @@ class EMAILS
         $mail->Body = $htmlText;
         //$mail->AltBody = $plainText;
 
-        if ($images)
-            foreach ($images as $img)
-                $mail->addAttachment(dirname(__FILE__) . '/../img/' . $img[0], '', 'base64', '', 'inline', $img[1]);
+        //if ($images)
+        //    foreach ($images as $img)
+        //        $mail->addAttachment(dirname(__FILE__) . '/../img/' . $img[0], '', 'base64', '', 'inline', $img[1]);
         
-        if (!$mail->send())
+        if (!$mail->send()){
             return $mail->ErrorInfo;
+        }
         else
             return null;
-    }      
+    }         
 }

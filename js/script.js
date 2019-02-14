@@ -1,5 +1,5 @@
 String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g, '');};
-    
+
 function he(str) {
     return str ? String(str)
             .replace(/&/g, '&amp;')
@@ -89,7 +89,7 @@ function setFieldError(field, isError){
     if( field.hasClass('emNewLocality')){
         el = field.parents ("div.modal").find (".emLocality");
         isError = (!el.val() || el.val() === '_none_') && field.val() === '';
-        
+
         if(!isError){
             el.parents('div.control-group').removeClass('error');
         }
@@ -99,14 +99,14 @@ function setFieldError(field, isError){
         field = field.parents (".control-group");
 
     if (isError)
-        field.addClass ("error"); 
+        field.addClass ("error");
     else
         field.removeClass ("error");
 
     if (field.parents ("div.modal").find (".control-group.error").length>0 || field.parents ("div.modal").find (" select.error").length>0)
         field.parents("div.modal").find(".disable-on-invalid").addClass("disabled");
     else
-        field.parents("div.modal").find(".disable-on-invalid").removeClass("disabled");        
+        field.parents("div.modal").find(".disable-on-invalid").removeClass("disabled");
 }
 
 function f (v) {
@@ -128,11 +128,9 @@ function showHint(html, autohide) {
 }
 
 function displayAidFields (windowWidth, formEl, aidVal){
-    //var display = windowWidth ? {'display': aidVal < 1 ? 'none': 'block'} : {'visibility': aidVal < 1 ? 'hidden' : 'visible'};
-    var display = {'display': aidVal < 1 ? 'none': 'block'};
+    var display = {'display': (aidVal < 1 || aidVal == undefined) ? 'none': 'block'};
     formEl.find('.emContrAmount, .emContrAmountLabel, .emTransAmount, .emTransAmountLabel, .emFellowship, .emFellowshipLabel').css(display);
-    //formEl.find('.emAid, .emAidLabel').val(aidVal).css(windowWidth ? {'display': 'block'} : {'visibility': 'visible'} );
-    formEl.find('.emAid, .emAidLabel').val(aidVal).css({'display': 'block'});
+    formEl.find('.emAid').val(aidVal || (aidVal < 1 || aidVal == undefined ? 0 : 1)).css({'display': 'block'});
 
     if(aidVal === 1){
         formEl.find('.emFellowship').val('_none_').change();
@@ -172,8 +170,8 @@ $(document).ready(function(){
     $.mask.definitions['5']='[012345]';
     $('input[placeholder="ДД.ММ.ГГГГ"]').mask("39.19.99?99");
     $('input[placeholder="ДД.ММ"]').mask("39.19");
-    $('input[placeholder="ЧЧ:ММ"]').mask("29:59");   
-    
+    $('input[placeholder="ЧЧ:ММ"]').mask("29:59");
+
     $("#btnDoSendEventMsgAdmins").click (function (){
         if ($(this).hasClass('disabled')) return;
 
@@ -183,13 +181,15 @@ $(document).ready(function(){
         .done (function() {messageBox ('Ваше сообщение отправлено службе поддержки', $('#messageAdmins'));});
     });
 
-    var isTabletWidth = $(document).width() < 980;    
+    var isTabletWidth = $(document).width() < 980;
+
 
     $('.datepicker').datepicker({
         language: 'ru',
-        autoclose : true
+        autoclose : true,
+        forceParse: false
     });
-    
+
     $('.datepicker-form').datepicker({
         language: 'ru',
         autoclose : true,
@@ -203,19 +203,19 @@ $(document).ready(function(){
             }
         }
     });
-    
+
     $(".datepicker, .datepicker-form").change(function(){
        setFieldError ($(this), isValidDate($(this).val()));
-    });               
-    
-    
+    });
+
+
     $(".emCollege").focus(function(){
         getColleges();
-    });    
+    });
 
 $(".scroll-up").click(function(e){
-    e.stopPropagation();    
-    
+    e.stopPropagation();
+
     //scrollTo(document.body, 0, 500);
   //  setTimeout(function(){
         document.body.scrollTop = document.documentElement.scrollTop = 0;
@@ -228,7 +228,7 @@ $(".scroll-up").click(function(e){
 window.onscroll = function() {
     handleScrollUp();
     handleAditionalMenu();
-};  
+};
 
 function scrollTo(element, to, duration) {
     if (duration <= 0) return;
@@ -243,14 +243,14 @@ function scrollTo(element, to, duration) {
 }
 
 function handleScrollUp(){
-    var height = $("body").height();        
+    var height = $("body").height();
     //var scrollTop = $("body").scrollTop();
 
     height>600 && (window.pageYOffset > 300 || document.documentElement.scrollTop >300) ? $(".scroll-up").show() : $(".scroll-up").hide();
 }
 
 function handleAditionalMenu(){
-    var height = $("body").height();       
+    var height = $("body").height();
 //    var scrollTop = $("body").scrollTop();
 
     if(height > 400 && (window.pageYOffset < 300 || document.documentElement.scrollTop < 300)){
@@ -322,7 +322,7 @@ function handleAditionalMenu(){
         }
     });
 
-    $(".emAid").change(function () {        
+    $(".emAid").change(function () {
         displayAidFields(isTabletWidth, $('#modalEditMember'), parseInt($(this).val()));
     });
 
@@ -336,8 +336,8 @@ function handleAditionalMenu(){
             setFieldError($(this), false);
             $(this).removeClass('error').removeClass('error');
         }
-    });    
-    
+    });
+
     // additional check for emPrepaid field. General check input[valid] doesn't work
     $("input").keyup (function () {
         if($(this).attr('valid') && $(this).hasClass('emPrepaid')){
@@ -357,7 +357,7 @@ function handleAditionalMenu(){
             );
         }
     });
-    
+
     // additional check for emCurrency field. General check select[valid='required'] doesn't work
     $("select").change (function () {
         if($(this).attr('valid') && $(this).hasClass('emCurrency')){
@@ -368,7 +368,7 @@ function handleAditionalMenu(){
                 (!$(this).val() || $(this).val()=="_none_"));
         }
     });
-    
+
     $("input[valid]").keyup (function () {
         setFieldError ($(this),
             $(this).parents(".controls").css('display')!='none' &&
@@ -418,7 +418,7 @@ function handleAditionalMenu(){
             var page = location.pathname.split('.')[0];
             if(page !== '/signup'){
                 $("#ajaxLoading").show ();
-            }            
+            }
         }
     });
 
@@ -432,7 +432,7 @@ function handleAditionalMenu(){
         else
             showError (jqxhr.responseText);
     });
-  	
+
     $('.locality-autocomplete').autocomplete({
         serviceUrl: '/ajax/localities.php',
         onSelect: function (suggestion) {
@@ -451,7 +451,7 @@ function handleAditionalMenu(){
         txt.select ();
         $(this).hide ();
     });
-		
+
     $('[rel=tooltip]').tooltip();
 
     $('input[tooltip]').keydown (function () {
@@ -512,23 +512,23 @@ function handleAditionalMenu(){
             setFieldError($(this), false);
         }
     });
-    
+
     $('.emName').focus(function(){
         $('.name-hint').css('display', 'block');
     });
-    
+
     $('.emName').blur(function(){
         $('.name-hint').css('display', 'none');
     });
-    
+
     $(".emCategory").change(function(){
         handleBirthDateAndCategoryFields();
     });
-    
+
     $(".emBirthdate").keyup(function(){
         handleBirthDateAndCategoryFields();
     });
-    
+
     $(".handle-new-locality").click(function(){
         $('.block-new-locality').css('display', 'block');
         $(".handle-new-locality").hide();
@@ -536,7 +536,7 @@ function handleAditionalMenu(){
             $('.emLocalityNew, .emNewLocality').focus();
         }, 500);
     });
-    
+
     $(".handle-passport-info").click(function(){
         var block = $(".block-passport-info"), icon = $(this).find('i');;
         block.css('display') === 'none' ? block.css('display', 'block') : block.css('display', 'none');
@@ -560,16 +560,16 @@ function handleAditionalMenu(){
         }
         else{
             $.post('/ajax/event.php?get_zones', {text : text, field : checkbox.attr('data-field')})
-            .done(function(data){       
-                if(data.zones && data.zones.length > 0){ 
+            .done(function(data){
+                if(data.zones && data.zones.length > 0){
                     handleEventZones(data.zones);
                 }
                 else{
                     $('.zones-available').html('');
                 }
-            });                        
+            });
         }
-    });    
+    });
 
     $('.search-participants').keyup(function(){
         var text = $(this).val().trim().toLocaleLowerCase(),
@@ -582,18 +582,18 @@ function handleAditionalMenu(){
             showError('Выберите границу поиска');
             return;
         }
-        else{            
+        else{
             $.post('/ajax/event.php?get_participants', {text : text, field : checkbox.attr('data-field')})
-            .done(function(data){       
-                if(data.participants && data.participants.length > 0){ 
+            .done(function(data){
+                if(data.participants && data.participants.length > 0){
                     handleEventParticipants(data.participants);
                 }
                 else{
                     $('.participants-available').html('');
                 }
-            });                        
+            });
         }
-    });    
+    });
 
     $('.search-reg-member').keyup(function(){
         var text = $(this).val().trim().toLocaleLowerCase();
@@ -603,40 +603,40 @@ function handleAditionalMenu(){
         }
         else{
             $.post('/ajax/event.php?members_for_registration', {text : text})
-            .done(function(data){        
-                if(data.members && data.members.length > 0){ 
+            .done(function(data){
+                if(data.members && data.members.length > 0){
                     handleAdminsList(data.members);
                 }
                 else{
                     $('.reg-members-available').html('');
                 }
-            });                        
+            });
         }
-    }); 
+    });
 });
 
 function handleBirthDateAndCategoryFields(){
     var noEvent = location.pathname.split('.')[0] === '/members';
     var categoryKey = $(".emCategory").val();
     var birthDate = $(".emBirthdate").val();
-    
+
     if(noEvent && ( parseDate(birthDate)!==null || categoryKey !== '_none_')){
         var dateParts = birthDate.split(".");
         var date = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
 
-        var schoolStart = $(".emSchoolStart").val(), 
-            schoolEnd = $(".emSchoolEnd").val(),             
+        var schoolStart = $(".emSchoolStart").val(),
+            schoolEnd = $(".emSchoolEnd").val(),
             collegeStart = $(".emCollegeStart").val(),
             collegeEnd = $(".emCollegeEnd").val(),
-            college = $(".emCollege").attr('data-college'), 
-            
+            college = $(".emCollege").attr('data-college'),
+
             collegeFullName = $(".emCollege").val(),
             indexFirstWhiteSpace = collegeFullName.indexOf(' '),
             collegeShortName = collegeFullName.substring(0, indexFirstWhiteSpace),
-            collegeName = collegeFullName.substring(indexFirstWhiteSpace), 
-            
+            collegeName = collegeFullName.substring(indexFirstWhiteSpace),
+
             collegeComment = $(".emCollegeComment").val();
-        
+
         handleSchoolAndCollegeFields(getAge(date), categoryKey, schoolStart, schoolEnd, collegeStart, collegeEnd, college, collegeComment, collegeName, collegeShortName);
     }
 }
@@ -686,38 +686,38 @@ function htmlLabelByRegState (regstate, web) {
             case '04': labelText='регистрация подтверждена';labelClass='label-success';break;
             case '05': labelText='регистрация отменена';labelClass='label-important';break;
         }
-    }                    
+    }
     return '<span  class="'+ ( web == '1' ? " btnHandleRegstate " : "") + ' label '+labelClass+'" data-regstate="'+(regstate || 0 )+'">' + labelText + '</span>';
 }
 
 function htmlListItemsByRegstate (regstate, attended){
     var listItems = '';
         switch (regstate){
-            case '03': listItems = 
+            case '03': listItems =
                         (attended == '1' ? '<li class="handle-regstate" data-action="07" ><a href="#">Отменить прибытие</a></li>' : '')  +
                         '<li class="handle-regstate" data-action="05" ><a href="#">Подтвердить отмену</a></li>'+
                         '<li class="handle-regstate" data-action="06" ><a href="#">Отметить прибывшим</a></li>';
                 break;
-            case '04': listItems = 
+            case '04': listItems =
                         (attended == '1' ? '<li class="handle-regstate" data-action="07" ><a href="#">Отменить прибытие</a></li>' : '')  +
                         '<li class="handle-regstate" data-action="03"><a href="#">Отменить</a></li>'+
                         '<li class="handle-regstate" data-action="06" ><a href="#">Отметить прибывшим</a></li>';
                 break;
-            case '05': listItems = 
+            case '05': listItems =
                         (attended == '1' ? '<li class="handle-regstate" data-action="07" ><a href="#">Отменить прибытие</a></li>' : '')  +
-                        '<li class="handle-regstate" data-action="06"><a href="#">Отметить прибывшим</a></li>'; 
+                        '<li class="handle-regstate" data-action="06"><a href="#">Отметить прибывшим</a></li>';
                 break;
             default:
-                listItems = 
+                listItems =
                         (attended == '1' ? '<li class="handle-regstate" data-action="07" ><a href="#">Отменить прибытие</a></li>' : '')  +
                         '<li class="handle-regstate" data-action="04" ><a href="#">Подтвердить</a></li>'+
                         '<li class="handle-regstate" data-action="03"><a href="#">Отменить</a></li>'+
                         '<li class="handle-regstate" data-action="06"><a href="#">Отметить прибывшим</a></li>';
                 break;
         }
-    
+
     return listItems;
-}                    
+}
 
 function handleFieldsByAdminRole(adminRole, isEventPrivate, regstate){
     if(adminRole === 0){
@@ -734,13 +734,13 @@ function handleFieldsByAdminRole(adminRole, isEventPrivate, regstate){
         }
         else{
             $("#btnDoRegisterMember").hide ();
-        }        
+        }
     }
 }
 
-function rebuildLocationsList(localities, selectedItem, arr){        
+function rebuildLocationsList(localities, selectedItem, arr){
     for( var l in localities){
-        if(l.trim() !== ''){                    
+        if(l.trim() !== ''){
             arr.push("<option value='"+l+"' "+ (selectedItem === l ? ' selected ': '') +">"+he (localities[l])+"</option>");
         }
     }
@@ -772,7 +772,7 @@ function sortedFields(){
 
     return { sort_field:sort_field, sort_type:sort_type, locality:locality, category:category,  searchText :searchText}
 }
-    
+
 function getValuesRegformFields(form, isIndexPage, isInvitation){
     var page = location.pathname.split('.')[0];
         page = page === '/youth' ? '/members' : page;
@@ -787,31 +787,29 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
         dep_time: parseTime (form.find(".emDepTime").val()),
         birth_date: parseDate (form.find(".emBirthdate").val()),
         cell_phone: form.find(".emCellPhone").val(),
-        //temp_phone: form.find(".emTempPhone").val(),
         comment: page !== '/reg' && page !== '/members' && page !== '/admin' ? form.find(".emUserComment").val() : form.find(".emComment").val(),
         email: form.find(".emEmail").val(),
-        //home_phone: form.find(".emHomePhone").val(),
-       
+
         locality_key: (page !== '/members' && page !== '/reg' && page !== '/admin' || isIndexPage) ? (window.selLocName == form.find(".emNewLocality").val() ? window.selLocId : '') : (form.find(".emLocality").val () === "_none_" ? (window.selLocName == form.find(".emNewLocality").val() ? window.selLocId : '') : form.find(".emLocality").val()),
         new_locality: (page !== '/members' && page !== '/reg' && page !== '/admin' || isIndexPage) ? (window.selLocName == form.find(".emNewLocality").val() ? '' : form.find(".emNewLocality").val()) : ( form.find(".emLocality").val () === "_none_" ? form.find(".emNewLocality").val() : ''),
-        
+
         category_key: form.find(".emCategory").val () === "_none_" ? "" : form.find(".emCategory").val (),
         document_num: form.find(".emDocumentNum").val(),
         document_date: parseDate(form.find(".emDocumentDate").val()),
-        document_auth: form.find(".emDocumentAuth").val(),        
+        document_auth: form.find(".emDocumentAuth").val(),
         document_key: form.find(".emDocumentType").val() === "_none_" ? "" : form.find(".emDocumentType").val (),
-        
+
         tp_num: form.find(".emDocumentNumTp").val(),
         tp_date: parseDate(form.find(".emDocumentDateTp").val()),
         tp_auth: form.find(".emDocumentAuthTp").val(),
         tp_name: form.find(".emDocumentNameTp").val(),
-        
+
         english_level: form.find(".emEnglishLevel").val() ? form.find(".emEnglishLevel").val() === "_none_" ? "" : form.find(".emEnglishLevel").val() : '_dont_change_',
         flight_num_arr: form.find(".emFlightNumArr").val(),
         flight_num_dep: form.find(".emFlightNumDep").val(),
         visa : form.find('.emVisa').val() === '_none_' ? 0 : form.find('.emVisa').val(),
         note: form.find(".emFlightNote").val(),
-        
+
         status_key: form.find(".emStatus").val () == "_none_" ? "" : form.find(".emStatus").val(),
         gender: form.find('.emGender').val(),
         mate_key: form.find(".emMate").val() == "_none_" ? "" : form.find(".emMate").val(),
@@ -825,16 +823,16 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
         prepaid: form.find(".emPrepaid").val (),
         currency: form.find(".emCurrency").val () == "_none_" ? "" : form.find(".emCurrency").val(),
         service_key: form.find(".emService").val () == "_none_" ? "" : form.find(".emService").val(),
-        
+
         aid : form.find('.emAid').val(),
         contr_amount : form.find('.emAid').val() < 1 ? 0 : form.find('.emContrAmount').val(),
         trans_amount : form.find('.emAid').val() < 1 ? 0 : form.find('.emTransAmount').val(),
         fellowship : form.find('.emAid').val() < 1 ? 0 : form.find('.emFellowship').val(),
-        
-        russian_lg : form.find(".emRussianLanguage").val(),        
-        
+
+        russian_lg : form.find(".emRussianLanguage").val(),
+
         sortedFields : sortedFields(),
-        
+
         schoolStart: form.find('.emSchoolStart').val(),
         schoolEnd : form.find('.emSchoolEnd').val(),
         collegeStart : form.find('.emCollegeStart').val(),
@@ -842,11 +840,11 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
         //college : form.find('.emCollege').val() == "_none_" ? "" : form.find('.emCollege').val(),
         college : form.find('.emCollege').attr('data-college') ? form.find('.emCollege').attr('data-college') : "" ,
         collegeComment : form.find('.emCollegeComment').val(),
-        school_comment : form.find(".emSchoolComment").val(),        
+        school_comment : form.find(".emSchoolComment").val(),
         member: window.currentEditMemberId,
         baptized : parseDate (form.find(".emBaptized").val()),
         page : page !== '/members' && page !== '/reg' && page !== '/admin' ? '/index' : page,
-        
+
         termsUse : form.find('#terms-use-checkbox').prop('checked'),
         isInvitation : isInvitation ? 1 : 0,
         regListName: form.find('.custom-list').val()
@@ -860,7 +858,7 @@ function handleSchoolAndCollegeFields(age, categoryKey, schoolStart, schoolEnd, 
     $('.school-fields').css('display', isSchool ? 'block' : 'none');
     $('.college-fields').css('display', isCollege ?'block' : 'none');
     var currentYear = new Date().getFullYear();
-    
+
     if(isSchool){
         $('.emSchoolStart').val(schoolStart>0 ? schoolStart : '');
         $('.emSchoolEnd').val(schoolEnd>0 ? schoolEnd : '');
@@ -870,19 +868,19 @@ function handleSchoolAndCollegeFields(age, categoryKey, schoolStart, schoolEnd, 
             $('.college-fields').css('display', 'block');
         }
     }
-                
+
     if(isCollege){
         $('.emCollegeStart').val(collegeStart >0 ? collegeStart : '');
         $('.emCollegeEnd').val(collegeEnd >0 ? collegeEnd : '');
         $('.emCollege').val(collegeShortName && collegeName ? collegeShortName + ' ('+collegeName+')' : '');
         $('.emCollege').attr('data-college', college);
         $('.emCollegeComment').val(collegeComment || '');
-        
+
         currentYear = parseInt(currentYear);
         var startCollege = collegeStart && collegeStart.length === 4 ? parseInt(collegeStart) : null ;
         var endCollege = collegeEnd && collegeEnd.length === 4 ? parseInt(collegeEnd) : null ;
         var courseLevel = startCollege ? currentYear - startCollege + 1 : null;
-        
+
         if(startCollege && endCollege){
             if(currentYear < startCollege){
                 courseLevel = "планирует поступить";
@@ -898,7 +896,7 @@ function handleSchoolAndCollegeFields(age, categoryKey, schoolStart, schoolEnd, 
                 courseLevel = courseLevel+" курс";
             }
         }
-        
+
         $('.emCourseLevel').html(courseLevel ? '('+courseLevel+')' : '');
     }
 }
@@ -909,9 +907,9 @@ function fillEditMember (memberId, info, localities) {
     var formEl = $('#modalEditMember');
 
     var arr = [];
-    arr.push("<option value='_none_' selected>&nbsp;</option>");    
+    arr.push("<option value='_none_' selected>&nbsp;</option>");
     $(".emLocality").html(rebuildLocationsList(localities, '', arr));
-    $(".emBaptized").val(info['baptized'] ? formatDate(info['baptized']) : '');        
+    $(".emBaptized").val(info['baptized'] ? formatDate(info['baptized']) : '');
 
     if(info['country_key'] === 'UA'){
         formEl.find('.emContrAmount').val(info['contr_amount']);
@@ -935,7 +933,7 @@ function fillEditMember (memberId, info, localities) {
     else{
         $(".contrib-block, .prepaid-block, .currency-block").hide();
     }
-    
+
     if (info["need_address"] == 0 && location.pathname.split('.')[0] !== '/members'){
         $(".address_block").css('display', 'none');
     }
@@ -945,21 +943,21 @@ function fillEditMember (memberId, info, localities) {
 
     if (info["need_flight"]>0){
         $(".flight-info").show ();
-        $(".emVisa").val(info["visa"] && info["visa"] !== '0' ? info["visa"] : "_none_").change();        
+        $(".emVisa").val(info["visa"] && info["visa"] !== '0' ? info["visa"] : "_none_").change();
     }
     else{
         $(".flight-info").hide ();
     }
-    
+
     $(".emEnglishLevel").val (info["english"] !== null ? info["english"] : "_none_").change();
-    
+
     if (info["need_tp"]>0) {
         $(".tp-passport-info").show ();
     }
     else {
         $(".tp-passport-info").hide ();
     }
-    
+
     if (info["need_parking"]>0) {
         $('.parking').show();
     }
@@ -973,7 +971,7 @@ function fillEditMember (memberId, info, localities) {
     else {
         $('.service-block').hide();
     }
-    
+
     if (info["need_accom"]>0) {
         $('.accom-block').show();
     }
@@ -991,7 +989,7 @@ function fillEditMember (memberId, info, localities) {
         for (l in list){
             if(list[l]){
                 htmlList += "<option value='" + list[l] + "' " + (list[l] === info["reg_list_name"] ? 'selected' : '') +" >" + list[l] + "</option>";
-            }            
+            }
         }
 
         $('.custom-list').html(htmlList);
@@ -1001,7 +999,7 @@ function fillEditMember (memberId, info, localities) {
         $('.custom-list').html('');
         $('.custom-block').hide();
     }
-    
+
     if (info["need_transport"]>0){
         $(".transportText").text( info["need_flight"]>0 ? "Транспорт" : "Транспорт");
         // $(".transportText").text( info["need_flight"]>0 ? "Поездка" : "Транспорт");
@@ -1023,12 +1021,12 @@ function fillEditMember (memberId, info, localities) {
     if (info["need_passport"]>0) {
         $(".passport-info").show ();
         $(".grpPassport").show();
-    }    
+    }
     else{
         $(".passport-info").hide ();
         $(".grpPassport").hide();
     }
-    
+
     if (info["need_flight"] == 0 && info["need_tp"] == 0 && info["need_passport"] == 0){
         $(".grpPassport").show();
     }
@@ -1059,7 +1057,7 @@ function fillEditMember (memberId, info, localities) {
     else {
         $(".emAddress").val (info["address"] ? info["address"] : "");
     }
-    
+
     $(".emArrDate").val (info["arr_date"] ? formatDDMM (info["arr_date"]) : "").attr('data-double_date', info["arr_date"]).keyup();
     $(".emArrTime").val (info["arr_time"] ? formatTime (info["arr_time"]) : "").keyup();
     $(".emBirthdate").val (info["birth_date"] ? formatDate (info["birth_date"]) : "").keyup();
@@ -1073,7 +1071,7 @@ function fillEditMember (memberId, info, localities) {
     if ($(".emLocality").size()==0){
         // GUEST
         if (info["locality_key"]){
-            window.selLocId = info["locality_key"]; 
+            window.selLocId = info["locality_key"];
             window.selLocName = info["locality_name"];
             $(".emNewLocality").val (info["locality_name"]).attr ("disabled", "disabled").next (".unblock-input").show ();
         }
@@ -1106,8 +1104,8 @@ function fillEditMember (memberId, info, localities) {
             $("#emNoSharedComment").show();
         }
         */
-    }   
-    
+    }
+
     $(".block-new-locality").css("display", info["new_locality"] ? 'block' : 'none');
     $(".handle-new-locality").css("display", info["new_locality"] ? 'none' : 'block');
 
@@ -1117,7 +1115,7 @@ function fillEditMember (memberId, info, localities) {
     $(".emDocumentDate").val (info["document_date"] ? formatDate (info["document_date"]) : "").keyup();
     $(".emDocumentAuth").val (info["document_auth"] ? info["document_auth"] : "").keyup();
     $(".emCategory").val (info["category_key"] ? info["category_key"] : "_none_").change();
-    $(".emDocumentType").val (info["document_key"] ? info["document_key"] : "_none_").change();    
+    $(".emDocumentType").val (info["document_key"] ? info["document_key"] : "_none_").change();
     $(".tooltipArrDate").attr('title', "День и месяц приезда. Мероприятие начинается "+formatDate (info["start_date"])).tooltip('fixTitle').data ('date', info["start_date"]);
     $(".tooltipDepDate").attr('title', "День и месяц отъезда. Мероприятие заканчивается "+formatDate (info["end_date"])).tooltip('fixTitle').data ('date', info["end_date"]);
 
@@ -1140,7 +1138,7 @@ function fillEditMember (memberId, info, localities) {
         }
 
     });
-    
+
     if ($(".emMate").length){
         var emMateHtml = "<option value='_none_'>&nbsp;</option>", mateArr = [];
 
@@ -1161,13 +1159,13 @@ function fillEditMember (memberId, info, localities) {
               return 1;
             }
             return 0;
-        });  
-        
+        });
+
         for(var i in mateArr){
             var mate = mateArr[i];
             emMateHtml+="<option value='"+he(mate.id)+"'>"+he(mate.name)+"</option>";
         }
-        
+
         $(".emMate").html (emMateHtml).val (info["mate_key"] ? info["mate_key"] : "_none_");
     }
 
@@ -1181,16 +1179,16 @@ function fillEditMember (memberId, info, localities) {
         $(".emName").removeAttr ("disabled").next (".unblock-input").hide ();
         //$("#tooltipNameHelp").show();
     }
-    
-    handleSchoolAndCollegeFields(age, info['category_key'], info['school_start'], info['school_end'], 
+
+    handleSchoolAndCollegeFields(age, info['category_key'], info['school_start'], info['school_end'],
             info['college_start'], info['college_end'], info['college_key'], info['college_comment'], info['college_name'], info['college_short_name']);
-            
-    $("#tooltipNameHelp").hide();        
-    
+
+    $("#tooltipNameHelp").hide();
+
     if (info["transport"]) $('.emTransport').val (info["transport"]>0 ? "1" : "0"); else $('.emTransport').val ("_none_");
     $(".emTransport").change();
 
-    if (info["need_parking"] > 0) {        
+    if (info["need_parking"] > 0) {
         if(info["parking"] > 0){
             $('.emParking').val ("1");
             $('.emAvtomobileNumber').val (info["avtomobile_number"]);
@@ -1205,11 +1203,11 @@ function fillEditMember (memberId, info, localities) {
         }
         $(".emParking").change();
         $('.emAvtomobileNumber, .emAvtomobile').keyup();
-    } 
+    }
     else {
         $('.emParking').val ("0");
     }
-    
+
     $(".emParking").change(function(){
         if($(this).val() == 1){
             $('.emAvtomobileNumber, .emAvtomobile').attr('disabled', false).attr('valid', 'required');
@@ -1219,7 +1217,7 @@ function fillEditMember (memberId, info, localities) {
         }
         $('.emAvtomobileNumber, .emAvtomobile').keyup();
     });
-    
+
     //if (info["need_flight"]== 0){
     //    $(".emParking").change();
     //}
@@ -1246,7 +1244,7 @@ function fillEditMember (memberId, info, localities) {
         $(".eventMemberArrived").text ();
         $("#eventMemberPlaceService").hide();
     }
-    
+
     var eventName = $('#eventTabs li.active a.dropdown-toggle span').text();
     if (!eventName) eventName = info["event_name"];
 
@@ -1271,10 +1269,10 @@ function fillEditMember (memberId, info, localities) {
         $(".emEmail").attr ('valid', window.isGuest ? 'required,email' : 'email').keyup();
     }
 */
-    $(".emActive").prop('checked', info["active"]==1); 
-    
+    $(".emActive").prop('checked', info["active"]==1);
+
     /*
-    $(".emLocality").change(function(){  
+    $(".emLocality").change(function(){
         var locality = $(this).val().trim(), newLocality = $(".emNewLocality").val().trim();
         if(locality === '_none_' && newLocality !== ''){
             $(this).parents('.control-group').removeClass('error');
@@ -1282,15 +1280,15 @@ function fillEditMember (memberId, info, localities) {
         else if(locality !== '_none_' && newLocality === ''){
             $(".emNewLocality").parents('.control-group').removeClass('error');
         }
-        
+
         checkLocalityFieldsFieldWithValue(locality, newLocality);
-    });    
-    
+    });
+
     $(".emNewLocality").keyup(function(){
         checkLocalityFieldsFieldWithValue($(".emLocality").val().trim(), $(this).val().trim());
     });
     */
-   
+
     $(".emNewLocality").keyup (function (){
         var el = $(".emLocality");
         if (el.val ()!="_none_" && window.selLocName != $(".emNewLocality").val())
@@ -1520,7 +1518,7 @@ function handleAidInteraction(userId, amount, eventId, eventName){
 }
 
 function getStatistics(stats, eventName, localitiesLength, countParking, countTransport, countAccomSisters, countAccomBrothers, countBrothers, countSisters){
-    var first = 0, second = 0, third = 0, forth = 0, fifth = 0, def  = 0, state;    
+    var first = 0, second = 0, third = 0, forth = 0, fifth = 0, def  = 0, state;
     for(var i in stats){
         state = stats[i];
         switch (state){
@@ -1532,7 +1530,7 @@ function getStatistics(stats, eventName, localitiesLength, countParking, countTr
             case 'null' : def++; break;
         }
     }
-    
+
     var regWait = first + second;
     var responce = '<div class="statistic-block"><p>Регистрация подтверждена — '+(forth)+' чел.</p><p>Ожидание подтверждения — '+(regWait)+' чел.</p>' +
         '<p>Не зарегистрирован — '+(def)+' чел.</p>'+
@@ -1540,7 +1538,7 @@ function getStatistics(stats, eventName, localitiesLength, countParking, countTr
         '<hr>'+
         '<p>Ожидание отмены — '+(third)+' чел.</p>'+
         '<p>Регистрация отменена — '+(fifth)+' чел.</p></div>';
-    
+
     var additionalStatistic = '<div class="statistic-additional-block"><p>Зарегистрировано братьев  — ' + countBrothers +' чел.</p>' +
                                         '<p>Зарегистрировано сестёр  — ' + countSisters + ' чел.</p>' +
                                         '<p>Разместить — ' + countAccomBrothers + ' братьев и '+ countAccomSisters + ' сестёр</p>' +
@@ -1548,7 +1546,7 @@ function getStatistics(stats, eventName, localitiesLength, countParking, countTr
                                         '<hr>'+
                                         '<p>Нужен транспорт — ' + countTransport +' чел.</p>' +
                                         '<p>Нужна парковка — ' + countParking +' м.</p></div>';
-    
+
     $("#showStatistic").append(responce + additionalStatistic);
     $("#modalStatistic h5").text(eventName);
     $("#modalStatistic").find(".count-localities").html("<strong>Всего местностей — "+(localitiesLength)+"</strong>");
@@ -1562,7 +1560,7 @@ function in_array(value, array){
     }
     return false;
 }
-    
+
 function deleteFile(data){
     $.ajax({
         type: "POST",
@@ -1572,7 +1570,7 @@ function deleteFile(data){
         success: function(data) {}
     });
 }
-    
+
 function parseTimeTocheck(time){
     return time.substr(0,5);
 }
@@ -1593,9 +1591,9 @@ function parseEventMemberDataToCheckChanges(info){
         contr_amount : info['contr_amount'].toString(),
         coord : info["coord"]>0 ? '1' : '0',
         dep_date : info["dep_date"] ? formatDDMM (info["dep_date"]) : "",
-        dep_time : info["dep_time"] ? parseTimeTocheck (info["dep_time"]) : "",        
+        dep_time : info["dep_time"] ? parseTimeTocheck (info["dep_time"]) : "",
         document_date : info["document_date"] ? formatDate (info["document_date"]) : "",
-        document_auth : info["document_auth"] ? info["document_auth"] : "",        
+        document_auth : info["document_auth"] ? info["document_auth"] : "",
         document_key : info["document_key"] ? info["document_key"] : "_none_",
         document_num : info["document_num"] ? info["document_num"] : "",
         email : info["email"] ? info["email"] : "",
@@ -1603,26 +1601,26 @@ function parseEventMemberDataToCheckChanges(info){
         fellowship : info['fellowship'] ? info['fellowship'].toString() : "0",
         flight_num_arr : info["flight_num_arr"] ? info["flight_num_arr"].toString() : "",
         flight_num_dep : info["flight_num_dep"] ? info["flight_num_dep"].toString() : "",
-        gender : info["gender"] ? info["gender"].toString() : "_none_", 
+        gender : info["gender"] ? info["gender"].toString() : "_none_",
         home_phone : info["home_phone"] ? info["home_phone"] : "",
         locality_key : info["locality_key"] ? info["locality_key"] : "_none_",
         mate_key : info["mate_key"] ? info["mate_key"].toString() : "_none_",
-        name : info["name"] ? info["name"] : "",      
-        new_locality : info["new_locality"] ? info["new_locality"] : "",   
+        name : info["name"] ? info["name"] : "",
+        new_locality : info["new_locality"] ? info["new_locality"] : "",
         note : info["note"] ? info["note"].toString() : "",
-        parking : info["parking"]>0 ? "1" : "0",        
+        parking : info["parking"]>0 ? "1" : "0",
         prepaid : info["prepaid"]>0 ? info["prepaid"].toString() : "",
         russian_lg : info["russian_lg"] ? info["russian_lg"].toString() : "1",
         service_key : info["service_key"] ? info["service_key"].toString() : "_none_",
         status_key : info["status_key"] ? info["status_key"] : "01",
-        temp_phone : info["temp_phone"] ? info["temp_phone"] : "",                       
+        temp_phone : info["temp_phone"] ? info["temp_phone"] : "",
         tp_auth : info["tp_auth"] ? info["tp_auth"].toString() : "",
         tp_date : info["tp_date"] ? formatDate (info["tp_date"]) : "",
-        tp_name : info["tp_name"] ? info["tp_name"].toString() : "",     
-        tp_num : info["tp_num"] ? info["tp_num"].toString() : "",    
+        tp_name : info["tp_name"] ? info["tp_name"].toString() : "",
+        tp_num : info["tp_num"] ? info["tp_num"].toString() : "",
         trans_amount : info['trans_amount'].toString(),
         transport : info["transport"]>0 ? "1" : "0",
-        visa : info["visa"] && info["visa"] !== '0' ? info["visa"].toString() : "_none_"                     
+        visa : info["visa"] && info["visa"] !== '0' ? info["visa"].toString() : "_none_"
     }
 }
 
@@ -1644,12 +1642,12 @@ function getAgeWithSuffix (parsedAge, age){
 }
 
 function getEventMemberColor(eventType){
-    var eventColors = {'FCT':'#ee5f5b', 'SCC':'#b94a48','RYT':'#04c', 
+    var eventColors = {'FCT':'#ee5f5b', 'SCC':'#b94a48','RYT':'#04c',
                 'SWT':'#08c','TSC':'#5bc0de', 'RTS':'#62c462',
                 'BLC':'#f89406', 'YPC':'#f80676','RBT':'#f80606',
                 'CWT':'#f87606','CWF':'#b8a8e8', 'REC':'#dba8e8',
                 'FCO':'#e8a8d1', 'STC':'#a8e8b6','STT':'#e8d7a8'};
-    
+
     return eventColors[eventType];
 }
 
@@ -1658,7 +1656,7 @@ $(".statOk, .statCancel").click(function(event){
     $("#showStatistic").empty();
     $("#modalStatistic").modal('hide');
  });
- 
+
  function isEmailvalid(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
@@ -1671,7 +1669,7 @@ function bindHandlerToRemoveAdmin(){
 
         if(in_array(id, window.regAdmins)){
             var index = window.regAdmins.indexOf(id);
-            if (index > -1) 
+            if (index > -1)
                 window.regAdmins.splice(index, 1);
         }
         $(this).parents('div [data-id='+id+']').remove();
@@ -1680,7 +1678,7 @@ function bindHandlerToRemoveAdmin(){
 
 function handleAdminsList(members, isEditMode){
     var list = buildListAdmins (members, isEditMode);
-    !isEditMode ? $('.reg-members-available').html(list.join('')) : $('.reg-members-added').html(list.join('')); 
+    !isEditMode ? $('.reg-members-available').html(list.join('')) : $('.reg-members-added').html(list.join(''));
 
     $('.addRegMember').click(function(e){
         e.stopPropagation();
@@ -1690,13 +1688,13 @@ function handleAdminsList(members, isEditMode){
 
         var isNewId = !in_array(id, window.regAdmins);
         var member = buildListAdmins([
-            {id : id, 
-            name : element.attr('data-name'), 
-            locality: element.attr('data-locality'), 
+            {id : id,
+            name : element.attr('data-name'),
+            locality: element.attr('data-locality'),
             email : element.attr('data-email')}], true);
 
         if(isNewId){
-            $('.reg-members-added').append(member);                
+            $('.reg-members-added').append(member);
             $('.reg-members-available').html('');
             $('.search-reg-member').val('').focus();
         }
@@ -1708,12 +1706,12 @@ function handleAdminsList(members, isEditMode){
     });
 
     bindHandlerToRemoveAdmin();
-}        
+}
 
 function buildListAdmins (members, isEditMode){
     var memberRows = [];
     for(var m in members){
-        var member = members[m];  
+        var member = members[m];
 
         if(isEditMode){
             window.regAdmins.push(member.id);
@@ -1726,14 +1724,14 @@ function buildListAdmins (members, isEditMode){
                             '<i data-id="'+member.id+'" class="fa fa-lg '+ ( isEditMode ? "fa-times removeRegMember" : "fa-plus addRegMember") + '" '+
                             'title="' + ( isEditMode ? "Убрать " + member.name + " из списка ответственных за регистрацию" : "Назначить " + member.name + " ответственным за регистрацию" )+'">'+
                             '</i>'+
-                        '</div>');                                        
+                        '</div>');
     }
     return memberRows;
 }
 
 function handleEventZones(zones, isEditMode){
     var list = buildListZones (zones, isEditMode);
-    $(!isEditMode ? '.zones-available' : '.zones-added').html(list.join('')); 
+    $(!isEditMode ? '.zones-available' : '.zones-added').html(list.join(''));
 
     $('.addZone').click(function(e){
         e.stopPropagation();
@@ -1745,7 +1743,7 @@ function handleEventZones(zones, isEditMode){
         var zone = buildListZones([{id : id, name : element.attr('data-name'), field : $('.zones-checkbox-block input[type="checkbox"]:checked').attr('data-field')}], true);
 
         if(isNewId){
-            $('.zones-added').append(zone);                
+            $('.zones-added').append(zone);
             $('.zones-available').html('');
             $('.search-zones').val('').focus();
         }
@@ -1763,7 +1761,7 @@ function buildListZones (zones, isEditMode){
     var zonesRows = [];
 
     for(var m in zones){
-        var zone = zones[m], field = zone.field;  
+        var zone = zones[m], field = zone.field;
 
         if(isEditMode){
             window.eventZones.push(zone.id);
@@ -1774,7 +1772,7 @@ function buildListZones (zones, isEditMode){
                             '<i data-id="'+zone.id+'" class="fa fa-lg '+ ( isEditMode ? "fa-times removeZone" : "fa-plus addZone") + '" '+
                             'title="' + ( isEditMode ? "Убрать " + zone.name + " из зоны доступа" : "Добавить " + zone.name + " в зону доступа" )+'">'+
                             '</i>'+
-                        '</div>');                                        
+                        '</div>');
     }
     return zonesRows;
 }
@@ -1786,7 +1784,7 @@ function bindHandlerToRemoveZone(){
 
         if(in_array(id, window.eventZones)){
             var index = window.eventZones.indexOf(id);
-            if (index > -1) 
+            if (index > -1)
                 window.eventZones.splice(index, 1);
         }
         $(this).parents('div [data-id='+id+']').remove();
@@ -1800,7 +1798,7 @@ function bindHandlerToRemoveParticipants(){
 
         if(in_array(id, window.eventParticipants)){
             var index = window.eventParticipants.indexOf(id);
-            if (index > -1) 
+            if (index > -1)
                 window.eventParticipants.splice(index, 1);
         }
         $(this).parents('div [data-id='+id+']').remove();
@@ -1809,7 +1807,7 @@ function bindHandlerToRemoveParticipants(){
 
 function handleEventParticipants(participants, isEditMode){
     var list = buildParticipantList (participants, isEditMode);
-    $(!isEditMode ? '.participants-available' : '.participants-added').html(list.join('')); 
+    $(!isEditMode ? '.participants-available' : '.participants-added').html(list.join(''));
 
     $('.addParticipant').click(function(e){
         e.stopPropagation();
@@ -1818,7 +1816,7 @@ function handleEventParticipants(participants, isEditMode){
         var participant = buildParticipantList([{id : id, name : element.attr('data-name'), field : $('.participants-checkbox-block input[type="checkbox"]:checked').attr('data-field')}], true);
 
         if(isNewId){
-            $('.participants-added').append(participant);                
+            $('.participants-added').append(participant);
             $('.participants-available').html('');
             $('.search-participants').val('').focus();
         }
@@ -1836,7 +1834,7 @@ function buildParticipantList (participants, isEditMode){
     var participantRows = [];
 
     for(var m in participants){
-        var participant = participants[m], field = participant.field;  
+        var participant = participants[m], field = participant.field;
 
         if(isEditMode){
             window.eventParticipants.push(participant.id);
@@ -1847,7 +1845,7 @@ function buildParticipantList (participants, isEditMode){
                             '<i data-id="'+participant.id+'" class="fa fa-lg '+ ( isEditMode ? "fa-times removeParticipant" : "fa-plus addParticipant") + '" '+
                             'title="' + ( isEditMode ? "Убрать " + participant.name + " из участников" : "Добавить " + participant.name + " к участникам" )+'">'+
                             '</i>'+
-                        '</div>');                                        
+                        '</div>');
     }
     return participantRows;
 }
@@ -1862,23 +1860,23 @@ $(document).ready(function(){
         if (checkForRegEnd ('event-add-member')) $('#modalAddMembers').modal('show');
     });
 
-    $('.openCollegesModal').click(function(){                
-        getColleges(false);        
-    }); 
+    $('.openCollegesModal').click(function(){
+        getColleges(false);
+    });
 
     $(".sort_college_locality").click(function(){
         var colleges = [], sortDirectionIcon = $(".sort-direction"), sortDirection = 'asc';
         $("#modalCollegesList #membersTable tbody tr").each(function(){
-            var id = $(this).attr('data-college'), 
-                locality_key = $(this).attr('data-locality'), 
-                locality = $(this).attr('data-locality_name'), 
-                name = $(this).attr('data-name'), 
+            var id = $(this).attr('data-college'),
+                locality_key = $(this).attr('data-locality'),
+                locality = $(this).attr('data-locality_name'),
+                name = $(this).attr('data-name'),
                 short_name = $(this).attr('data-short_name'),
                 author = $(this).attr('data-author');
 
             colleges.push({id : id, author : author, locality : locality,locality_key :locality_key, name : name, short_name : short_name });
         });
-        
+
         if(sortDirectionIcon.hasClass("fa-chevron-down")){
             sortDirectionIcon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
             sortDirection = 'asc';
@@ -1887,7 +1885,7 @@ $(document).ready(function(){
             sortDirectionIcon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
             sortDirection = 'desc';
         }
-        
+
         colleges.sort(function (a, b) {
             if (a.locality < b.locality) {
               return sortDirection === 'asc' ? -1 : 1;
@@ -1896,31 +1894,31 @@ $(document).ready(function(){
               return sortDirection === 'asc' ? 1 : -1;
             }
             return 0;
-        });                
-        
+        });
+
         buildCollegesList(colleges);
-    }); 
+    });
 
     $(".search-locality-to-add-college").keyup(function(){
         var text = $(this).val().trim().toLowerCase(), localityName;
-       
+
         $("#modalEditCollege .locality-list").css('display', text ? 'block' : 'none');
-       
+
         $("#modalEditCollege .locality-list li").each(function(){
             localityName = $(this).text().trim().toLowerCase();
             localityName.search(text) !== -1 ? $(this).show() : $(this).hide();
         });
-    });       
-    
+    });
+
     $("#modalEditCollege .locality-list li").click(function(){
-        renderCollegeLocality($(this).attr('data-value'), $(this).text());        
+        renderCollegeLocality($(this).attr('data-value'), $(this).text());
         resetSearchLocality();
-    });                       
+    });
 
     $('.colleges-city-list').change(function(){
         handleCollegesList();
     });
-    
+
     $('.search-colleges').keyup(function(){
         handleCollegesList();
     });
@@ -1928,7 +1926,7 @@ $(document).ready(function(){
     $('.clear-search-colleges').click(function(){
         $(this).siblings('.search-colleges').val('').focus();
         handleCollegesList();
-    });    
+    });
 
     $('#btnDoAddCollege').click(function(e){
         e.preventDefault();
@@ -1937,7 +1935,7 @@ $(document).ready(function(){
 
         modal.find('.edit-college-name').val('').keyup();
         modal.find('.edit-college-short-name').val('').keyup();
-        modal.find('.search-locality-to-add-college').val('').keyup(); 
+        modal.find('.search-locality-to-add-college').val('').keyup();
         modal.find('.btnDoSaveCollege').removeAttr('data-college_id');
         setTimeout(function(){modal.find('.edit-college-name').focus();}, 1000);
         modal.find('h3').html('Добавить учебное заведение');
@@ -1958,7 +1956,7 @@ $(document).ready(function(){
             name = modal.find('.edit-college-name').val().trim(),
             shortName = modal.find('.edit-college-short-name').val().trim(),
             locality = modal.find('.selected-locality span').attr('data-value'),
-            text = $('#modalCollegesList').find('.search-colleges').val().trim();             
+            text = $('#modalCollegesList').find('.search-colleges').val().trim();
 
         if(!name || !shortName){
             showError("Необходимо указать название и сокращенное название учебного заведения");
@@ -1998,7 +1996,7 @@ $(document).ready(function(){
 });
 
 // colleges
-function getColleges(){                
+function getColleges(){
     $.post('/ajax/members.php?getColleges')
     .done(function(data){
         buildCollegesList(data.colleges);
@@ -2010,7 +2008,7 @@ function getColleges(){
     function resetSearchLocality(){
         $('.search-locality-to-add-college').val('');
         $("#modalEditCollege .locality-list").css('display', 'none');
-    }            
+    }
 
     function buildCollegesList(colleges){
         var arr = [], modalList = $('#modalCollegesList'), modalEditMemberWindowIsOpen = checkIfModalEditMemberOpen(), college = '';
@@ -2018,7 +2016,7 @@ function getColleges(){
         if(modalEditMemberWindowIsOpen){
             college = $("#modalEditMember .emCollege").attr('data-college');
         }
-        
+
         for (var i in colleges){
             var c = colleges[i];
 
@@ -2026,7 +2024,7 @@ function getColleges(){
                 '<tr data-college="'+c["id"]+'" data-author="'+ c["author"]+'" data-locality_name="'+c["locality"]+'" data-name="'+c["name"]+'" data-short_name="'+ c["short_name"]+'" data-locality="'+ c["locality_key"]+'">' +
                     '<td style="width: 60%;">' + ( modalEditMemberWindowIsOpen ? '<input class="user-college" type="radio" ' + ( modalEditMemberWindowIsOpen && college == c["id"] ? "checked" : "") + ' style="margin-top: -4px; margin-right: 10px;">' : '' )+ he (c["short_name"]+ ' (' + c["name"]+ ')') + '</td>' +
                     '<td>' + he(c["locality"])+ '</td>' +
-                    '<td>' + ( c["author"] == 1 ?                        
+                    '<td>' + ( c["author"] == 1 ?
                         '<i style="float: right" class="fa fa-trash-o fa-lg openCollegeDeleteModal" title="Удалить"></i>'+
                         '<i style="float: right" class="fa fa-pencil fa-lg openCollegeEditModal" title="Редактировать"></i>' : '' ) +
                     '</td>' +
@@ -2066,7 +2064,7 @@ function getColleges(){
             modal.find('.btnDoDeleteCollege').attr('data-college_id', collegeId);
             modal.modal('show');
         });
-        
+
         $(".user-college").change(function(){
             var currentRadio = $(this);
             $(this).parents('tbody').find('.user-college').each(function(){
@@ -2074,14 +2072,14 @@ function getColleges(){
             });
             currentRadio.prop('checked', true);
         });
-        
+
         handleCollegesList();
     }
 
     function renderCollegeLocality(localityValue, localityName){
         $(".search-locality-to-add-college").hide();
         $("#modalEditCollege .selected-locality").html('<span data-value="'+localityValue+'"><strong>'+localityName+'</strong> <i style="color:red;" class="fa fa-times removeCollegeLocality" title="Изменить город"></i></span>');
-        
+
         $(".removeCollegeLocality").click(function(){
             setTimeout(function() {$(".search-locality-to-add-college").focus();}, 500);
             $(".search-locality-to-add-college").show();
@@ -2090,8 +2088,8 @@ function getColleges(){
     }
 
     function handleCollegesList(){
-        var collegeLocality = $('.colleges-city-list').val(), searchName = $('.search-colleges').val().toLowerCase().trim();       
-        
+        var collegeLocality = $('.colleges-city-list').val(), searchName = $('.search-colleges').val().toLowerCase().trim();
+
         $("#modalCollegesList tbody tr").each(function(){
             var locality = $(this).attr('data-locality'), name = $(this).attr('data-name').toLowerCase().trim(), shortName = $(this).attr('data-short_name').toLowerCase().trim(), shortNamePlusName = shortName+' ('+name+')';
 
@@ -2117,12 +2115,12 @@ function getColleges(){
             if(adminLocality && l.locality_key == adminLocality){
                 isMatchedLocality = true;
             }
-            
+
             arr.push('<option ' + ( adminLocality && l.locality_key == adminLocality ? "selected" : "" ) + ' value="'+l.locality_key+'" >'+l.locality+'</option>');
         }
 
         arr.unshift('<option '+ (isMatchedLocality ? "" : "selected") +' value="_all_" >Все местности</option>');
-        
+
         modalList.find('.colleges-city-list').html(arr.length === 0 ? "" : arr.join(''));
     }
 
@@ -2132,7 +2130,7 @@ function getColleges(){
             var collegeName = $("#modalEditMember .emCollege").val();
             modalWindow.find('.modal-footer').html('<button class="btn btn-primary select-college">Выбрать</button><button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>');
             modalWindow.find('.search-colleges').val(collegeName);
-            
+
             $(".select-college").click(function(){
                 var selectedCollegeName = '', selectedCollege = '';
                 $(this).parents('#modalCollegesList').find('.user-college').each(function(){
@@ -2159,7 +2157,7 @@ function getColleges(){
             modalWindow.find('.search-colleges').val('');
         }
         handleCollegesList();
-        modalWindow.modal('show');        
+        modalWindow.modal('show');
     }
 
 function showModalHintWindow(text){
