@@ -2195,6 +2195,39 @@
     $(".confirm-save-changes").click(function(){
         $('#modalEditMember').modal('hide');
     });
+    // Romans Code 5.0.4
+    function arriveDepart(tagAttr, ClassDates) {
+// Это мой код, получаем данные и сбрасываем настройки виджета календаря для заданного заданого поля
+      var getDateArriveOrDepart = $('.tab-pane.active').attr(tagAttr);
+      getDateArriveOrDepart = getDateArriveOrDepart.split('-');
+      getDateArriveOrDepart[1]--;
+      $(ClassDates).datepicker('destroy');
+// Этот копия кода из script.js
+      $(ClassDates).datepicker({
+          language: 'ru',
+          autoclose : true,
+          defaultViewDate: {
+              month: getDateArriveOrDepart[1]
+            },
+          format: {
+              toDisplay: function (date) {
+                  return formatDDMM(date);
+              },
+              toValue: function (date) {
+                  var arrDate = date.split('.');
+                  return new Date(parseDDMM(date, new Date ($('#modalEditMember').find("input[data-double_date$='"+(arrDate[1]+'-'+arrDate[0])+"']").attr('data-double_date'))));
+              }
+          }
+      });
+    }
+  arriveDepart('data-start','.emArrDate');
+  arriveDepart('data-end','.emDepDate');
+
+  $("#events-list").change(function () {
+    arriveDepart('data-start','.emArrDate');
+    arriveDepart('data-end','.emDepDate');
+  });
+    // END Romans Code
 </script>
 
 <?php
