@@ -548,22 +548,35 @@ include_once "modals.php";
 
 	function getMemberSchoolOrCollegeDegree(category, age, collegeStart, collegeEnd, schoolStart, schoolEnd){
 		var currentYear = new Date().getFullYear();
-
+		var currentMonth = new Date().getMonth(); // month for check
 		if(category === 'SC'){
-			var classLevel = schoolStart && schoolStart.length === 4 ? currentYear - schoolStart + 1 : '';
-			return classLevel ? classLevel > 0 && classLevel < 12 ? ','+classLevel+' класс' : '' : age >= 7 ? age - 6 : '';
+			var classLevel;
+// Start Roman's code ver 5.0.7
+			if (schoolStart && schoolStart.length === 4) {
+				classLevel = currentMonth <= 6 ? currentYear - 1 - schoolStart + 1 : currentYear - schoolStart + 1;
+			}
+// End Roman's code
+			return classLevel ? classLevel > 0 && classLevel < 12 ? ', '+classLevel+' класс' : '' : age >= 7 ? age - 6 : '';
 		}
 		else{
 			var startCollege = collegeStart && collegeStart.length === 4 ? parseInt(collegeStart) : '' ;
 			var endCollege = collegeEnd && collegeEnd.length === 4 ? parseInt(collegeEnd) : '' ;
-			var courseLevel = startCollege ? currentYear - startCollege + 1 : '';
-
+			var courseLevel;
+// Start Roman's code ver 5.0.7
+			if (startCollege) {
+				courseLevel = currentMonth <= 6 ? currentYear - 1 - startCollege + 1 : currentYear - startCollege + 1;
+			} else {
+				courseLevel = '';
+			}
+// End Roman's code
 			if(startCollege && endCollege){
 				if(currentYear < startCollege){
 					courseLevel = "планирует поступить";
 				}
+				else if (currentYear === startCollege && currentMonth < 6) {
+					courseLevel = "планирует поступить";
+				}
 				else if(currentYear === endCollege){
-					var currentMonth = new Date().getMonth();
 					courseLevel = currentMonth >= 6 ? "обучение завершено" : courseLevel + " курс, окончание в этом году";
 				}
 				else if(currentYear > endCollege){
