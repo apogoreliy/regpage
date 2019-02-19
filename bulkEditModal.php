@@ -2,8 +2,9 @@
 <div id="modalBulkEditor" data-width="560" class="modal-edit-member modal hide fade" tabindex="-1" role="dialog" aria-labelledby="bulkEditorEventTitle" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 id="bulkEditorEventTitle"></h3>
-    </div>    
+        <h4 id="bulkEditorEventTitle"></h4>
+        <p class="text-info">В бланках регистрации будут изменены <b>только заполненные в этом окне</b> поля</p>
+    </div>
     <div class="modal-body">
         <div class="controls">
             <div class="control-group row-fluid" style="width: 48%;">
@@ -39,31 +40,32 @@
                         <?php foreach (db_getServices() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
                     </select>
                 </div>
-            </div>                
-            <div class="control-group row-fluid service-block">                
+            </div>
+            <div class="control-group row-fluid service-block">
                 <div class="control-group row-fluid" style="width: 48%;">
                     <label class="span12">Служение</label>
                     <select class="span12 beService">
                         <option value='_none_' selected>&nbsp;</option>
                         <?php foreach (db_getServices() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
                     </select>
-                </div>    
+                </div>
                 <div class="control-group row-fluid" style="width: 48%; float: right;">
                     <label class="span12">Координатор<a href="#" rel="tooltip" data-placement="bottom" data-toggle="tooltip" title="Условия: возраст до 55 лет, здоровье и способность позаботиться о святых" tabindex="-1"><i class="icon-question-sign"></i></a></label>
                     <select class="span12 beCoord">
                         <option value='0'>---</option>
                         <option value='1'>РЕКОМЕНДУЕТСЯ</option>
                     </select>
-                </div>             
+                </div>
             </div>
-            <div class="control-group row-fluid parking">
-                <label class="span12">Парковка<a href="#" rel="tooltip" data-toggle="tooltip" title="только для владельцев автомобилей" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-                <select class="span12 beParking">
-                    <option value='_none_' selected>&nbsp;</option>
-                    <option value="1">НУЖНА</option>
-                    <option value="0">НЕ НУЖНА</option>
-                </select>
-            </div>
+            <div class="controls">
+                <div class="control-group row-fluid">
+                    <label class="span12">Статус<sup>*</sup></label>
+                    <select class="span12 beStatus" valid="required">
+                        <option value='_none_' selected>&nbsp;</option>
+                        <?php foreach (db_getStatuses() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+                    </select>
+                </div>
+            </div>            
             <div class="control-group row-fluid block-transport">
                 <label class="span12 beLblTransport"><span class="transportText"></span><a href="#" class="transportHint" rel="tooltip" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
                 <div class="control-group row-fluid beGrpTransport">
@@ -73,7 +75,7 @@
                         <option value="0">НЕ ТРЕБУЕТСЯ</option>
                     </select>
                 </div>
-            </div>  
+            </div>
             <div class="show-admin-fields">
                 <div class="control-group row-fluid">
                     <label class="span12">Прибыл</label>
@@ -82,15 +84,15 @@
                         <option value='0'>НЕТ</option>
                         <option value='1'>ДА</option>
                     </select>
-                </div> 
+                </div>
                 <div class="control-group row-fluid">
                     <label class="span12">Расселение</label>
                     <input class="span12 emPlace" type="text">
-                </div> 
+                </div>
                 <div class="control-group row-fluid">
                     <label class="span12">Взнос</label>
                     <input class="span12 emPaid" type="text">
-                </div>             
+                </div>
                 <div class="control-group row-fluid prepaidBlock">
                     <label class="span12">Предварительная оплата</label>
                     <input class="span12 emPrepaid" disabled type="text">
@@ -103,7 +105,7 @@
         </div>
         <div style="margin-left:30px">
             <hr/>
-            <p class="text-info">Будут изменены только заполненные поля</p>
+            <p class="text-info" style="color: rgba(255, 0, 0, 0)">Будут изменены только заполненные поля</p>
         </div>
     </div>
     <div class="modal-footer">

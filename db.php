@@ -903,7 +903,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
         e.need_passport, e.need_tp, reg.admin_comment, reg.comment, e.list_name, reg.list_name as reg_list_name,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
-        reg.prepaid, reg.attended, reg.aid_paid, reg.paid, reg.service_key, reg.coord, reg.contr_amount, reg.currency,
+        reg.prepaid, reg.attended, reg.aid_paid, reg.paid, reg.service_key, reg.status_key, reg.coord, reg.contr_amount, reg.currency,
         reg.visa, reg.note, reg.flight_num_arr, reg.flight_num_dep, m.english, m.birth_date,
         m.tp_name, m.tp_num, m.tp_auth, m.tp_date, m.address, reg.avtomobile, reg.avtomobile_number,
         (SELECT rg.name FROM region rg WHERE rg.key=l.region_key) as region,
@@ -917,6 +917,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
     INNER JOIN member m ON m.locality_key = l.key
     INNER JOIN reg ON reg.member_key = m.key
     LEFT JOIN service srv ON srv.key = reg.service_key
+    LEFT JOIN status stts ON stts.key = reg.status_key
     INNER JOIN event e ON e.key = reg.event_key
     LEFT JOIN document d ON d.key = m.document_key
     LEFT JOIN category ca ON m.category_key = ca.key
@@ -931,7 +932,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
         e.need_passport, e.need_tp, reg.admin_comment, reg.comment, e.list_name, reg.list_name as reg_list_name,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
-        reg.prepaid, reg.attended, reg.aid_paid, reg.paid, reg.service_key, reg.coord, reg.contr_amount, reg.currency,
+        reg.prepaid, reg.attended, reg.aid_paid, reg.paid, reg.service_key, reg.status_key, reg.coord, reg.contr_amount, reg.currency,
         reg.visa, reg.note, reg.flight_num_arr, reg.flight_num_dep, m.english, m.birth_date,
         m.tp_name, m.tp_num, m.tp_auth, m.tp_date, m.address, reg.avtomobile, reg.avtomobile_number,
         (SELECT rg.name FROM region rg WHERE rg.key=l.region_key) as region,
@@ -942,6 +943,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
     INNER JOIN member m ON m.key = reg.member_key
     LEFT JOIN locality l ON l.key = m.locality_key
     LEFT JOIN service srv ON srv.key = reg.service_key
+    LEFT JOIN status stts ON stts.key = reg.status_key
     INNER JOIN event e ON e.key = reg.event_key
     LEFT JOIN document d ON d.key = m.document_key
     LEFT JOIN category ca ON m.category_key = ca.key
@@ -1509,7 +1511,7 @@ function db_setEventMember ($adminId, $get, $post){
 }
 
 function db_setEventMembers ($adminId, $eventId, $memberIds, $arr_date, $arr_time, $dep_date, $dep_time,
-                             $accom, $transport, $parking, $coord, $service, $mate)
+                             $accom, $transport, $status, $coord, $service, $mate)
 {
     global $db;
     db_checkSync ();
@@ -1527,7 +1529,7 @@ function db_setEventMembers ($adminId, $eventId, $memberIds, $arr_date, $arr_tim
     if ($dep_time) db_query ("UPDATE reg SET dep_time='".$db->real_escape_string($dep_time).$ending);
     if (is_numeric($accom)) db_query ("UPDATE reg SET accom='".$db->real_escape_string($accom).$ending);
     if (is_numeric($transport)) db_query ("UPDATE reg SET transport='".$db->real_escape_string($transport).$ending);
-    if (is_numeric($parking)) db_query ("UPDATE reg SET parking='".$db->real_escape_string($parking).$ending);
+    if (is_numeric($status)) db_query ("UPDATE reg SET status_key='".$db->real_escape_string($status).$ending);
     if (is_numeric($coord)) db_query ("UPDATE reg SET coord='".$db->real_escape_string($coord).$ending);
     if (is_numeric($service)) db_query ("UPDATE reg SET service_key='".$db->real_escape_string($service).$ending);
     if (is_numeric($mate)) db_query ("UPDATE reg SET mate_key='".$db->real_escape_string($mate).$ending);

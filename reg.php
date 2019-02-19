@@ -1092,7 +1092,7 @@
             var dataItems = 'data-accom="'+m.accom+'" data-transport="'+m.transport+'" data-male="'+m.male+'" '+
                     'data-parking="'+m.parking+'" data-regstate="'+m.regstate+'" data-prepaid="'+m.prepaid+'" data-locality="'+he(m.locality)+'"' +
                     'data-attended="'+m.attended+'" data-aid_paid="'+(m.aid_paid || 0)+'" data-paid="'+m.paid+'" '+
-                    'data-place="'+(m.place || "") +'" data-service="'+m.service_key+'" data-coord="'+m.coord+'" data-mate="'+m.mate_key+'" '+
+                    'data-place="'+(m.place || "") +'" data-service="'+m.service_key+'" data-status="'+m.status_key+'" data-coord="'+m.coord+'" data-mate="'+m.mate_key+'" '+
                     'data-aid_amount="'+m.contr_amount+'" data-comment="'+he(m.admin_comment.length > 0 ? 1 : 0)+'" data-currency="'+(m.currency || '') +'"';
             // console.log(m);
 
@@ -1579,10 +1579,10 @@
                 dep_time: parseTime ($(" .beDepTime").val()),
                 accom: $(" .beAccom").val() == "_none_" ? "" : $(" .beAccom").val(),
                 transport: $(" .beTransport").val() == "_none_" ? "" : $(" .beTransport").val(),
-                parking: $(" .beParking").val() == "_none_" ? "" : $(" .beParking").val(),
+                status: $(" .beStatus").val() == "_none_" ? "" : $(" .beStatus").val(),
                 service: $(" .beService").val() == "_none_" ? "" : $(" .beService").val(),
                 coord: $(" .beCoord").val(),
-                mate : $(" .beMate").val() == "_none_" ? "" : $(" .beMate").val(),
+                mate: $(" .beMate").val() == "_none_" ? "" : $(" .beMate").val(),
             }).done (function(data) {
                 refreshEventMembers (eventId, data.members, data.localities);
                 $('#modalBulkEditor').modal('hide');
@@ -1705,9 +1705,9 @@
         if ($(that).hasClass('disabled')) return;
         $("#bulkEditorEventTitle").text($('#events-list option:selected').text());
 
-        var arr_date=null, arr_time=null, dep_date=null, dep_time=null, accom=null, trans=null, parking=null,
+        var arr_date=null, arr_time=null, dep_date=null, dep_time=null, accom=null, trans=null,
             service_key =null, coord = null, mate = null, memberId = null,
-            attended = null, place = null, aidneed=null, aidpaid=null, prepaid=null, paid = null, currency = null;
+            attended = null, place = null, aidneed=null, aidpaid=null, prepaid=null, paid = null, currency = null, status_key = null;
 
         $("div.tab-pane.active tr[class|='regmem'] input[type='checkbox']:checked").parents ("tr").each (function(){
             if (arr_date===null) arr_date=$(this).find(".arrival").data('date');
@@ -1728,8 +1728,8 @@
             if (trans===null) trans=$(this).data('transport');
             else if (trans!=$(this).data('transport')) trans="_none_";
 
-            if (parking===null) parking=$(this).data('parking');
-            else if (parking!=$(this).data('parking')) parking="_none_";
+            if (status_key===null) status_key=$(this).attr('data-status');
+            else if (status_key!=$(this).data('data-status')) status_key="_none_";
 
             if (service_key===null) service_key=$(this).attr('data-service');
             else if (service_key !== $(this).attr('data-service')) service_key="_none_";
@@ -1782,10 +1782,10 @@
         $(".beDepDate").val(formatDate(dep_date)).keyup();
         $(".beDepTime").val(formatTime(dep_time));
         $(".beAccom").val(accom).change();
-        $(".beParking").val(parking).change();
         $(".beTransport").val(trans).change();
         $(".beService").val(service_key);
         $(".beCoord").val(coord);
+        $(".beStatus").val(status_key);
 
         if ($(".beMate").length){
             var emMateHtml = "<option value='_none_' selected>&nbsp;</option>";
