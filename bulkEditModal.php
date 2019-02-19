@@ -3,7 +3,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h4 id="bulkEditorEventTitle"></h4>
-        <p class="text-info">В бланках регистрации будут изменены <b>только заполненные в этом окне</b> поля</p>
+        <p class="text-info">В бланках регистрации будут изменены&nbsp;<b>только заполненные в этом окне</b>&nbsp;поля</p>
     </div>
     <div class="modal-body">
         <div class="controls">
@@ -65,7 +65,7 @@
                         <?php foreach (db_getStatuses() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
                     </select>
                 </div>
-            </div>            
+            </div>
             <div class="control-group row-fluid block-transport">
                 <label class="span12 beLblTransport"><span class="transportText"></span><a href="#" class="transportHint" rel="tooltip" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
                 <div class="control-group row-fluid beGrpTransport">
