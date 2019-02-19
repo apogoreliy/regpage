@@ -3,7 +3,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h4 id="bulkEditorEventTitle"></h4>
-        <p class="text-info">В бланках регистрации будут изменены&nbsp;<b>только заполненные в этом окне</b>&nbsp;поля</p>
+        <p class="text-info"><b>В бланках регистрации будут изменены только заполненные в этом окне поля</b></p>
     </div>
     <div class="modal-body">
         <div class="controls">
