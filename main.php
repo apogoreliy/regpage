@@ -1198,11 +1198,11 @@ $(document).ready(function(){
             });
         }
     });
-
+  */
     $('#btnCancelChanges').click (function (){
         $("#modalEditMember").addClass('hide').modal('hide');
     });
-    */
+
 
     $("#btnDoSendEventMsg").click (function (){
         if ($(this).hasClass('disabled')) return;
