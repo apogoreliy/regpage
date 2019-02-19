@@ -167,7 +167,7 @@
 <div class="controls ">
     <div class="control-group row-fluid " style="width: 48%;">
         <label class="span12">Дата приезда<sup>*</sup> <a href="#" class="tooltipArrDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-        <input class="span12 emArrDate datepicker-form" readonly type="text" maxlength="5" placeholder="ДД.ММ" valid="required,ddmm">
+        <input class="span12 emArrDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required,ddmm">
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
         <label class="span12">Время <a href="#" id="tooltipArr" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Время приезда к месту проведения конференции (с учётом времени на дорогу от вокзала/аэропорта)" tabindex="-1"><i class="icon-question-sign"></i></a></label>
@@ -175,7 +175,7 @@
     </div>
     <div class="control-group row-fluid " style="width: 48%;">
         <label class="span12">Дата отъезда<sup>*</sup> <a href="#" class="tooltipDepDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-        <input class="span12 emDepDate datepicker-form" readonly type="text" maxlength="5" placeholder="ДД.ММ" valid="required,ddmm">
+        <input class="span12 emDepDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required,ddmm">
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
         <label class="span12">Время <a href="#" id="tooltipDep" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Время отъезда от места проведения конференции, а не от вокзала" tabindex="-1"><i class="icon-question-sign"></i></a></label>
@@ -411,3 +411,16 @@ if(!$isGuest && !$indexPage){
 <?php } ?>
 </div>
 <div style="clear: both;"></div>
+<script>
+//ver 5.0.8
+$(document).ready(function(){
+  $(".emLocality").change(function() {
+      if ($(".emLocality").val() == '001192') {
+        $(".emCategory").val('FT');
+      } else if ($(".emCategory").val() == 'FT' && $(".emLocality").val() != '001192') {
+        $(".emCategory").val('');
+      }
+  });
+});
+//end
+</script>
