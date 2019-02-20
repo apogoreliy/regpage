@@ -183,7 +183,6 @@ $(document).ready(function(){
 
     var isTabletWidth = $(document).width() < 980;
 
-
     $('.datepicker').datepicker({
         language: 'ru',
         autoclose : true,
@@ -720,12 +719,17 @@ function htmlListItemsByRegstate (regstate, attended){
 }
 
 function handleFieldsByAdminRole(adminRole, isEventPrivate, regstate){
+    $("#forAdminRegNotice").text('');
+    $("#btnDoRegisterMember").hide ();
     if(adminRole === 0){
         $(".role-send-msg, .role-admin, .role-edit").css('display','none');
     }
     else if(adminRole === 1 && isEventPrivate){
         $(".role-send-msg, .role-admin").css('display','none');
-        $(".role-edit").css('display','inline-block');
+        $(".role-edit").css('display','inline-block');        
+        if (!regstate) {
+          $("#forAdminRegNotice").text('Заявку на регистрацию на это мероприятие отправит ответственный за регистрацию в вашем регионе.');
+        }
     }
     else{
         $(".role-send-msg, .role-admin, .role-edit").css('display','inline-block');

@@ -280,6 +280,7 @@
         <button class="btn btn-primary disable-on-invalid role-admin" id="btnDoRegisterMember"><i class="icon-ok icon-white"></i> Зарегистрировать</button>
         <button class="btn btn-info disable-on-invalid role-edit" id="btnDoSaveMember">Сохранить</button>
         <button class="btn close-form" data-dismiss="modal" aria-hidden="true">Отменить</button>
+        <p id="forAdminRegNotice" style="color: red; font-style: bold; font-size: 16px; padding-top: 15px; text-align: center;"></p>
     </div>
 </div>
 
@@ -753,8 +754,7 @@
     function setAdminRole (memberId){
         var eventId = $("#events-list").val();
         var adminRole = '<?php echo db_getAdminRole($memberId); ?>';
-        var isEventPrivate = parseInt($("#eventTab-"+eventId).attr("data-private")) === 1;
-
+        var isEventPrivate = parseInt($("#eventTab-"+eventId).attr("data-private")) === 1;        
         if(memberId){
             $.post('/ajax/get.php?get_regstate', { eventAdmin:eventId, memberKey: memberId})
             .done (function(data) {
@@ -1154,7 +1154,7 @@
         var elemList = $("tr[class|='regmem']");
         elemList.unbind('click');
         elemList.click (function (){
-            var memberId = $(this).attr ('class').replace(/^regmem-/,''),
+            var memberId = $(this).attr ('class').replace(/^regmem-/,'');
                 eventId = $("#events-list").val();
 
             $.getJSON('/ajax/get.php', { member: memberId, event: eventId})
