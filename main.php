@@ -664,7 +664,7 @@ $(document).ready(function(){
                 var regstateText='', regstateClass = '';
                 if(event.regstate_key && event.regstate_key !== 'null'){
                     switch (event.regstate_key){
-                        case '03': regstateText='ожидание отмены'; regstateClass='danger';break;
+                        case '03': regstateText='ожидание отмены'; regstateClass='warning';break;
                         case '04': regstateText='регистрация подтверждена'; regstateClass='success';break;
                         case '05': regstateText='регистрация отклонена'; regstateClass='danger';break;
                         default : regstateText='ожидание подтверждения'; regstateClass='warning';break;
@@ -1117,7 +1117,7 @@ $(document).ready(function(){
         $('#modalRejectMember').modal('hide');
         $.getJSON('/ajax/event.php', { eventIdReject: window.currentEventId})
         .done (function(){
-            window.location = '/';
+            window.location = '/main';
         });
     });
 
