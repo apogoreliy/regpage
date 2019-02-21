@@ -898,7 +898,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
         m.cell_phone as cell_phone, reg.arr_date, reg.arr_time, reg.dep_date, reg.dep_time, reg.regstate_key as regstate,
         (reg.changed>0 or m.changed>0) as changed, m.admin_key as mem_admin_key, e.web,
         reg.admin_key as reg_admin_key, (SELECT name FROM member m2 WHERE m2.key=m.admin_key) as mem_admin_name, m.male,
-        (SELECT name FROM member m3 WHERE m3.key=reg.admin_key) as reg_admin_name, reg.send_result, srv.name as service,
+        (SELECT name FROM member m3 WHERE m3.key=reg.admin_key) as reg_admin_name, reg.send_result, stts.name as status, srv.name as service,
         IF (reg.attended, IFNULL(reg.place,''), null) as place, reg.accom, reg.transport, reg.parking, reg.mate_key,
         e.need_passport, e.need_tp, reg.admin_comment, reg.comment, e.list_name, reg.list_name as reg_list_name,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
@@ -927,7 +927,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
         m.cell_phone as cell_phone, reg.arr_date, reg.arr_time, reg.dep_date, reg.dep_time, reg.regstate_key as regstate,
         (reg.changed>0 or m.changed>0) as changed, m.admin_key as mem_admin, e.web,
         reg.admin_key as reg_admin, (SELECT name FROM member m2 WHERE m2.key=m.admin_key) as mem_admin_name, m.male,
-        (SELECT name FROM member m3 WHERE m3.key=reg.admin_key) as reg_admin_name, reg.send_result, srv.name as service,
+        (SELECT name FROM member m3 WHERE m3.key=reg.admin_key) as reg_admin_name, reg.send_result, stts.name as status, srv.name as service,
         IF (reg.attended, IFNULL(reg.place,''), null) as place, reg.accom, reg.transport, reg.parking, reg.mate_key,
         e.need_passport, e.need_tp, reg.admin_comment, reg.comment, e.list_name, reg.list_name as reg_list_name,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
@@ -994,11 +994,11 @@ function db_getDashboardMembersService ($eventId, $attended, $regstate, $sortFie
         m.email as email, m.cell_phone as cell_phone, m.birth_date,
         (SELECT name FROM member m2 WHERE m2.key=m.admin_key) as mem_admin_name,
         m.admin_key as mem_admin_key, m.male, m.document_num as document_num,
-        m.document_auth as document_auth, m.document_date as document_date,
+        m.document_auth as document_auth, m.document_date as document_date, stts.name as status,
         s.name as service, reg.attended, reg.prepaid, reg.aid_paid, reg.paid,
         (SELECT name FROM member m3 WHERE m3.key=reg.admin_key) as reg_admin_name,
         IF (reg.attended, IFNULL(reg.place,''), null) as place, reg.accom,
-        reg.transport, reg.parking, reg.service_key, reg.admin_key, reg.arr_date,
+        reg.transport, reg.parking, reg.service_key, reg.status_key, reg.admin_key, reg.arr_date,
         reg.arr_time, reg.dep_date, reg.dep_time, reg.regstate_key as regstate,
         (reg.changed>0 or m.changed>0) as changed, reg.contr_amount, reg.currency, e.list_name, reg.list_name as reg_list_name,
         reg.coord, reg.send_result, reg.admin_key as reg_admin_key, reg.admin_comment, reg.comment,
@@ -1015,6 +1015,7 @@ function db_getDashboardMembersService ($eventId, $attended, $regstate, $sortFie
         INNER JOIN reg ON reg.member_key = m.key
         INNER JOIN event e ON e.key=reg.event_key
         LEFT JOIN service s ON s.key = reg.service_key
+        LEFT JOIN status stts ON stts.key = reg.status_key
         LEFT JOIN document d ON d.key = m.document_key
         LEFT JOIN category ca ON m.category_key = ca.key
         WHERE reg.event_key=$eventId $searchText $_attended $_regstate $_service $_coord $_locality
@@ -1023,11 +1024,11 @@ function db_getDashboardMembersService ($eventId, $attended, $regstate, $sortFie
         m.email as email, m.cell_phone as cell_phone, m.birth_date,
         (SELECT name FROM member m2 WHERE m2.key=m.admin_key) as mem_admin_name,
         m.admin_key as mem_admin_key, m.male, m.document_num as document_num,
-        m.document_auth as document_auth, m.document_date as document_date,
+        m.document_auth as document_auth, m.document_date as document_date, stts.name as status,
         s.name as service, reg.attended, reg.prepaid, reg.aid_paid, reg.paid,
         (SELECT name FROM member m3 WHERE m3.key=reg.admin_key) as reg_admin_name,
         IF (reg.attended, IFNULL(reg.place,''), null) as place, reg.accom,
-        reg.transport, reg.parking, reg.service_key, reg.admin_key, reg.arr_date,
+        reg.transport, reg.parking, reg.service_key, reg.status_key, reg.admin_key, reg.arr_date,
         reg.arr_time, reg.dep_date, reg.dep_time, reg.regstate_key as regstate,
         (reg.changed>0 or m.changed>0) as changed, reg.contr_amount, reg.currency, e.list_name, reg.list_name as reg_list_name,
         reg.coord, reg.send_result, reg.admin_key as reg_admin_key, reg.admin_comment, reg.comment,
@@ -1041,6 +1042,7 @@ function db_getDashboardMembersService ($eventId, $attended, $regstate, $sortFie
         INNER JOIN reg ON reg.member_key = m.key
         INNER JOIN event e ON e.key=reg.event_key
         LEFT JOIN service s ON s.key = reg.service_key
+        LEFT JOIN status stts ON stts.key = reg.status_key
         LEFT JOIN document d ON d.key = m.document_key
         LEFT JOIN category ca ON m.category_key = ca.key
         WHERE ( m.locality_key IS NULL OR m.locality_key ='' ) AND reg.event_key=$eventId $searchText $_attended $_regstate $_service $_coord $_locality)
