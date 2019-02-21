@@ -982,7 +982,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
             if(((localityFilter === '_all_' || localityFilter === undefined) && categoryFilter === '_all_' && text === '') ||
 
                 (
-                    (in_array(memberLocality, localityList) || (localityFilter === undefined && localityList.length === 0))  &&
+                    (in_array(memberLocality, localityList) || localityFilter === '_all_' || (localityFilter === undefined && localityList.length === 0))  &&
                     (memberCategory === categoryFilter || categoryFilter === '_all_')) && (memberName.search(text) !== -1))
                 {
 
