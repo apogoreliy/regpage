@@ -166,9 +166,9 @@
                                 ?>
                             <th class="hide-tablet">Телефон</th>
 
-                            <?php if(in_array(4, $user_settings)) {?>
-                            <th class="hide-tablet"><a id="sort-service" href='#' title="сортировать">Служение</a>&nbsp;<i class="<?php echo $sort_field=='serving' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                            <?php } ?>
+
+                            <th class="hide-tablet"><a id="sort-status" href='#' title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='status' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+
                             <th>Даты</th>
                             <th><a id="sort-regstate" href="#" title="сортировать">Состояние</a>&nbsp;<i class="<?php echo $sort_field=='regstate' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         </tr>
@@ -754,7 +754,7 @@
     function setAdminRole (memberId){
         var eventId = $("#events-list").val();
         var adminRole = '<?php echo db_getAdminRole($memberId); ?>';
-        var isEventPrivate = parseInt($("#eventTab-"+eventId).attr("data-private")) === 1;        
+        var isEventPrivate = parseInt($("#eventTab-"+eventId).attr("data-private")) === 1;
         if(memberId){
             $.post('/ajax/get.php?get_regstate', { eventAdmin:eventId, memberKey: memberId})
             .done (function(data) {
@@ -1117,7 +1117,7 @@
                 (in_array(3, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.email+'</span>' : '') +
                 '</td>' +
 
-                (in_array(4, window.user_settings) ? '<td class="style-serv hide-tablet">' + (m.service ? he(m.service) : '') + ( m.coord == '1' ? '<div>Координатор</div>' : '') + '</td>' : '') +
+               '<td class="style-serv hide-tablet"><div>'+ (m.status ? he(m.status) : '') +'<br>'+'<span class="user_setting_span">'+(m.service ? he(m.service) : '')+ '</span>' + '</div>' + ( m.coord == '1' ? '<div>Координатор</div>' : '') + '</td>' +
 
                 '<td class="style-date"><span class="arrival" data-date="' + he(m.arr_date) + '" data-time="' + he(m.arr_time) + '">' + formatDDMM( m.arr_date) + '</span> - '+
                 '<span class="departure" data-date="' + he(m.dep_date) + '" data-time="' + he(m.dep_time) + '">'+ formatDDMM(m.dep_date) + '</span><br>'+htmlPlace + ' ' +htmlPlaceFlag+'</td>'+
@@ -1137,7 +1137,7 @@
                 '<div><span>'+ he(m.cell_phone) + '</span>'+ (m.cell_phone && m.email ? ', ' :' ' )+
                 (in_array(3, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.email+'</span>' : '') +
                 '</div>'+
-                (in_array(4, window.user_settings) ? '<div><span>' + he(m.service) + '</span></div>' : '') +
+                '<div><span>' + (m.status ? he(m.status) : '') + '<br>'+ (m.service ? he(m.service) : '') + '</span></div>' +
                 '<div><span class="arrival" data-date="' + he(m.arr_date) + '" data-time="' + he(m.arr_time) + '">' +
                 formatDDMM(m.arr_date) + '</span>'+
                 '<span class="departure" data-date="' + he(m.dep_date) + '" data-time="' + he(m.dep_time) + '">'+ ' - '+formatDDMM(
