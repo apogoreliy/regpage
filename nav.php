@@ -1,5 +1,5 @@
-<?php 
-$s = $_SERVER["SCRIPT_NAME"]; 
+<?php
+$s = $_SERVER["SCRIPT_NAME"];
 
 $h = ($_SERVER['PHP_SELF']);
 $res = '';
@@ -47,15 +47,15 @@ switch ($h) {
 }
 ?>
 <div class="navbar navbar-inverse navbar-fixed-top">
-  <div class="navbar-inner">    
-    <div class="container">               
-        <span class="show-name-list"><?php echo $res; ?></span>          
+  <div class="navbar-inner">
+    <div class="container">
+        <span class="show-name-list"><?php echo $res; ?></span>
         <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
-        </button>        
-       
+        </button>
+
         <div class="btn-group" style="float: right; margin-right: 10px;">
             <button class="btn dropdown-toggle fa fa-question fa-lg" data-toggle="dropdown"></button>
             <ul class="dropdown-menu pull-right">
@@ -64,7 +64,7 @@ switch ($h) {
                 $sortField = isset ($_COOKIE['sort_field_reference']) ? $_COOKIE ['sort_field_reference'] : 'name';
                 $sortType = isset ($_COOKIE['sort_type_reference']) ? $_COOKIE ['sort_type_reference'] : 'asc';
                 $references = db_getReferences($sortField, $sortType);
-            
+
                 $page = explode('.', substr($_SERVER['PHP_SELF'], 1))[0];
                 $countReference = 0;
 
@@ -83,20 +83,20 @@ switch ($h) {
         </div>
 
         <!-- <span class="btn fa fa-envelope-o fa-lg send-message-support-phone" style="float: right;" data-toggle="modal" data-target="#messageAdmins" title="Отправить сообщение службе поддержки" aria-hidden="true"></span> -->
-        <?php if(strpos ($s,"/reg")!==FALSE){ ?> 
+        <?php if(strpos ($s,"/reg")!==FALSE){ ?>
             <span class="btn fa fa-envelope fa-lg send-message-regteam" tabindex="-1" style="float: right; margin-right: 10px;" title="Отправить сообщение команде регистрации" data-toggle="modal" data-target="#modalEventSendMsg"></span>
-        <?php } ?>        
-        <div class="nav-collapse collapse">            
-            <ul class="nav">   
-            <?php 
+        <?php } ?>
+        <div class="nav-collapse collapse">
+            <ul class="nav">
+            <?php
 
-            if(!isset($isGuest) && isset($memberId)){ 
+            if(!isset($isGuest) && isset($memberId)){
                 echo "<li ";
                 if (strpos ($s,"/main")!==FALSE) echo 'class="active"';
                 // if (strpos ($s,"/index")!==FALSE) echo 'class="active"';
                 // echo '><a href="/">Главная</a></li>';
                 echo '><a href="/main">Главная</a></li>';
-            } 
+            }
 
             if(!isset($isGuest) && db_isAdmin($memberId) || db_hasAdminFullAccess($memberId)) {
                 echo '<li';
@@ -109,14 +109,14 @@ switch ($h) {
                 if (strpos ($s,"/members")!==FALSE) {echo " class='active'";}
                 echo"><a href='/members'>Список</a></li>";
             }
-            
+
             if(!isset($isGuest) && db_isAdmin($memberId) || db_hasAdminFullAccess($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/youth")!==FALSE) {echo " class='active'";}
                 echo"><a href='/youth'>Молодёжь</a></li>";
             }
 
-            if((!isset($isGuest) && db_isAdmin($memberId)) || db_isAvailableMeetingPage($memberId)) {
+            if((!isset($isGuest) && db_isAdmin($memberId)) || db_hasAdminFullAccess($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/meetings")!==FALSE ) {echo " class='active'";}
                 echo"><a href='/meetings'>Собрания</a></li>";
@@ -127,7 +127,7 @@ switch ($h) {
                 if (strpos ($s,"/list")!==FALSE){echo " class='active'";}
                 echo"><a href='/list'>Ответственные</a></li>";
             }
-            
+
             /*if(isset($memberId) && $memberId == '000008601' && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/statistic")!==FALSE) {echo " class='active'";}
@@ -145,24 +145,24 @@ switch ($h) {
                 echo '<li';
                 if (strpos ($s,"/links")!==FALSE) {echo " class='active'";}
                 echo"><a href='/links'>Ссылки</a></li>";
-            } 
-            
+            }
+
             if(isset($memberId) && ($memberId == '000008601' || $memberId == '000001679')){
-          
+
                 echo '<li';
                 if (strpos ($s,"/reference")!==FALSE) {echo " class='active'";}
                 echo"><a href='/reference'>Справка</a></li>";
-            }                        
+            }
 
             if(!isset($isGuest) && isset($memberId)){
                 echo '<li class="divider-vertical"></li>';
-            } 
+            }
 
             if (!isset($isGuest) && $memberId) {
                 list($name, $email) = db_getMemberNameEmail($memberId);
 
                 $_name = '';
-                
+
                 if($name){
                     $nameArr = explode(' ', $name);
                     $_name  = $nameArr[0].' '.( $nameArr[1] ? strtoupper(mb_substr($nameArr[1], 0, 1, 'utf-8')).'. ' : '' ).' '.($nameArr[2] ? strtoupper(mb_substr($nameArr[2], 0, 1, 'utf-8')).'. ' : '');
@@ -170,9 +170,9 @@ switch ($h) {
                 else{
                     $_name = $email;
                 }
-                
+
                 echo '<li class="btn-group">
-                        <a class="user-name-field dropdown-toggle" data-toggle="dropdown"'; 
+                        <a class="user-name-field dropdown-toggle" data-toggle="dropdown"';
                             //echo count(db_getAdminAccess ($memberId))>0 ? 'title="Область регистрации: '.htmlspecialchars (implode (", ", db_getAdminAccess ($memberId))).'"' : '';
                             echo 'href="#"><span class="user-name">'.$_name.'</span>
                             <span class="caret"></span>
@@ -180,37 +180,37 @@ switch ($h) {
                         <ul class="dropdown-menu">
                             <li';
                         if (strpos ($s,'/profile')!==FALSE) echo ' class="active"';
-                        echo '><a href="/profile">Профиль</a></li>'; 
-                        
+                        echo '><a href="/profile">Профиль</a></li>';
+
                         $access_areas = db_getAdminAccess ($memberId);
 
                         if($access_areas && count($access_areas) > 0){
                             echo '<li';
                             if (strpos ($s,'/settings')!==FALSE) echo ' class="active"';
-                            echo '><a href="/settings">Настройки</a></li>';   
-                        }                                                
+                            echo '><a href="/settings">Настройки</a></li>';
+                        }
                         echo'<li><a href="/" class="logout">Выйти</a></li>
                         </ul>
                     </li>';
             }
             else {
                 echo '<li ';
-                if (strpos ($s,"/index")!==FALSE) echo 'class="active"'; 
-                echo '><a href="/index">Войти</a></li>';       
+                if (strpos ($s,"/index")!==FALSE) echo 'class="active"';
+                echo '><a href="/index">Войти</a></li>';
                 echo '<li ';
-                if (strpos ($s,"/signup")!==FALSE) echo 'class="active"'; 
-                echo '><a href="/signup">Создать учётную запись</a></li>';   
+                if (strpos ($s,"/signup")!==FALSE) echo 'class="active"';
+                echo '><a href="/signup">Создать учётную запись</a></li>';
             }
             ?>
         </ul>
-      </div><!--/.nav-collapse -->            
+      </div><!--/.nav-collapse -->
       <div class='notifications center'></div>
     </div>
   </div>
 
 </div>
 <script>
-    $('.logout').click(function(e){        
+    $('.logout').click(function(e){
         e.preventDefault();
 
         var memberId = '<?php echo $memberId; ?>';
@@ -226,12 +226,12 @@ switch ($h) {
     });
 
     $('.btn-navbar').click(function(){
-        if($('.nav-collapse').hasClass('in')){            
+        if($('.nav-collapse').hasClass('in')){
             $('.show-name-list').css('display','inline');
-        }   
+        }
         else $('.show-name-list').css('display','none');
     });
-    
+
     $(".send-message-regteam").click (function (){
         $("#sendMsgEventName").text ($('#events-list option:selected').text());
     });
