@@ -361,6 +361,19 @@ include_once "modals.php";
 			}
 		});
 	}
+	$(".remove-member-reason").click(function(e){
+			e.stopPropagation();
+			e.preventDefault();
+			var reason = '';
+
+			if($(this).hasClass('empty-info')){
+					reason = 'Информация отсутствует';
+			}
+			else if($(this).hasClass('outside')){
+					reason = 'Не в церковной жизни';
+			}
+			$(".removeMemberReason").val(reason);
+	});
 
 	function handleMember(member, active, reason, searchText) {
 		$.getJSON('/ajax/youth.php', {
