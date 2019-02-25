@@ -554,7 +554,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                 '<td>' + age + '</td>' +
                 '<td><input type="checkbox" class="check-meeting-attend" '+ (m.attend_meeting == 1 ? "checked" : "") +' /></td>' +
                 '<td>' + htmlChanged + htmlEditor + '</td>' +
-                '<td><i class="'+(m.active==0?'icon-circle-arrow-up':'icon-trash')+' icon-black" title="'+(m.active==0?'Добавить в список':'Удалить из списка')+'"/></td>' +
+  <?php if (db_getAdminRole($memberId) != 0) { ?> '<td><i class="'+(m.active==0?'icon-circle-arrow-up':'icon-trash')+' icon-black" title="'+(m.active==0?'Добавить в список':'Удалить из списка')+'"/></td>' <?php } ?> +
                 '</tr>'
             );
 
