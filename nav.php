@@ -122,7 +122,7 @@ switch ($h) {
                 echo"><a href='/meetings'>Собрания</a></li>";
             }
 
-            if(!isset($isGuest) && count(db_getAdminsList())>0 && db_getAdminRole($memberId)>0) {
+            if((!isset($isGuest) && db_isAdmin($memberId)) || db_hasAdminFullAccess($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/list")!==FALSE){echo " class='active'";}
                 echo"><a href='/list'>Ответственные</a></li>";
@@ -235,4 +235,12 @@ switch ($h) {
     $(".send-message-regteam").click (function (){
         $("#sendMsgEventName").text ($('#events-list option:selected').text());
     });
+// Give me Admin Role 0   ver 5.1.8
+    function setAdminRole_0(element1, element2) {
+        var adminRole = parseInt('<?php echo db_getAdminRole($memberId); ?>');
+        if (adminRole===0) {
+          $ (element1).hide ();
+          $ (element2).hide ();
+        }
+    }
 </script>

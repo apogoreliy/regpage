@@ -195,7 +195,7 @@ include_once "modals.php";
 		window.user_settings = "<?php echo $userSettings; ?>".split(',');
 
 		loadYouthList();
-
+		setAdminRole_0('.add-member','#btnDoSaveMember');
 		$(".clear-college").click(function(e){
 			e.stopPropagation();
 			$(".emCollege").val('');

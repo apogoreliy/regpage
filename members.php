@@ -250,6 +250,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
 <script>
     window.user_settings = "<?php echo $userSettings; ?>".split(',');
     get_localities();
+    setAdminRole_0('.add-member','#btnDoSaveMember');
 
     function get_localities(){
         $.get('/ajax/members.php?get_localities')
@@ -1025,7 +1026,6 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
         $ (".emName").removeAttr ("disabled");
         setTimeout(function() {$(".emName").focus();}, 1000);
     });
-
 </script>
 
 <?php
