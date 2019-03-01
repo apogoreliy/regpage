@@ -52,14 +52,18 @@ elseif(isset($_GET['get_member_localities'])){
     echo json_encode(["localities"=>db_getAdminLocalities ($adminId)]);
     exit();
 }
+elseif(isset($_GET['get_member_localities_Not_Reg_Tbl'])){
+    echo json_encode(["localities"=>db_getAdminLocalitiesNotRegTbl ($adminId)]);
+    exit();
+}
 elseif(isset($_GET['get_localities'])){
-    echo json_encode(["localities"=>db_isAdminRespForReg($adminId, $_POST['event']) ? db_getLocalities() : db_getAdminLocalities ($adminId)]);
+    echo json_encode(["localities"=>db_isAdminRespForReg($adminId, $_POST['event']) ? db_getLocalities() : db_getAdminLocalitiesNotRegTbl ($adminId)]);
     exit();
 }
 elseif(isset($_GET['get_members'])){
     echo json_encode([
         "members"=> db_getAdminActiveMembers(
-                db_isAdminRespForReg($adminId, $_POST['event']) ? null : $adminId, 
+                db_isAdminRespForReg($adminId, $_POST['event']) ? null : $adminId,
                 isset($_POST['locId']) ? $_POST['locId'] : null,
                 isset($_POST['catId']) ? $_POST['catId'] : null,
                 isset($_POST['text']) ? $_POST['text'] : null,
@@ -83,8 +87,8 @@ elseif (isset ($_GET ['member']) && isset ($_GET ['event']))
     if ($member)
     {
         echo json_encode(array (
-            "eventmember"=>$member, 
-            "localities"=>db_isAdminRespForReg($adminId, $_GET['event']) ? db_getLocalities() : db_getAdminLocalities ($adminId) ));
+            "eventmember"=>$member,
+            "localities"=>db_isAdminRespForReg($adminId, $_GET['event']) ? db_getLocalities() : db_getAdminLocalitiesNotRegTbl ($adminId) ));
         exit;
     }
     else{
@@ -97,8 +101,8 @@ elseif (isset ($_GET ['member']))
     if ($member)
     {
         echo json_encode(array (
-            "member"=>$member, 
-            "localities"=>db_getAdminLocalities ($adminId)));
+            "member"=>$member,
+            "localities"=>db_getAdminLocalitiesNotRegTbl ($adminId)));
         exit;
     }
     else
@@ -116,7 +120,7 @@ elseif (isset ($_GET ['memberCheck']) && isset ($_GET ['event']))
     if ($member)
     {
         echo json_encode(array (
-            "eventmember"=>$member, 
+            "eventmember"=>$member,
             "localities"=>db_isAdminRespForReg($adminId, $_GET['event']) ? db_getLocalities() : db_getAdminLocalities ($adminId)));
         exit;
     }
@@ -144,11 +148,11 @@ if (isset ($_GET ['eventId']))
     if ($info)
     {
         echo json_encode(array (
-            "info"=>$info, 
+            "info"=>$info,
             "localities"=>db_isAdminRespForReg($adminId, $_GET['eventId']) ? db_getLocalities() : db_getAdminLocalities ($adminId)));
         exit;
     }
-    else 
+    else
         $error = "Неизвестное мероприятие";
 }
 else
