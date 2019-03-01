@@ -47,18 +47,25 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
             </div>
             <?php if (!$singleCity) { ?>
             <div class="btn-group">
-                <select id="selMemberLocality" class="span3" >
+                <select id="selMemberLocality" class="span2" >
                 </select>
             </div>
             <?php } ?>
             <div class="btn-group">
-                <select id="selMemberCategory" class="span3">
+                <select id="selMemberCategory" class="span2">
                     <option value='_all_' selected <?php echo $selMemberCategory =='_all_' ? 'selected' : '' ?> >Все категории</option>
                     <?php foreach ($categories as $id => $name) {
                         echo "<option value='$id' ". ($id==$selMemberCategory ? 'selected' : '') .">".htmlspecialchars ($name)."</option>";
                     } ?>
                 </select>
             </div>
+            <div class="btn-group">
+    					<select id="selMemberAttendMeeting" class="span2">
+    						<option value='_all_' >Все участники</option>
+    						<option value='1' >Посещают собрания</option>
+    						<option value='0' >Не посещают собрания</option>
+    					</select>
+    				</div>
             <div class="btn-group">
                 <a class="btn dropdown-toggle btnDownloadMembers" data-toggle="dropdown" href="#">
                     <i class="fa fa-download"></i> <span class="hide-name">Скачать</span>
@@ -957,6 +964,11 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
         filterMembers();
     });
 
+    $("#selMemberAttendMeeting").change(function(){
+			setCookie('selAttendMeeting', $(this).val());
+			filterMembers();
+		});
+
     $("#selMemberCategory").change (function (){
         setCookie('selMemberCategory', $(this).val());
         filterMembers();
@@ -966,6 +978,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
         var isTabletMode = $(document).width()<786,
             localityFilter = $("#selMemberLocality").val(),
             categoryFilter = $("#selMemberCategory").val(),
+            attendMeetingFilter = $("#selMemberAttendMeeting").val(),
             text = $('.search-text').val().trim().toLowerCase(),
             filteredMembers = [],
             localityList = [];
@@ -977,14 +990,16 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
         $(".members-list " + ( isTabletMode ? " #membersPhone " : " #members" ) + " tbody tr").each(function(){
             var memberLocality = $(this).attr('data-locality'),
                 memberCategory = $(this).attr('data-category'),
+                attendMeeting = $(this).attr('data-attendance'),
                 memberName = $(this).find('td').first().text().toLowerCase(),
                 memberKey = $(this).attr('data-id');
 
-            if(((localityFilter === '_all_' || localityFilter === undefined) && categoryFilter === '_all_' && text === '') ||
+
+            if(((localityFilter === '_all_' || localityFilter === undefined) && categoryFilter === '_all_' && text === '' && attendMeetingFilter === '_all_') ||
 
                 (
                     (in_array(memberLocality, localityList) || localityFilter === '_all_' || (localityFilter === undefined && localityList.length === 0))  &&
-                    (memberCategory === categoryFilter || categoryFilter === '_all_')) && (memberName.search(text) !== -1))
+                    (memberCategory === categoryFilter || categoryFilter === '_all_') && (attendMeeting === attendMeetingFilter || attendMeetingFilter === '_all_') ) && (memberName.search(text) !== -1))
                 {
 
                 $(this).show();
