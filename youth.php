@@ -60,9 +60,9 @@ include_once "modals.php";
 				<div style="margin-top: 10px;">
 				<?php if (!$singleCity) { ?>
 				<div class="btn-group">
-					<select id="selMemberLocality" class="span3">
+					<select id="selMemberLocality" class="span2">
 						<option value='_all_' <?php echo $selMemberLocality =='_all_' ? 'selected' : '' ?> >Все местности</option>
-						<?php foreach ($localities as $id => $name) {
+						<?php foreach (db_getAdminLocalitiesNotRegTbl($memberId) as $id => $name) {
 								echo "<option value='$id' ". ($id==$selMemberLocality ? 'selected' : '') ." >".htmlspecialchars ($name)."</option>";
 						} ?>
 					</select>
@@ -73,7 +73,7 @@ include_once "modals.php";
 						<option value='_all_' >Все категории</option>
 						<option value='SC' >Школьники</option>
 						<option value='ST' >Студенты</option>
-						<option value='SN' >Святые в церковной жизни</option>
+						<option value='SN' >Святые в церк. жизни</option>
 						<option value='BL' >Верующие</option>
 					</select>
 				</div>
@@ -114,6 +114,13 @@ include_once "modals.php";
 								echo "<option value='$key'>$key</option>";
 							}
 						?>
+					</select>
+				</div>
+				<div class="btn-group">
+					<select id="selMemberAttendMeeting" class="span2">
+						<option value='_all_' >Все участники</option>
+						<option value='1' >Посещают собрания</option>
+						<option value='0' >Не посещают собрания</option>
 					</select>
 				</div>
 			</div>
@@ -231,6 +238,10 @@ include_once "modals.php";
 			filterMembers();
 		});
 
+		$("#selMemberAttendMeeting").change(function(){
+			setCookie('selAttendMeeting', $(this).val());
+			filterMembers();
+		});
 
 		$("#selMemberSchoolEnd").change(function(){
 			setCookie('selSchoolEnd', $(this).val());
@@ -240,7 +251,7 @@ include_once "modals.php";
 		$(".add-member").click(function(){
 			var adminLocality = $(this).attr('data-locality');
 
-			$.getJSON('/ajax/get.php?get_member_localities').done(function(data){
+			$.getJSON('/ajax/get.php?get_member_localities_Not_Reg_Tbl').done(function(data){
 				fillEditMember ('', {need_passport : "1", need_tp : "1", locality_key : adminLocality}, data.localities);
 				$('#modalEditMember #btnDoSaveMember').addClass('create');
 				$('#modalEditMember').modal('show');
@@ -415,7 +426,7 @@ include_once "modals.php";
 			var age = getAgeWithSuffix(parseInt(m.age), m.age),
 				memberInfo = '',
 				memberSchoolOrCollegeDegree = getMemberSchoolOrCollegeDegree(m.category_key, age, m.college_start, m.college_end, m.school_start, m.school_end);
-			var dataFields = 'data-id="'+m.id+'" data-category="'+m.category_key+'" data-age="'+parseInt(m.age)+'" data-locality="'+m.locality_key+'" data-school_end="'+m.school_end+'" data-college_end="'+m.college_end+'" ' ;
+			var dataFields = 'data-id="'+m.id+'" data-category="'+m.category_key+'" data-attendmeeting="'+m.attend_meeting+'"data-age="'+parseInt(m.age)+'" data-locality="'+m.locality_key+'" data-school_end="'+m.school_end+'" data-college_end="'+m.college_end+'" ' ;
 
 			var rowStyle = m.category_key == 'SC' && m.college ? ' style="color: red;" ' : '',
 				cellPhones = m.cell_phone.split(','),cellPhonesStr = '';
@@ -633,6 +644,7 @@ include_once "modals.php";
 			categoryFilter = $("#selMemberCategory").val(),
 			collegeEndFilter = $("#selMemberCollegeEnd").val(),
 			schoolEndFilter = $("#selMemberSchoolEnd").val(),
+			attendMeetingFilter = $("#selMemberAttendMeeting").val(),
 			ageFilter = $("#selMemberAge").val(),
 			text = $('.search-text').val().trim().toLowerCase(),
 			filteredMembers = [];
@@ -643,16 +655,18 @@ include_once "modals.php";
 				memberAge = parseInt($(this).attr('data-age')),
 				memberSchoolEnd = $(this).attr('data-school_end'),
 				memberCollegeEnd = $(this).attr('data-college_end'),
+				attendMeeting = $(this).attr('data-attendmeeting'),
 				memberName = $(this).find('td').first().text().toLowerCase(),
 				memberKey = $(this).attr('data-id');
 
 			if(
-			((localityFilter === '_all_' || localityFilter === undefined) && categoryFilter === '_all_' && text === '' && ageFilter === '_all_' && schoolEndFilter === '_all_'  && collegeEndFilter === '_all_' ) ||
+			((localityFilter === '_all_' || localityFilter === undefined) && categoryFilter === '_all_' && text === '' && ageFilter === '_all_' && schoolEndFilter === '_all_'  && collegeEndFilter === '_all_' && attendMeetingFilter === '_all_') ||
 			(
 				(memberLocality === localityFilter || localityFilter === '_all_' || localityFilter === undefined) &&
 				(memberCategory === categoryFilter || categoryFilter === '_all_') &&
 				(memberSchoolEnd === schoolEndFilter || schoolEndFilter === '_all_') &&
 				(memberCollegeEnd === collegeEndFilter || collegeEndFilter === '_all_') &&
+				(attendMeeting === attendMeetingFilter || attendMeetingFilter === '_all_') &&
 				(memberAge >= parseInt(ageFilter) || ageFilter === '_all_') &&
 				(memberName.search(text) !== -1)
 			)){

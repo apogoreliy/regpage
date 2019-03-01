@@ -840,7 +840,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
     $(".add-member").click(function(){
         var adminLocality = $(this).attr('data-locality');
 
-        $.getJSON('/ajax/get.php?get_member_localities').done(function(data){
+        $.getJSON('/ajax/get.php?get_member_localities_Not_Reg_Tbl').done(function(data){
             fillEditMember ('', {need_passport : "1", need_tp : "1", locality_key : adminLocality}, data.localities);
             $('#modalEditMember #btnDoSaveMember').addClass('create');
             $('#modalEditMember').modal('show');

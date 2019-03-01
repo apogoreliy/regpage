@@ -426,6 +426,26 @@ function db_getAdminLocalities ($adminId)
     return $localities;
 }
 
+function db_getAdminLocalitiesNotRegTbl ($adminId)
+{
+    global $db;
+    $adminId = $db->real_escape_string($adminId);
+
+    $res=db_query ("SELECT DISTINCT * FROM (
+                    SELECT l.key as id, l.name as name
+                    FROM access a
+                    LEFT JOIN country c ON c.key = a.country_key
+                    LEFT JOIN region r ON r.key = a.region_key or c.key=r.country_key
+                    INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
+                    LEFT JOIN member m ON m.locality_key = l.key
+                    WHERE a.member_key='$adminId'                    
+                    ) q ORDER BY q.name");
+
+    $localities = array ();
+    while ($row = $res->fetch_assoc()) $localities[$row['id']]=$row['name'];
+    return $localities;
+}
+
 function db_getCountries ($sorted_ones)
 {
     $res=db_query ($sorted_ones ? "SELECT `key` as id, name FROM country WHERE COALESCE(`order`,0)>0 ORDER BY `order`" :
