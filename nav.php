@@ -12,7 +12,7 @@ switch ($h) {
         $res = 'Регистрация';
         break;
     case '/members.php':
-        $res = 'Список';
+        $res = 'Списки';
         break;
     case '/meetings.php':
         $res = 'Собрания';
@@ -107,14 +107,14 @@ switch ($h) {
             if(!isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/members")!==FALSE) {echo " class='active'";}
-                echo"><a href='/members'>Список</a></li>";
+                echo"><a href='/members'>Списки</a></li>";
             }
 
-            if(!isset($isGuest) && db_isAdmin($memberId) || db_hasAdminFullAccess($memberId)) {
+            /*if(!isset($isGuest) && db_isAdmin($memberId) || db_hasAdminFullAccess($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/youth")!==FALSE) {echo " class='active'";}
                 echo"><a href='/youth'>Молодёжь</a></li>";
-            }
+            }*/
 
             if((!isset($isGuest) && db_isAdmin($memberId)) || db_hasAdminFullAccess($memberId)) {
                 echo '<li';
@@ -122,11 +122,11 @@ switch ($h) {
                 echo"><a href='/meetings'>Собрания</a></li>";
             }
 
-            if((!isset($isGuest) && db_isAdmin($memberId)) || db_hasAdminFullAccess($memberId)) {
+            /*if((!isset($isGuest) && db_isAdmin($memberId)) || db_hasAdminFullAccess($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/list")!==FALSE){echo " class='active'";}
                 echo"><a href='/list'>Ответственные</a></li>";
-            }
+            }*/
 
             /*if(isset($memberId) && $memberId == '000008601' && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
