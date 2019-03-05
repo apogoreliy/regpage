@@ -438,7 +438,7 @@ function db_getAdminLocalitiesNotRegTbl ($adminId)
                     LEFT JOIN region r ON r.key = a.region_key or c.key=r.country_key
                     INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
                     LEFT JOIN member m ON m.locality_key = l.key
-                    WHERE a.member_key='$adminId'                    
+                    WHERE a.member_key='$adminId'
                     ) q ORDER BY q.name");
 
     $localities = array ();
@@ -586,20 +586,7 @@ function db_getAdminActiveMembers ($adminId, $locId, $catId, $text, $eventId){
                         INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
                         INNER JOIN member m ON m.locality_key = l.key
                         WHERE a.member_key='$adminId' AND m.active>0 $locId $catId $_text
-                        UNION
-                        SELECT m.key as id, m.name as name, COALESCE(l.name, m.new_locality) as locality,
-                        l.key as locId, m.category_key as catId
-                        FROM member m
-                        LEFT JOIN locality l ON l.key=m.locality_key
-                        WHERE  m.admin_key='$adminId' AND m.active>0 $locId $catId $_text
-                        UNION
-                        SELECT m.key as id, m.name as name, COALESCE(l.name, m.new_locality) as locality, l.key as locId,
-                        m.category_key as catId
-                        FROM reg
-                        INNER JOIN member m ON m.key=reg.member_key
-                        LEFT JOIN locality l ON l.key=m.locality_key
-                        WHERE reg.admin_key='$adminId' AND m.active>0 $locId $catId $_text
-                        ) q ORDER BY q.name");
+                      ) q ORDER BY q.name");
     }
     elseif($locId || $catId || strlen ($text)>=3) {
         $res = db_query("SELECT DISTINCT m.key as id, m.name, m.key, l.name as locality, l.key as locId, m.category_key as catId
