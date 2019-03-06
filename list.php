@@ -16,6 +16,11 @@ $countries = db_getCountriesList();
         ?>
         <div id="eventTabs" class="admins-list">
             <div class="tab-content">
+              <select class="controls span4 members-lists-combo" tooltip="Выберите нужный вам список здесь">
+                  <option value="members">Общий список</option>
+                  <option value="youth">Молодые люди</option>
+                  <option selected value="list">Ответственные за регистрацию</option>
+              </select>
                 <div class="btn-toolbar">
                     <select class="span3" id="selCountry">
                         <?php
@@ -84,12 +89,12 @@ $countries = db_getCountriesList();
             </div>
         </div>
     </div>
-    <script>        
+    <script>
         $('.search-text').bind("paste keyup", function(event){
             event.stopPropagation();
 
             var text = $('.search-text').val();
-            if(text.length>=3 || text.length==0){                
+            if(text.length>=3 || text.length==0){
                 filterAdmins();
             }
         });
@@ -194,68 +199,68 @@ $countries = db_getCountriesList();
             loadDashboard ();
         });
 
-        $("#selRegion").change (function (){       
+        $("#selRegion").change (function (){
             $("#selLocality").val('_all_');
             filterRegions();
         });
 
-        $("#selLocality").change (function (){            
+        $("#selLocality").change (function (){
             filterLocalities();
         });
 
-        $("#selCountry").change (function (){   
+        $("#selCountry").change (function (){
             $("#selRegion").val('_all_');
             $("#selLocality").val('_all_')
             filterRegions();
         });
-        
+
         function filterRegions(){
             var country = $('#selCountry').val(), countRegions = 0;
-            
+
             $('#selRegion option').each(function(){
                 if($(this).val().substr(0,2) == country || country == '_all_' || $(this).val() === '_all_'){
                     countRegions ++;
                     $(this).show();
                 }
                 else{
-                    $(this).hide(); 
+                    $(this).hide();
                 }
             });
             countRegions > 1 ? $('#selRegion').removeAttr('disabled') :  $('#selRegion').attr('disabled', 'disabled');
             filterLocalities(countRegions);
         }
-        
+
         function filterLocalities(countRegions=false){
             var region = $('#selRegion').val(), countLocalities = 0, country = $("#selCountry").val();
-            
+
             $('#selLocality option').each(function(){
                 if(($(this).val().substr(3,4) == region) || $(this).val() === '_all_' || ( region == '_all_' && country == '_all_' ) || ( region == '_all_' && country !== '_all_' && countRegions !== 0 && $(this).val().substr(0,2) == country) ){
                     countLocalities ++;
                     $(this).show();
                 }
                 else{
-                    $(this).hide(); 
+                    $(this).hide();
                 }
             });
-            
+
             countLocalities > 0 ? $('#selLocality').removeAttr('disabled') : $('#selLocality').attr('disabled', 'disabled');
             filterAdmins();
         }
-        
+
         function filterAdmins(){
-            var regionFilter = $("#selRegion").val(), localityFilter = $("#selLocality").val().substr(-6), 
+            var regionFilter = $("#selRegion").val(), localityFilter = $("#selLocality").val().substr(-6),
                 countryFilter = $("#selCountry").val(), adminsRegions, adminsLocalities, adminsCountries, adminsName, searchText = $('.search-text').val().toLowerCase();
-            
+
             setCookie("selRegion", regionFilter);
             setCookie("selLocality", localityFilter);
-            setCookie("selCountry", countryFilter);            
+            setCookie("selCountry", countryFilter);
 
             $('.admins-list '+($(document).width() < 768 ? '.show-phone' : '.desctopVisible') + ' tbody tr').each(function(){
                 adminsRegions = $(this).attr('data-regions') !== 'null' ? $(this).attr('data-regions').split(',') : 'null';
                 adminsLocalities = $(this).attr('data-localities') !== 'null' ? $(this).attr('data-localities').split(',') : 'null';
                 adminsCountries = $(this).attr('data-countries') !== 'null' ? $(this).attr('data-countries').split(',') : 'null';
                 adminsName = $(this).find('.admins-name').text().toLowerCase();
-                
+
                 var value = '', regionsCountries = [];
                 if(adminsRegions !== 'null'){
                     adminsRegions.forEach(function(item){

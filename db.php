@@ -1133,7 +1133,7 @@ function db_getEventsByAdmin($adminId){
         $request= $adminId == "" ? "  AND e.is_active=1 " : "";
 
         $res=db_query ("SELECT DISTINCT * FROM(
-        SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date,
+        SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration, e.need_transport, e.need_prepayment, e.private, e.need_tp,
@@ -1146,7 +1146,7 @@ function db_getEventsByAdmin($adminId){
         INNER JOIN access a ON a.country_key=c.key or a.region_key=r.key or a.locality_key = lo.key
         WHERE a.member_key='$adminId' AND e.is_active=1 $request
         UNION
-        SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date,
+        SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
@@ -1160,7 +1160,7 @@ function db_getEventsByAdmin($adminId){
         INNER JOIN event_zones z ON z.event_key=e.key AND (z.country_key=c.key or z.region_key=r.key or z.locality_key=lo.key)
         WHERE e.is_active=1 $request
         UNION
-        SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date,
+        SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
@@ -1173,7 +1173,7 @@ function db_getEventsByAdmin($adminId){
         while ($row = $res->fetch_object()) $events[]=$row;
     }
     else{
-        $res = db_query("SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date,
+        $res = db_query("SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
         e.need_transport, e.need_prepayment, e.private, e.need_tp,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
@@ -2782,7 +2782,7 @@ function db_getMemberMain ($memberId, $eventId){
                 m.category_key, m.document_key, m.document_num, m.document_date,
                 m.document_auth, m.new_locality, m.citizenship_key, m.cell_phone,
                 m.admin_key as mem_admin, e.name as event_name, e.key as event_key,
-                e.need_passport, e.need_transport, e.need_prepayment, m.email,
+                e.need_passport, e.need_transport, e.need_prepayment, e.need_accom, m.email,
                 e.start_date, e.end_date, m.college_key, m.college_comment,
                 IF (rg.name='--',l.name,CONCAT (l.name,', ',rg.name)) as locality_name,
                 m.english, e.need_tp, e.need_flight, m.tp_num, e.private,
