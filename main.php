@@ -478,6 +478,7 @@ else if (isset ($_SESSION["logged-in"])){
 
 function showEmptyForm (eventId){
     window.currentEventId = eventId;
+
     $.getJSON('/ajax/guest.php', { eventId: eventId })
     .done (function(data){
         window.currentEventName=data.info.event_name;
@@ -841,7 +842,7 @@ $(document).ready(function(){
                             });
 
                             $('.handleRegistration').click(function(){
-                                var memberId = '<?php echo $memberId; ?>', modalWindow = $(this).parents('#modalShowEventInfo'),
+                                var memberId = '<?php echo $memberId; ?>', isThisAdmin = '<?php echo $isUserWithRights; ?>' ,modalWindow = $(this).parents('#modalShowEventInfo'),
                                     eventId = modalWindow.attr ('data-event-id'), stopRegistration = modalWindow.find('.modal-header h4').attr('data-stop_registration'), closeRegistration = modalWindow.find('.modal-header h4').attr('data-close_registration');
                                 window.currentEventId = eventId;
 
@@ -851,7 +852,6 @@ $(document).ready(function(){
                                     showModalHintWindow("<strong>Онлайн-регистрация на это мероприятие закрыта.<br>По всем вопросам <a href='' data-toggle='modal' data-target='#modalEventSendMsg'>обращайтесь к команде регистрации.</a> </strong>");
                                     return;
                                 }
-
                                 if(memberId){
                                     $.getJSON('/ajax/event.php'+request , { eventIdRegistration: eventId})
                                     .done (function(data){
@@ -859,9 +859,12 @@ $(document).ready(function(){
                                         $('#btnDoRegisterGuest').removeClass('guest');
                                         isEditMode ? $('#btnDoRegisterGuest').addClass('edit') : $('#btnDoRegisterGuest').removeClass('edit');
                                         $('#modalEditMember').modal('show');
+                                        if(isThisAdmin != 1){
+                                          $('.emMate').hide();
+                                          $('.emMateLbl').hide();
+                                        }
                                     });
-                                }
-                                else{
+                                } else{
                                     $('#btnDoRegisterGuest').addClass('guest');
                                     showEmptyForm (eventId);
                                 }

@@ -191,8 +191,8 @@
             <option value="0">НЕ ТРЕБУЕТСЯ</option>
         </select>
     </div>
-    <div class="control-group row-fluid" style="width: 48%; float: right;">
-        <label class="span12">Разместить с</label>
+    <div class="control-group row-fluid" style="min-height: 61px; width: 48%; float: right;">
+        <label class="span12 emMateLbl" >Разместить с</label>
         <select class="span12 emMate"></select>
     </div>
 </div>
