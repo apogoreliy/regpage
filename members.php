@@ -37,8 +37,13 @@ $textBlock = db_getTextBlock('members_list');
 if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
 ?>
 <div id="eventTabs" class="members-list">
-        <div class="tab-content">
-            <div class="btn-toolbar">
+    <div class="tab-content">
+      <select class="controls span4 members-lists-combo" tooltip="Выберите нужный вам список здесь">
+          <option selected value="members">Общий список</option>
+          <option value="youth">Молодые люди</option>
+          <option value="list">Ответственные за регистрацию</option>
+      </select>
+        <div class="btn-toolbar">
             <div class="btn-group">
                 <a class="btn btn-success add-member" data-locality="<?php echo $adminLocality; ?>" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
             </div>

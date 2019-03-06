@@ -16,7 +16,7 @@ a {
     padding: 19px 29px 29px;
     margin: 100px auto 20px;
 }
-.form-signup-full label{ 
+.form-signup-full label{
     min-height: 15px !important;
 }
 .form-signup {
@@ -123,7 +123,7 @@ a {
     text-align: right;
 }
 
-.modal-edit-member .controls-row input, .modal-edit-member .controls-row select, 
+.modal-edit-member .controls-row input, .modal-edit-member .controls-row select,
 .modal-edit-member .controls-row textarea, .modal-edit-member .controls-row div[class*="span"],
 .modal-edit-member .controls-row label {
 	margin-left: 30px;
@@ -147,10 +147,10 @@ a {
     margin-left: 10px;
 }
 #globalError {
-    z-index: 2000; 
-    position: fixed; 
-    right: 1px; 
-    left: 1px; 
+    z-index: 2000;
+    position: fixed;
+    right: 1px;
+    left: 1px;
     top: 1px;
     text-align: center;
     background: red;
@@ -158,10 +158,10 @@ a {
     color: white;
 }
 #globalHint {
-    z-index: 2000; 
-    position: fixed; 
-    right: 1px; 
-    left: 1px; 
+    z-index: 2000;
+    position: fixed;
+    right: 1px;
+    left: 1px;
     top: 1px;
     text-align: center;
     background: #5bb75b;
@@ -220,7 +220,7 @@ a {
 .guest-event:hover{
     color: #0E7DA1;
     background-color: #B0DFF7;
-    border-color: #5DA6C9;	
+    border-color: #5DA6C9;
 }
 .unblock-input{
     position: relative;
@@ -290,7 +290,7 @@ ul.dropdown-menu a.disabled {
     height: 100%;
 }
 #guest-container{
-    
+
 }
 .alert{
     color: #c06d07;
@@ -369,7 +369,7 @@ input.error, .control-group.error select, textarea.error {
 }
 /*
 .desctopVisible .btn-toolbar > .btn, .desctopVisible .btn-toolbar > .btn-group,
-.show-phone .btn-toolbar > .btn, .show-phone .btn-toolbar > .btn-group{    
+.show-phone .btn-toolbar > .btn, .show-phone .btn-toolbar > .btn-group{
     margin-left: 0 !important;
     margin-right: 10px;
     margin-top: 10px;
@@ -569,7 +569,7 @@ input.error, .control-group.error select, textarea.error {
     margin-bottom: 10px;
     margin-right: 10px;
 }
-.registration-list .btn-toolbar .btn, .registration-list .btn-toolbar select, 
+.registration-list .btn-toolbar .btn, .registration-list .btn-toolbar select,
 .admins-list .btn-toolbar select{
     margin-right: 10px;
     margin-top: 10px;
@@ -577,9 +577,9 @@ input.error, .control-group.error select, textarea.error {
 .members-list .btn-toolbar .btn-group{
     margin-right: 10px;
 }
-.registration-list .btn-group+.btn-group, 
+.registration-list .btn-group+.btn-group,
 .registration-list .btn-toolbar>.btn+.btn-group,
-.btn-toolbar>.btn+.btn, 
+.btn-toolbar>.btn+.btn,
 .members-list .btn-group+.btn-group,
 .members-list .btn-toolbar>.btn-group+.btn{
     margin-left: 0 !important;
@@ -613,7 +613,7 @@ input.error, .control-group.error select, textarea.error {
 
 .meeting-note{
     width: 100%;
-    padding: 0; 
+    padding: 0;
 }
 .meeting-list:hover{
     color: blue;
@@ -678,7 +678,7 @@ input.error, .control-group.error select, textarea.error {
 #modalMeetingStatistic .modal-body{
     max-height: 450px !important;
     overflow-y: auto !important;
-}  
+}
 #selMeetingCategory, #selMeetingLocality, #selectedEventType, #selectedEventLocality, .btn-meeting-members-statistic{
     margin-right: 10px;
 }
@@ -730,20 +730,20 @@ input.error, .control-group.error select, textarea.error {
     margin-bottom: 10px !important;
 }
 .scroll-up{
-    z-index: 1; 
-    height: 10%; 
-    color: #d5dddf; 
+    z-index: 1;
+    height: 10%;
+    color: #d5dddf;
     text-align: center;
     position: fixed;
     display: none;
     right: 20px;
-    bottom: 70px; 
+    bottom: 70px;
 }
 
 .modal-body .scroll-up{
-    position: absolute; 
+    position: absolute;
     right: 20px;
-    bottom: 70px; 
+    bottom: 70px;
 }
 .scroll-up:hover{
     cursor: pointer;
@@ -760,7 +760,7 @@ input.error, .control-group.error select, textarea.error {
 }
 .meetings-list .dropdown .dropdown-menu li{
     font-size: 14px;
-} 
+}
 .meetings-list .dropdown .dropdown-menu li a{
     padding: 0px 0px 0px 10px !important;
     display: inline !important;
@@ -784,7 +784,7 @@ input.error, .control-group.error select, textarea.error {
     margin-left: 0;
     margin-top: 2px;
     border: 1px solid #e6e5e5;
-    border-radius: 5px;     
+    border-radius: 5px;
  }
  .regstate-list-handle > li{
      display: block;
@@ -803,10 +803,10 @@ input.error, .control-group.error select, textarea.error {
  .show-admin-fields, .service-admin-fields{
      display: none;
  }
- 
- 
+
+
  /* events */
- 
+
  #user-profile{
     background-color: white;
     padding: 20px 40px;
@@ -872,7 +872,7 @@ input.error, .control-group.error select, textarea.error {
 }
 .list-events > div > span, .hidden-events-list > div > span{
     margin-left: 10px;
-} 
+}
 .events-list-headers{
     margin-top: 20px;
     border-bottom: 1px solid #eee;
@@ -995,7 +995,7 @@ input.error, .control-group.error select, textarea.error {
 
 .localities-added, .localities-available {
     margin-bottom: 10px;
-    
+
 }
 .localities-added > div, .localities-available > div{
     min-height: 20px !important;
@@ -1082,12 +1082,12 @@ input.error, .control-group.error select, textarea.error {
 }
 
 .statistic-block {
-    display:inline-block; 
+    display:inline-block;
     width: 48%;
 }
 
 .statistic-additional-block{
-    display:inline-block; 
+    display:inline-block;
     width: 48%;
     float: right;
 }
@@ -1099,11 +1099,11 @@ input.error, .control-group.error select, textarea.error {
     width: 21%;
 }
 .prepaid-block{
-    width: 22%; 
+    width: 22%;
     margin-left: 5%;
 }
 .currency-block{
-    width: 48%; 
+    width: 48%;
     float: right !important;
 }
 .desctop-references-header > div{
@@ -1172,7 +1172,7 @@ input.error, .control-group.error select, textarea.error {
     margin-right: 5px;
 }
 #modalParticipantsList .modal-body, #modalHandleTemplate .modal-body, #addEditMeetingModal .modal-body{
-    height: 450px !important; 
+    height: 450px !important;
     overflow-y: scroll !important;
 }
 .btn-remove-item{
@@ -1204,7 +1204,7 @@ input.error, .control-group.error select, textarea.error {
     margin-right: 5px;
 }
 .block-add-members{
-    display: none;  
+    display: none;
 }
 .check-member:hover{
     cursor: pointer;
@@ -1215,8 +1215,8 @@ input.error, .control-group.error select, textarea.error {
 }
 
 .add-filter{
-    color: #ddd; 
-    margin-top: 5px; 
+    color: #ddd;
+    margin-top: 5px;
     margin-left: 5px;
     position: absolute;
 }
@@ -1266,7 +1266,7 @@ input.error, .control-group.error select, textarea.error {
 }
 
 .download-checkboxes-first-column, .search-checkbox-first-column{
-    width: 40%; 
+    width: 40%;
     float: left;
 }
 .user_setting_span{
@@ -1279,18 +1279,18 @@ input.error, .control-group.error select, textarea.error {
 /*** RESPONSIVENESS ***/
 
 /* Large Desktop */
-@media (min-width: 1200px) {    
+@media (min-width: 1200px) {
     .cell-column, .email-column {
         display: table-cell;
     }
-    
+
     div.show-phone {
         display: none;
-    }    
+    }
     .show-name-list{
         display: none;
     }
-    
+
     .style-date{
         width: 10%;
     }
@@ -1305,7 +1305,7 @@ input.error, .control-group.error select, textarea.error {
     }
     .style-email{
         width: 15%;
-    }  
+    }
 
     .tablets-visible{
         display: none;
@@ -1317,7 +1317,7 @@ input.error, .control-group.error select, textarea.error {
     #modalEventSendMsg, #messageAdmins, #modalSendLetter, #modalSendLetterService, #modalMessageBox{
         width: 500px;
     }
-    
+
     #addEditMeetingModal .span2{
         width: 126px;
     }
@@ -1345,11 +1345,11 @@ input.error, .control-group.error select, textarea.error {
     .hide-tablet {
         display: none;
     }
-    /*.modal-edit-member .controls input, .modal-edit-member .controls select, 
+    /*.modal-edit-member .controls input, .modal-edit-member .controls select,
     .modal-edit-member .controls textarea, .modal-edit-member .controls div[class*="span"],
     .modal-edit-member .controls label {
         margin-left: 30px;
-    } 
+    }
     */
 
     #modalEditMember .controls label.span1, #modalEditMember .controls select.span1{
@@ -1406,7 +1406,7 @@ input.error, .control-group.error select, textarea.error {
     #modalEditMember .controls-row [class*="span"] + [class*="span"] {
         margin-left: 30px;
     }
-           
+
     .show-name-list{
         display: none;
     }
@@ -1415,7 +1415,7 @@ input.error, .control-group.error select, textarea.error {
     }
     .style-date{
         width: 30% !important;
-    }   
+    }
     .style-date{
         width: 30% !important;
     }
@@ -1425,17 +1425,17 @@ input.error, .control-group.error select, textarea.error {
     .style-city{
         width: 20% !important;
     }
-    
+
     /*
     div.grpTransport{
         width: 156px;
-    } 
+    }
     */
-    
+
     div.show-phone {
         display: none;
-    } 
-    
+    }
+
     .table th, .table td {
         padding: 10px 0 10px 5px;
         line-height: 20px;
@@ -1473,7 +1473,7 @@ input.error, .control-group.error select, textarea.error {
 @media (max-width: 979px) {
     .navbar-fixed-top, .navbar-fixed-bottom {
         position: fixed;
-    }    
+    }
 
     .control-group {
         display:inline-block;
@@ -1492,7 +1492,7 @@ input.error, .control-group.error select, textarea.error {
     .modal-footer{
         padding-bottom: 45px;
     }
-            
+
     .show-name-list{
         display: inline;
         color: white;
@@ -1553,7 +1553,7 @@ input.error, .control-group.error select, textarea.error {
     }
     #meetingLocalityModal{
         margin-left: 0;
-    }        
+    }
     .aditional-menu{
         top: 51px;
     }
@@ -1584,7 +1584,7 @@ input.error, .control-group.error select, textarea.error {
     div[id^="eventTab"] .desctopVisible{
         display: block;
     }
-    
+
     .hide-tablet {
         display: none;
     }
@@ -1594,13 +1594,13 @@ input.error, .control-group.error select, textarea.error {
     .desctopVisible table tbody td {
         max-width: 100px !important;
         overflow: hidden !important;
-    }   
+    }
     #modalMeetingStatistic .span2{
         width: 126px;
     }
     #modalMeetingMembers .span3{
         width: 206px;
-    }    
+    }
     .event-date{
         width: 100px;
     }
@@ -1639,16 +1639,16 @@ input.error, .control-group.error select, textarea.error {
     }
     .hide-name{
         display: none;
-    }        
-    
+    }
+
     #addEditMeetingModal .modal-body label{
         line-height: 20px;
-    }        
+    }
     .meetings-list .btn-toolbar > .btn {
         margin-bottom: 0;
         margin-left: 0;
     }
-    
+
     #selMeetingCategory, #selMeetingLocality, #modalMeetingStatistic .input-daterange, #localityStatistic, #modalGeneralMeetingStatistic .input-daterange{
         margin-left: 0;
     }
@@ -1675,35 +1675,35 @@ input.error, .control-group.error select, textarea.error {
     .btn-meeting-download-members-statistic, .btn-meeting-download-general-statistic{
         margin-bottom: 0;
     }
-    i.unblock-input{  
+    i.unblock-input{
         margin-top: 5px;
     }
     .aditional-menu > a.chk-register{
         margin-left: 40px;
     }
-    
+
     .references-blocks{
         flex-direction: column;
         justify-content: space-between;
     }
-    
+
     .references-blocks > div{
         margin-bottom: 10px;
         border-bottom: 1px solid #f5f5f5;
         height: auto;
     }
-    
+
     .statistic-block {
-        display: block; 
+        display: block;
         width: 100%;
     }
 
     .statistic-additional-block{
-        display: block; 
+        display: block;
         width: 100%;
         float: left;
     }
-    
+
     #showStatistic{
         display: inline-block;
     }
@@ -1718,7 +1718,7 @@ input.error, .control-group.error select, textarea.error {
     }
     .prepaid-block{
         width: 48%;
-        float: right !important; 
+        float: right !important;
         margin-left: 0;
     }
     .contrib-block{
@@ -1733,9 +1733,23 @@ input.error, .control-group.error select, textarea.error {
         padding-right: 5px !important;
     }
     .modal-body .scroll-up{
-        bottom: 80px; 
+        bottom: 80px;
     }
     .download-checkboxes-first-column, .search-checkbox-first-column{
         width: 100%;
     }
+}
+.members-lists-combo {
+  font-weight: bold;
+  border: 1px solid blue;
+}
+.members-lists-combo>option {
+  font-size: 16px;
+}
+#events-list>option {
+  font-size: 16px;
+}
+#events-list {
+  font-weight: bold;
+  border: 1px solid blue;
 }

@@ -31,6 +31,11 @@ include_once "modals.php";
 <div class="container">
 	<div id="eventTabs" class="members-list">
 		<div class="tab-content">
+			<select class="controls span4 members-lists-combo" tooltip="Выберите нужный вам список здесь">
+          <option value="members">Общий список</option>
+          <option selected value="youth">Молодые люди</option>
+          <option value="list">Ответственные за регистрацию</option>
+      </select>
 			<div class="btn-toolbar">
 				<div class="btn-group">
 					<a class="btn btn-success add-member" data-locality="<?php echo $adminLocality; ?>" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
