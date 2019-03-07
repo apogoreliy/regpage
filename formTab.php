@@ -91,15 +91,21 @@
         <input class="span12 emTempPhone" type="text" maxlength="50" placeholder="+XXXXXXXXXX" tooltip="tooltipTempPhone">
     </div>-->
     <?php //} ?>
+
+    <div class="control-group row-fluid"
     <?php if (!$isGuest && !$indexPage) { ?>
-    <div class="control-group row-fluid">
+      style="display:inline-block"
+    <?php } else {?>
+      style="display: none"      
+    <?php } ?>
+    >
         <label class="span12"><?php g ('&nbsp;','Категория'.($noEvent ? '' : '<sup>*</sup>')); ?></label>
         <select class="span12 emCategory" valid="required" <?php //e('valid="required"');?>>
             <option value='_none_' selected>&nbsp;</option>
             <?php foreach (db_getCategories() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
         </select>
     </div>
-    <?php } ?>
+
     <?php if ($noEvent) {?>
     <div class="control-group row-fluid">
         <label class="span12">Дата крещения</label>

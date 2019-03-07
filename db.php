@@ -3144,7 +3144,7 @@ function db_getEventsForEventsPage($adminId, $sort_type, $sort_field){
     $res=db_query ("SELECT DISTINCT * FROM (
                     SELECT e.key as id, e.name as name, e.need_passport, e.need_transport, e.close_registration,
                     e.participants_count,
-                    e.need_prepayment, e.start_date, e.end_date, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
+                    e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
                     e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key
                     FROM event e
                     LEFT JOIN reg re ON re.event_key=e.key AND re.member_key='$adminId'
@@ -3160,7 +3160,7 @@ function db_getEventsForEventsPage($adminId, $sort_type, $sort_field){
 
                     SELECT e.key as id, e.name as name, e.need_passport, e.need_transport, e.close_registration,
                     e.participants_count,
-                    e.need_prepayment, e.start_date, e.end_date, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
+                    e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
                     e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key
                     FROM event e
                     LEFT JOIN reg re ON re.event_key=e.key AND re.member_key='$adminId'
@@ -3176,7 +3176,7 @@ function db_getEventsForEventsPage($adminId, $sort_type, $sort_field){
 
                     SELECT DISTINCT e.key as id, e.name as name, e.need_passport, e.need_transport, e.close_registration,
                     e.participants_count,
-                    e.need_prepayment, e.start_date, e.end_date, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
+                    e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
                     e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key
                     FROM event e
                     LEFT JOIN reg re ON re.event_key=e.key AND re.member_key='$adminId'
@@ -3192,7 +3192,7 @@ function db_getEventsForEventsPage($adminId, $sort_type, $sort_field){
 
                     SELECT e.key as id, e.name as name, e.need_passport, e.need_transport, e.close_registration,
                     e.participants_count,
-                    e.need_prepayment, e.start_date, e.end_date, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
+                    e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
                     e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key
                     FROM event e
                     LEFT JOIN reg re ON re.event_key=e.key AND re.member_key='$adminId'
@@ -3369,7 +3369,7 @@ function db_getGuestEvent ($eventId){
     $eventId = $db->real_escape_string($eventId);
     $res=db_query ("SELECT e.key as event_id, e.name as event_name, e.need_passport, e.need_transport,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL ) ) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
-        e.close_registration, e.need_prepayment, e.start_date, e.end_date, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
+        e.close_registration, e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
         e.author, e.team_key, e.event_type, e.organizer, e.need_parking, e.need_accom, e.need_service
         FROM event e
         WHERE e.key='$eventId'");
