@@ -639,7 +639,11 @@ function handleBirthDateAndCategoryFields(){
         handleSchoolAndCollegeFields(getAge(date), categoryKey, schoolStart, schoolEnd, collegeStart, collegeEnd, college, collegeComment, collegeName, collegeShortName);
     }
 }
-
+function prepareGetAge(preparingDate) {
+  preparingDate = preparingDate.split('.');
+  preparingDate = new Date(preparingDate[2], (preparingDate[1] - 1), preparingDate[0]);
+  return  preparingDate;
+}
 function getAge(birthDate) {
     var today = new Date();
     var age = today.getFullYear() - birthDate.getFullYear();
@@ -648,6 +652,26 @@ function getAge(birthDate) {
         age--;
     }
     return age;
+}
+function checkAgeLimit(classEvent) {
+  var c = $(classEvent).attr('data-min_age');
+  var e = $(classEvent).attr('data-max_age');
+
+  if (c != 0 && e != 0 && $(".emCategory").val() != 'FS' && $(".emCategory").val() != 'RB') {
+
+    var f = getAge(prepareGetAge($(".emBirthdate").val()));
+    if (f < $(classEvent).attr('data-min_age')) {
+      showError('Возраст участника '+f+'. Мероприятие доступно для святых не младше ' + c + ' лет.', true);
+      return false;
+    } else if (f > $(classEvent).attr('data-max_age')) {
+      showError('Возраст участника '+f+'. Мероприятие доступно для святых не старше ' + e + ' лет.', true);
+      return false;
+    } else {
+        return true;
+    }
+  }  else {
+    return true;
+  }
 }
 
 function messageBox (html, parent) {
@@ -726,7 +750,7 @@ function handleFieldsByAdminRole(adminRole, isEventPrivate, regstate){
     }
     else if(adminRole === 1 && isEventPrivate){
         $(".role-send-msg, .role-admin").css('display','none');
-        $(".role-edit").css('display','inline-block');        
+        $(".role-edit").css('display','inline-block');
         if (!regstate) {
           $("#forAdminRegNotice").text('Заявку на регистрацию на это мероприятие отправит ответственный за регистрацию в вашем регионе.');
         }
@@ -1860,23 +1884,31 @@ window.eventZones = [];
 window.eventParticipants = [];
 
 $(document).ready(function(){
-    $('.continue-closed-registration').click(function(){
-        if (checkForRegEnd ('event-add-member')) $('#modalAddMembers').modal('show');
-    });
+  $(".members-lists-combo").change(function(){
+      listsType = $(".members-lists-combo").val();
+      switch (listsType) {
+          case 'members': window.location = '/members'; break;
+          case 'youth': window.location = '/youth'; break;
+          case 'list': window.location = '/list'; break;
+      }
+  });
+  $('.continue-closed-registration').click(function(){
+      if (checkForRegEnd ('event-add-member')) $('#modalAddMembers').modal('show');
+  });
 
-    $('.openCollegesModal').click(function(){
-        getColleges(false);
-    });
+  $('.openCollegesModal').click(function(){
+      getColleges(false);
+  });
 
-    $(".sort_college_locality").click(function(){
-        var colleges = [], sortDirectionIcon = $(".sort-direction"), sortDirection = 'asc';
-        $("#modalCollegesList #membersTable tbody tr").each(function(){
-            var id = $(this).attr('data-college'),
-                locality_key = $(this).attr('data-locality'),
-                locality = $(this).attr('data-locality_name'),
-                name = $(this).attr('data-name'),
-                short_name = $(this).attr('data-short_name'),
-                author = $(this).attr('data-author');
+  $(".sort_college_locality").click(function(){
+      var colleges = [], sortDirectionIcon = $(".sort-direction"), sortDirection = 'asc';
+      $("#modalCollegesList #membersTable tbody tr").each(function(){
+          var id = $(this).attr('data-college'),
+              locality_key = $(this).attr('data-locality'),
+              locality = $(this).attr('data-locality_name'),
+              name = $(this).attr('data-name'),
+              short_name = $(this).attr('data-short_name'),
+              author = $(this).attr('data-author');
 
             colleges.push({id : id, author : author, locality : locality,locality_key :locality_key, name : name, short_name : short_name });
         });

@@ -660,7 +660,7 @@ $(document).ready(function(){
                 eventAttrs = ' class="event-row" data-name="'+event.name+'" data-locality_name="'+event.locality_name+'" '+
                         'data-start_date="'+event.start_date+'" data-end_date="'+event.end_date+'" data-private="'+event.private+'" '+
                         'data-is_active="'+event.is_active+'" data-id="'+event.id+'" data-author="'+event.author+'" '+
-                        'data-archived="'+event.archived+'" data-regstate_key="'+event.regstate_key+'" ';
+                        'data-archived="'+event.archived+'" data-regstate_key="'+event.regstate_key+'" data-max_age="'+event.max_age+'" data-min_age="'+event.min_age+'" ';
 
                 var regstateText='', regstateClass = '';
                 if(event.regstate_key && event.regstate_key !== 'null'){
@@ -800,6 +800,8 @@ $(document).ready(function(){
                 // Show an info regarding an event
                 $('.list-events .event-row').click(function(e){
                     e.stopPropagation();
+                    $('.theActiveEvent').removeClass('theActiveEvent');
+                    $(this).addClass('theActiveEvent');
                     var eventId = $(this).attr('data-id');
                     arriveDepartMyself($(this).attr('data-start_date'),'.emArrDate');
                     arriveDepartMyself($(this).attr('data-end_date'),'.emDepDate');
@@ -1126,10 +1128,13 @@ $(document).ready(function(){
 
     $("#btnDoRegisterGuest").click (function (){
         if ($(this).hasClass('disabled')){
+
             showError("Необходимо заполнить все обязательные поля, выделенные розовым фоном!", true);
             return;
         }
-
+        if (!checkAgeLimit(".theActiveEvent")) {
+          return;
+        }
         var form = $('#modalEditMember'), self = this, fieldsValue = getValuesRegformFields(form, true, false);
 
         if(!fieldsValue.termsUse){

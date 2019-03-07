@@ -54,7 +54,7 @@
 
 <div class="tabbable hide-phone registration-list" id="eventTabs">
     <div class="tab-content">
-        <select class="controls span5" style="margin-bottom: 0" id="events-list">
+        <select class="controls span5" id="events-list">
             <?php
             $activeIsSet = false;
             foreach($events as $index => $event){
@@ -80,7 +80,7 @@
         data-custom_list_item ="<?php echo $event->list_name; ?>"
         data-regend="<?php echo $event->regend_date; ?>" data-event_type="<?php echo $event->event_type; ?>" data-private="<?php echo $event->private; ?>" data-access="<?php echo $memberId == $event->admin_access ? 1: 0 ; ?>"
         data-show-locality-field="<?php echo $showLocalityField ? 1 : 0; ?>"
-        data-need_flight="<?php echo $event->need_flight; ?>" data-need_tp="<?php echo $event->need_tp; ?>"
+        data-need_flight="<?php echo $event->need_flight; ?>" data-need_tp="<?php echo $event->need_tp; ?>" data-min_age="<?php echo $event->min_age; ?>" data-max_age="<?php echo $event->max_age; ?>"
         >
         <div>
         <div class="btn-toolbar">
@@ -1514,13 +1514,16 @@
     });
 
     $("#btnDoRegisterMember").click (function (){
-        var btn = $(this).attr('id');
+      var btn = $(this).attr('id');
 
-        if (!$(this).hasClass('disabled')) {
-            if (checkForRegEnd(btn))saveMember (true);
-        }
-        else {
-            showError("Необходимо заполнить все обязательные поля, выделенные розовым фоном!", true);
+      if (!$(this).hasClass('disabled')) {
+        if (checkAgeLimit(".tab-pane.active")) {
+          if (checkForRegEnd(btn)) {
+              saveMember (true);
+            }
+          }
+        } else {
+          showError("Необходимо заполнить все обязательные поля, выделенные розовым фоном!", true);
         }
     });
 
