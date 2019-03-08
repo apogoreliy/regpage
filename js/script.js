@@ -639,13 +639,28 @@ function handleBirthDateAndCategoryFields(){
         handleSchoolAndCollegeFields(getAge(date), categoryKey, schoolStart, schoolEnd, collegeStart, collegeEnd, college, collegeComment, collegeName, collegeShortName);
     }
 }
+// about age start
 function prepareGetAge(preparingDate) {
-  preparingDate = preparingDate.split('.');
-  preparingDate = new Date(preparingDate[2], (preparingDate[1] - 1), preparingDate[0]);
-  return  preparingDate;
+  var isDash;
+  preparingDate[4] == '-' ? isDash = true : sDash = false;
+  if (isDash == true) {
+    preparingDate = preparingDate.split('-');
+    preparingDate = new Date(preparingDate[0], (preparingDate[1] - 1), preparingDate[2]);
+    return  preparingDate;
+  } else {
+    preparingDate = preparingDate.split('.');
+    preparingDate = new Date(preparingDate[2], (preparingDate[1] - 1), preparingDate[0]);
+    return  preparingDate;
+  }
+
 }
-function getAge(birthDate) {
-    var today = new Date();
+function getAge(birthDate, notTodayDate) {
+  var today;
+  if (notTodayDate) {
+    today = notTodayDate
+  } else {
+    today = new Date();
+  }
     var age = today.getFullYear() - birthDate.getFullYear();
     var m = today.getMonth() - birthDate.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
@@ -653,17 +668,17 @@ function getAge(birthDate) {
     }
     return age;
 }
-function checkAgeLimit(classEvent) {
+function checkAgeLimit(classEvent,attrStartEventDate) {
   var c = $(classEvent).attr('data-min_age');
   var e = $(classEvent).attr('data-max_age');
 
-  if (c != 0 && e != 0 && $(".emCategory").val() != 'FS' && $(".emCategory").val() != 'RB') {
-
-    var f = getAge(prepareGetAge($(".emBirthdate").val()));
-    if (f < $(classEvent).attr('data-min_age')) {
+  if ((c != 0 || e != 0) && ($(".emCategory").val() != 'FS' && $(".emCategory").val() != 'RB')) {
+    var h = prepareGetAge($(classEvent).attr(attrStartEventDate))
+    var f = getAge(prepareGetAge($(".emBirthdate").val()), h);
+    if (c != 0 && f < c) {
       showError('Возраст участника '+f+'. Мероприятие доступно для святых не младше ' + c + ' лет.', true);
       return false;
-    } else if (f > $(classEvent).attr('data-max_age')) {
+    } else if (e != 0 && f > e) {
       showError('Возраст участника '+f+'. Мероприятие доступно для святых не старше ' + e + ' лет.', true);
       return false;
     } else {
@@ -673,7 +688,7 @@ function checkAgeLimit(classEvent) {
     return true;
   }
 }
-
+// about age end
 function messageBox (html, parent) {
     window.messageBoxParent = parent;
     $("#modalMessageBox h4").html (html);
@@ -1173,7 +1188,7 @@ function fillEditMember (memberId, info, localities) {
         $(".tab-pane.active " + (document.documentElement.clientWidth < 751 ? '.show-phone' : '.desctopVisible' ) + " table.reg-list tr[class|='regmem']").each (function (){
             var id = $(this).attr ('class').replace(/^regmem-/,'');
             if (id.length>2 && id.substr (0,2)!="99" && id!=memberId){
-                var name = $(this).find('.mname').text();
+                var name = $(this).find('.mname1').text() + " (" + $(this).find('.mnameCategory').text() + ")";
                 mateArr.push({'id': he(id), 'name' : he(name)});
                 //emMateHtml+="<option value='"+he(id)+"'>"+he(name)+"</option>";
             }

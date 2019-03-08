@@ -1132,7 +1132,7 @@ $(document).ready(function(){
             showError("Необходимо заполнить все обязательные поля, выделенные розовым фоном!", true);
             return;
         }
-        if (!checkAgeLimit(".theActiveEvent")) {
+        if (!checkAgeLimit(".theActiveEvent","data-start_date")) {
           return;
         }
         var form = $('#modalEditMember'), self = this, fieldsValue = getValuesRegformFields(form, true, false);
