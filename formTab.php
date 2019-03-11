@@ -96,7 +96,7 @@
     <?php if (!$isGuest && !$indexPage) { ?>
       style="display:inline-block"
     <?php } else {?>
-      style="display: none"      
+      style="display: none"
     <?php } ?>
     >
         <label class="span12"><?php g ('&nbsp;','Категория'.($noEvent ? '' : '<sup>*</sup>')); ?></label>
@@ -173,7 +173,7 @@
 <div class="controls ">
     <div class="control-group row-fluid " style="width: 48%;">
         <label class="span12">Дата приезда<sup>*</sup> <a href="#" class="tooltipArrDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-        <input class="span12 emArrDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required,ddmm">
+        <input class="span12 emArrDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required">
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
         <label class="span12">Время <a href="#" id="tooltipArr" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Время приезда к месту проведения конференции (с учётом времени на дорогу от вокзала/аэропорта)" tabindex="-1"><i class="icon-question-sign"></i></a></label>
@@ -181,7 +181,7 @@
     </div>
     <div class="control-group row-fluid " style="width: 48%;">
         <label class="span12">Дата отъезда<sup>*</sup> <a href="#" class="tooltipDepDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-        <input class="span12 emDepDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required,ddmm">
+        <input class="span12 emDepDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required">
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
         <label class="span12">Время <a href="#" id="tooltipDep" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Время отъезда от места проведения конференции, а не от вокзала" tabindex="-1"><i class="icon-question-sign"></i></a></label>

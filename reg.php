@@ -1107,8 +1107,8 @@
 
             tableRows.push('<tr class="regmem-'+m.id+'" '+ dataItems +' >'+
                 '<td class="style-checkbox"><input type="checkbox"></td>'+
-                '<td class="style-name mname '+(m.male==1?'male':'female')+'">' + he(m.name) +
-                (in_array(1, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.category_name+'</span>' : '') +
+                '<td class="style-name mname '+(m.male==1?'male':'female')+'"><span class="mname1">'+ he(m.name) +
+                (in_array(1, window.user_settings) ? '</span><br/>'+ '<span class="mnameCategory user_setting_span">'+m.category_name+'</span>' : '') +
                 '</td>' +
                 (showLocalityField ? '<td class=style-city>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                 (in_array(2, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+(m.region || m.country)+'</span>' : '') +
@@ -1129,8 +1129,8 @@
 
             phoneRows.push ('<tr class="regmem-'+m.id+'" '+ dataItems +' >'+
                 '<td class="arrival" data-date="' + he( m.arr_date) + '" data-time="' + he(m.arr_time) + '"><input type="checkbox"></td>'+
-                '<td class="departure" data-date="' + he(m.dep_date) + '" data-time="' + he(m.dep_time) + '"><span class="mname '+(m.male==1?'male':'female')+'">' + he(m.name) +
-(in_array(1, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.category_name+'</span>' : '') +
+                '<td class="departure" data-date="' + he(m.dep_date) + '" data-time="' + he(m.dep_time) + '"><span class="mname '+(m.male==1?'male':'female')+'"><span class="mname1">' + he(m.name) + '</span>' +
+(in_array(1, window.user_settings) ? '<br/>'+ '<span class="user_setting_span mnameCategory">'+m.category_name+'</span>' : '') +
                 "</span> " +
                 (showLocalityField ? '<div>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +(in_array(2, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+(m.region || m.country)+'</span>' : '') +
                     '</div>' : '') +
@@ -1506,7 +1506,9 @@
 
     $("#btnDoSaveMember").click (function (){
         if (!$(this).hasClass('disabled')){
-            saveMember(false);
+          if (checkAgeLimit(".tab-pane.active","data-start", false)) {
+              saveMember(false);
+            }
         }
         else{
             showError("Необходимо заполнить все обязательные поля, выделенные розовым фоном!", true);
@@ -1517,7 +1519,7 @@
       var btn = $(this).attr('id');
 
       if (!$(this).hasClass('disabled')) {
-        if (checkAgeLimit(".tab-pane.active")) {
+        if (checkAgeLimit(".tab-pane.active","data-start", false)) {
           if (checkForRegEnd(btn)) {
               saveMember (true);
             }
