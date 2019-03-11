@@ -268,7 +268,6 @@ var MeetingsPage = (function(){
                             });
                         }
                     })
-
                 }
                 else{
                     modalWindowTemplates.find('.modal-footer').html('<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Ok</button>');
@@ -875,7 +874,6 @@ var MeetingsPage = (function(){
         }
 
         function buildMembersList(modalWindowSelector, list){
-console.log(list);
             var members = [];
             $(modalWindowSelector).find('.members-available').html('');
 
@@ -1347,7 +1345,7 @@ console.log(list);
                 $("#addEditMeetingModal").find('.btnDoHandleMeeting').attr('data-id', meetingId).attr('data-locality', locality).attr('data-date', date).attr('data-meeting_type',meetingType);
                 $("#addEditMeetingModal").attr('data-id', meetingId);
 
-                console.log(members);
+                //console.log(members);
                 fillMeetingModalForm(textMode, formatDate(date), locality, meetingType, note, countList, count, countGuests, countChildren, countFulltimers, countTrainees, isMeetingSummary, saintsCount, meetingName, members, participants);
             });
 
@@ -1425,11 +1423,11 @@ console.log(list);
             filterMeetingsList();
         });
 
-        $("#meetingCategory").change(function(){
+    /*    $("#meetingCategory").change(function(){
             var text = $('#meetingCategory option:selected').text();
             $(".meetingName").val(text);
             update_members_list();
-        });
+        });*/
 
         $("#meetingLocalityModal").change(function(){
             if($(this).parents("#addEditMeetingModal").is(':visible')){

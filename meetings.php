@@ -24,7 +24,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <a class="btn btn-primary show-templates" type="button"><i class="fa fa-list"></i> <span class="hide-name">Шаблоны</span></a>
                 <a class="btn btn-meeting-members-statistic" href="#">
                     <i class="fa fa-bar-chart" title="Поименная статистика" aria-hidden="true"></i>
-                </a>                
+                </a>
                 <a class="btn btn-meeting-general-statistic" href="#">
                     <i class="fa fa-area-chart" title="Общая статистика" aria-hidden="true"></i>
                 </a>
@@ -50,14 +50,14 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <input type="text" class="span2 start-date" value="<?php echo date("d.m.Y", strtotime("-1 months")); ?>">
                     <i class="btn fa fa-calendar" aria-hidden="true"></i>
                     <input type="text" class="span2 end-date" value="<?php echo date('d.m.Y'); ?>">
-                </div>                
+                </div>
                 <select id="selMeetingCategory" class="span2">
                     <option value='_all_' selected <?php echo $selMeetingCategory =='_all_' ? 'selected' : '' ?> >Все собрания</option>
                     <?php foreach ($meetingsTypes as $id => $name) {
                         echo "<option value='$id' ". ($id==$selMeetingCategory ? 'selected' : '') .">".htmlspecialchars ($name)."</option>";
                     } ?>
-                </select>   
-                    
+                </select>
+
                 <?php if (!$isSingleCity) { ?>
                 <select id="selMeetingLocality" class="span3">
                     <option value='_all_' <?php echo $selMeetingLocality =='_all_' ? 'selected' : '' ?> >Все местности (районы)</option>
@@ -67,9 +67,9 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                         }
                     ?>
                 </select>
-                <?php } ?>                
+                <?php } ?>
             </div>
-            <div class="desctopVisible">                
+            <div class="desctopVisible">
                 <table id="meetings" class="table table-hover">
                     <thead>
                     <tr>
@@ -87,12 +87,12 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <tbody><tr><td colspan="8"><h3 style="text-align: center">Загрузка...</h3></td></tr></tbody>
                 </table>
             </div>
-            <div class="show-phone">                
+            <div class="show-phone">
                 <table id="meetingsPhone" class="table table-hover">
                     <tbody><tr><td colspan="8"><h3 style="text-align: center">Загрузка...</h3></td></tr></tbody>
                 </table>
             </div>
-        </div>        
+        </div>
     </div>
 </div>
 
@@ -103,7 +103,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <h4 id="titleMeetingModal"></h4>
     </div>
     <div class="modal-body">
-        <div class="desctop-visible tablets-visible">            
+        <div class="desctop-visible tablets-visible">
 
             <div style="margin-bottom: 10px;">
                 <a class="show-templates open-in-meeting-window">Заполнить из шаблона</a>
@@ -115,7 +115,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             echo "<option value='$id' ". ($id==$selMeetingLocality || $isSingleCity ? 'selected="selected"' : '') ." >".htmlspecialchars ($name)."</option>";
                         }
                     ?>
-                </select>       
+                </select>
             </div>
             <div class="control-group row-fluid" >
                 <input class="datepicker meetingDate span12" type="text" placeholder="ДД.ММ.ГГГГ" valid="required,date" style="width: 38%">
@@ -128,7 +128,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <div class="control-group row-fluid">
                 <label class="span12" style="min-height: 10px; line-height: 20px;">Название собрания</label>
                 <input type="text" class="span12 meetingName">
-            </div>                    
+            </div>
             <div class="control-group row-fluid">
                 <label>Количество по списку (от 12 лет):</label>
                 <input type="text" style="float:right;" class="span2 meeting-list-count">
@@ -140,7 +140,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <div class="show-extra-fields control-group row-fluid"">
                 <label>Полновременных служащих:</label>
                 <input type="text" style="float:right;" class="span2 meeting-count-fulltimers">
-            </div> 
+            </div>
             <div class="show-extra-fields control-group row-fluid"">
                 <label>Обучающихся ПВОМ:</label>
                 <input type="text" style="float:right;" class="span2 meeting-count-trainees">
@@ -160,7 +160,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <div class="control-group row-fluid">
                 <label class="span12 meeting-label-note note-field">Комментарий:</label>
                 <textarea class="span12 meeting-note note-field"></textarea>
-            </div>                        
+            </div>
             <div class="control-group row-fluid" style="margin-top: 10px;">
                 <div>
                     <a href="" class="meeting-add-btn" style="margin-right: 10px">Добавить</a> <a href="" style="margin-right: 10px" class="meeting-clear-btn">Очистить список</a>
@@ -169,7 +169,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <div class="control-group row-fluid">
                         <div class="checkbox-block">
                             <div class="btn-group">
-                                <input id="checkbox-locality" type="radio" data-field="l" >    
+                                <input id="checkbox-locality" type="radio" data-field="l" >
                                 <label for="checkbox-locality">Местности</label>
                             </div>
                             <div class="btn-group">
@@ -178,7 +178,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             </div>
                         </div>
                     </div>
-                    <div class="input-append span12">                        
+                    <div class="input-append span12">
                         <input class="span11 search-members" type="text" placeholder="Введите местность или ФИО">
                         <span class="add-on"><i style="color: #ddd;" class="fa fa-plus fa-lg"></i></span>
                     </div>
@@ -192,13 +192,13 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             <th><a id='sort-attend_meeting' href='#' title='сортировать'>С</a>&nbsp;</th>
                             <th>&nbsp;</th>
                         </tr>
-                    </thead>      
+                    </thead>
                     <tbody></tbody>
                 </table>
-            </div>                 
+            </div>
         </div>
     </div>
-    <div class="modal-footer">        
+    <div class="modal-footer">
         <button class="btn btn-success btnDoHandleMeeting disable-on-invalid">Сохранить</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
@@ -215,18 +215,18 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <div>
             <input class="span3 search-meeting-members" type="text" placeholder="Введите ФИО">
             <i class="btn fa fa-check fa-lg filter-stat-members-checked" title="Отмеченные" aria-hidden="true"></i>
-            <i class="btn fa fa-ban fa-lg filter-stat-members-unchecked" title="Неотмеченные" aria-hidden="true"></i>            
+            <i class="btn fa fa-ban fa-lg filter-stat-members-unchecked" title="Неотмеченные" aria-hidden="true"></i>
         </div>
         <table class="table table-hover table-condensed ">
             <thead><tr><th>&nbsp;</th><th>Фамилия Имя Отчество</th><th>Дата рождения</th></tr></thead>
-            <tbody>                
+            <tbody>
             </tbody>
         </table>
         <i class="fa fa-arrow-up fa-3x scroll-up" aria-hidden="true"></i>
     </div>
     <div class="modal-footer">
         <button class="btn btn-success doSaveListMembers" data-dismiss="modal" aria-hidden="true">Сохранить</button>
-        <button class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Отмена</button>        
+        <button class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
 -->
@@ -243,7 +243,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <?php foreach ($meetingsTypes as $id => $name) {
                 echo "<option value='$id' ". ($id==$selMeetingCategory ? 'selected' : '') .">".htmlspecialchars ($name)."</option>";
             } ?>
-        </select>   
+        </select>
         <?php if (!$isSingleCity) { ?>
         <select id="localityStatistic" class="span2">
             <option value='_all_' <?php echo $selMeetingLocality =='_all_' ? 'selected' : '' ?> >Все местности (районы)</option>
@@ -261,21 +261,21 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         </div>
         <i class="btn btn-meeting-download-members-statistic fa fa-download" title="Скачать общую статистику" aria-hidden="true"></i>
         <div style="margin-bottom: 10px;">
-            <?php 
+            <?php
                     foreach ($meetingsTypes as $type => $name){
                         echo '<span class="statistic-bar-form '.$type.'-meeting"></span><span>'.$name.'</span>';
                     }
             ?>
         </div>
         <div id="general-statistic"></div>
-        <table class="table table-hover table-condensed statistic-meeting-list">            
+        <table class="table table-hover table-condensed statistic-meeting-list">
             <thead><tr><th style="width: 30%;">Фамилия Имя Отчество</th><th></th></tr></thead>
             <tbody></tbody>
         </table>
         <i class="fa fa-arrow-up fa-3x scroll-up" aria-hidden="true"></i>
     </div>
     <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Ok</button>      
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Ok</button>
     </div>
 </div>
 
@@ -291,7 +291,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <?php foreach ($meetingsTypes as $id => $name) {
                 echo "<option value='$id' ". ($id==$selMeetingCategory ? 'selected' : '') .">".htmlspecialchars ($name)."</option>";
             } ?>
-        </select>   
+        </select>
         <?php if (!$isSingleCity) { ?>
         <select id="localityGeneralStatistic" class="span2">
             <option value='_all_' <?php echo $selMeetingLocality =='_all_' ? 'selected' : '' ?> >Все местности (районы)</option>
@@ -308,12 +308,12 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <input type="text" class="span2 end-date-statistic-general" value="<?php echo date('d.m.Y'); ?>">
         </div>
         <i class="btn btn-meeting-download-general-statistic fa fa-download" title="Скачать статистику" aria-hidden="true"></i>
-        
+
         <div id="chart_div" style="height: 85%"></div>
         <i class="fa fa-arrow-up fa-3x scroll-up" aria-hidden="true"></i>
     </div>
     <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Ok</button>      
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Ok</button>
     </div>
 </div>
 
@@ -328,7 +328,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary remove-meeting" data-dismiss="modal" aria-hidden="true">Удалить</button>
-        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отмена</button>        
+        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
 
@@ -340,7 +340,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
     <div class="modal-body">
             <div class="toolbar">
-                <a class="btn btn-success btn-add-template" type="button"><i class="fa fa-plus icon-plus icon-white"></i> <span class="hide-name">Добавить</span></a>                
+                <a class="btn btn-success btn-add-template" type="button"><i class="fa fa-plus icon-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
             </div>
             <table id='template-list' class='table table-hover'>
                 <thead>
@@ -351,8 +351,8 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                         <th><a id='sort-admin' href='#' title='сортировать'>Редакторы</a>&nbsp;</th>
                         <th>&nbsp;</th>
                     </tr>
-                </thead>      
-                <tbody></tbody>                          
+                </thead>
+                <tbody></tbody>
             </table>
     </div>
     <div class="modal-footer">
@@ -388,10 +388,10 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <label>Выберите вид собрания</label>
                     <select  class="span12 template-meeting-type" valid="required">
                         <option value='_none_'>&nbsp;</option>
-                        <?php 
+                        <?php
                             foreach ($meetingsTypes as $id => $name) {
                                 echo "<option value='$id'>".htmlspecialchars ($name)."</option>";
-                            } 
+                            }
                         ?>
                     </select>
                 </div>
@@ -402,7 +402,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <div class="control-group row-fluid">
                     <label class="span12">Редакторы</label>
                     <div class="template-admins-added"></div>
-                    <input type="text" class="span12 search-template-admins" placeholder="Введите текст">   
+                    <input type="text" class="span12 search-template-admins" placeholder="Введите текст">
                     <div class="template-admins-available"></div>
                 </div>
             </div>
@@ -410,7 +410,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <div class="control-group row-fluid">
                     <div class="checkbox-block">
                         <div class="btn-group">
-                            <input id="checkbox-locality" type="radio" data-field="l" >    
+                            <input id="checkbox-locality" type="radio" data-field="l" >
                             <label for="checkbox-locality">Местности</label>
                         </div>
                         <div class="btn-group">
@@ -420,17 +420,17 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     </div>
                 </div>
                 <div class="control-group row-fluid">
-                    <div class="input-append span12">                        
+                    <div class="input-append span12">
                         <input class="span11 search-members" type="text" placeholder="Введите местность или ФИО">
                         <span class="add-on"><i style="color: #ddd;" class="fa fa-plus fa-lg"></i></span>
                     </div>
                     <!-- template-participants-available -->
                     <div class="members-available"></div>
-                </div> 
+                </div>
                 <!--
                 <span class="block-remove-members-buttons">
                     <a style="margin-right: 10px" class="remove-members">Удалить</a>
-                    <a style="margin-right: 10px" class="remove-members-cancel-all">Отменить</a>                    
+                    <a style="margin-right: 10px" class="remove-members-cancel-all">Отменить</a>
                 </span>
                 <a class="remove-members-check-all">Отметить всех</a>
                 -->
@@ -442,7 +442,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             <th><a id='sort-attend_meeting' href='#' title='сортировать'>С</a>&nbsp;</th>
                             <th>&nbsp;</th>
                         </tr>
-                    </thead>      
+                    </thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -450,7 +450,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
     <div class="modal-footer" style="display: flow-root;">
         <button class="btn btn-primary btn-handle-template"></button>
-        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отмена</button>        
+        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
 
@@ -460,7 +460,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3></h3>
     </div>
-    <div class="modal-body">         
+    <div class="modal-body">
         <div>
             <div class="toolbar">
                 <div class="control-group row-fluid">
@@ -479,8 +479,8 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <th><a id='sort-locality' href='#' title='сортировать'>Местность</a>&nbsp;</th>
                     <th>&nbsp;</th>
                 </tr>
-            </thead>      
-            <tbody></tbody>                          
+            </thead>
+            <tbody></tbody>
         </table>
     </div>
     <div class="modal-footer">
@@ -494,8 +494,8 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3></h3>
     </div>
-    <div class="modal-body">            
-        
+    <div class="modal-body">
+
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary doDeleteParticipant" data-dismiss="modal" aria-hidden="true">Удалить</button>
@@ -509,8 +509,8 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3>Удаление участника</h3>
     </div>
-    <div class="modal-body">            
-        
+    <div class="modal-body">
+
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary delete-member-from-list" data-dismiss="modal" aria-hidden="true">Удалить</button>
@@ -524,7 +524,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3>Удаление шаблона собрания</h3>
     </div>
-    <div class="modal-body">            
+    <div class="modal-body">
         Вы действительно хотите удалить данный шаблон собрания?
     </div>
     <div class="modal-footer">
@@ -539,7 +539,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3>Создание собрания на основе шаблона</h3>
     </div>
-    <div class="modal-body">            
+    <div class="modal-body">
         Вы действительно хотите создать собрание используя данный шаблон собрания?
     </div>
     <div class="modal-footer">
@@ -548,7 +548,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
 </div>
 
-<script src="/js/meetings.js"></script>
+<script src="/js/meetings.js?v2"></script>
 <?php
     include_once './footer.php';
 ?>
