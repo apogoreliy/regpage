@@ -206,7 +206,7 @@ var MeetingsPage = (function(){
 
                     templatesArr.push(
                         "<tr data-id='"+t.id+"' data-locality='"+t.locality_key+"' data-type='"+t.meeting_type+"' >" +
-                        "<td>"+ ( isOpenInMeetingWindow ? "<input style='margin-top: -3px;' type='checkbox' class='check-template'> " : "" ) + t.template_name+"</td>"+
+                        "<td><label class='form-check-label'>"+ ( isOpenInMeetingWindow ? "<input style='margin-top: -3px;' type='checkbox' class='check-template form-check-input'> " : "" ) + t.template_name+"</label></td>"+
                         "<td class='template-name'>"+ t.locality_name + "</td>"+
                         "<td class='template-participants' data-participants='"+participants+"'>"+ participants.length + " <i class='fa fa-list fa-lg template-participants-info' title='Список участников'></i></td>"+
                         "<td class='template-admins' data-admins='"+t.admins+"'>"+ admins.length +" <i class='fa fa-list fa-lg template-admins-info' title='Список редакторов'></i></td>"+
@@ -268,6 +268,7 @@ var MeetingsPage = (function(){
                             });
                         }
                     })
+
                 }
                 else{
                     modalWindowTemplates.find('.modal-footer').html('<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Ok</button>');
@@ -874,6 +875,7 @@ var MeetingsPage = (function(){
         }
 
         function buildMembersList(modalWindowSelector, list){
+console.log(list);
             var members = [];
             $(modalWindowSelector).find('.members-available').html('');
 
@@ -881,7 +883,7 @@ var MeetingsPage = (function(){
                 for (var i in list){
                     var member = list[i], buttons = "<i title='Удалить' class='fa fa-trash fa-lg btn-remove-member'></i>";
                     members.push("<tr class='check-member' data-id='"+member.id+"' data-attend_meeting='"+member.attend_meeting+"' data-name='"+member.name+"' data-locality='"+member.locality+"'>"+
-                        "<td>" + ( modalWindowSelector === '#modalHandleTemplate' ? "" : "<input type='checkbox' "+(member.present ? "checked='true'" : "" ) + " style='margin-top: -3px;' class='check-member-checkbox'> ") +member.name +"</td>"+
+                        "<td><label class='check-member-label'>" + ( modalWindowSelector === '#modalHandleTemplate' ? "" : "<input type='checkbox' "+(member.present ? "checked='true'" : "" ) + " style='margin-top: -3px;' class='check-member-checkbox form-check-input'> ") +member.name +"</label></td>"+
                         "<td>"+member.locality+"</td>"+
                         "<td>"+(member.attend_meeting == 1 ? '<i class="fa fa-check"></i>' : '-') +"</td>"+
                         "<td>"+buttons+"</td>"+
@@ -890,11 +892,11 @@ var MeetingsPage = (function(){
 
                 $(modalWindowSelector).find('.modal-body tbody').html(members.join(''));
 
-                $('.check-member').click(function(){
+                /*$('.check-member').click(function(){
                     var element = $(this).find('.check-member-checkbox');
 
                     element.prop('checked', !element.prop('checked'));
-                });
+                });*/
 
                 $(modalWindowSelector).find(".btn-remove-member").click(function(){
                     var memberIdToDelete = $(this).parents('tr').attr('data-id'), members = [];

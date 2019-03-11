@@ -668,11 +668,13 @@ function getAge(birthDate, notTodayDate) {
     }
     return age;
 }
-function checkAgeLimit(classEvent,attrStartEventDate) {
+function checkAgeLimit(classEvent,attrStartEventDate, isSelfRegistration) {
   var c = $(classEvent).attr('data-min_age');
   var e = $(classEvent).attr('data-max_age');
+  var k;
+  isSelfRegistration ? k = 01 : k = $('.emStatus').val();
 
-  if ((c != 0 || e != 0) && ($(".emCategory").val() != 'FS' && $(".emCategory").val() != 'RB')) {
+  if ((c != 0 || e != 0) && ($(".emCategory").val() != 'FS' && $(".emCategory").val() != 'RB') && k == 01) {
     var h = prepareGetAge($(classEvent).attr(attrStartEventDate))
     var f = getAge(prepareGetAge($(".emBirthdate").val()), h);
     if (c != 0 && f < c) {

@@ -1506,7 +1506,7 @@
 
     $("#btnDoSaveMember").click (function (){
         if (!$(this).hasClass('disabled')){
-          if (checkAgeLimit(".tab-pane.active","data-start")) {
+          if (checkAgeLimit(".tab-pane.active","data-start", false)) {
               saveMember(false);
             }
         }
@@ -1519,7 +1519,7 @@
       var btn = $(this).attr('id');
 
       if (!$(this).hasClass('disabled')) {
-        if (checkAgeLimit(".tab-pane.active","data-start")) {
+        if (checkAgeLimit(".tab-pane.active","data-start", false)) {
           if (checkForRegEnd(btn)) {
               saveMember (true);
             }
