@@ -548,7 +548,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
 </div>
 
-<script src="/js/meetings.js?v2"></script>
+<script src="/js/meetings.js?v6"></script>
 <?php
     include_once './footer.php';
 ?>
