@@ -1621,6 +1621,7 @@
             fillEditMember ('', data.info, data.localities);
             $('#modalAddMembers').modal('hide');
             $('#modalEditMember').attr('data-member_id', '');
+            $(".emLocality").val("_none_").change();
             var el = $('#modalEditMember').modal('show');
             //el.find('.edit-member-form').empty();
             $(document).width() >980 ? el.find('.tablets-visible').empty() : el.find('.desctop-visible').empty();
