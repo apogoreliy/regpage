@@ -4265,7 +4265,7 @@ function db_getMeetingTemplate($templateId){
 
     $res = db_query(
         "SELECT mt.id, mt.name as meeting_name, mt.meeting_type_key, mt.locality_key,
-        (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, l.name) ORDER BY m.name ASC SEPARATOR ',') FROM member m INNER JOIN locality l ON l.key=m.locality_key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
+        (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, l.name, m.attend_meeting) ORDER BY m.name ASC SEPARATOR ',') FROM member m INNER JOIN locality l ON l.key=m.locality_key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
         (SELECT GROUP_CONCAT( CONCAT_WS(':', ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(m.birth_date, '%Y-%m-%d'))/365),
                     m.category_key) SEPARATOR  ',') as members FROM member m WHERE FIND_IN_SET(m.key, mt.participant)<>0) as members
         FROM meeting_template mt

@@ -1,6 +1,6 @@
 var MeetingsPage = (function(){
     google.charts.load('current', {'packages':['corechart', 'bar']});
-
+var isFillTemplate = 0;
     $(document).ready(function(){
 
         // empty admins array
@@ -259,8 +259,9 @@ var MeetingsPage = (function(){
                                             }
                                         }
                                     }
-
+                                    isFillTemplate = 1;
                                     fillMeetingModalForm('Новое собрание', '', templateInfo.locality_key, templateInfo.meeting_type_key, '', countList, '', '', countChildren, countFulltimers, countTrainees, false, '', templateInfo.meeting_name, templateInfo.participants, '');
+
                                 }
                                 else{
                                     showError('Информация по данному шаблону не найдена.');
@@ -1423,11 +1424,15 @@ var MeetingsPage = (function(){
             filterMeetingsList();
         });
 
-    /*    $("#meetingCategory").change(function(){
+        $("#meetingCategory").change(function(){
+          if (isFillTemplate === 0) {
             var text = $('#meetingCategory option:selected').text();
             $(".meetingName").val(text);
             update_members_list();
-        });*/
+          } else {
+            isFillTemplate = 0;
+          }
+        });
 
         $("#meetingLocalityModal").change(function(){
             if($(this).parents("#addEditMeetingModal").is(':visible')){

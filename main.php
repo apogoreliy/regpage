@@ -861,10 +861,8 @@ $(document).ready(function(){
                                         $('#btnDoRegisterGuest').removeClass('guest');
                                         isEditMode ? $('#btnDoRegisterGuest').addClass('edit') : $('#btnDoRegisterGuest').removeClass('edit');
                                         $('#modalEditMember').modal('show');
-                                        if(isThisAdmin != 1){
-                                          $('.emMate').hide();
-                                          $('.emMateLbl').hide();
-                                        }
+                                        $('.emMate').hide();
+                                        $('.emMateLbl').hide();
                                     });
                                 } else{
                                     $('#btnDoRegisterGuest').addClass('guest');
@@ -1258,6 +1256,7 @@ $(document).ready(function(){
     /* END Romans Code  */
 });
 </script>
+/*<script src="/js/mainpage.js?v10"></script>*/
 <?php
 }
 
