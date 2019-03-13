@@ -29,11 +29,11 @@ if(!$hasMemberRightToSeePage){
 			$.get('/ajax/setting.php?get_settings')
             .done (function(data) {
 
-                render_setting_list(data.settings, data.user_settings, data.access_area, data.user_access_area_settings); 
+                render_setting_list(data.settings, data.user_settings, data.access_area, data.user_access_area_settings);
             });
 		}
 
-		function render_setting_list(settings, user_settings, access_area, user_access_area_settings){	
+		function render_setting_list(settings, user_settings, access_area, user_access_area_settings){
 			var settings_list = [], category_list = [];
 
 			for(var s in settings){
@@ -50,7 +50,7 @@ if(!$hasMemberRightToSeePage){
 					'<div style="margin-bottom: 5px;">'+
 					'<input style="margin-top:0" id="'+setting.setting_key+'" class="select_setting" type="checkbox" '+( in_array(setting.setting_key, user_settings) ? "checked" : "")+' />'+
 					'<label for="'+setting.setting_key+'" style="display:inline; margin-left: 10px;">'+setting.name+'</label></div>');
-				}				
+				}
 
 				if(setting.category_name == 'Зоны доступа'){
 					for(var a in access_area){
@@ -61,10 +61,10 @@ if(!$hasMemberRightToSeePage){
 							//'<input style="margin-top:0" id="'+a+'" class="select_area" type="checkbox" '+( in_array(a, user_access_area_settings) ? "checked" : "")+' />'+
 							'<label for="'+a+'" style="display:inline;">'+area+'</label></div>'
 						);
-					}					
+					}
 				}
 			}
-			
+
 			$('.settings_list').html(settings_list.join(''));
 
 			$('.select_setting').change(function(){
@@ -73,9 +73,11 @@ if(!$hasMemberRightToSeePage){
 
 				$.get('/ajax/setting.php?change_user_setting', {setting_key: setting_key, is_checked: is_checked})
 	            .done (function(data) {
-
 	            });
-			});
+              if ($(this).attr('id') == 8 ) {
+                setTimeout(function() { window.location = '/settings'} ,700);
+              }
+        });
 
 			$('.select_area').change(function(){
 				var is_checked = $(this).prop('checked'),
@@ -85,13 +87,13 @@ if(!$hasMemberRightToSeePage){
 	            .done (function(data) {
 
 	            });
-			});			
-		}		
+			});
+		}
 	});
 
 </script>
 
-<?php 
+<?php
 
 include_once 'footer.php';
 
