@@ -225,6 +225,7 @@ var isFillTemplate = 0;
 
                     $(".fill-meeting-by-template").click(function(){
                         if(!$(this).attr('disabled')){
+                            $("#addEditMeetingModal tbody").html('');
                             var templateId = modalWindowTemplates.find(".check-template[type='checkbox']:checked").parents('tr').attr('data-id');
 
                             $.post('/ajax/meeting.php?get_template', { templateId : templateId }).done(function(data){
@@ -1435,12 +1436,14 @@ var isFillTemplate = 0;
         });
 
         $("#meetingLocalityModal").change(function(){
+          if (isFillTemplate === 0) {
             if($(this).parents("#addEditMeetingModal").is(':visible')){
                 var locality = $(this).val();
 
                 chechExtraFields(locality);
                 update_members_list();
             }
+          }
         });
 
         function update_members_list(){
