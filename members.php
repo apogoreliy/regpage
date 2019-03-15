@@ -1019,6 +1019,13 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
     }
 
     $("#btnDoSaveMember").click (function (){
+      var el = $('#modalEditMember');
+      if ((el.find(".emGender").val () == "_none_" || el.find(".emName").val().trim().length==0) || el.find(".emCitizenship").val () == "_none_" || el.find(".emCategory").val () == "_none_" || el.find(".emLocality").val () == "_none_") {
+        showError("Необходимо заполнить все поля выделеные розовым цветом");
+        $(".localityControlGroup").addClass ("error");
+        window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
+        return;
+      }
         if (!$(this).hasClass('disabled')){
             saveMember();
         }
