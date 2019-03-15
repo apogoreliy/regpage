@@ -1447,6 +1447,24 @@
         var elem =$('#btnDoSaveMember'),
             el = $('#modalEditMember');
             //el = $('#modalEditMember').find($(document).width() > 980 ? '.desctop-visible' : '.tablets-visible');
+        if ((el.find(".emLocality").val () == "_none_" && el.find(".emNewLocality").val().trim().length==0) || el.find(".emCitizenship").val () == "_none_" || el.find(".emGender").val () == "_none_" || el.find(".emName").val().trim().length==0 || el.find(".emParking").val () == "_none_") {
+          showError("Необходимо выбрать гражданство и населенный пункт из списка или если его нет, то указать его название");
+          $(".localityControlGroup").addClass ("error");
+          window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
+          return;
+        }
+        if (el.find(".emArrDate").val().trim().length==0 && el.find(".emDepDate").val().trim().length==0 || el.find(".emAccom").val () == "_none_" || el.find(".emBirthdate").val().trim().length==0 || el.find(".emCategory").val () == "_none_" || el.find(".emStatus").val () == "_none_") {
+          showError("Необходимо заполнить все поля отмеченные розовым");
+          $(".localityControlGroup").addClass ("error");
+          window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
+          return;
+        }
+        if (el.find(".emParking").val () == "1" && (el.find(".emAvtomobileNumber").val().trim().length==0 || l.find(".emAvtomobile").val().trim().length==0)) {
+          showError("Необходимо заполнить номер, марку и цвет автомобиля");
+          $(".localityControlGroup").addClass ("error");
+          window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
+          return;
+        }
         if ((elem.hasClass ("disable-on-invalid") || doRegister) && el.find(".emLocality").val () == "_none_" && el.find(".emNewLocality").val().trim().length==0) {
             showError("Необходимо выбрать населенный пункт из списка или если его нет, то указать его название");
             $(".localityControlGroup").addClass ("error");
