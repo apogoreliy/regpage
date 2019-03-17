@@ -1459,7 +1459,7 @@
           window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
           return;
         }
-        if (el.find(".emParking").val () == "1" && (el.find(".emAvtomobileNumber").val().trim().length==0 || l.find(".emAvtomobile").val().trim().length==0)) {
+        if (el.find(".emParking").val () == "1" && (el.find(".emAvtomobileNumber").val().trim().length==0 || el.find(".emAvtomobile").val().trim().length==0)) {
           showError("Необходимо заполнить номер, марку и цвет автомобиля");
           $(".localityControlGroup").addClass ("error");
           window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
