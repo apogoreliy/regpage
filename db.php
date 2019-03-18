@@ -2288,7 +2288,7 @@ function db_getLocalityMembers($localityId){
     global $db;
     $_localityId = $db->real_escape_string($localityId);
 
-    $res = db_query("SELECT CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting) as member
+    $res = db_query("SELECT CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key) as member
         FROM member m
         INNER JOIN locality lo ON lo.key=m.locality_key
         WHERE lo.key = '$_localityId' ORDER BY m.name ASC");
