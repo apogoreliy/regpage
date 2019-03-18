@@ -1026,6 +1026,12 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
         window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
         return;
       }
+      if (el.find(".emBirthdate").val().trim().length==0) {
+        showError("Необходимо заполнить дату рождения");
+        $(".localityControlGroup").addClass ("error");
+        window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
+        return;
+      }
         if (!$(this).hasClass('disabled')){
             saveMember();
         }
