@@ -88,14 +88,14 @@
 
 <!-- Registration state statistics -->
 
-<div id="modalStatistic" class="modal hide fade" data-width="700" tabindex="-1" role="dialog" aria-labelledby="eventInfoTitle" aria-hidden="true">
+<div id="modalStatistic" class="modal hide fade" data-width="500" tabindex="-1" role="dialog" aria-labelledby="eventInfoTitle" aria-hidden="true">
     <div id="closeModal">
         <div class="modal-header">
             <button type="button" class="close statCancel" data-dismiss="modal" aria-hidden="true">x</button>
             <h3>Статистика</h3>
             <h5></h5>
         </div>
-        <div class="modal-body"><div id="showStatistic"></div></div>        
+        <div class="modal-body"><div id="showStatistic"></div></div>
     </div>
 </div>
 
@@ -258,7 +258,7 @@
                 <i class="fa fa-plus-circle" aria-hidden="true"></i> Добавить
             </button>
             <select style="margin-left: 10px;" class="controls colleges-city-list">
-                
+
             </select>
             <input type="text" style="padding-right: 20px;" class="span4 controls search-colleges" placeholder="Введите текст для поиска">
             <i class="fa fa-remove clear-search-colleges"></i>
@@ -350,7 +350,7 @@
                 <div>
                     <input type="checkbox" data-download="birth-date" id="download-birth-date">
                     <label for="download-birth-date">Дата рождения</label>
-                </div>            
+                </div>
                 <div>
                     <input type="checkbox" data-download="age" id="download-age">
                     <label for="download-age">Возраст</label>
@@ -408,7 +408,7 @@
                 <div>
                     <input type="checkbox" data-download="college_comment" id="download-college_comment">
                     <label for="download-college_comment">Примечание о вузе</label>
-                </div>            
+                </div>
             </div>
         </div>
     </div>
@@ -442,7 +442,7 @@
 </div>
 
 <div id="modalHintWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-body">        
+    <div class="modal-body">
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Ok</button>
