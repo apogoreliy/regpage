@@ -2224,13 +2224,13 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
     $requestDates = " AND (me.date BETWEEN '$startDate' AND '$endDate')";
     $requestCheckMeetingAdditions = "SELECT COUNT(*) count FROM member m WHERE m.locality_key=l.key AND m.category_key='FS'";
 
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $res = db_query("SELECT DISTINCT * FROM (
             SELECT me.name, me.id, l.name as locality_name, me.date, 0 as add_list_count, me.list_count, me.saints_count,
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
-            me.locality_key, me.fulltimers_count,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
+            me.locality_key, me.note, me.fulltimers_count,
+            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
             (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, me.participants)<>0 AND m.category_key='FS') as fulltimers_in_list, me.participants,
             me.trainees_count,
             IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
@@ -2249,8 +2249,8 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
             GROUP_CONCAT(me.list_count), GROUP_CONCAT(me.saints_count),
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, GROUP_CONCAT(me.guests_count),
             GROUP_CONCAT(me.children_count), d.locality_key,
-            GROUP_CONCAT(me.fulltimers_count),
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
+            GROUP_CONCAT(me.fulltimers_count),GROUP_CONCAT(me.note),
+            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
             (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, me.participants)<>0 AND m.category_key='FS') as fulltimers_in_list, me.participants,
             GROUP_CONCAT(me.trainees_count),
             IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
@@ -2266,8 +2266,8 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
             UNION
             SELECT me.name, me.id, l.name as locality_name, me.date, 0 as add_list_count, me.list_count, me.saints_count,
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
-            me.locality_key, me.fulltimers_count,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
+            me.locality_key, me.note, me.fulltimers_count,
+            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
             (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, me.participants)<>0 AND m.category_key='FS') as fulltimers_in_list, me.participants,
             me.trainees_count,
             IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
@@ -2288,7 +2288,7 @@ function db_getLocalityMembers($localityId){
     global $db;
     $_localityId = $db->real_escape_string($localityId);
 
-    $res = db_query("SELECT CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key) as member
+    $res = db_query("SELECT CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key, m.birth_date) as member
         FROM member m
         INNER JOIN locality lo ON lo.key=m.locality_key
         WHERE lo.key = '$_localityId' ORDER BY m.name ASC");
@@ -2439,9 +2439,9 @@ function db_setMeeting($data){
     $oldLocality = isset($data['oldLocality'] ) ? $db->real_escape_string($data['oldLocality']) : null;
     $oldMeetingType = isset($data['oldMeetingType'] ) ? $db->real_escape_string($data['oldMeetingType']) : null;
 
-    $listCount = (int)($data['listCount']);
+    //$listCount = (int)($data['listCount']);
     $guestsCount = (int)($data['countGuest']);
-    $childrenCount = (int)($data['countChildren']);
+    //$childrenCount = (int)($data['countChildren']);
 
     $saintsCount = (int)($data['saintsCount']);
     $traineesCount = (int)($data['traineesCount']);
@@ -2451,25 +2451,26 @@ function db_setMeeting($data){
 
     $members = $data['members'];
     $attendMembers = $db->real_escape_string( $data['attendMembers']);
-    $listCount = $members ? count(explode(',', $data['members'])) : db_getCountMembersByLocality($locality);
+    $listCount = $guestsCount + $saintsCount;
+    //$listCount = $members ? count(explode(',', $data['members'])) : db_getCountMembersByLocality($locality);
 
     if($meetingId){
         if(($date != $oldDate || $locality != $oldLocality || $meetingType != $oldMeetingType) && checkDoubleMeeting($date, $locality, $meetingType)){
             return true;
         }
 
-        db_query("UPDATE meetings SET name='$name', children_count=$childrenCount, meeting_type='$meetingType',
+        db_query("UPDATE meetings SET name='$name', meeting_type='$meetingType',
                 date='$date', locality_key='$locality', note='$note', guests_count=$guestsCount,
-                children_count=$childrenCount, list_count=$listCount, saints_count=$saintsCount, members = '$members',
+                list_count=$listCount, saints_count=$saintsCount, members = '$members',
                 trainees_count=$traineesCount, fulltimers_count=$fulltimersCount, participants='$attendMembers' WHERE id='$meetingId' ");
     }
     else {
 
         db_query("INSERT INTO meetings (meeting_type, date, locality_key, note,
-                                        guests_count, children_count, list_count,
+                                        guests_count, list_count,
                                         saints_count, trainees_count, fulltimers_count, name, members, participants )
                 VALUE ('$meetingType', '$date', '$locality', '$note', $guestsCount,
-                        $childrenCount, $listCount, $saintsCount, $traineesCount, $fulltimersCount, '$name', '$members', '$attendMembers' )");
+                         $listCount, $saintsCount, $traineesCount, $fulltimersCount, '$name', '$members', '$attendMembers' )");
     }
 
     return false;
@@ -4035,7 +4036,7 @@ function db_getParticipantsForMeetingByMember($text){
     }
 
     $res = db_query(
-        "SELECT DISTINCT m.name, m.key as id, l.name as locality, m.attend_meeting
+        "SELECT DISTINCT m.name, m.key as id, l.name as locality, m.attend_meeting, m.category_key
         FROM locality l
         LEFT JOIN member m ON m.locality_key = l.key
         WHERE m.name LIKE '%$text%' ORDER BY m.name LIMIT 0, 3");
@@ -4246,8 +4247,8 @@ function db_getMeetingTemplates($memberId){
 
     $res = db_query("SELECT mt.id, me.key as meeting_type, me.name as meeting_name,
                     mt.name as template_name, l.key as locality_key, l.name as locality_name,
-                    (SELECT GROUP_CONCAT(CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting)  ORDER BY m.name ASC SEPARATOR  ',') FROM member m INNER JOIN locality lo ON m.locality_key=lo.key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
-                    (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting) ORDER BY m.name ASC SEPARATOR  ',') FROM member m INNER JOIN locality lo ON m.locality_key=lo.key WHERE FIND_IN_SET(m.key, mt.admin)<>0) as admins
+                    (SELECT GROUP_CONCAT(CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key)  ORDER BY m.name ASC SEPARATOR  ',') FROM member m INNER JOIN locality lo ON m.locality_key=lo.key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
+                    (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key) ORDER BY m.name ASC SEPARATOR  ',') FROM member m INNER JOIN locality lo ON m.locality_key=lo.key WHERE FIND_IN_SET(m.key, mt.admin)<>0) as admins
                     FROM meeting_template mt
                     INNER JOIN locality l ON l.key=mt.locality_key
                     INNER JOIN meeting_type me ON me.key=mt.meeting_type_key
@@ -4265,7 +4266,7 @@ function db_getMeetingTemplate($templateId){
 
     $res = db_query(
         "SELECT mt.id, mt.name as meeting_name, mt.meeting_type_key, mt.locality_key,
-        (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, l.name, m.attend_meeting) ORDER BY m.name ASC SEPARATOR ',') FROM member m INNER JOIN locality l ON l.key=m.locality_key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
+        (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, l.name, m.attend_meeting, m.category_key) ORDER BY m.name ASC SEPARATOR ',') FROM member m INNER JOIN locality l ON l.key=m.locality_key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
         (SELECT GROUP_CONCAT( CONCAT_WS(':', ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(m.birth_date, '%Y-%m-%d'))/365),
                     m.category_key) SEPARATOR  ',') as members FROM member m WHERE FIND_IN_SET(m.key, mt.participant)<>0) as members
         FROM meeting_template mt
