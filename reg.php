@@ -1097,7 +1097,9 @@
             // console.log(m);
 
             // Cut the m.region string. Roman's code ver 5.0.1
-            if (m.region =='--') {
+            if (!m.region) {
+              m.region = '--';              
+            } else if (m.region =='--') {
               m.region = m.country;
             } else {
               m.region = m.region.substring(0, m.region.indexOf(" ("));
