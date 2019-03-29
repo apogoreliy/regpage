@@ -1450,6 +1450,7 @@ var isFillTemplate = 0;
 
         $('#addEditMeetingModal').on('hide', function (){
             if ($('.addEditMode').length > 0) $('#addEditMeetingModal').removeClass('addEditMode');
+              $('#addEditMeetingModal').attr('data-id', '');
           });
 
         $('#addEditMeetingModal').on('show', function (){
