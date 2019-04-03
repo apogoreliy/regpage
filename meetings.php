@@ -388,8 +388,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                   style="display: none"
                  <?php } ?>
                 >
-                    <label>Выберите местность</label>
-                    <select class="span12 template-locality"  valid="required">
+                    <select class="span12 template-locality" valid="required" style="width: 48%">
                         <option value='_none_' >&nbsp;</option>
                         <?php
                             foreach ($localities as $id => $name) {
@@ -397,10 +396,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             }
                         ?>
                     </select>
-                </div>
-                <div class="control-group row-fluid">
-                    <label>Выберите вид собрания</label>
-                    <select  class="span12 template-meeting-type" valid="required">
+                    <select  class="span12 template-meeting-type" valid="required"  style="width: 48%; float: right;">
                         <option value='_none_'>&nbsp;</option>
                         <?php
                             foreach ($meetingsTypes as $id => $name) {
@@ -410,35 +406,29 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     </select>
                 </div>
                 <div class="control-group row-fluid">
-                    <label>Название</label>
-                    <input type="text" class="span12 template-name"  valid="required">
-                </div>
-                <div class="control-group row-fluid">
-                    <label class="span12">Редакторы</label>
-                    <div class="template-admins-added"></div>
-                    <input type="text" class="span12 search-template-admins" placeholder="Введите текст">
-                    <div class="template-admins-available" style="margin-bottom: 25px;"></div>
+                    <label>Название собрания</label>
+                    <input type="text" class="span12 template-name"  valid="required" style="margin-bottom: 25px;">
                 </div>
             </div>
             <div id="list">
-                <div class="control-group row-fluid">
+                <!--<div class="control-group row-fluid">
                   <label style="float:left;">Поместных святых:</label>
                   <input type="text" style="float:right;" readonly class="span2 meeting-saints-count-template">
                 </div>
-                <!--<div class="control-group row-fluid" style="display:none;">
+                <div class="control-group row-fluid" style="display:none;">
                   <label style="float:left;">Гостей:</label>
                   <input type="text" style="float:right;" class="span2 meeting-count-guest-template">
-                </div>-->
+                </div>
                 <div class="control-group row-fluid">
                   <label style="float:left;">Всего присутствующих:</label>
                   <input disabled type="text" style="float:right;" class="span2 meeting-count-template">
-                </div>
+                </div>-->
                 <div class="show-extra-fields control-group row-fluid fulltimersClass-template">
                   <div>В том числе полновременных служащих - <span class="meeting-count-fulltimers-template"></span></div>
                 </div>
                 <div>
-                    <input id="button-people" class="btn btn-primary" type="button" value="Добавить участников" data-field="m" style="margin-top: 25px; margin-right: 10px; ">
-                    <input id="clear-button-people" class="btn btn-warning" type="button" value="Очистить список" data-field="m" style="margin-top: 25px;">
+                    <a id="button-people" class="btn btn-success" type="button" data-field="m" ><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
+                    <input id="clear-button-people" class="btn btn-warning" type="button" value="Очистить список" data-field="m">
                 </div>
               <div class="control-group row-fluid" style="margin-top: 10px;">
 
@@ -477,6 +467,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                         <tr>
                             <th><a id='sort-meeting_type' href='#' title='сортировать'>ФИО</a>&nbsp;</th>
                             <th><a id='sort-locality' href='#' title='сортировать'>Местность</a>&nbsp;</th>
+                            <th><a id='sort-old' href='#' title='сортировать'>В</a>&nbsp;</th>
                             <th><a id='sort-attend_meeting' href='#' title='сортировать'>С</a>&nbsp;</th>
                             <th>&nbsp;</th>
                         </tr>
@@ -484,11 +475,17 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <tbody></tbody>
                 </table>
          </div>
+         <div class="control-group row-fluid">
+             <strong class="span12">Редакторы</strong>
+             <div class="template-admins-added"></div>
+             <input type="text" class="span12 search-template-admins" placeholder="Введите текст">
+             <div class="template-admins-available" style="margin-bottom: 25px;"></div>
+         </div>
        </div>
      </div>
    </div>
     <div class="modal-footer" style="display: flow-root;">
-        <button class="btn btn-primary btn-handle-template"></button>
+        <button class="btn btn-info btn-handle-template"></button>
         <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
