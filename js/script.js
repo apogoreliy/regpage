@@ -207,7 +207,14 @@ $(document).ready(function(){
        setFieldError ($(this), isValidDate($(this).val()));
     });
 
-
+    $(".meeting-lists-combo").change(function(){
+        listsType = $(".meeting-lists-combo").val();
+        switch (listsType) {
+            case 'meetings': window.location = '/meetings'; break;
+            case 'callsAndVisits': window.location = '/visits'; break;
+        }
+    });
+    
     $(".emCollege").focus(function(){
         getColleges();
     });

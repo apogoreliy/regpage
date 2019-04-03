@@ -1746,6 +1746,14 @@ input.error, .control-group.error select, textarea.error {
 .members-lists-combo>option {
   font-size: 16px;
 }
+.meeting-lists-combo {
+  font-weight: bold;
+  border: 1px solid blue;
+}
+.meeting-lists-combo>option {
+  font-size: 16px;
+}
+
 #events-list>option {
   font-size: 16px;
 }
