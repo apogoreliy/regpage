@@ -1325,10 +1325,8 @@ var isFillTemplate = 0;
                     '<i style="float: right;" title="Удалить" class="fa fa-trash fa-lg btn-remove-meeting"></i>'+
                     //'<i style="float: right;" class="fa fa-list fa-lg meeting-list" title="Список"/>'+
                     '<div><span>'+formatDate(m.date)+'</span>; '+
-                    (isSingleCity ? '' : he(m.locality_name ? (m.locality_name.length>20 ? m.locality_name.substring(0,18)+'...' : m.locality_name) : '') + '</div>') + '<div>' +
-                    (meetingCounts.saintsCount ? ('<span class="meeting-list-counts" >Святых: '+ meetingCounts.saintsCount +'</span>; ' ) : '')+
-                    (meetingCounts.guestCount ? (' <span class="meeting-saints-counts" >Гостей: '+ meetingCounts.guestCount + '</span>') : '') + '</div>' +
-                    (meetingCounts.countMembers ? ('<strong class="meeting-list-counts" >Всего: '+ meetingCounts.countMembers +'</strong>') : '')+
+                    (isSingleCity ? '' : he(m.locality_name ? (m.locality_name.length>20 ? m.locality_name.substring(0,18)+'...' : m.locality_name) : '') + '</div>') +
+                    (meetingCounts.countMembers ? ('<span class="meeting-list-counts" >Всего: '+ meetingCounts.countMembers +'</span>') : '')+
                     '</td>' +
                     '</tr>'
                 );
@@ -1396,7 +1394,6 @@ var isFillTemplate = 0;
             //  $('#ajaxLoading').on('show', function (){
                   $("tbody tr").each(function(){
                     if ($(this).attr("data-type") == 'LT') {
-                      $(this).attr("style", "background-color: lightgray;");
                       $(this).find('.meeting-name').attr('style', 'font-weight: bold');
                     }
                   });
