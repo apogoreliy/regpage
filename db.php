@@ -2309,7 +2309,7 @@ function db_getMeetingMembersList($adminId, $meetingId, $locality, $date, $is_su
     $date = $db->real_escape_string($date);
     $is_summary_meeting = $db->real_escape_string($is_summary_meeting);
     $meeting_type = $db->real_escape_string($meeting_type);
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $req = $is_summary_meeting == 'true' ? "FIND_IN_SET(m.key, me.participants)<>0 AND me.date='$date' AND me.meeting_type='$meeting_type' " : " me.id='$meetingId' ";
 
@@ -2356,7 +2356,7 @@ function db_getMeetingsTypes(){
 function db_getAdminMeetingLocalities($adminId){
     global $db;
     $adminId = $db->real_escape_string($adminId);
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $res=db_query ("SELECT DISTINCT * FROM (
                     SELECT l.key as id, l.name as name
@@ -2514,7 +2514,7 @@ function getMeetingMembersStatistic($adminId, $meetingType, $locality, $startDat
     $startDate = $db->real_escape_string($startDate);
     $endDate = $db->real_escape_string($endDate);
     $requestDates = " AND (me.date BETWEEN '$startDate' AND '$endDate')";
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $res=db_query ("SELECT * FROM (
                     SELECT m.key as member_key, m.name as name, l.name as locality_name, m.locality_key as locality_key,
@@ -3269,7 +3269,7 @@ function db_setEventArchive($eventId, $adminId){
         return false;
     }
     else{
-        db_query('SET Session group_concat_max_len=20000');
+        db_query('SET Session group_concat_max_len=100000');
 
         $res = db_query("SELECT e.event_type, e.name, e.start_date, e.end_date, e.locality_key, e.author,
                 GROUP_CONCAT(r.member_key) as members,
@@ -3553,7 +3553,7 @@ function db_getArchiveEventList($adminId, $eventId){
     global $db;
     $adminId = $db->real_escape_string($adminId);
     $eventId = $db->real_escape_string($eventId);
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     // CASE WHEN FIND_IN_SET(m.key, ea.coordinators)<>0 THEN 1 ELSE 0 END as coord,
     // CASE WHEN FIND_IN_SET(m.key, ea.service_ones)<>0 THEN ea.service_key ELSE 0 END as service
@@ -3577,7 +3577,7 @@ function getEventArchiveMembersStatistic($adminId, $eventType, $startDate, $endD
     $endDate = $db->real_escape_string($endDate);
     $requestDates = " AND (ea.start_date BETWEEN '$startDate' AND '$endDate')";
     $searchText = $text !='' ? "AND ( m.name LIKE '%".$db->real_escape_string($text)."%' OR l.name LIKE '%".$db->real_escape_string($text)."%' ) " : '';
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     //COALESCE( GROUP_CONCAT(CONCAT_WS(':', ea.event_type, ea.start_date) ORDER BY ea.start_date ASC SEPARATOR  ','), '') as event,
     /*
@@ -4241,14 +4241,14 @@ function db_getYouthList($adminId, $sort_field, $sort_type){
 function db_getMeetingTemplates($memberId){
     global $db;
     $_memberId = $db->real_escape_string($memberId);
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $templates = [];
 
     $res = db_query("SELECT mt.id, me.key as meeting_type, me.name as meeting_name,
                     mt.name as template_name, l.key as locality_key, l.name as locality_name,
-                    (SELECT GROUP_CONCAT(CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key)  ORDER BY m.name ASC SEPARATOR  ',') FROM member m INNER JOIN locality lo ON m.locality_key=lo.key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
-                    (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key) ORDER BY m.name ASC SEPARATOR  ',') FROM member m INNER JOIN locality lo ON m.locality_key=lo.key WHERE FIND_IN_SET(m.key, mt.admin)<>0) as admins
+                    (SELECT GROUP_CONCAT(CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key, m.birth_date)  ORDER BY m.name ASC SEPARATOR  ',') FROM member m INNER JOIN locality lo ON m.locality_key=lo.key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
+                    (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, lo.name, m.attend_meeting, m.category_key, m.birth_date) ORDER BY m.name ASC SEPARATOR  ',') FROM member m INNER JOIN locality lo ON m.locality_key=lo.key WHERE FIND_IN_SET(m.key, mt.admin)<>0) as admins
                     FROM meeting_template mt
                     INNER JOIN locality l ON l.key=mt.locality_key
                     INNER JOIN meeting_type me ON me.key=mt.meeting_type_key
@@ -4262,7 +4262,7 @@ function db_getMeetingTemplates($memberId){
 function db_getMeetingTemplate($templateId){
     global $db;
     $_templateId = $db->real_escape_string($templateId);
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $res = db_query(
         "SELECT mt.id, mt.name as meeting_name, mt.meeting_type_key, mt.locality_key,
@@ -4361,7 +4361,7 @@ function db_deleteTemplateParticipant($memberId, $mode, $templateId){
 function db_getMeetingTemplateParticipantList($templateId, $mode){
     global $db;
     $_templateId = $db->real_escape_string($templateId);
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $participants = [];
 
@@ -4407,7 +4407,7 @@ function db_deleteMeetingTemplate($adminId, $templateId){
 function db_addTemplateMeeting($templateId){
     global $db;
     $_templateId = $db->real_escape_string($templateId);
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $res = db_query("SELECT mt.name, mt.meeting_type_key, mt.locality_key, mt.participant,
                     GROUP_CONCAT( CONCAT_WS(':', ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(m.birth_date, '%Y-%m-%d'))/365),
@@ -4463,9 +4463,9 @@ function db_addTemplateMeeting($templateId){
         $locality = $row['locality_key'];
         $listCount = count($participants);
 
-        setMeetingByTemplate(['saints_count' => $saintsCount, 'trainees_count' => $traineesCount,
-            'fulltimers_count' => $fulltimersCount,
-            'list_count' => $listCount, 'children_count' => $childrenCount, 'members' => $members,
+        setMeetingByTemplate(['saints_count' => 0, 'trainees_count' => 0,
+            'fulltimers_count' => 0,
+            'list_count' => 0, 'children_count' => 0, 'members' => $members,
             'locality_key' => $locality, 'meeting_type' => $row['meeting_type_key'], 'name' => $row['name'] ]);
     }
 }
@@ -4500,7 +4500,7 @@ function db_addTemplateParticipant($mode, $participantId, $templateId){
 function db_isAvailableMeetingPage($memberId){
     global $db;
     $_memberId = $db->real_escape_string($memberId);
-    db_query('SET Session group_concat_max_len=20000');
+    db_query('SET Session group_concat_max_len=100000');
 
     $res = db_query("SELECT COUNT(*) as count FROM meeting_template WHERE FIND_IN_SET('$_memberId', admin)<>0 ");
     $row = $res->fetch_assoc();

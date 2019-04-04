@@ -206,8 +206,8 @@ var isFillTemplate = 0;
 
                     templatesArr.push(
                         "<tr data-id='"+t.id+"' data-locality='"+t.locality_key+"' data-type='"+t.meeting_type+"' >" +
-                        "<td><label class='form-check-label'>"+ ( isOpenInMeetingWindow ? "<input style='margin-top: -3px;' type='checkbox' class='check-template form-check-input'> " : "" ) + t.template_name+"</label></td>"+
-                        "<td class='template-name'>"+ t.locality_name + "</td>"+
+                        "<td><label class='form-check-label template-name-list'>"+ ( isOpenInMeetingWindow ? "<input style='margin-top: -3px;' type='checkbox' class='check-template form-check-input'> " : "" ) + t.template_name+"</label></td>"+
+                        "<td>"+ t.locality_name + "</td>"+
                         "<td class='template-participants' data-participants='"+participants+"'>"+ participants.length + " <i class='fa fa-list fa-lg template-participants-info' title='Список участников'></i></td>"+
                         "<td class='template-admins' data-admins='"+t.admins+"'>"+ admins.length +" <i class='fa fa-list fa-lg template-admins-info' title='Список редакторов'></i></td>"+
                         "<td>"+ buttons +"</td>"+
@@ -298,7 +298,7 @@ var isFillTemplate = 0;
                     var element = $(this).parents('tr'),
                         id = element.attr('data-id'),
                         type = element.attr('data-type'),
-                        name = element.find('.template-name').text().trim(),
+                        name = element.find('.template-name-list').text().trim(),
                         locality = element.attr('data-locality'),
                         participants = element.find('.template-participants').attr('data-participants'),
                         admins = element.find('.template-admins').attr('data-admins');
@@ -461,7 +461,7 @@ var isFillTemplate = 0;
                 for (var i = 0 in participantsArrTemp) {
                     var participant = participantsArrTemp[i];
                     var participantItem = participant.split(':');
-                    participantsArr.push({id: participantItem[0], name : participantItem[1], locality: participantItem[2], attend_meeting: participantItem[3], category_key : participantItem[4]});
+                    participantsArr.push({id: participantItem[0], name : participantItem[1], locality: participantItem[2], attend_meeting: participantItem[3], category_key : participantItem[4], birth_date : participantItem[5]});
                 }
             }
             modalWindow.find('.modal-header h3').html('Шаблон собрания (' + participantsArrTemp.length+' чел.)');

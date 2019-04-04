@@ -17,7 +17,7 @@
         <i class="icon-pencil unblock-input" style="display: none;"></i>
     </div>
     <div class="control-group row-fluid" style="width: 48%">
-        <label class="span12">Дата рождения</label>
+        <label id="emBirthdateLabelSup" class="span12">Дата рождения</label>
         <input class="span12 emBirthdate datepicker" type="text"  maxlength="10" placeholder="ДД.ММ.ГГГГ" valid="">
     </div>
     <div class="control-group row-fluid" style="width: 48%; float: right;">
