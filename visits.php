@@ -23,7 +23,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <div class="tab-content">
           <select class="controls span4 meeting-lists-combo" tooltip="Выберите нужный вам список здесь">
               <option value="meetings">Собрания</option>
-              <option selected value="callsAndVisits">Звонки и посещения</option>
+              <option selected value="callsAndVisits">Посещения и звонки</option>
           </select>
             <div class="btn-toolbar">
                 <a class="btn btn-success add-meeting" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
@@ -55,10 +55,10 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <div class="input-group input-daterange datepicker">
                     <input type="text" class="span2 start-date" value="<?php echo date("d.m.Y", strtotime("-1 months")); ?>">
                     <i class="btn fa fa-calendar" aria-hidden="true"></i>
-                    <input type="text" class="span2 end-date" value="<?php echo date('d.m.Y'); ?>">
+                    <input type="text" class="span2 end-date" value="<?php echo date('d.m.Y', strtotime("+1 months")); ?>">
                 </div>
                 <select id="selMeetingCategory" class="span2">
-                    <option value="_all_" selected >Всё</option>
+                    <option value="_all_" selected >Все события</option>
                         <option value="calls">Звонки</option>
                         <option value="visits">Посещения</option>
                 </select>
@@ -80,7 +80,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <tr>
                         <th><a id="sort-date" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th><a id="sort-meeting_type" href="#" title="сортировать">Посещаемые</a>&nbsp;<i class="<?php echo $sort_field=='meeting_type' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: center"><a id="sort-list_count" href="#" title="сортировать">Действие</a>&nbsp;<i class="<?php echo $sort_field=='list_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: center"><a id="sort-list_count" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='list_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: center"><a id="sort-members_count" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='members_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: center"><a href="#">Сделано</a></th>
                     </tr>
@@ -105,62 +105,47 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
     <div class="modal-body">
         <div class="desctop-visible tablets-visible">
-
-            <div style="margin-bottom: 10px;">
-                <a class="show-templates open-in-meeting-window">Заполнить из шаблона</a>
-            </div>
             <div class="control-group row-fluid"
             <?php if (count($localities) == 1) { ?>
               style="display: none"
              <?php } ?>
             >
-                <label>Ответственный:</label>
-                <span id="responsible" data-id_admin='
+              <div style="margin-bottom: 5px">
+                <select id="visitLocalityModal">
+                    <?php
+                        foreach ($localities as $id => $name) {
+                            echo "<option value='$id' ". ($id == $singleLocality || $isSingleCity ? 'selected="selected"' : '') ." >".htmlspecialchars ($name)."</option>";
+                            }
+                    ?>
+                </select>
+                <span style="float: right" id="responsible" data-id_admin='
                 <?php echo $memberId; ?>' class="col-sm">
                   <?php echo db_getAdminNameById($memberId); ?>
-                   </span><br>
-
-            <label>Дата действия:</label>
-            <input id="actionDate" class="datepicker actionDate span12" type="text" placeholder="ДД.ММ.ГГГГ" valid="required,date" style="width: 38%"><br>
-            <label>Действие:</label>
-            <select id="actionType">
-              <option selected value='visit'>Посещение</option>
-              <option value='call'>Звонок</option>
-            </select><br>
-            <label for="responsible">Местность:</label>
-            <select id="visitLocalityModal">
-                <?php
-                    foreach ($localities as $id => $name) {
-                        echo "<option value='$id' ". ($id == $singleLocality || $isSingleCity ? 'selected="selected"' : '') ." >".htmlspecialchars ($name)."</option>";
-                        }
-                ?>
-            </select>
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="performedChkbx">
-                <label class="custom-control-label" for="performedChkbx">Сделано</label>
+                   </span>
               </div>
-            </div>
-            <div class="control-group row-fluid">
-                <label class="span12 meeting-label-note note-field">Комментарий:</label>
-                <textarea id="visitNote" class="span12 note-field"></textarea>
-            </div>
+              <div class="">
+                <input id="actionDate" class="datepicker actionDate" type="text" placeholder="ДД.ММ.ГГГГ" valid="required,date">
+                <select id="actionType" style="float: right">
+                  <option selected value='visit'>Посещение</option>
+                  <option value='call'>Звонок</option>
+                </select>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="performedChkbx">
+                <label class="form-check-label" for="performedChkbx" style="margin-bottom: 5px">сделано</label>
+              </div>
 
-          <!--<div class="control-group row-fluid">
-                <label class="span12" style="min-height: 10px; line-height: 20px;">Название собрания</label>
-                <input type="text" class="span12 meetingName">
-            </div>-->
-            <div>
-                <input id="button-people-meting" class="btn btn-primary" type="button" value="Добавить участников" data-field="m" style="margin-top: 10px; margin-right: 10px; margin-bottom: 10px;">
-                <input id="clear-button-people-meeting" class="btn btn-warning" type="button" value="Очистить список" data-field="m" style="margin-top: 10px; margin-bottom: 10px;">
+                <textarea id="visitNote" class="span12 note-field" style="margin-top: 10px; margin-bottom: 10px"></textarea>
             </div>
-            <div id="selectingMembers">
+            <div>
+                <a id="button-people-meting" class="btn btn-success" type="button" value="" data-field="m"><i class="fa fa-plus icon-plus icon-white"></i><span class="hide-name"> Добавить</span></a>
+                <!--<input id="clear-button-people-meeting" class="btn btn-warning" type="button" value="Очистить список" data-field="m" style="margin-top: 10px; margin-bottom: 10px;">-->
+            </div>
+            <!--<div id="selectingMembers">
                 <a id="selectAllMembers" onclick="">Выбрать всех</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a id="unselectAllMembers" onclick="">Отменить выбор</a>
-            </div>
+            </div>-->
             <div class="control-group row-fluid">
-                <!--<div>
-                    <a href="" class="meeting-add-btn" style="margin-right: 10px">Добавить</a> <a href="" style="margin-right: 10px" class="meeting-clear-btn">Очистить список</a>
-                </div>-->
                 <div class="block-add-members">
                     <div class="control-group row-fluid">
                         <div class="checkbox-block">
@@ -184,7 +169,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <thead>
                         <tr>
                             <th><a id='sort-meeting_type' href='#' title='сортировать'>ФИО</a>&nbsp;</th>
-                            <th><a id='sort-locality' href='#' title='сортировать'>Местность</a>&nbsp;</th>
+                            <th><a id='sort-locality' href='#' title='сортировать'>В</a>&nbsp;</th>
                             <th><a id='sort-attend_meeting' href='#' title='сортировать'>С</a>&nbsp;</th>
                             <th>&nbsp;</th>
                         </tr>
@@ -627,7 +612,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v23"></script>
+<script src="/js/visits.js?v24"></script>
 <?php
     include_once './footer.php';
 ?>

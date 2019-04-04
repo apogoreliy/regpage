@@ -23,7 +23,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <div class="tab-content">
           <select class="controls span4 meeting-lists-combo" tooltip="Выберите нужный вам список здесь">
               <option selected value="meetings">Собрания</option>
-              <option value="callsAndVisits">Звонки и посещения</option>
+              <option value="callsAndVisits">Посещения и звонки</option>
           </select>
             <div class="btn-toolbar">
                 <a class="btn btn-success add-meeting" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>

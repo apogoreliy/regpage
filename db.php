@@ -4799,7 +4799,7 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
 
     $res = db_query("SELECT DISTINCT * FROM (
             SELECT vi.id as visit_id, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
+            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
             FROM access a
             LEFT JOIN country c ON c.key = a.country_key
             LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
@@ -4809,7 +4809,7 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
             WHERE a.member_key='$adminId' $requestMeeting $requestLocality $requestDates
             UNION
             SELECT vi.id as visit_id, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
+            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
             FROM access a
             LEFT JOIN country c ON c.key = a.country_key
             LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
@@ -4819,7 +4819,7 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
             WHERE a.member_key='$adminId' $requestMeeting $requestDates $requestLocality GROUP BY vi.date_visit
             UNION
             SELECT vi.id as visit_id, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
+            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
             FROM visits vi
             INNER JOIN locality l ON l.key = vi.locality_key
             LEFT JOIN district d ON d.locality_key=vi.locality_key
