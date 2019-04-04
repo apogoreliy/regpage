@@ -2225,6 +2225,9 @@
     function arriveDepart(tagAttr, ClassDates) {
 // Это мой код, получаем данные и сбрасываем настройки виджета календаря для заданного заданого поля
       var getDateArriveOrDepart = $('.tab-pane.active').attr(tagAttr);
+      if (!getDateArriveOrDepart) {
+        console.log(getDateArriveOrDepart);
+      } else {
       getDateArriveOrDepart = getDateArriveOrDepart.split('-');
       getDateArriveOrDepart[1]--;
       $(ClassDates).datepicker('destroy');
@@ -2245,6 +2248,7 @@
               }
           }
       });
+      }
     }
   arriveDepart('data-start','.emArrDate');
   arriveDepart('data-end','.emDepDate');
@@ -2255,7 +2259,7 @@
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v2"></script>
+<script src="/js/reg.js?v3"></script>
 <?php
     include_once "footer.php";
 ?>
