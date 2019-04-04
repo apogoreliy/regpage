@@ -1098,7 +1098,7 @@
 
             // Cut the m.region string. Roman's code ver 5.0.1
             if (!m.region) {
-              m.region = '--';              
+              m.region = '--';
             } else if (m.region =='--') {
               m.region = m.country;
             } else {
@@ -2255,7 +2255,7 @@
   });
     // END Romans Code
 </script>
-
+<script src="/js/reg.js?v2"></script>
 <?php
     include_once "footer.php";
 ?>
