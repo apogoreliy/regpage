@@ -53,21 +53,21 @@ function refreshMeetings(meetings){
         );
 
         phoneRows.push('<tr '+dataString+'>'+
-            '<td><div class="meeting-name"><strong>' + he(m.name) + '</strong></div>' +
+            '<td><div class="meeting-name"><strong>' + he(m.members ? splitMember[1] : '') + '</strong></div>' +
             '<i style="float: right;" title="Удалить" class="fa fa-trash fa-lg btn-remove-meeting"></i>'+
             //'<i style="float: right;" class="fa fa-list fa-lg meeting-list" title="Список"/>'+
-            '<div><span>'+formatDate(m.date)+'</span>; '+
+            '<div>'+formatDate(m.date_visit)+ ' ' +he(m.act || '') +
             '</div>' + '<div>' +
-            (meetingCounts.saintsCount ? ('<span class="meeting-list-counts" >Святых: '+ meetingCounts.saintsCount +'</span>; ' ) : '')+
-            (meetingCounts.guestCount ? ('<span class="meeting-saints-counts" >Гостей: '+ meetingCounts.guestCount +'</span>') : '') + '</div>' +
-            '<input type="checkbox" class ="check-performed" ' + (m.performed == 1 ? 'checked' : '') + '>'+
+            he(m.members ? splitMember[6] : '') + ' '+
+            (!isLocationAlone && m.members ? m.locality_name : '') + '</div>' +
+
             '</td>' +
             '</tr>'
         );
     }
 
-    $(".desctopVisible tbody").html (tableRows.join(''));
-    $(".show-phone tbody").html (phoneRows.join(''));
+    $("#visitsListTbl tbody").html (tableRows.join(''));
+    $("#visitsListMbl tbody").html (phoneRows.join(''));
 
     $(".meeting-row").unbind('click');
     $(".meeting-row").click (function () {
@@ -205,6 +205,10 @@ function fillMeetingModalForm(textMode, date, locality, actionType, note, countL
         var members = members.split(','), membersArr = [];
         for(var i in members){
             var member = members[i].split(':');
+            if (members[i].indexOf("Москва:") != -1) {
+              var varTemp = member.splice(3, 1);
+              member[2] = member[2] + varTemp;
+            }
             membersArr.push({id: member[0], name: member[1], locality: member[2], attend_meeting: member[3], category_key: member[4], locality_key: member[5], cell_phone: member[6], birth_date: member[7], present : member[0]});
         }
         buildMembersList("#addEditMeetingModal", membersArr);
@@ -238,9 +242,7 @@ function buildMembersList(modalWindowSelector, list, mode){
               x=0;
             }
             members.push("<tr class='check-member' data-id='"+member.id+"' data-attend_meeting='"+member.attend_meeting+"' data-name='"+member.name+"' data-category_key='"+member.category_key+"' data-birth_date='"+member.birth_date+"' data-locality_key='"+member.locality_key+"' data-cell_phone='"+member.cell_phone+"' data-locality='"+member.locality+"'>"+
-                "<td><label>" +member.name +'<br>' +member.cell_phone+"</label></td>"+
-                "<td>"+x+"</td>"+
-                "<td>"+(member.attend_meeting == 1 ? '<i class="fa fa-check"></i>' : '-') +"</td>"+
+                "<td><span><strong>" +member.name +"</strong><br>" +(member.cell_phone ? member.cell_phone +", " : '')  +x+" лет</span></td>"+
                 "<td>"+buttons+"</td>"+
                 "</tr>");
           }
@@ -742,6 +744,10 @@ function buildMembersList(modalWindowSelector, list, mode){
                 for (var i = 0 in participantsArrTemp) {
                     var participant = participantsArrTemp[i];
                     var participantItem = participant.split(':');
+                    if (participant.indexOf("Москва:") != -1) {
+                      var varTemp = participantItem.splice(3, 1);
+                      participantItem[2] = participantItem[2] + varTemp;
+                    }
                     participantsArr.push({id: participantItem[0], name : participantItem[1], locality: participantItem[2], attend_meeting: participantItem[3], category_key : participantItem[4]});
                 }
             }
@@ -1501,6 +1507,25 @@ function buildMembersList(modalWindowSelector, list, mode){
           $('.member-row > td > input[type=checkbox]').prop('checked', false);
         });
 
+        function screenSizeMdl() {
+          if ($(window).width() < 800) {
+            $("#responsible").attr('style', 'float: none');
+            $("#actionType").attr('style', 'float: none');
+            $("#cancelModalWindow").attr('style', 'margin-right: 60px');
+
+          } else {
+            $("#responsible").attr('style', 'float: right');
+            $("#actionType").attr('style', 'float: right');
+            $("#cancelModalWindow").removeAttr('style');
+          }
+        }
+
+        screenSizeMdl();
+
+        $(window).resize(function(){
+          screenSizeMdl();
+        });
+
   function membersCounterMeeting(template) {
 //TEMPLATE
     if ($('#modalHandleTemplate').is(':visible')) {
@@ -1590,6 +1615,10 @@ function buildMembersList(modalWindowSelector, list, mode){
                         for(var m in members){
                             var member = members[m]['member'];
                             var memberArr = member.split(':');
+                            if (member.indexOf("Москва:") != -1) {
+                              var varTemp = memberArr.splice(3, 1);
+                              memberArr[2] = memberArr[2] + varTemp;
+                            }
                             membersArr.push({id: memberArr[0], name: memberArr[1], locality: memberArr[2], attend_meeting: memberArr[3], category_key: memberArr[4], birth_date: memberArr[5], present : in_array(memberArr[0], [])});
 
                         }
