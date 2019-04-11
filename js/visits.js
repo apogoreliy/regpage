@@ -1799,9 +1799,9 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
         loadMembersList ();
         loadMembersListFilter ();
       });
-      setTimeout(function () {
+      /*setTimeout(function () {
         $("#selMeetingCategory").val('plan');
       }, 1000);
-
+*/
     });
 })();

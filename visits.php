@@ -102,7 +102,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h4 id="titleMeetingModal"></h4>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" style="height:auto !important">
         <div class="desctop-visible tablets-visible">
             <div class="control-group row-fluid"
             <?php if (count($localities) == 1) { ?>
@@ -139,7 +139,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                           <input style="margin-bottom: 3px;" type="checkbox" id="performedChkbx">
                           <label for="performedChkbx">сделано</label>
                         </div>
-
+                      </div>
               <div class="control-group row-fluid" style="margin-top: 15px;">
                   <div class="block-add-members">
                       <div class="members-available"></div>
@@ -148,13 +148,9 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                       <tbody></tbody>
                   </table>
               </div>
+              <div class="control-group row-fluid">
                 <textarea id="visitNote" class="span12 note-field" style="margin-top: 10px; margin-bottom: 10px"></textarea>
-            </div>
-            <!--<div id="selectingMembers">
-                <a id="selectAllMembers" onclick="">Выбрать всех</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a id="unselectAllMembers" onclick="">Отменить выбор</a>
-            </div>-->
-
+              </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -595,7 +591,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v30"></script>
+<script src="/js/visits.js?v31"></script>
 <?php
     include_once './footer.php';
 ?>
