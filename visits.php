@@ -58,9 +58,8 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <input type="text" class="span2 end-date" value="<?php echo date('d.m.Y', strtotime("+1 months")); ?>">
                 </div>
                 <select id="selMeetingCategory" class="span2">
-                    <option value="_all_" selected >Все события</option>
-                        <option value="calls">Звонки</option>
-                        <option value="visits">Посещения</option>
+                    <option value="_all_" selected>Все события</option>
+                    <option value="plan" >Планируемые</option>
                 </select>
 
                 <?php if (!$isSingleCity) { ?>
@@ -596,7 +595,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v26"></script>
+<script src="/js/visits.js?v30"></script>
 <?php
     include_once './footer.php';
 ?>

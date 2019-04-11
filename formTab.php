@@ -78,7 +78,7 @@
     </div>
     <div class="control-group row-fluid">
         <label class="span12">Email<?php g('<sup id="supEmailRequred">*</sup>'); ?></label>
-        <input class="span12 emEmail" type="email" maxlength="50" valid="<?php /* e */ g('required, '); ?>email">
+        <input class="span12 emEmail" type="email" maxlength="50" valid="<?php g('required, '); ?>email">
     </div>
     <div class="control-group row-fluid">
         <label class="span12">Мобильный телефон <span class="example">Если имеется несколько номеров, укажите их через запятую</span></label>

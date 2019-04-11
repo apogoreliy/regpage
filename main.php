@@ -1256,7 +1256,7 @@ $(document).ready(function(){
     /* END Romans Code  */
 });
 </script>
-/*<script src="/js/mainpage.js?v10"></script>*/
+<script src="/js/mainpage.js?v10"></script>
 <?php
 }
 

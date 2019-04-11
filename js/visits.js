@@ -238,11 +238,12 @@ function buildMembersList(modalWindowSelector, list, mode){
             if (member.id < 990000000) {
             if (member.birth_date) {
               x = getAge(prepareGetAge(member.birth_date));
+              x = getAgeWithSuffix(parseInt(x), x);
             } else {
-              x=0;
+              x='';
             }
             members.push("<tr class='check-member' data-id='"+member.id+"' data-attend_meeting='"+member.attend_meeting+"' data-name='"+member.name+"' data-category_key='"+member.category_key+"' data-birth_date='"+member.birth_date+"' data-locality_key='"+member.locality_key+"' data-cell_phone='"+member.cell_phone+"' data-locality='"+member.locality+"'>"+
-                "<td><span><strong>" +member.name +"</strong><br>" +(member.cell_phone ? member.cell_phone +", " : '')  +x+" лет</span></td>"+
+                "<td><span><strong>" +member.name +"</strong><br>" +(member.cell_phone ? member.cell_phone +", " : '')  +x+"</span></td>"+
                 "<td>"+buttons+"</td>"+
                 "</tr>");
           }
@@ -1004,11 +1005,9 @@ function buildMembersList(modalWindowSelector, list, mode){
         function filterMeetingsList(){
             var locality = $("#selMeetingLocality").val();
             var meetingType = $("#selMeetingCategory").val();
-            if (meetingType != '_all_') {
-                meetingType == 'visits' ? meetingType='Посещение': meetingType= 'Звонок';
-            }
+            if (meetingType != '_all_'){ meetingType = '0'};
             $(".meetings-list tbody tr").each(function(){
-                ($(this).attr('data-locality') === locality || $(this).attr('data-district') === locality || locality === '_all_') && ($(this).attr('data-type') === meetingType || meetingType === '_all_') ? $(this).show() : $(this).hide();
+                ($(this).attr('data-locality') === locality || $(this).attr('data-district') === locality || locality === '_all_') && ($(this).attr('data-performed') === meetingType || meetingType === '_all_') ? $(this).show() : $(this).hide();
             });
         }
 
@@ -1800,5 +1799,9 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
         loadMembersList ();
         loadMembersListFilter ();
       });
+      setTimeout(function () {
+        $("#selMeetingCategory").val('plan');
+      }, 1000);
+
     });
 })();
