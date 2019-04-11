@@ -567,17 +567,13 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <?php foreach ($categories as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
             </select>
         </form>
-        <div id="addMemberTableHeader">
+        <!--<div id="addMemberTableHeader">
             <a id="selectAllMembersList" onclick="">Выбрать всех</a>
             <a id="unselectAllMembersList" onclick="">Отменить выбор</a>
-        </div>
-        <div class="control-group row-fluid searchBlock">
-            <label class="span12">Введите ФИО или местность участника</label>
-            <input class="span12 searchMemberToAdd" type="text">
-        </div>
+        </div>-->
         <div class="membersTable">
             <table class="table table-hover table-condensed">
-                <thead><tr><th>&nbsp;</th><th>Фамилия Имя Отчество</th><th>Местность</th></tr></thead>
+                <thead><tr><th><input type="checkbox" id="selectAllMembersList"></th><th>Фамилия Имя Отчество</th><th>Местность</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -591,7 +587,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v31"></script>
+<script src="/js/visits.js?v34"></script>
 <?php
     include_once './footer.php';
 ?>

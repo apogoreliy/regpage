@@ -1498,14 +1498,13 @@ function buildMembersList(modalWindowSelector, list, mode){
           membersCounterMeeting();
         });
 
-        $("#selectAllMembersList").click (function (){
-          $('.member-row > td > input[type=checkbox]').filter(':visible').prop('checked', true);
+        $("#selectAllMembersList").click (function() {
+          if ($("#selectAllMembersList").prop('checked')) {
+            $('.member-row > td > input[type=checkbox]').filter(':visible').prop('checked', true);
+          } else {
+            $('.member-row > td > input[type=checkbox]').prop('checked', false);
+          }
         });
-
-        $("#unselectAllMembersList").click (function (){
-          $('.member-row > td > input[type=checkbox]').prop('checked', false);
-        });
-
         function screenSizeMdl() {
           if ($(window).width() < 800) {
             $("#responsible").attr('style', 'float: none');
@@ -1735,12 +1734,12 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
     function loadMembersList (){
         var locId = $("#selAddMemberLocalityTemplate").val();
         var catId = $("#selAddMemberCategoryTemplate").val();
-        var text = $(".searchMemberToAdd").val().trim().toLowerCase();
+        //var text = $(".searchMemberToAdd").val().trim().toLowerCase();
         var hasAccessToAllLocals = false; // parseInt($('#eventTab-'+event).attr('data-access')) === 1;
 
         locId = locId && locId !== '_all_' ? locId : null ;
         catId = catId && catId !== '_all_' ? catId : null;
-        text = text && text.length >= 3 ? text : null;
+        //text = text && text.length >= 3 ? text : null;
 /*
         var arr = [];
         arr.push("<option value='_all_' selected>&lt;все&gt;</option>");
@@ -1749,7 +1748,7 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
             $("#selAddMemberLocality").html(rebuildLocationsList(data.localities, locId, arr).join(""));
         });
 */
-        if(locId || catId || text || !hasAccessToAllLocals){
+        if(locId || catId || !hasAccessToAllLocals){
 
             $.post('/ajax/members.php', {
               })
