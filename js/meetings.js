@@ -1537,9 +1537,9 @@ var isFillTemplate = 0;
 
         $("#selectAllMembersList").click (function (){
           if ($("#selectAllMembersList").prop('checked')) {
-            $('.member-row > td > input[type=checkbox]').prop('checked', false);
+            $('.member-row > td > input[type=checkbox]').prop('checked', true);
           } else {
-            $('.member-row > td > input[type=checkbox]').filter(':visible').prop('checked', true);
+            $('.member-row > td > input[type=checkbox]').filter(':visible').prop('checked', false);
           }
         });
 
