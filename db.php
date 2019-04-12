@@ -4825,7 +4825,7 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
             LEFT JOIN district d ON d.locality_key=vi.locality_key
             INNER JOIN meeting_template mtl ON mtl.locality_key = l.key
             WHERE FIND_IN_SET('$adminId', mtl.admin)<>0 $requestMeeting $requestDates $requestLocality
-            ) q ORDER BY q.date_visit ".$sort_type.", q.locality_name ASC");
+            ) q ORDER BY q.$sort_field ".$sort_type.", q.locality_name ASC");
 
     while ($row = $res->fetch_object()) $meetings[]=$row;
     return $meetings;

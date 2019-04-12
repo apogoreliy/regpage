@@ -13,7 +13,7 @@ $categories = db_getCategories();
 $selMeetingLocality = isset ($_COOKIE['selMeetingLocality']) ? $_COOKIE['selMeetingLocality'] : '_all_';
 $selMeetingCategory = isset ($_COOKIE['selMeetingCategory']) ? $_COOKIE['selMeetingCategory'] : '_all_';
 
-$sort_field = isset ($_SESSION['sort_field-meetings']) ? $_SESSION['sort_field-meetings'] : 'date';
+$sort_field = isset ($_SESSION['sort_field-meetings']) ? $_SESSION['sort_field-meetings'] : 'date_visit';
 $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meetings'] : 'desc';
 ?>
 
@@ -40,7 +40,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" id="dropdownMenu" aria-labelledby="dropdownMenu1">
-                        <li><a id="sort-date" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-date" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date_visit' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                         <li>
                             <?php
                             if (!$isSingleCity)
@@ -77,10 +77,10 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <table id="meetings" class="table table-hover">
                     <thead>
                     <tr>
-                        <th><a id="sort-date" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th><a id="sort-meeting_type" href="#" title="сортировать">Посещаемые</a>&nbsp;<i class="<?php echo $sort_field=='meeting_type' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: center"><a id="sort-list_count" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='list_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: center"><a id="sort-members_count" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='members_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th><a id="sort-date_visit" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date_visit' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th><a id="sort-list_members" href="#" title="сортировать">Посещаемые</a>&nbsp;<i class="<?php echo $sort_field=='list_members' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: center"><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='act' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: center"><a id="sort-responsible" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: center"><a href="#">Сделано</a></th>
                     </tr>
                     </thead>
@@ -567,10 +567,6 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <?php foreach ($categories as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
             </select>
         </form>
-        <!--<div id="addMemberTableHeader">
-            <a id="selectAllMembersList" onclick="">Выбрать всех</a>
-            <a id="unselectAllMembersList" onclick="">Отменить выбор</a>
-        </div>-->
         <div class="membersTable">
             <table class="table table-hover table-condensed">
                 <thead><tr><th><input type="checkbox" id="selectAllMembersList"></th><th>Фамилия Имя Отчество</th><th>Местность</th></tr></thead>
@@ -587,7 +583,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v34"></script>
+<script src="/js/visits.js?v37"></script>
 <?php
     include_once './footer.php';
 ?>
