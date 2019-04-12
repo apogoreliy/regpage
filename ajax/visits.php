@@ -15,7 +15,7 @@ if (isset ($_GET['sort_field']))
     $sort_field = $_GET ['sort_field'];
 }
 else
-    $sort_field = 'date';
+    $sort_field = 'date_visit';
 
 if (isset ($_GET['sort_type']))
 {

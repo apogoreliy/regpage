@@ -667,7 +667,7 @@ $(document).ready(function(){
                     switch (event.regstate_key){
                         case '03': regstateText='ожидание отмены'; regstateClass='warning';break;
                         case '04': regstateText='регистрация подтверждена'; regstateClass='success';break;
-                        case '05': regstateText='регистрация отклонена'; regstateClass='important';break;
+                        case '05': regstateText='регистрация отменена'; regstateClass='important';break;
                         default : regstateText='ожидание подтверждения'; regstateClass='warning';break;
                     }
                 }
@@ -819,7 +819,7 @@ $(document).ready(function(){
                                 switch (member['regstate_key']){
                                     case '03': btnText='ожидание отмены'; btnClass='warning';break;
                                     case '04': btnText='регистрация подтверждена'; btnClass='success';break;
-                                    case '05': btnText='регистрация отклонена'; btnClass='important';break;
+                                    case '05': btnText='регистрация отменена'; btnClass='important';break;
                                     default : btnText='ожидание подтверждения'; btnClass='warning';break;
                                 }
                             }

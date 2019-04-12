@@ -1279,16 +1279,18 @@ function buildMembersList(modalWindowSelector, list, mode){
 
         function setFiltersForRequest(){
             var sort_type = 'desc',
-                sort_field = 'date';
+                sort_field = 'date_visit';
 
             $('#eventTabs').find(" a[id|='sort']").each (function (i) {
                 if ($(this).siblings("i.icon-chevron-down").length) {
                     sort_type = 'asc';
                     sort_field = $(this).attr("id").replace(/^sort-/,'');
+                    if (sort_field == 'date')  {sort_field = 'date_visit'}
                 }
                 else if ($(this).siblings("i.icon-chevron-up").length) {
                     sort_type = 'desc';
                     sort_field = $(this).attr("id").replace(/^sort-/,'');
+                    if (sort_field == 'date')  {sort_field = 'date_visit'}
                 }
             });
 

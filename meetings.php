@@ -80,13 +80,13 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <thead>
                     <tr>
                         <th><a id="sort-date" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th><a id="sort-meeting_type" href="#" title="сортировать">Собрание</a>&nbsp;<i class="<?php echo $sort_field=='meeting_type' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th><a id="sort-name" href="#" title="сортировать">Собрание</a>&nbsp;<i class="<?php echo $sort_field=='name' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <?php
                         if (!$isSingleCity)
                             echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
                         ?>
                         <th style="text-align: center"><a id="sort-list_count" href="#" title="сортировать">Святых</a>&nbsp;<i class="<?php echo $sort_field=='list_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: center"><a id="sort-members_count" href="#" title="сортировать">Гостей</a>&nbsp;<i class="<?php echo $sort_field=='members_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: center"><a id="sort-guests_count" href="#" title="сортировать">Гостей</a>&nbsp;<i class="<?php echo $sort_field=='guests_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: center"><a href="#">Всего</a></th>
                     </tr>
                     </thead>
