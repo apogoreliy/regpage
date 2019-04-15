@@ -128,3 +128,11 @@ elseif(isset ($_GET['get_member'])){
     echo json_encode(["members" => db_getMembersByLocality($_POST['localityId'])]);
     exit;
 }
+/*elseif(isset ($_GET['get_all_list_admins'])){
+    echo json_encode(["members" => db_getAdminsList()]);
+    exit;
+}*/
+elseif(isset ($_GET['get_list_admins'])){
+    echo json_encode(["members" => db_getAdminsListByLocalities()]);
+    exit;
+}
