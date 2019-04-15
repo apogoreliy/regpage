@@ -59,7 +59,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 </div>
                 <select id="selMeetingCategory" class="span2">
                     <option value="_all_" selected>Все события</option>
-                    <option value="plan" >Планируемые</option>
+                    <option value="plan">Планируемые</option>
                 </select>
 
                 <?php if (!$isSingleCity) { ?>
@@ -72,6 +72,8 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     ?>
                 </select>
                 <?php } ?>
+                <select id="responsibleList" data-id_admin="" class="col-sm span2">
+                </select>
             </div>
             <div class="desctopVisible" id="visitsListTbl">
                 <table id="meetings" class="table table-hover">
@@ -117,11 +119,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                               }
                               ?>
                             </select>
-                            <select style="float: right" id="responsible" data-id_admin='
-                            <?php echo $memberId; ?>' class="col-sm">
-                            <option value='<?php echo $memberId;?>' selected="selected">
-                              <?php echo db_getAdminNameById($memberId); ?></option>
-
+                            <select style="float: right" id="responsible" data-id_admin="" class="col-sm">
                             </select>
                             <!--<span style="float: right" id="responsible" data-id_admin='
                             <?php echo $memberId; ?>' class="col-sm">
@@ -583,7 +581,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v37"></script>
+<script src="/js/visits.js?v57"></script>
 <?php
     include_once './footer.php';
 ?>

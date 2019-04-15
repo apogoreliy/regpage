@@ -85,7 +85,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                         if (!$isSingleCity)
                             echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
                         ?>
-                        <th style="text-align: center"><a id="sort-list_count" href="#" title="сортировать">Святых</a>&nbsp;<i class="<?php echo $sort_field=='list_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: center"><a id="sort-saints_count" href="#" title="сортировать">Святых</a>&nbsp;<i class="<?php echo $sort_field=='saints_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: center"><a id="sort-guests_count" href="#" title="сортировать">Гостей</a>&nbsp;<i class="<?php echo $sort_field=='guests_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: center"><a href="#">Всего</a></th>
                     </tr>
@@ -134,7 +134,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             </div>
             <div class="control-group row-fluid">
                 <label class="span12" style="min-height: 10px; line-height: 20px;">Название собрания</label>
-                <input type="text" class="span12 meetingName">
+                <input type="text" class="span12 meetingName" valid="required">
             </div>
             <div class="control-group row-fluid" >
 
@@ -192,10 +192,10 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <table class='table table-hover'>
                     <thead>
                         <tr>
-                            <th><input id="selectAllMembers" type="checkbox">&nbsp;&nbsp;&nbsp;<a id='sort-meeting_type' href='#' title='сортировать'> ФИО</a>&nbsp;</th>
-                            <th><a id='sort-locality' href='#' title='сортировать'>Местность</a>&nbsp;</th>
-                            <th><a id='sort-old' href='#' title='сортировать'>В</a>&nbsp;</th>
-                            <th><a id='sort-attend_meeting' href='#' title='сортировать'>С</a>&nbsp;</th>
+                            <th><input id="selectAllMembers" type="checkbox">&nbsp;&nbsp;&nbsp;<a id='' class="sortingByName sortMembersModal" href='#' title='сортировать'> ФИО</a>&nbsp;</th>
+                            <th><a id='' href='#' title='сортировать' class="sortingByLocality sortMembersModal">Местность</a>&nbsp;</th>
+                            <th><a id='' href='#' title='сортировать' class="sortingByOld sortMembersModal">В</a>&nbsp;</th>
+                            <th><a id='' href='#' title='сортировать' class="sortingByattend sortMembersModal">С</a>&nbsp;</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -457,10 +457,10 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <table class='table table-hover'>
                     <thead>
                         <tr>
-                            <th><a id='sort-meeting_type' href='#' title='сортировать'>ФИО</a>&nbsp;</th>
-                            <th><a id='sort-locality' href='#' title='сортировать'>Местность</a>&nbsp;</th>
-                            <th><a id='sort-old' href='#' title='сортировать'>В</a>&nbsp;</th>
-                            <th><a id='sort-attend_meeting' href='#' title='сортировать'>С</a>&nbsp;</th>
+                            <th><a id='sort-by_name' href='#' title='сортировать' class="sortingByName sortMembersModal">ФИО</a>&nbsp;</th>
+                            <th><a id='sort-locality' href='#' title='сортировать' class="sortingByLocality sortMembersModal">Местность</a>&nbsp;</th>
+                            <th><a id='sort-old' href='#' title='сортировать' class="sortingByOld sortMembersModal">В</a>&nbsp;</th>
+                            <th><a id='sort-attend_meeting' href='#' title='сортировать' class="sortingByattend sortMembersModal">С</a>&nbsp;</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -631,7 +631,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
 </div>
 
-<script src="/js/meetings.js?v48"></script>
+<script src="/js/meetings.js?v53"></script>
 <?php
     include_once './footer.php';
 ?>

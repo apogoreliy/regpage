@@ -861,9 +861,9 @@ var isFillTemplate = 0;
                 var members = members.split(','), membersArr = [];
                 for(var i in members){
                     var member = members[i].split(':');
-                    if (members[i].indexOf("Москва:") != -1) {
+                    if (members[i].indexOf("Москва:") != -1 && members[i].indexOf("Москва:0") === -1 && members[i].indexOf("Москва:1") === -1) {
                       var varTemp = member.splice(3, 1);
-                      member[2] = member[2] + varTemp;
+                      var area = member[2] + varTemp;
                     }
                     membersArr.push({id: member[0], name: member[1], locality: member[2], attend_meeting: member[3], category_key: member[4], locality_key: member[5], birth_date: member[6], present : in_array(member[0], participants)});
                 }
@@ -1530,14 +1530,14 @@ var isFillTemplate = 0;
             $('.check-member > td > .check-member-label > input[type=checkbox]').filter(':visible').prop('checked', true);
             membersCounterMeeting();
           } else {
-            $('.check-member > td > .check-member-label > input[type=checkbox]').prop('checked', false);
+            $('.check-member > td > .check-member-label > input[type=checkbox]').filter(':visible').prop('checked', false);
             membersCounterMeeting();
           }
         });
 
         $("#selectAllMembersList").click (function (){
           if ($("#selectAllMembersList").prop('checked')) {
-            $('.member-row > td > input[type=checkbox]').prop('checked', true);
+            $('.member-row > td > input[type=checkbox]').filter(':visible').prop('checked', true);
           } else {
             $('.member-row > td > input[type=checkbox]').filter(':visible').prop('checked', false);
           }
@@ -1681,7 +1681,7 @@ var isFillTemplate = 0;
             for(var m in members){
                 var member = members[m];
                 arr.push(
-                "<tr data-member_key="+member.id+" data-category_key="+member.category_key+" data-locality_key="+member.locality_key+" data-birth_date="+member.birth_date+" data-locality="+member.locality+" data-attend_meeting = "+member.attend_meeting+" id='mr-"+m+"' class='member-row'><td><input type='checkbox' id="+member.id+" class='form-check-input'></td><td><label for="+member.id+" class='form-check-label'>"+ he (member.name) + "</label></td><td>"+
+                "<tr data-member_key="+member.id+" data-category_key="+member.category_key+" data-locality_key="+member.locality_key+" data-birth_date="+ (member.birth_date ? member.birth_date : 0) +" data-locality="+member.locality+" data-attend_meeting = "+member.attend_meeting+" id='mr-"+m+"' class='member-row'><td><input type='checkbox' id="+member.id+" class='form-check-input'></td><td><label for="+member.id+" class='form-check-label'>"+ he (member.name) + "</label></td><td>"+
                     he(member.locality) + "</td></tr>");
             }
         }
@@ -1802,7 +1802,7 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
       });
     }
       modalAddMembersTemplate.find("tbody tr").each(function(){
-        u = $(this).attr('data-member_key');
+        u = $(this).attr('data-member_key');        
         if ($(this).find('.form-check-input').prop("checked") && u[0] == 0 && !in_array(u, arrMembersTemplateCheck)) {
           arrMembersTemplate.push({id: $(this).attr('data-member_key'), category_key: $(this).attr('data-category_key'), locality: $(this).attr('data-locality'), name: $(this).find('label').text(), locality_key: $(this).attr('data-locality_key'), attend_meeting: $(this).attr('data-attend_meeting'), birth_date: $(this).attr('data-birth_date')});
         }
@@ -1822,8 +1822,167 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
         e.stopPropagation();
         $("#selAddMemberLocalityTemplate, #selAddMemberCategoryTemplate").val('_all_');
         //$(".searchMemberToAdd").val('');
+        $('#modalAddMembersTemplate').find('#selectAllMembersList').prop('checked', false);
         loadMembersList ();
         loadMembersListFilter ();
       });
+
+    $('#sort-by_name').click(function(){
+      sortModalList('sortingByName', '#modalHandleTemplate');
+    });
+    $('#sort-locality').click(function(){
+      sortModalList('sortingByLocality', '#modalHandleTemplate');
+    });
+    $('#sort-old').click(function(){
+      sortModalList('sortingByOld', '#modalHandleTemplate');
+    });
+    $('#sort-attend_meeting').click(function(){
+      sortModalList('sortingByattend', '#modalHandleTemplate');
+    });
+
+    $('#addEditMeetingModal').find('.sortingByName').click(function(){
+      sortModalList('sortingByName', '#addEditMeetingModal');
+    });
+    $('#addEditMeetingModal').find('.sortingByLocality').click(function(){
+      sortModalList('sortingByLocality', '#addEditMeetingModal');
+    });
+    $('#addEditMeetingModal').find('.sortingByOld').click(function(){
+      sortModalList('sortingByOld', '#addEditMeetingModal');
+    });
+    $('#addEditMeetingModal').find('.sortingByattend').click(function(){
+      sortModalList('sortingByattend', '#addEditMeetingModal');
+    });
+
+    function sortModalList(element,modal) {
+
+        $(modal).find('.sortMembersModal').each(function() {
+
+          if (!$(this).hasClass(element)){
+            $(this).hasClass('sortingUp')? $(this).removeClass('sortingUp'):'';
+            $(this).hasClass('sortingDown')? $(this).removeClass('sortingDown'):'';
+          }
+        });
+        element = '.' + element;
+      if ($(element).hasClass('sortingUp')) {
+          $(element).removeClass('sortingUp');
+          $(element).addClass('sortingDown');
+          blankMembersSorting(element, modal);
+      } else if ($(element).hasClass('sortingDown')) {
+          $(element).removeClass('sortingUp')
+          $(element).addClass('sortingUp');
+          blankMembersSorting(element+'2', modal);
+      } else {
+          $(element).addClass('sortingDown');
+          blankMembersSorting(element, modal);
+      }
+    }
+
+   function blankMembersSorting(elm, modal) {
+     var list = [], members = [];
+      $(modal).find("tbody tr").each(function(){
+          var memberName = $(this).attr('data-name'),
+              memberId = $(this).attr('data-id'),
+              memberLocality = $(this).attr('data-locality'),
+              memberLocality_key = $(this).attr('data-locality_key'),
+              attendMeeting = $(this).attr('data-attend_meeting'),
+              member_age = $(this).attr('data-birth_date'),
+              membercategory = $(this).attr('data-category_key'),
+              present = $(this).find('.check-member-checkbox').prop('checked') ? present = 1 : present = 0;
+
+          list.push({id: memberId, name: memberName, locality: memberLocality, attend_meeting: attendMeeting, category_key: membercategory, present: present, member_age: member_age, locality_key: memberLocality_key });
+      });
+      if (elm === '.sortingByName') {
+        list.sort(function (a, b) {
+          if (a.name < b.name) {
+            return 1;
+          }
+          if (a.name > b.name) {
+            return -1;
+          }
+          return 0;
+        });
+      } else if (elm === '.sortingByName2') {
+        list.sort(function (a, b) {
+          if (a.name > b.name) {
+            return 1;
+          }
+          if (a.name < b.name) {
+            return -1;
+          }
+          return 0;
+        });
+      } else if (elm === '.sortingByLocality') {
+        list.sort(function (a, b) {
+          if (a.locality < b.locality) {
+            return 1;
+          }
+          if (a.locality > b.locality) {
+            return -1;
+          }
+          return 0;
+        })
+      } else if (elm === '.sortingByLocality2') {
+          list.sort(function (a, b) {
+            if (a.locality > b.locality) {
+              return 1;
+            }
+            if (a.locality < b.locality) {
+              return -1;
+            }
+            return 0;
+          });
+        }else if (elm === '.sortingByOld') {
+          list.sort(function (a, b) {
+            if (a.member_age < b.member_age) {
+              return 1;
+            }
+            if (a.member_age > b.member_age) {
+              return -1;
+            }
+            return 0;
+          });
+        } else if (elm === '.sortingByOld2') {
+          list.sort(function (a, b) {
+            if (a.member_age > b.member_age) {
+              return 1;
+            }
+            if (a.member_age < b.member_age) {
+              return -1;
+            }
+            return 0;
+          });
+        } else if (elm === '.sortingByattend') {
+          list.sort(function (a, b) {
+            if (a.attend_meeting < b.attend_meeting) {
+              return 1;
+            }
+            if (a.attend_meeting > b.attend_meeting) {
+              return -1;
+            }
+            return 0;
+          })
+        } else if (elm === '.sortingByattend2') {
+            list.sort(function (a, b) {
+              if (a.attend_meeting > b.attend_meeting) {
+                return 1;
+              }
+              if (a.attend_meeting < b.attend_meeting) {
+                return -1;
+              }
+              return 0;
+            });
+          }
+      for (var i in list){
+        member = list[i], buttons = "<i title='Удалить' class='fa fa-trash fa-lg btn-remove-member'></i>";
+        members.push("<tr class='check-member' data-id='"+member.id+"' data-attend_meeting='"+member.attend_meeting+"' data-name='"+member.name+"' data-category_key='"+member.category_key+"' data-birth_date='"+member.member_age+"'  data-locality_key='"+member.locality_key+"'data-locality='"+member.locality+"'>"+
+            "<td><label class='check-member-label'>" + (modal !='#modalHandleTemplate' ? "<input type='checkbox' "+(member.present ===1 ? "checked" : "" ) + " style='margin-top: -3px;' class='check-member-checkbox form-check-input'>  " : "") +member.name+"</label></td>"+
+            "<td>"+member.locality+"</td>"+
+            "<td>"+member.member_age+"</td>"+
+            "<td>"+(member.attend_meeting == 1 ? '<i class="fa fa-check"></i>' : '- ') +"</td>"+
+            "<td>"+buttons+"</td>"+
+            "</tr>");
+      }
+      $(modal).find('tbody').html(members.join(''));
+     }
     });
 })();

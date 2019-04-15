@@ -1672,6 +1672,7 @@ function db_getMemberListAdmins ($sortField, $sortType)
 
 function db_getAdminsList ()
 {
+    global $db;
     $res=db_query ("SELECT DISTINCT m.key as id, m.name as name, m.email as email, m.cell_phone as cell_phone, lo.name as locality_name, ad.comment as note
     FROM access as a
     INNER JOIN admin ad ON ad.member_key=a.member_key
@@ -4791,7 +4792,7 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
 
     $meetings = array ();
 
-    $requestMeeting = $meetingTypeFilter == "_all_" ? "" : " AND vi.act='$meetingTypeFilter' ";
+    $requestMeeting = $meetingTypeFilter == "_all_" ? "" : " AND vi.act=0 ";
     $requestLocality = $localityFilter=="_all_" ? "" : " AND l.key='$localityFilter' ";
     $requestDates = " AND (vi.date_visit BETWEEN '$startDate' AND '$endDate')";
 
@@ -4838,7 +4839,7 @@ function db_setVisit($data){
     $note = $db->real_escape_string($data['note']);
     $actionType = $db->real_escape_string($data['actionType']);
     $responsible = $db->real_escape_string($data['responsible']);
-    $adminIdIs= $db->real_escape_string($data['responsible']);
+    $adminIdIs= $db->real_escape_string($data['admin']);
     $countMembers = (int)($data['countMembers']);
     $performed = (int)($data['performed']);
     $visitId = isset($data['visitId']) ? $db->real_escape_string($data['visitId']) : null;
@@ -4894,4 +4895,18 @@ function db_setPerformedVisit($value, $memberId){
     else{
         return "Данного события нет в списке.";
     }
+}
+
+function db_getAdminsListByLocalities ()
+{
+    global $db;
+    $res=db_query ("SELECT DISTINCT m.key as id, m.name as name, m.email as email, m.cell_phone as cell_phone, lo.name as locality_name, ad.comment as note, lo.key as locality_key
+    FROM access as a
+    INNER JOIN admin ad ON ad.member_key=a.member_key
+    INNER JOIN member m ON a.member_key = m.key
+    INNER JOIN locality lo ON lo.key=m.locality_key ORDER BY name");
+
+    $members = array ();
+    while ($row = $res->fetch_object()) $members[]=$row;
+    return $members;
 }
