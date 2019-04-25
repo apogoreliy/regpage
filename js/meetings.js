@@ -1214,6 +1214,7 @@ var isFillTemplate = 0;
         function loadMeetings(){
             var request = getRequestFromFilters(setFiltersForRequest());
             $.getJSON('/ajax/meeting.php?get_meetings'+request).done(function(data){
+              console.log(data);
                 refreshMeetings(data.meetings);
             });
         }
@@ -1306,11 +1307,22 @@ var isFillTemplate = 0;
         }
 
         function refreshMeetings(meetings){
-            var tableRows = [], phoneRows = [];
+            var tableRows = [], phoneRows = [], localityArr = [];
+
+            $('#selMeetingLocality option').each(function() {
+              a = $(this).val();
+              b = $(this).text();
+              localityArr.push(b,a);
+            });
+
             var isSingleCity = parseInt('<?php echo $isSingleCity; ?>');
 
             for (var i in meetings){
                 var m = meetings[i], dataString, meetingCounts = getMeetingCounts(m);
+                var localityName = m.locality_key;
+                for (var i = 0; i < localityArr.length; i++) {
+                  localityArr[i] === localityName ? localityName = localityArr[i-1] : '';
+                }
 
                 dataString = 'data-members="'+m.members+'" data-district="'+m.district+'" data-summary="'+m.summary+'" data-extra_fields="'+m.show_additions+'" '+
                     'class="meeting-row '+(parseInt(m.summary) ? '' : '')+' " data-note="'+he(m.note)+'" data-type="'+m.meeting_type+'" data-date="'+m.date+'" '+
@@ -1322,7 +1334,7 @@ var isFillTemplate = 0;
                 tableRows.push('<tr '+dataString +'>'+
                     '<td>' + formatDate(m.date) + '</td>' +
                     '<td class="meeting-name">' + he(m.name || '') + '</td>' +
-                    (isSingleCity ? '' : '<td>' + he(m.locality_name ? (m.locality_name.length>20 ? m.locality_name.substring(0,18)+'...' : m.locality_name) : '') + '</td>') +
+                    (isSingleCity ? '' : '<td>' + he(localityName ? (localityName.length>20 ? localityName.substring(0,18)+'...' : localityName) : '') + '</td>') +
                     '<td style="text-align:center;">' + (meetingCounts.saintsCount || '') + '</td>' +
                     '<td style="text-align:center;">' + (meetingCounts.guestCount || '') + '</td>' +
                     '<td style="text-align:center;">' + (meetingCounts.countMembers || '') + '</td>' +
@@ -1335,7 +1347,7 @@ var isFillTemplate = 0;
                     '<i style="float: right;" title="Удалить" class="fa fa-trash fa-lg btn-remove-meeting"></i>'+
                     //'<i style="float: right;" class="fa fa-list fa-lg meeting-list" title="Список"/>'+
                     '<div><span>'+formatDate(m.date)+'</span>; '+
-                    (isSingleCity ? '' : he(m.locality_name ? (m.locality_name.length>20 ? m.locality_name.substring(0,18)+'...' : m.locality_name) : '') + '</div>') +
+                    (isSingleCity ? '' : he(localityName ? (localityName>20 ? localityName.substring(0,18)+'...' : localityName) : '') + '</div>') +
                     (meetingCounts.countMembers ? ('<span class="meeting-list-counts" >Всего '+ meetingCounts.countMembers +'</span>') : '')+
                     '</td>' +
                     '</tr>'
@@ -1802,7 +1814,7 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
       });
     }
       modalAddMembersTemplate.find("tbody tr").each(function(){
-        u = $(this).attr('data-member_key');        
+        u = $(this).attr('data-member_key');
         if ($(this).find('.form-check-input').prop("checked") && u[0] == 0 && !in_array(u, arrMembersTemplateCheck)) {
           arrMembersTemplate.push({id: $(this).attr('data-member_key'), category_key: $(this).attr('data-category_key'), locality: $(this).attr('data-locality'), name: $(this).find('label').text(), locality_key: $(this).attr('data-locality_key'), attend_meeting: $(this).attr('data-attend_meeting'), birth_date: $(this).attr('data-birth_date')});
         }
@@ -1985,4 +1997,24 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
       $(modal).find('tbody').html(members.join(''));
      }
     });
+
 })();
+function screenSizeMdl() {
+  if ($(window).width() <= 769) {
+
+    if ($(window).width() < 769 && $(window).width() > 436) {
+      $(".btn-toolbar").attr('style', '');
+    }
+    if ($(window).width() <= 436) {
+      $(".btn-toolbar").attr('style', 'margin-top:15px !important');
+    }
+  } else {
+    $(".btn-toolbar").attr('style', 'margin-top:10px !important');
+  }
+}
+
+screenSizeMdl();
+
+$(window).resize(function(){
+  screenSizeMdl();
+});

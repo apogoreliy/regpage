@@ -1761,3 +1761,35 @@ input.error, .control-group.error select, textarea.error {
   font-weight: bold;
   border: 1px solid blue;
 }
+.bg-gray-mbl {
+  background-color: lightgray;
+}
+
+.status-select-plan {
+  background-color: gray;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+}
+.status-select-done {
+  background-color: #468847;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+}
+.status-select-failed {
+  background-color: #f89406;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+}
+.visitСhangeStts>option {
+  background-color: white;
+  color: black;
+}
+.status-select-plan>option,
+.status-select-done>option,
+.status-select-failed>option {
+  background-color: white;
+  color: black;
+}

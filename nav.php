@@ -106,7 +106,7 @@ switch ($h) {
 
             if(!isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
-                if (strpos ($s,"/members")!==FALSE) {echo " class='active'";}
+                if (strpos ($s,"/members")!==FALSE || strpos($s,"/youth")!==FALSE || strpos($s,"/list")!==FALSE) {echo " class='active'";}
                 echo"><a href='/members'>Списки</a></li>";
             }
 
@@ -118,7 +118,7 @@ switch ($h) {
 
             if((!isset($isGuest) && db_isAdmin($memberId) && (!in_array('8', db_getUserSettings($memberId)))) || (db_hasAdminFullAccess($memberId) && (!in_array('8', db_getUserSettings($memberId))))) {
                 echo '<li';
-                if (strpos ($s,"/meetings")!==FALSE ) {echo " class='active'";}
+                if (strpos ($s,"/meetings")!==FALSE || strpos ($s,"/visits")!==FALSE ) {echo " class='active'";}
                 echo"><a href='/meetings'>Собрания</a></li>";
             }
 

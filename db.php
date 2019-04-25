@@ -2216,7 +2216,7 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
     $startDate = $db->real_escape_string($startDate);
     $endDate = $db->real_escape_string($endDate);
     $sort_type = $db->real_escape_string($sort_type);
-    $sort_field = $sort_field != 'locality_key' ? $db->real_escape_string($sort_field)."" : " locality_name ";
+    $sort_field = $sort_field != 'locality_key' ? $db->real_escape_string($sort_field)."" : " locality_key ";
 
     $meetings = array ();
 
@@ -2228,7 +2228,7 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
     db_query('SET Session group_concat_max_len=100000');
 
     $res = db_query("SELECT DISTINCT * FROM (
-            SELECT me.name, me.id, l.name as locality_name, me.date, 0 as add_list_count, me.list_count, me.saints_count,
+            SELECT me.name, me.id, me.date, 0 as add_list_count, me.list_count, me.saints_count,
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
             me.locality_key, me.note, me.fulltimers_count,
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
@@ -2245,7 +2245,7 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
             INNER JOIN meeting_type mt ON mt.key=me.meeting_type
             WHERE a.member_key='$adminId' $requestMeeting $requestLocality $requestDates
             UNION
-            SELECT me.name, GROUP_CONCAT(me.id), l.name as locality_name, me.date,
+            SELECT me.name, GROUP_CONCAT(me.id), me.date,
             (SELECT COUNT(*) FROM member m WHERE (m.locality_key = l.key) AND (DATEDIFF(CURRENT_DATE, STR_TO_DATE(m.birth_date, '%Y-%m-%d'))/365 >= 12 OR m.birth_date IS NULL)) as add_list_count,
             GROUP_CONCAT(me.list_count), GROUP_CONCAT(me.saints_count),
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, GROUP_CONCAT(me.guests_count),
@@ -2265,7 +2265,7 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
             INNER JOIN meeting_type mt ON mt.key=me.meeting_type
             WHERE a.member_key='$adminId' $requestMeeting $requestDates $requestLocality GROUP BY me.date, me.meeting_type
             UNION
-            SELECT me.name, me.id, l.name as locality_name, me.date, 0 as add_list_count, me.list_count, me.saints_count,
+            SELECT me.name, me.id, me.date, 0 as add_list_count, me.list_count, me.saints_count,
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
             me.locality_key, me.note, me.fulltimers_count,
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
@@ -2279,7 +2279,7 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
             LEFT JOIN district d ON d.locality_key=me.locality_key
             INNER JOIN meeting_template mtl ON mtl.locality_key = l.key
             WHERE FIND_IN_SET('$adminId', mtl.admin)<>0 $requestMeeting $requestDates $requestLocality
-            ) q ORDER BY q.$sort_field ".$sort_type.", q.locality_name ASC");
+            ) q ORDER BY q.$sort_field ".$sort_type.", q.meeting_name ASC");
 
     while ($row = $res->fetch_object()) $meetings[]=$row;
     return $meetings;
@@ -4788,7 +4788,7 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
     $startDate = $db->real_escape_string($startDate);
     $endDate = $db->real_escape_string($endDate);
     $sort_type = $db->real_escape_string($sort_type);
-    $sort_field = $sort_field != 'locality_key' ? $db->real_escape_string($sort_field)."" : " locality_name ";
+    $sort_field = $sort_field != 'locality_key' ? $db->real_escape_string($sort_field)."" : " locality_key ";
 
     $meetings = array ();
 
@@ -4799,7 +4799,7 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
     db_query('SET Session group_concat_max_len=100000');
 
     $res = db_query("SELECT DISTINCT * FROM (
-            SELECT vi.id as visit_id, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
+            SELECT vi.id as visit_id, vi.act,  vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
             FROM access a
             LEFT JOIN country c ON c.key = a.country_key
@@ -4809,7 +4809,7 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
             INNER JOIN visits vi ON vi.locality_key = l.key
             WHERE a.member_key='$adminId' $requestMeeting $requestLocality $requestDates
             UNION
-            SELECT vi.id as visit_id, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
+            SELECT vi.id as visit_id, vi.act,  vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
             FROM access a
             LEFT JOIN country c ON c.key = a.country_key
@@ -4819,14 +4819,14 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
             INNER JOIN visits vi ON vi.locality_key = d.district
             WHERE a.member_key='$adminId' $requestMeeting $requestDates $requestLocality GROUP BY vi.date_visit
             UNION
-            SELECT vi.id as visit_id, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
+            SELECT vi.id as visit_id, vi.act,  vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
             FROM visits vi
             INNER JOIN locality l ON l.key = vi.locality_key
             LEFT JOIN district d ON d.locality_key=vi.locality_key
             INNER JOIN meeting_template mtl ON mtl.locality_key = l.key
             WHERE FIND_IN_SET('$adminId', mtl.admin)<>0 $requestMeeting $requestDates $requestLocality
-            ) q ORDER BY q.$sort_field ".$sort_type.", q.locality_name ASC");
+            ) q ORDER BY q.$sort_field ".$sort_type.", q.locality_key ASC");
 
     while ($row = $res->fetch_object()) $meetings[]=$row;
     return $meetings;
@@ -4881,14 +4881,30 @@ function db_removeVisit($meetingId){
     db_query("DELETE FROM visits WHERE id = '$_meetingId' ");
 }
 
-function db_setPerformedVisit($value, $memberId){
+function db_setDateVisit($value, $visitId){
     global $db;
     $_value = $db->real_escape_string($value);
-    $_memberId = $db->real_escape_string($memberId);
+    $_visitId = $db->real_escape_string($visitId);
 
-    db_query("UPDATE visits SET performed = '$_value' WHERE id ='$_memberId' ");
+    db_query("UPDATE visits SET date_visit = '$_value' WHERE id ='$_visitId' ");
 
-    $res = db_query("SELECT performed FROM visits WHERE id ='$_memberId' ");
+    $res = db_query("SELECT date_visit FROM visits WHERE id ='$_visitId' ");
+    if($row = $res->fetch_assoc()){
+      return $row;
+    }
+    else{
+        return "Данного события нет в списке.";
+    }
+}
+
+function db_setPerformedVisit($value, $visitId){
+    global $db;
+    $_value = $db->real_escape_string($value);
+    $_visitId = $db->real_escape_string($visitId);
+
+    db_query("UPDATE visits SET performed = '$_value' WHERE id ='$_visitId' ");
+
+    $res = db_query("SELECT performed FROM visits WHERE id ='$_visitId' ");
     if($row = $res->fetch_assoc()){
       return $row;
     }

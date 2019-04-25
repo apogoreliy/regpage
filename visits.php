@@ -25,7 +25,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
               <option value="meetings">Собрания</option>
               <option selected value="callsAndVisits">Посещения и звонки</option>
           </select>
-            <div class="btn-toolbar">
+            <div class="btn-toolbar" style="margin-top:10px !important">
                 <a class="btn btn-success add-meeting" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
                 <!--<a class="btn btn-primary show-templates" type="button"><i class="fa fa-list"></i> <span class="hide-name">Шаблоны</span></a>-->
                 <a class="btn " href="#"><!-- add this style btn-meeting-members-statistic-->
@@ -36,20 +36,24 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 </a>
                 <div class="dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span class="sortName"><?php echo $s = isset($_COOKIE['sort'])? $_COOKIE['sort'] : 'Сортировать' ?></span>
+                        <span class="sortName fa fa-list"><?php echo $s = isset($_COOKIE['sort'])? $_COOKIE['sort'] : ' ' ?></span>
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" id="dropdownMenu" aria-labelledby="dropdownMenu1">
-                        <li><a id="sort-date" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date_visit' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-date_visit" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date_visit' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-list_members" href="#" title="сортировать">Фамилия Имя</a>&nbsp;<i class="<?php echo $sort_field=='list_members' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
+                        </li>
                         <li>
                             <?php
                             if (!$isSingleCity)
                                 echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
                             ?>
                         </li>
-                        <li><a id="sort-meeting_type" href="#" title="сортировать">Собрание</a>&nbsp;<i class="<?php echo $sort_field=='meeting_type' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
-                        <li><a id="sort-list_count" href="#" title="сортировать">На собрании</a>&nbsp;<i class="<?php echo $sort_field=='list_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
-                        <li><a id="sort-members_count" href="#" title="сортировать">По списку</a>&nbsp;<i class="<?php echo $sort_field=='members_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='meeting_type' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-responsible" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
+                        </li>
+                        <li><a id="sort-status" href="#" title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
+                        </li>
                     </ul>
                 </div>
                 <div class="input-group input-daterange datepicker">
@@ -58,8 +62,10 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <input type="text" class="span2 end-date" value="<?php echo date('d.m.Y', strtotime("+1 months")); ?>">
                 </div>
                 <select id="selMeetingCategory" class="span2">
-                    <option value="_all_" selected>Все события</option>
-                    <option value="plan">Планируемые</option>
+                    <option value="_all_">Все события</option>
+                    <option value="plan" selected>Планируемые</option>
+                    <option value="1">Сделано</option>
+                    <option value="2">Не сделано</option>
                 </select>
 
                 <?php if (!$isSingleCity) { ?>
@@ -73,6 +79,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 </select>
                 <?php } ?>
                 <select id="responsibleList" data-id_admin="" class="col-sm span2">
+                  <option value="_all_">Все</option>
                 </select>
             </div>
             <div class="desctopVisible" id="visitsListTbl">
@@ -80,10 +87,14 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                     <thead>
                     <tr>
                         <th><a id="sort-date_visit" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='date_visit' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th><a id="sort-list_members" href="#" title="сортировать">Посещаемые</a>&nbsp;<i class="<?php echo $sort_field=='list_members' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: center"><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='act' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: center"><a id="sort-responsible" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: center"><a href="#">Сделано</a></th>
+                        <th style=""><a id="sort-list_members" href="#" title="сортировать">Фамилия Имя</a>&nbsp;<i class="<?php echo $sort_field=='list_members' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <?php
+                        if (!$isSingleCity)
+                            echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
+                        ?>
+                        <th style="text-align: center; min-width:100px"><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='act' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: center; min-width:170px"><a id="sort-responsible" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: left; width:130px;"><a id="sort-status" href="#" title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                     </tr>
                     </thead>
                     <tbody><tr><td colspan="8"><h3 style="text-align: center">Загрузка...</h3></td></tr></tbody>
@@ -126,17 +137,26 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             <?php echo db_getAdminNameById($memberId); ?>
                           </span>-->
                         </div>
-                        <div class="">
-                          <input id="actionDate" class="datepicker actionDate" type="text" placeholder="ДД.ММ.ГГГГ"   valid="required,date">
-                          <select id="actionType" style="float: right">
-                            <option selected value='visit'>Посещение</option>
+                        <div class="" style="margin-bottom: 5px;">
+                          <select id="actionType">
+                            <option selected value="visit">Посещение</option>
                             <option value='call'>Звонок</option>
                           </select>
+                          <select id="performedChkbx" class="status-select-plan" style="float: right">
+                            <option selected value='0'>Запланировано</option>
+                            <option value='1'>Сделано</option>
+                            <option value='2'>Не сделано</option>
+                            <option value='3'>Удалить карточку</option>
+                          </select>
                         </div>
-                        <div>
-                          <input style="margin-bottom: 3px;" type="checkbox" id="performedChkbx">
+                        <div class="">
+                          <input id="actionDate" class="actionDate" type="date">
+                          <span id="dayOfWeek" style="padding-left: 11px;" ></span>
+                        </div>
+                        <!--<div>
+                           <input style="margin-bottom: 3px;" type="checkbox" id="performedChkbx">
                           <label for="performedChkbx">сделано</label>
-                        </div>
+                        </div> -->
                       </div>
               <div class="control-group row-fluid" style="margin-top: 15px;">
                   <div class="block-add-members">
@@ -162,33 +182,35 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
 </div>
 
-<!-- MEETING Members Modal -->
+<!-- STATUS Visit Modal -->
 <!--
-<div id="modalMeetingMembers" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3>Список</h3>
+<div id="modalStatusChange" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true" data-id="" data-status_old="" data-mobile="" style="max-width: 300px;">
+    <div class="modal-header" style="max-width: 300px;">
+        <h3 style="text-align: center">Выберите статус</h3>
     </div>
-    <div class="modal-body">
-        <div>
-            <input class="span3 search-meeting-members" type="text" placeholder="Введите ФИО">
-            <i class="btn fa fa-check fa-lg filter-stat-members-checked" title="Отмеченные" aria-hidden="true"></i>
-            <i class="btn fa fa-ban fa-lg filter-stat-members-unchecked" title="Неотмеченные" aria-hidden="true"></i>
-        </div>
-        <table class="table table-hover table-condensed ">
-            <thead><tr><th>&nbsp;</th><th>Фамилия Имя Отчество</th><th>Дата рождения</th></tr></thead>
+    <div class="modal-body" style="max-width: 300px;">
+        <table class="table table-hover table-condensed " style="margin-bottom: 0px !important">
             <tbody>
+              <tr>
+                  <td style="text-align: center"><span data-dismiss="modal" class="label label-default" style="font-size: 22px; cursor: pointer; padding: 10px" id="planingVisit" data-status_new="0" data-status_name="планируется">планируется</span></td>
+              </tr>
+              <tr>
+                  <td style="text-align: center"><span data-dismiss="modal" class="label label-success" style="font-size: 22px; cursor: pointer; padding: 10px" id="doneVisit" data-status_new="1" data-status_name="сделано">сделано</span></td>
+              </tr>
+              <tr>
+                  <td style="text-align: center"><span data-dismiss="modal" style="font-size: 22px; cursor: pointer; padding: 10px" class="label label-warning" id="missVisit" data-status_new="2" data-status_name="не сделано">не сделано</span></td>
+              </tr>
+              <tr>
+                  <td style="text-align: center"><span data-dismiss="modal" style="font-size: 22px; cursor: pointer; padding: 10px" class="label label-info" id="deleteThisVisit" data-status_new="3" data-status_name="удалить карточку">удалить карточку</span></td>
+              </tr>
             </tbody>
         </table>
-        <i class="fa fa-arrow-up fa-3x scroll-up" aria-hidden="true"></i>
     </div>
-    <div class="modal-footer">
-        <button class="btn btn-success doSaveListMembers" data-dismiss="modal" aria-hidden="true">Сохранить</button>
-        <button class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Отмена</button>
+    <div class="modal-footer" style="max-width: 300px;">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
 -->
-
 <!-- STATISTIC Members Modal -->
 <div id="modalMeetingStatistic" data-width="900" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
@@ -282,7 +304,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <h4>Удаление собрания</h4>
     </div>
     <div class="modal-body">
-        <h5>Вы действительно хотите удалить запись об этом собрании?</h5>
+        <h5>Карточка будет удалена! Продолжить?</h5>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary remove-meeting" data-dismiss="modal" aria-hidden="true">Удалить</button>
@@ -581,7 +603,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v57"></script>
+<script src="/js/visits.js?v113"></script>
 <?php
     include_once './footer.php';
 ?>
