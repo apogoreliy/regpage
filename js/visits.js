@@ -10,18 +10,29 @@ var startSystemFilter = 1;
         window.meetingTemplateAdminsList = [];
         window.meetingTemplateParticipantsList = [];
 
-fillAdminsOfLocations('#responsibleList');
-        loadMeetings();
+//fillAdminsOfLocations('#responsibleList');
+$.when(fillAdminsOfLocations('#responsibleList')).then(loadMeetings());
+//loadMeetings();
 // CALLS AND VISITS CODE
 function loadMeetings(){
     var request = getRequestFromFilters(setFiltersForRequest());
     $.getJSON('/ajax/visits.php?get_visits'+request).done(function(data){
-        $.when(refreshMeetings(data.meetings)).then(startSortingPosition());
-        function startSortingPosition() {
-
-          startSystemFilter === 1 ? (filterMeetingsList(startSystemFilter),   startSystemFilter = 0) : '';
-        };
-        clickOnSort === 1 ? (filterMeetingsList(), clickOnSort = 0) : '';
+      var responsibilesTrue = [];
+      $('#responsibleList option').each(function(){
+        if (($(this).val() != '_all_')) {
+          var tempVar = [];
+          tempVar.push($(this).val());
+          responsibilesTrue.push(tempVar);
+        }
+      });
+      if (responsibilesTrue.length === 0) {
+          setTimeout(function () {
+              $.when(refreshMeetings(data.meetings)).then(filterMeetingsList());
+          }, 400);
+      } else {
+        $.when(refreshMeetings(data.meetings)).then(filterMeetingsList());
+      }
+      console.log(responsibilesTrue.length);
     });
 }
 
@@ -35,50 +46,96 @@ function getMeetingCounts(item){
     };
 }
 
-function refreshMeetings(meetings){
-    var tableRows = [], phoneRows = [];
+function refreshMeetings(meetings,sort){
+    var tableRows = [], phoneRows = [], responsibiles = [], responsibleName, performedStatus, listOfMembersGoals, idDatePicker=[];
     var isSingleCity = parseInt('<?php echo $isSingleCity; ?>');
     var isLocationAlone = $('#selMeetingLocality option').length == 2 ?  true : false;
-    var responsibiles = [], responsibleName;
+
     $('#responsibleList option').each(function(){
-      if ($(this).val() != '_all_') {
+      if (($(this).val() != '_all_')) {
         var tempVar = [];
         tempVar.push($(this).val());
         tempVar.push($(this).text());
         responsibiles.push(tempVar);
       }
-    })
+    });
+
     for (var i in meetings){
-        var m = meetings[i], dataString, meetingCounts = getMeetingCounts(m);
+        var m = meetings[i], dataString, moscow=false, shortNameMbl;
         if (m.members) {
           splitMember = m.members.split(',');
-          splitMember = splitMember[0].split(':');
+          if (splitMember[0].indexOf("Москва:") != -1 && !(splitMember[0].indexOf("Москва:0") != -1 || splitMember[0].indexOf("Москва:1") != -1)) {
+            splitMember = splitMember[0].split(':');
+            var varTempRbld = splitMember.splice(3, 1);
+            splitMember[2] = splitMember[2] + varTempRbld;
+            shortNameMbl = twoNames(splitMember[1]);
+          } else {
+              splitMember = splitMember[0].split(':');
+              shortNameMbl = twoNames(splitMember[1]);
+          }
       }
+        m.performed == 0 ? performedStatus = 'планируется' : '';
+        m.performed == 1 ? performedStatus = 'сделано' : '';
+        m.performed == 2 ? performedStatus = 'не сделано' : '';
+        //m.performed == 3 ? performedStatus = 'удалить карточку' : '';
+        m.performed == 0 ? performedStatusCss = 'status-select-plan' : '';
+        m.performed == 1 ? performedStatusCss = 'status-select-done' : '';
+        m.performed == 2 ? performedStatusCss = 'status-select-failed' : '';
+        //m.performed == 3 ? performedStatusCss = 'label-info' : '';
         for (var i in responsibiles) {
           responsibiles[i][0] == m.responsible ? responsibleName = responsibiles[i][1] : '';
         }
-        dataString = 'data-members="'+m.members+'" data-responsible="'+m.responsible+'" data-performed="'+m.performed+'"  '+'class="meeting-row '+(parseInt(m.summary) ? 'meeting-summary' : '')+' " data-note="'+he(m.comments || '')+'" data-type="'+m.act+'" data-date="'+m.date_visit+'" '+'data-count="'+m.count_members+'" '+
-            ' data-id="'+m.visit_id+'" '+' data-locality="'+m.locality_key+'" data-admin_key="'+m.admin_key+'" ';
 
+        function twoNames(fullName) {
+          var shortName;
+          fullName ? fullName = fullName.split(' ') : '';
+          if (fullName) shortName = fullName[0] + ' ' + fullName[1];
+          return shortName;
+        }
+        responsibleName = twoNames(responsibleName);
+        var br = '<br>';
+        function listOfMembersGoals() {
+          var arr=[];
+          m.members ? splitAllMember = m.members.split(',') : '';
+          for (var i = 0; i < splitAllMember.length; i++) {
+            if (splitAllMember[i].indexOf("Москва:") != -1 && !(splitAllMember[i].indexOf("Москва:0") != -1 || splitAllMember[i].indexOf("Москва:1") != -1)) {
+              moscow = true;
+            }
+                splitAllMember[i] ? shortNames = splitAllMember[i].split(':'): '';
+            if (moscow === true) {
+              shortNames[7] ? '' : shortNames[7] = '';
+              arr.push((twoNames(shortNames[1])) + ' ' + shortNames[7]);
+            } else {
+              shortNames[6] ? '' : shortNames[6] = '';
+              arr.push((twoNames(shortNames[1])) + ' ' + shortNames[6]);
+            }
+          }
+          return arr
+        }
+        var shortNameFirst = [], shortNameMore = [];
+        shortNameFirst = listOfMembersGoals();
+        shortNameMore = listOfMembersGoals();
+        shortNameMore.splice(0,5);
+        var dayOfWeek = getNameDayOfWeek(m.date_visit);
+        //m.performed == 1 ? backgroundDone = 'bg-gray-mbl' : backgroundDone = '';
+        m.performed == 0 ? planStts = 'selected' : planStts = '';
+        m.performed == 1 ? doneStts = 'selected' : doneStts = '';
+        m.performed == 2 ? failedStts = 'selected' : failedStts = '';
+
+        dataString = 'data-members="'+m.members+'" data-responsible="'+m.responsible+'" data-performed="'+m.performed+'"  '+'class="meeting-row '+(parseInt(m.summary) ? 'meeting-summary' : '')+' " data-note="'+he(m.comments || '')+'" data-type="'+m.act+'" data-date="'+m.date_visit+'" data-count="'+m.count_members+'" data-status_name="'+performedStatus+'" data-id="'+m.visit_id+'" '+' data-locality="'+m.locality_key+'" data-admin_key="'+m.admin_key+'" ';
         tableRows.push('<tr '+dataString +'>'+
-            '<td>' + formatDate(m.date_visit) + '</td>' +
-            '<td class="meeting-name">' + he(m.members ? splitMember[1] : '') + '<br>'+ he(m.members ? splitMember[6] : '') + ' ' + (!isLocationAlone && m.members ? m.locality_name : '') +'</td>' +
-            '<td style="text-align:center;">' + he(m.act || '') + '</td>' +
-            '<td style="text-align:center;">' + (responsibleName || '') + '</td>' +
-            '<td style="text-align:center;"><input type="checkbox" class ="check-performed"' + (m.performed == 1 ? 'checked' : '') + '></td>' +
-            '<td><!--<i class="fa fa-list fa-lg meeting-list" title="Список"></i>--><i title="Удалить" class="fa fa-trash fa-lg btn-remove-meeting"></i></td>' +
+            '<td style="text-align:left;"><input style="background-color: inherit; width: 130px" class="visitListDate" type="date" value="' + m.date_visit+'"><br><span class="example day-of-week-in-list">'+dayOfWeek+'</span></td>' +
+            '<td class="meeting-name" style="text-align:left;width:330px; padding-left: 5px;"><div>'+ (shortNameFirst[0] || '')+'</div><div>'+ (shortNameFirst[1] || '')+'</div><div>' + (shortNameFirst[2] || '')+'</div><div>' + (shortNameFirst[3] || '')+'</div><div>' + (shortNameFirst[4] || '')+'</div><div>' + (shortNameMore || '')+'</div></td><td style="text-align: center"><span>'+(!isLocationAlone && m.members ? splitMember[2] : '')+'</span></td>' +
+            '<td style="text-align:center;"><span>'+ he(m.act || '') +'</span></td>' +
+            '<td style="text-align:center;"><span>' + (responsibleName || '') + '</span></td>' +
+            '<td style="text-align:left;width:130px" class="statusChange"><select class="visitСhangeStts '+performedStatusCss+'" style="width:130px;"><option '+planStts+' value="0">Планируется</option><option value="1" '+doneStts+'>Сделано</option><option value="2" '+failedStts+'>Не сделано</option><option value="3">Удалить карточку</option></select></td>' +
             '</tr>'
         );
 
         phoneRows.push('<tr '+dataString+'>'+
-            '<td><div class="meeting-name"><strong>' + he(m.members ? splitMember[1] : '') + '</strong></div>' +
-            '<i style="float: right;" title="Удалить" class="fa fa-trash fa-lg btn-remove-meeting"></i>'+
-            //'<i style="float: right;" class="fa fa-list fa-lg meeting-list" title="Список"/>'+
-            '<div>'+formatDate(m.date_visit)+ ' ' +he(m.act || '') +
-            '</div>' + '<div>' +
-            he(m.members ? splitMember[6] : '') + ' '+
-            (!isLocationAlone && m.members ? m.locality_name : '') + '</div>' +
-
+            '<td><div class="meeting-name"><strong>' + he(m.members ? shortNameMbl : '') + '</strong></div><div>' +
+            (!isLocationAlone && m.members ? splitMember[2] : '') + ' '+
+            he(m.members ? splitMember[6] : '') + '</div><div><input style="background-color: inherit; width: 130px; margin-bottom: 10px; margin-top: 10px; margin-right:0px" class="visitListDate" type="date" value="' + m.date_visit+'"><span class="example day-of-week-in-list">'+ dayOfWeek+ '</span><br><select class="visitСhangeStts '+performedStatusCss+'" style="width:145px; margin-right:7px; margin-top:5px"><option '+planStts+' value="0">Планируется</option><option value="1" '+doneStts+'>Сделано</option><option value="2" '+failedStts+'>Не сделано</option><option value="3">Удалить карточку</option></select><span>' +he(m.act || '') + '  ' + '</span></div>'  +
             '</td>' +
             '</tr>'
         );
@@ -87,9 +144,9 @@ function refreshMeetings(meetings){
     $("#visitsListTbl tbody").html (tableRows.join(''));
     $("#visitsListMbl tbody").html (phoneRows.join(''));
 
-    $(".meeting-row").unbind('click');
-    $(".meeting-row").click (function () {
-        var element = $(this);
+    $(".meeting-name").unbind('click');
+    $(".meeting-name").click (function () {
+        var element = $(this).parents('tr');
         var note = element.attr('data-note');
         var date = element.attr('data-date');
         var membersCount = element.attr('data-count');
@@ -104,17 +161,17 @@ function refreshMeetings(meetings){
 
         $("#addEditMeetingModal").find('.btnDoHandleMeeting').attr('data-id', actionId).attr('data-locality', locality).attr('data-date', date).attr('data-type',actionType);
         $("#addEditMeetingModal").attr('data-id', actionId);
-        fillMeetingModalForm(textMode, formatDate(date), locality, actionType, note, membersCount, performed, adminKey, responsible, actionId, members);
+        fillMeetingModalForm(textMode, date, locality, actionType, note, membersCount, performed, adminKey, responsible, actionId, members);
     });
 
-    $(".check-performed").click(function(e){
+    $(".dateQuickChange").click(function(e){
         e.stopPropagation();
     });
 
-    $(".check-performed").change(function(e){
+    $(".dateQuickChange").change(function(e){
         e.stopPropagation();
         var value = $(this).prop('checked') ? 1 : 0, memberId = $(this).parents('tr').attr('data-id'), winmin = $(this);
-        $.post('/ajax/visits.php?set_performed_visit', {value : value, memberId : memberId})
+        $.post('/ajax/visits.php?set_date_visit', {value : value, memberId : memberId})
         .done(function(data){
           if(data.result){
               //showModalHintWindow("<strong>"+data.result+"</strong>");
@@ -122,7 +179,7 @@ function refreshMeetings(meetings){
           }
       });
     });
-
+/*
     $('.btn-remove-meeting').unbind('click');
     $('.btn-remove-meeting').click(function(e){
         e.stopPropagation();
@@ -131,11 +188,71 @@ function refreshMeetings(meetings){
         modal.find(".remove-meeting").attr("data-id", meetingId);
         modal.modal("show");
     });
+    */
     $("tbody tr").each(function(){
         if ($(this).find('.meeting-name') == 'Посещения') {
           $(this).find('.meeting-name').attr('style', 'font-weight: bold');
         }
     });
+    $(".visitListDate").change(function(e){
+        e.stopPropagation();
+        var value = $(this).val(), visitId = $(this).parents('tr').attr('data-id'), winmin = $(this);
+        if (!$(this).val()) {
+          var actualyDate = $(this).parents('tr').attr('data-date');
+          $(this).val(actualyDate);
+          return
+        }
+        $.post('/ajax/visits.php?set_date_visit', {value : value, visitId : visitId})
+        .done(function(data){
+          if(data.result){
+              //showModalHintWindow("<strong>"+data.result+"</strong>");
+              $(winmin).parents('tr').attr('data-date', data.result.date_visit);
+              var dayOfWeek = getNameDayOfWeek(data.result.date_visit);
+              $(winmin).parents('td').find('.day-of-week-in-list').text(dayOfWeek);
+          }
+      });
+    });
+
+    $(".visitСhangeStts").change(function(e){
+        e.stopPropagation();
+        statusQua = 1;
+        var statusOld = $(this).parents('tr').attr('data-performed');
+        var statusNew = $(this).val();
+        var visitId = $(this).parents('tr').attr('data-id');
+        if (statusNew == 3) {
+              modal = $("#modalRemoveMeeting");
+          modal.find(".remove-meeting").attr("data-id", visitId);
+          modal.modal("show");
+          $(this).parents('td').find('select').val(statusOld);
+        } else if (statusNew != statusOld) {
+
+            $.post('/ajax/visits.php?set_status_visit', {value : statusNew, visitId : visitId})
+            .done(function(data){
+              if(!data.result){
+                console.log('same data');
+              }
+            });
+          statusNew == 0 ? statusNameCss = 'status-select-plan' : '' ;
+          statusNew == 1 ? statusNameCss = 'status-select-done' : '' ;
+          statusNew == 2 ? statusNameCss = 'status-select-failed' : '' ;
+
+          $(this).parents('tr').attr('data-performed', statusNew);
+          $(this).parents('td').find('select').val(statusNew);
+          if ($(this).parents('td').find('select').hasClass('status-select-plan')) {
+            $(this).parents('td').find('select').removeClass('status-select-plan');
+            $(this).parents('td').find('select').addClass(statusNameCss);
+          } else if ($(this).parents('td').find('select').hasClass('status-select-done')) {
+            $(this).parents('td').find('select').removeClass('status-select-done');
+            $(this).parents('td').find('select').addClass(statusNameCss);
+          } else if ($(this).parents('td').find('select').hasClass('status-select-failed')) {
+            $(this).parents('td').find('select').removeClass('status-select-failed');
+            $(this).parents('td').find('select').addClass(statusNameCss);
+          }
+        } else {
+          console.log('inspect option');
+        }
+    });
+  sort ? filterMeetingsList() : '';
 }
 
 $(".btnDoHandleMeeting").click(function(){
@@ -148,7 +265,7 @@ $(".btnDoHandleMeeting").click(function(){
     var note = modal.find('#visitNote').val();
     var responsible = modal.find('#responsible option:selected').val();
     var request = getRequestFromFilters(setFiltersForRequest());
-    var performed = modal.find('#performedChkbx').prop('checked') ? 1 : 0;
+    var performed = modal.find('#performedChkbx').val();
     var admin_key = window.adminId;
 
     if(!date || !locality || !actionType){
@@ -163,9 +280,14 @@ $(".btnDoHandleMeeting").click(function(){
 
     var countMembers = members.length;
 
+    if (countMembers === 0) {
+      showError('Перед сохранением добавьте участника');
+      return
+    }
+
     $.post('/ajax/visits.php?set_visit'+request, {
         visitId : visitId,
-        date: parseDate(date),
+        date: date,
         locality: locality,
         actionType : actionType,
         responsible: responsible,
@@ -191,11 +313,19 @@ $(".remove-meeting").click(function(e){
     e.stopPropagation();
     var meetingId = $(this).attr('data-id');
     var request = getRequestFromFilters(setFiltersForRequest());
-
+    if (!meetingId) {
+      $("#modalRemoveMeeting").modal('hide');
+      $("#addEditMeetingModal").modal('hide');
+      return
+    }
+    if ($("#addEditMeetingModal").is(':visible')) {
+      console.log('Im here');
+      $("#addEditMeetingModal").modal('hide');
+    }
     $("#modalRemoveMeeting").modal('hide');
     $.post('/ajax/visits.php?remove'+request, {meeting_id: meetingId})
     .done(function(data){
-        refreshMeetings(data.meetings);
+        refreshMeetings(data.meetings, true);
     });
 });
 
@@ -207,29 +337,34 @@ function fillMeetingModalForm(textMode, date, locality, actionType, note, countL
     locality = isSingleCity ? '<?php echo $singleLocality; ?>' : locality;
     var isLocationAlone = $('#selMeetingLocality option').length == 2 ?  true : false;
 // END
-
-    modal.find('#actionDate').val(date || formatDate (new Date()));
+    nn = formatDate (new Date());
+    nnn = formatDateNew(nn);
+    console.log(date);
+    modal.find('#actionDate').val(date || nnn);
     modal.find('#actionType').val(actionType == 'Звонок' ? 'call' : 'visit');
     modal.find('#visitLocalityModal').val(locality || whatIsLocalityAdmin);
-    performed == 1 ? modal.find('#performedChkbx').prop('checked', true) : modal.find('#performedChkbx').prop('checked', false);
+    modal.find('#performedChkbx').val(performed || 0);
     modal.find('#visitNote').val(note || '');
     //modal.find('#responsible').val(responsible);
     if (textMode == 'Карточка события') {
       (actionType == 'Посещение') ? modal.find("#titleMeetingModal").text('Посещение') : modal.find("#titleMeetingModal").text('Звонок');
     } else {
-      modal.find("#titleMeetingModal").text(textMode);
+      modal.find("#titleMeetingModal").text('Посещение');
     }
-
 
     $(".show-templates.open-in-meeting-window").css('display', textMode === 'Новое событие' ? 'block': 'none');
     if(members && members !== 'null'){
         var members = members.split(','), membersArr = [];
         for(var i in members){
-            var member = members[i].split(':');
-            if (members[i].indexOf("Москва:") != -1) {
+            var member = members[i];
+            if (members[i].indexOf("Москва:") != -1 && !(members[i].indexOf("Москва:0") != -1 || members[i].indexOf("Москва:1") != -1)) {
+              member = members[i].split(':');
               var varTemp = member.splice(3, 1);
               member[2] = member[2] + varTemp;
+            } else {
+              member = members[i].split(':');
             }
+
             membersArr.push({id: member[0], name: member[1], locality: member[2], attend_meeting: member[3], category_key: member[4], locality_key: member[5], cell_phone: member[6], birth_date: member[7], present : member[0]});
         }
         buildMembersList("#addEditMeetingModal", membersArr);
@@ -241,11 +376,25 @@ function fillMeetingModalForm(textMode, date, locality, actionType, note, countL
     }
     modal.modal('show');
     modal.find('#responsible').val(responsible);
+    if (textMode == 'Новое событие') {
+      if ($('.addEditMode').length == 0) {
+        $('#addEditMeetingModal').addClass('addEditMode');
+      }
+    $('#modalAddMembersTemplate').modal('show');
+    }
+    getNameDayOfWeek( $('#addEditMeetingModal').find('.actionDate').val(),'#dayOfWeek', false);
+    $('#modalAddMembersTemplate').on('hide', function (){
+        if ($("#addEditMeetingModal").hasClass('new-visit-create')) {
+          $("#addEditMeetingModal").removeClass('new-visit-create');
+          $("#addEditMeetingModal").modal('hide');
+        }
+      });
 }
 
 $(".add-meeting").click(function(){
     $("#addEditMeetingModal").removeAttr('data-id');
     $("#addEditMeetingModal").find('.btnDoHandleMeeting').removeAttr('data-id');
+    $("#addEditMeetingModal").addClass('new-visit-create');
     //handleExtraFields(false);
     fillMeetingModalForm('Новое событие');
 });
@@ -257,15 +406,17 @@ function buildMembersList(modalWindowSelector, list, mode){
     if(list && list.length > 0){
         for (var i in list){
             var member = list[i], buttons = "<i title='Удалить' class='fa fa-trash fa-lg btn-remove-member'></i>";
+
             if (member.id < 990000000) {
             if (member.birth_date) {
+
               x = getAge(prepareGetAge(member.birth_date));
               x = getAgeWithSuffix(parseInt(x), x);
             } else {
               x='';
             }
-            members.push("<tr class='check-member' data-id='"+member.id+"' data-attend_meeting='"+member.attend_meeting+"' data-name='"+member.name+"' data-category_key='"+member.category_key+"' data-birth_date='"+member.birth_date+"' data-locality_key='"+member.locality_key+"' data-cell_phone='"+member.cell_phone+"' data-locality='"+member.locality+"'>"+
-                "<td><span><strong>" +member.name +"</strong><br>" +(member.cell_phone ? member.cell_phone +", " : '')  +x+"</span></td>"+
+
+            members.push("<tr class='check-member' data-id='"+member.id+"' data-attend_meeting='"+member.attend_meeting+"' data-name='"+member.name+"' data-category_key='"+member.category_key+"' data-birth_date='"+member.birth_date+"' data-locality_key='"+member.locality_key+"' data-cell_phone='"+member.cell_phone+"' data-locality='"+member.locality+"'><td><span><strong>" +member.name +"</strong><br>" +(member.cell_phone ? member.cell_phone +", " : '')  +x+"</span></td>"+
                 "<td>"+buttons+"</td>"+
                 "</tr>");
           }
@@ -317,7 +468,7 @@ function buildMembersList(modalWindowSelector, list, mode){
 // get admins of localities
 function fillAdminsOfLocations(element, responsible) {
   var localities = []; responsibles = [];
-  element == '#responsibleList' ? responsibles.push('<option value="_all_">Все</option>') : '';
+  element == '#responsibleList' ? responsibles.push('<option selected value="_all_">Все</option>') : '';
   $('#selMeetingLocality option').each(function(){
     $(this).val() != '_all_' ? localities.push($(this).val()): '';
   })
@@ -333,9 +484,17 @@ function fillAdminsOfLocations(element, responsible) {
               if (id != responsible && responsible) {
                 responsibles.push('<option value="'+ id +'">'+ name +'</option>');
               } else if (id == responsible) {
-                responsibles.push('<option selected value="'+ id +'">'+ name +'</option>');
+                if (element == '#responsibleList') {
+                  responsibles.push('<option value="'+ id +'">'+ name +'</option>');
+                } else {
+                    responsibles.push('<option selected value="'+ id +'">'+ name +'</option>');
+                }
               } else if (!responsible && id == window.adminId) {
-                responsibles.push('<option selected value="'+ id +'">'+ name +'</option>');
+                if (element == '#responsibleList') {
+                  responsibles.push('<option value="'+ id +'">'+ name +'</option>');
+                } else {
+                  responsibles.push('<option selected value="'+ id +'">'+ name +'</option>');
+                }
               } else {
                 responsibles.push('<option value="'+ id +'">'+ name +'</option>');
               }
@@ -353,7 +512,7 @@ function filterMeetingsList(start){
     var locality = $("#selMeetingLocality").val();
     var meetingType = $("#selMeetingCategory").val();
     var countIteration = 0;
-    if (meetingType != '_all_'){ meetingType = '0'};
+    if (meetingType === 'plan'){ meetingType = '0'};
 
     $(".meetings-list tbody tr").each(function(){
         (($(this).attr('data-responsible') === responsible || responsible == '_all_') && ($(this).attr('data-locality') === locality || $(this).attr('data-district') === locality || locality === '_all_') && ($(this).attr('data-performed') === meetingType || meetingType === '_all_')) ? ($(this).show(), countIteration++) : $(this).hide();
@@ -384,7 +543,6 @@ function setFiltersForRequest(){
     meetingTypeFilter == 'plan' ? meetingTypeFilter = '0' : '';
     var startDate = $(".start-date").val();
     var endDate = $(".end-date").val();
-
     var filters = [];
     filters = [{name: "sort_field", value: sort_field},
                 {name: "sort_type", value: sort_type},
@@ -417,13 +575,296 @@ $("#selMeetingCategory, #selMeetingLocality").change(function(){
 });
 
 $("a[id|='sort']").click (function (){
-    clickOnSort = 1;
+    //clickOnSort = 1;
     var id = $(this).attr("id");
     var icon = $(this).siblings("i");
 
     $(".meetings-list a[id|='sort'][id!='"+id+"'] ~ i").attr("class","icon-none");
     icon.attr ("class", icon.hasClass("icon-chevron-down") ? "icon-chevron-up" : "icon-chevron-down");
-    loadMeetings ();
+/*
+    if (id == 'sort-list_members') {
+      icon.hasClass("icon-chevron-down") ? sortingVisits(1) : sortingVisits(2);
+      filterMeetingsList()
+    } else if (id == 'sort-responsible') {
+      icon.hasClass("icon-chevron-down") ? sortingVisits(3) :sortingVisits(4);
+      filterMeetingsList()
+    } else {
+      loadMeetings ();
+    }
+*/
+    if (id === 'sort-list_members') {
+      icon.hasClass("icon-chevron-down") ? sortingVisits(1) : sortingVisits(2);
+    } else if (id === 'sort-responsible') {
+      icon.hasClass("icon-chevron-down") ? sortingVisits(3) :sortingVisits(4);
+    } else if (id === 'sort-act') {
+      icon.hasClass("icon-chevron-down") ? sortingVisits(5) :sortingVisits(6);
+    } else if (id === 'sort-date_visit') {
+      icon.hasClass("icon-chevron-down") ? sortingVisits(7) :sortingVisits(8);
+    } else if (id === 'sort-locality_key') {
+      icon.hasClass("icon-chevron-down") ? sortingVisits(9) :sortingVisits(10);
+    } else if (id === 'sort-status') {
+      icon.hasClass("icon-chevron-down") ? sortingVisits(11) :sortingVisits(12);
+    } else {
+      loadMeetings ();
+    }
+});
+
+function sortingVisits(sortType) {
+  var list = [], tableRows = [], phoneRows = [], isLocationAlone = $('#selMeetingLocality option').length == 2 ?  true : false;
+  $('#meetings').find('tr').each(function(){
+      var membersList = $(this).attr('data-members'),
+          responsible = $(this).attr('data-responsible'),
+          performed = $(this).attr('data-performed'),
+          note = $(this).attr('data-note'),
+          type = $(this).attr('data-type'),
+          date = $(this).attr('data-date'),
+          count = $(this).attr('data-count'),
+          id = $(this).attr('data-id'),
+          locality = $(this).attr('data-locality'),
+          admin = $(this).attr('data-admin_key'),
+          responsibleName = $(this).find('td:eq(4)').text(),
+          visit_data = $(this).find('td:eq(1)').text(),
+          localityName = $(this).find('td:eq(2)').text();
+    if (id) {
+      list.push({visit_id: id, act: type, locality_key: locality, performed: performed, members: membersList, responsible: responsible, comments: note, date_visit: date, count_members: count, admin_key: admin, responsible_name: responsibleName, visit_data: visit_data, locality_name: localityName});
+    }
+  });
+
+if (sortType == 1) {
+  list.sort(function (a, b) {
+    if (a.visit_data > b.visit_data) {
+      return 1;
+    }
+    if (a.visit_data < b.visit_data) {
+      return -1;
+    }
+    return 0;
+  });
+}
+
+if (sortType == 2) {
+  list.sort(function (a, b) {
+    if (a.visit_data < b.visit_data) {
+      return 1;
+    }
+    if (a.visit_data > b.visit_data) {
+      return -1;
+    }
+    return 0;
+  });
+}
+if (sortType == 3) {
+  list.sort(function (a, b) {
+    if (a.responsible_name > b.responsible_name) {
+      return 1;
+    }
+    if (a.responsible_name < b.responsible_name) {
+      return -1;
+    }
+    return 0;
+  });
+}
+
+if (sortType == 4) {
+  list.sort(function (a, b) {
+    if (a.responsible_name < b.responsible_name) {
+      return 1;
+    }
+    if (a.responsible_name > b.responsible_name) {
+      return -1;
+    }
+    return 0;
+  });
+}
+if (sortType == 5) {
+  list.sort(function (a, b) {
+    if (a.act > b.act) {
+      return 1;
+    }
+    if (a.act < b.act) {
+      return -1;
+    }
+    return 0;
+  });
+}
+
+if (sortType == 6) {
+  list.sort(function (a, b) {
+    if (a.act < b.act) {
+      return 1;
+    }
+    if (a.act > b.act) {
+      return -1;
+    }
+    return 0;
+  });
+}
+if (sortType == 7) {
+  list.sort(function (a, b) {
+    if (a.date_visit > b.date_visit) {
+      return 1;
+    }
+    if (a.date_visit < b.date_visit) {
+      return -1;
+    }
+    return 0;
+  });
+}
+if (sortType == 8) {
+  list.sort(function (a, b) {
+    if (a.date_visit < b.date_visit) {
+      return 1;
+    }
+    if (a.date_visit > b.date_visit) {
+      return -1;
+    }
+    return 0;
+  });
+}
+if (sortType == 9) {
+  list.sort(function (a, b) {
+    if (a.locality_name > b.locality_name) {
+      return 1;
+    }
+    if (a.locality_name < b.locality_name) {
+      return -1;
+    }
+    return 0;
+  });
+}
+if (sortType == 10) {
+  list.sort(function (a, b) {
+    if (a.locality_name < b.locality_name) {
+      return 1;
+    }
+    if (a.locality_name > b.locality_name) {
+      return -1;
+    }
+    return 0;
+  });
+}
+if (sortType == 11) {
+  list.sort(function (a, b) {
+    if (a.performed > b.performed) {
+      return 1;
+    }
+    if (a.performed < b.performed) {
+      return -1;
+    }
+    return 0;
+  });
+}
+if (sortType == 12) {
+  list.sort(function (a, b) {
+    if (a.performed < b.performed) {
+      return 1;
+    }
+    if (a.performed > b.performed) {
+      return -1;
+    }
+    return 0;
+  });
+}
+refreshMeetings(list,true);
+
+  $('.btn-remove-meeting').unbind('click');
+  $('.btn-remove-meeting').click(function(e){
+      e.stopPropagation();
+      var meetingId = $(this).parents('tr').attr('data-id'),
+          modal = $("#modalRemoveMeeting");
+      modal.find(".remove-meeting").attr("data-id", meetingId);
+      modal.modal("show");
+  });
+  $("tbody tr").each(function(){
+      if ($(this).find('.meeting-name') == 'Посещения') {
+        $(this).find('.meeting-name').attr('style', 'font-weight: bold');
+      }
+  });
+}
+var dateActionChange=parseDDMM ($('#addEditMeetingModal').find('.actionDate').val());
+
+function formatDateNew(date) {
+  dates = []
+  var tempDate = date.split('.');
+  dates.push(tempDate[2]);
+  dates.push(tempDate[1]);
+  dates.push(tempDate[0]);
+  //var dates2 = new Date(tempDate[2], tempDate[1], tempDate[0]);
+  date = dates.join('-');
+  return date;
+
+}
+function getNameDayOfWeek(date, modal, short) {
+  //var date = parseDDMM ($('#addEditMeetingModal').find('.actionDate').val());
+  var tempDate = date.split('-');
+  var dates = new Date(tempDate[0], tempDate[1]-1, tempDate[2]);
+  var weekday = new Array(7);
+  if (short) {
+    weekday[0] = "Вс";
+    weekday[1] = "Пн";
+    weekday[2] = "Вт";
+    weekday[3] = "Ср";
+    weekday[4] = "Чт";
+    weekday[5] = "Пт";
+    weekday[6] = "Сб";
+  } else {
+    weekday[0] = "Воскресенье";
+    weekday[1] = "Понедельник";
+    weekday[2] = "Вторник";
+    weekday[3] = "Среда";
+    weekday[4] = "Четверг";
+    weekday[5] = "Пятница";
+    weekday[6] = "Суббота";
+  }
+  var dayofweek = weekday[dates.getDay()];
+  if (modal) {
+    $(modal).text(dayofweek);
+  } else {
+    return dayofweek;
+  }
+}
+
+$('.actionDate').change(function() {
+  if ($('#addEditMeetingModal').find('.actionDate').val()) {
+    $('#addEditMeetingModal').find('.actionDate').removeAttr('style', 'background-color: #FCF4F4; border-color:#E08A88;');
+    var date = $('#addEditMeetingModal').find('.actionDate').val();
+    getNameDayOfWeek(date, '#dayOfWeek', false);
+  } else {
+    $('#addEditMeetingModal').find('.actionDate').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
+  }
+
+})
+$('#actionType').change(function() {
+  $('#actionType').val() == 'call' ? $('#titleMeetingModal').html('Звонок') : $('#titleMeetingModal').html('Посещение');
+
+})
+$('#performedChkbx').change(function() {
+  var statusNew = $(this).val();
+  statusNew == 0 ? statusNameCss = 'status-select-plan' : '' ;
+  statusNew == 1 ? statusNameCss = 'status-select-done' : '' ;
+  statusNew == 2 ? statusNameCss = 'status-select-failed' : '' ;
+
+  if (statusNew == 3) {
+    modal = $("#modalRemoveMeeting");
+    var visitId = $("#addEditMeetingModal").attr('data-id');
+    if (visitId) {
+      modal.find(".remove-meeting").attr("data-id", visitId);
+      modal.modal("show");
+    } else {
+      modal.modal("show");
+    }
+  } else if ($(this).hasClass('status-select-plan')) {
+    $(this).removeClass('status-select-plan');
+    $(this).addClass(statusNameCss);
+  } else if ($(this).hasClass('status-select-done')) {
+    $(this).removeClass('status-select-done');
+    $(this).addClass(statusNameCss);
+  } else if ($(this).hasClass('status-select-failed')) {
+    $(this).removeClass('status-select-failed');
+    $(this).addClass(statusNameCss);
+  } else {
+      console.log('inspect option');
+  }
 });
 
 // END CALLS AND VISITS CODE
@@ -878,7 +1319,7 @@ $("a[id|='sort']").click (function (){
                 for (var i = 0 in participantsArrTemp) {
                     var participant = participantsArrTemp[i];
                     var participantItem = participant.split(':');
-                    if (participant.indexOf("Москва:") != -1) {
+                    if (participant.indexOf("Москва:") != -1 && !(splitMember[0].indexOf("Москва:0") != -1 || splitMember[0].indexOf("Москва:1") != -1)) {
                       var varTemp = participantItem.splice(3, 1);
                       participantItem[2] = participantItem[2] + varTemp;
                     }
@@ -1299,6 +1740,7 @@ $("a[id|='sort']").click (function (){
           });
 
         $('#addEditMeetingModal').on('hide', function (){
+          $('#addEditMeetingModal').find('.actionDate').removeAttr('style', 'background-color: #FCF4F4; border-color:#E08A88;');
             if ($('.addEditMode').length > 0) $('#addEditMeetingModal').removeClass('addEditMode');
           });
 
@@ -1383,13 +1825,22 @@ $("a[id|='sort']").click (function (){
         function screenSizeMdl() {
           if ($(window).width() < 800) {
             $("#responsible").attr('style', 'float: none');
-            $("#actionType").attr('style', 'float: none');
+            $("#performedChkbx").attr('style', 'float: none');
             $("#cancelModalWindow").attr('style', 'margin-right: 60px');
-
+            if ($(window).width() < 769 && $(window).width() > 371) {
+              $(".btn-toolbar").attr('style', '');
+            }
+            if ($(window).width() <= 371) {
+              $(".btn-toolbar").attr('style', 'margin-top:15px !important');
+            }
+            if ($(window).width() >= 769) {
+              $(".btn-toolbar").attr('style', 'margin-top:10px !important');
+            }
           } else {
             $("#responsible").attr('style', 'float: right');
-            $("#actionType").attr('style', 'float: right');
+            $("#performedChkbx").attr('style', 'float: right');
             $("#cancelModalWindow").removeAttr('style');
+            $(".btn-toolbar").attr('style', 'margin-top:10px !important');
           }
         }
 
@@ -1488,7 +1939,8 @@ $("a[id|='sort']").click (function (){
                         for(var m in members){
                             var member = members[m]['member'];
                             var memberArr = member.split(':');
-                            if (member.indexOf("Москва:") != -1) {
+                            if (member.indexOf("Москва:") != -1 &&
+                          !(splitMember[0].indexOf("Москва:0") != -1 || splitMember[0].indexOf("Москва:1") != -1)) {
                               var varTemp = memberArr.splice(3, 1);
                               memberArr[2] = memberArr[2] + varTemp;
                             }
@@ -1534,8 +1986,9 @@ $("a[id|='sort']").click (function (){
         if(members){
             for(var m in members){
                 var member = members[m];
+                a = 'data-locality="'+member.locality+'"';
                 arr.push(
-                "<tr data-member_key="+member.id+" data-category_key="+member.category_key+" data-locality_key="+member.locality_key+" data-birth_date="+member.birth_date+" data-locality="+member.locality+" data-cell_phone = '"+member.cell_phone+"' data-attend_meeting = "+member.attend_meeting+" id='mr-"+m+"' class='member-row'><td><input type='checkbox' id="+member.id+" class='form-check-input'></td><td><label for="+member.id+" class='form-check-label'>"+ he (member.name) + "</label></td><td>"+
+                "<tr data-member_key="+member.id+" data-category_key="+member.category_key+" data-locality_key="+member.locality_key+" data-birth_date="+member.birth_date+" "+a+" data-cell_phone = '"+member.cell_phone+"' data-attend_meeting = "+member.attend_meeting+" id='mr-"+m+"' class='member-row'><td><input type='checkbox' id="+member.id+" class='form-check-input'></td><td><label for="+member.id+" class='form-check-label'>"+ he (member.name) + "</label></td><td>"+
                     he(member.locality) + "</td></tr>");
             }
         }
@@ -1644,9 +2097,68 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
     }
 
     $("#btnDoAddMembersTemplate").click (function (){
-      var modalAddMembersTemplate = $("#modalAddMembersTemplate"), arrMembersTemplate=[], u, arrMembersTemplateCheck=[], addEditMeetingModal = $("#addEditMeetingModal");
-//checking exist list
+      var modalAddMembersTemplate = $("#modalAddMembersTemplate"), arrMembersTemplate=[], u, arrMembersTemplateCheck=[], addEditMeetingModal = $("#addEditMeetingModal"), visitMember=[];
+      if ($("#addEditMeetingModal").hasClass('new-visit-create')) {
+        $("#modalAddMembersTemplate").find('tbody tr').each(function() {
+          if ($(this).find('.form-check-input').prop("checked")) {
+              var tempVar = $(this).attr('data-member_key');
+              visitMember.push(tempVar);
+          }
+        })
+        if (visitMember.length > 1) {
+          for (var i in visitMember) {
 
+              var modal = $("#addEditMeetingModal");
+
+              var visitId = '';
+              var date = modal.find('#actionDate').val();
+              var locality = modal.find('#visitLocalityModal').val();
+              var actionType = $("#actionType").find(':selected').text();
+              var note = modal.find('#visitNote').val();
+              var responsible = modal.find('#responsible option:selected').val();
+              var request = getRequestFromFilters(setFiltersForRequest());
+              var performed = modal.find('#performedChkbx').val();
+              var admin_key = window.adminId;
+
+
+              if(!date || !locality || !actionType){
+                  showError('Необходимо заполнить все обязательные поля выделенные розовым цветом');
+                  return
+              }
+
+              var members = visitMember[i];
+              var countMembers = 1;
+              $.post('/ajax/visits.php?set_visit'+request, {
+                  visitId : visitId,
+                  date: date,
+                  locality: locality,
+                  actionType : actionType,
+                  responsible: responsible,
+                  performed: performed,
+                  note: note,
+                  members : members,
+                  admin: admin_key,
+                  countMembers: countMembers
+              }).done(function(data){
+                  if(data.isDoubleMeeting){
+                      showError('Данное собрание является дублирующим и не было сохранено!');
+                  }
+                  $(".localities-available").html('');
+                  $(".localities-added").html('');
+                  $(".searchLocality").val('');
+
+                  loadMeetings();
+                  $("#addEditMeetingModal").modal('hide');
+              });
+          }
+        } else if (visitMember.length === 0) {
+            $("#addEditMeetingModal").modal('hide');
+        } else {
+          console.log("normal way");
+        }
+      }
+      $("#addEditMeetingModal").hasClass('new-visit-create') ? $("#addEditMeetingModal").removeClass('new-visit-create') : '';
+//checking exist list
       addEditMeetingModal.find("tbody tr").each(function(){
          arrMembersTemplateCheck.push($(this).attr('data-id'))
       });
