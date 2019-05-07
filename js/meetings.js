@@ -892,7 +892,7 @@ var isFillTemplate = 0;
                       }
                     member.name ? shortName = member.name.split(' ') : '';
                     members.push("<tr class='check-member' data-id='"+member.id+"' data-attend_meeting='"+member.attend_meeting+"' data-name='"+shortName[0]+' '+shortName[1]+"' data-category_key='"+member.category_key+"' data-birth_date='"+member_age+"' data-locality_key='"+member.locality_key+"' data-locality='"+member.locality+"'>"+
-                        "<td><label class='check-member-label'>" + ( modalWindowSelector === '#modalHandleTemplate' ? "" : "<input type='checkbox' "+(member.present ? "checked='true'" : "" ) + " style='margin-top: -3px;' class='check-member-checkbox form-check-input'> ") +shortName[0]+' '+shortName[1]+"</label></td>"+
+                        "<td><label class='check-member-label' style='line-height: 20px'>" + ( modalWindowSelector === '#modalHandleTemplate' ? "" : "<input type='checkbox' "+(member.present ? "checked='true'" : "" ) + " style='margin-top: -3px;' class='check-member-checkbox form-check-input'> ") +shortName[0]+' '+shortName[1]+"</label></td>"+
                         "<td>"+member.locality+"</td>"+
                         "<td>"+member_age+"</td>"+
                         "<td>"+(member.attend_meeting == 1 ? '<i class="fa fa-check"></i>' : '-') +"</td>"+
@@ -1287,7 +1287,7 @@ var isFillTemplate = 0;
             var traineesCount = 0, fulltimersCount = 0, guestCount = 0, childrenCount = 0,
                     listCount = 0, saintsCount = 0, countMembers, fulltimersInSaintsList = 0;
 
-            fulltimersInSaintsList = parseInt(item.fulltimers_in_list.split(',').reduce(add, 0));
+            //fulltimersInSaintsList = parseInt(item.fulltimers_in_list.split(',').reduce(add, 0));
             listCount = parseInt(item.list_count.split(',').reduce(add, 0)) + parseInt(item.add_list_count);
             saintsCount = parseInt(item.saints_count.split(',').reduce(add, 0));
             guestCount = parseInt(item.guests_count.split(',').reduce(add, 0));
@@ -1307,7 +1307,7 @@ var isFillTemplate = 0;
         }
 
         function refreshMeetings(meetings){
-            var tableRows = [], phoneRows = [], localityArr = [];
+            var tableRows = [], phoneRows = [], localityArr = [], checkId, checkIdNew, moskow = false;
 
             $('#selMeetingLocality option').each(function() {
               a = $(this).val();
@@ -1315,10 +1315,25 @@ var isFillTemplate = 0;
               localityArr.push(b,a);
             });
 
+            if (localityArr.indexOf("Москва") != -1) {
+              $('#pvom_count').show();
+              moskow = true;
+            } else {
+              $('#pvom_count').hide();
+            }
+
             var isSingleCity = parseInt('<?php echo $isSingleCity; ?>');
 
             for (var i in meetings){
+
                 var m = meetings[i], dataString, meetingCounts = getMeetingCounts(m);
+                checkId = m.id;
+
+                if (checkIdNew === m.id) {
+                    checkIdNew = m.id;
+                } else {
+                    checkIdNew = m.id;
+                }
                 var localityName = m.locality_key;
                 for (var i = 0; i < localityArr.length; i++) {
                   localityArr[i] === localityName ? localityName = localityArr[i-1] : '';
@@ -1335,7 +1350,7 @@ var isFillTemplate = 0;
                     '<td>' + formatDate(m.date) + '</td>' +
                     '<td class="meeting-name">' + he(m.name || '') + '</td>' +
                     (isSingleCity ? '' : '<td>' + he(localityName ? (localityName.length>20 ? localityName.substring(0,18)+'...' : localityName) : '') + '</td>') +
-                    '<td style="text-align:center;">' + (meetingCounts.saintsCount || '') + '</td>' +
+                    '<td style="text-align:center;">' + (meetingCounts.saintsCount || '') + '</td>' + (moskow ?'<td style="text-align:center;">' + (meetingCounts.traineesCount || '') + '</td>' : '') +
                     '<td style="text-align:center;">' + (meetingCounts.guestCount || '') + '</td>' +
                     '<td style="text-align:center;">' + (meetingCounts.countMembers || '') + '</td>' +
                     '<td><!--<i class="fa fa-list fa-lg meeting-list" title="Список"></i>--><i title="Удалить" class="fa fa-trash fa-lg btn-remove-meeting"></i></td>' +
@@ -1352,6 +1367,7 @@ var isFillTemplate = 0;
                     '</td>' +
                     '</tr>'
                 );
+
             }
 
             $(".desctopVisible tbody").html (tableRows.join(''));
@@ -1501,12 +1517,17 @@ var isFillTemplate = 0;
           membersCounterMeeting();
         });
 
+        var locOld = '';
+        $("#meetingLocalityModal").click(function(){
+          locOld = $("#meetingLocalityModal").val();
+        });
+
         $("#meetingLocalityModal").change(function(){
           if (isFillTemplate === 0) {
             if($(this).parents("#addEditMeetingModal").is(':visible')){
               //var locality = $(this).val();
               //  chechExtraFields(locality);
-                update_members_list(1);
+                update_members_list(1,locOld);
                 var moskow = $('#meetingLocalityModal').val();
                  moskow == '001009' || moskow == '001163' || moskow == '001164' || moskow == '001168' || moskow == '001165' || moskow == '001166' || moskow == '001167' ? $(".traineesClass").show() : $(".traineesClass").hide();
             }
@@ -1627,7 +1648,7 @@ var isFillTemplate = 0;
     }
 }
 
-        function update_members_list(changeLocalityBox){
+        function update_members_list(changeLocalityBox, localityOld){
             var meetingType = $("#meetingCategory").val();
             var locality = $("#meetingLocalityModal").val();
             var title = $("#addEditMeetingModal #titleMeetingModal").text().trim()
@@ -1638,8 +1659,18 @@ var isFillTemplate = 0;
                 $("#meetingLocalityModal").val(locality).change()
             }
 
-            if((meetingType === 'LT' || meetingType === 'PM') && locality && title === 'Новое собрание'){
-              if (confirm("Внимание! Заполнить список святыми из этой местности? Текущий список будет будет заменён")) {
+            var members = [], membersCounter =[], countMembers;
+            $('#addEditMeetingModal').find("tbody tr").each(function(){
+                membersCounter.push($(this).attr('data-id'));
+            });
+            countMembers = membersCounter.length;
+            console.log(countMembers);
+            /*if (countMembers === 0) {
+              showError('Перед сохранением добавьте участника');
+              return
+            }*/
+            if((meetingType === 'LT' || meetingType === 'PM') && locality && title === 'Новое собрание' && countMembers === 0){
+              if (confirm("Внимание! Заполнить список святыми из этой местности? ")) {
                 $.post('/ajax/meeting.php?get_locality_members', {localityId : locality})
                 .done(function(data){
                     var members = data.members, membersArr = [];
@@ -1662,7 +1693,7 @@ var isFillTemplate = 0;
                     }
                     })
                   }
-            } else if (changeLocalityBox != 1 && (meetingType === 'GM' || meetingType === 'CM' || meetingType === 'HM' || meetingType === 'YM') && locality && title === 'Новое собрание') {
+            } else if (changeLocalityBox != 1 && (meetingType === 'GM' || meetingType === 'CM' || meetingType === 'HM' || meetingType === 'YM') && locality && title === 'Новое собрание' && countMembers != 0) {
               if (confirm("Внимание! Очистить список участников?")) {
                 var modalWindow = $("#addEditMeetingModal");
                 modalWindow.find('.members-available').html('');
@@ -1673,7 +1704,8 @@ var isFillTemplate = 0;
                 //(meetingLocalityModal == '001013' || meetingLocalityModal == '001009') ? $('.meeting-count-fulltimers').val('0') : '';
                 // $('#meetingLocalityModal').val() == '001009' ? $('.meeting-count-trainees').val('0') : '';
               }
-            } else if (changeLocalityBox == 1 && (meetingType === 'GM' || meetingType === 'CM' || meetingType === 'HM' || meetingType === 'YM') && locality && title === 'Новое собрание') {
+            } else if (changeLocalityBox == 1 && (meetingType === 'GM' || meetingType === 'CM' || meetingType === 'HM' || meetingType === 'YM' || meetingType === 'LT' || meetingType === 'PM') && locality && title === 'Новое собрание' && countMembers != 0) {
+              if (confirm("Внимание! Список будет очищен! Продолжить?")) {
               changeLocalityBox = 0;
               var modalWindow = $("#addEditMeetingModal");
               modalWindow.find('.members-available').html('');
@@ -1683,7 +1715,11 @@ var isFillTemplate = 0;
               var meetingLocalityModal = $('#meetingLocalityModal').val();
               //(meetingLocalityModal == '001013' || meetingLocalityModal == '001009') ? $('.meeting-count-fulltimers').val('0') : '';
               // $('#meetingLocalityModal').val() == '001009' ? $('.meeting-count-trainees').val('0') : '';
+            } else {
+              $('#meetingLocalityModal').val(localityOld);
             }
+          }
+          localityOld ? localityOld = '' : '';
         }
 
     //ADD MEMBERS TO TAMPLATE
@@ -1987,8 +2023,8 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
       for (var i in list){
         member = list[i], buttons = "<i title='Удалить' class='fa fa-trash fa-lg btn-remove-member'></i>";
         members.push("<tr class='check-member' data-id='"+member.id+"' data-attend_meeting='"+member.attend_meeting+"' data-name='"+member.name+"' data-category_key='"+member.category_key+"' data-birth_date='"+member.member_age+"'  data-locality_key='"+member.locality_key+"'data-locality='"+member.locality+"'>"+
-            "<td><label class='check-member-label'>" + (modal !='#modalHandleTemplate' ? "<input type='checkbox' "+(member.present ===1 ? "checked" : "" ) + " style='margin-top: -3px;' class='check-member-checkbox form-check-input'>  " : "") +member.name+"</label></td>"+
-            "<td>"+member.locality+"</td>"+
+            "<td><label class='check-member-label' style='line-height: 20px'>" + (modal !='#modalHandleTemplate' ? "<input type='checkbox' "+(member.present ===1 ? "checked" : "" ) + " style='margin-top: -3px;' class='check-member-checkbox form-check-input'>  " : "") +member.name+"</label></td>"+
+            "<td >"+member.locality+"</td>"+
             "<td>"+member.member_age+"</td>"+
             "<td>"+(member.attend_meeting == 1 ? '<i class="fa fa-check"></i>' : '- ') +"</td>"+
             "<td>"+buttons+"</td>"+

@@ -6,7 +6,7 @@ $res = '';
 switch ($h) {
     case '/main.php':
     // case '/index.php':
-        $res = 'Главная';
+        $res = 'События';
         break;
     case '/reg.php':
         $res = 'Регистрация';
@@ -94,8 +94,8 @@ switch ($h) {
                 echo "<li ";
                 if (strpos ($s,"/main")!==FALSE) echo 'class="active"';
                 // if (strpos ($s,"/index")!==FALSE) echo 'class="active"';
-                // echo '><a href="/">Главная</a></li>';
-                echo '><a href="/main">Главная</a></li>';
+                // echo '><a href="/">События</a></li>';
+                echo '><a href="/main">События</a></li>';
             }
 
             if(!isset($isGuest) && db_isAdmin($memberId) || db_hasAdminFullAccess($memberId)) {

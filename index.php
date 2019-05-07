@@ -119,7 +119,7 @@ $(document).ready(function(){
             $(this).parents ('div.modal').modal('hide');
         <?php } else { ?>
         var locHost = location.host, host;
-        host = locHost == 'localhost:3306' ? 'http://localhost:3306/' : locHost.substr(4,3) !== 'dev'? 'http://app.tcgarant.ru/' : 'http://www.dev.reg-page.ru/';
+        host = locHost == 'localhost:3306' ? 'http://localhost:3306/' : locHost.substr(4,3) !== 'dev'? 'https://test.new-constellation.ru/' : 'https://test.new-constellation.ru/';
         window.location = host ;
         <?php } ?>
     });
@@ -237,10 +237,12 @@ $(document).ready(function(){
 });
 
 $("#loginFormBtn").click (function (e){
+  var loginTrim = $('#login').val();
+  loginTrim = loginTrim.trim();
     var emailValidate = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var password = $("#password").val();
 
-    if(!emailValidate.test($('#login').val())){
+    if(!emailValidate.test(loginTrim)){
         $('#loginError').hide();
         $("#emailError").show ();
         e.stopPropagation();
@@ -255,7 +257,7 @@ $("#loginFormBtn").click (function (e){
         return;
     }
 
-    $.get('ajax/login.php', { login: $("#login").val(), password:$("#password").val() })
+    $.get('ajax/login.php', { login: loginTrim, password:$("#password").val() })
     .done (function(data) {
         $("#ajaxError").hide ();
 
@@ -267,6 +269,8 @@ $("#loginFormBtn").click (function (e){
         else{
             $("#loginError").hide ();
             window.location = "<?php print(substr($appRootPath, 0, -1).(isset ($_GET['returl'])?urldecode($_GET['returl']):'/main')); ?>";
+            var getSessionId = "<?php print(session_id()); ?>"
+            setCookie('sess_a', getSessionId, 356);
         }
     })
     .fail(function() { $("#ajaxError").show (); });

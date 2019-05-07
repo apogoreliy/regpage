@@ -85,6 +85,7 @@ else if (isset ($_SESSION["logged-in"])){
                     }
                 ?>
                 <div class="desctopVisible">
+                <h3>Конференции и обучения</h3>
                     <div class="events-list-headers">
                         <span class="span5">Название</span>
                         <span class="span3">Место проведения</span>
@@ -676,7 +677,7 @@ $(document).ready(function(){
                             '<span class="span5 event-name">'+ event.name + '</span>'+
                             '<span class="span3">'+ event.locality_name + '</span>'+
                             '<span class="span2 event-date">'+ formatDDMM(event.start_date) + ' - ' + formatDDMM(event.end_date)+'</span>'+
-                            '<span class="span2 event-icons">'+ icons + (regstateClass == "" ?  "" : '<span style="margin-top:5px; margin-left: 5px; display: inline" class="label label-'+regstateClass+'">'+ regstateText + '</span>') +'</span>'+
+                            '<span class="span2 event-icons">'+ icons + (regstateClass == "" ?  "" : '<span style="margin-top:5px; margin-left: 15px; display: inline" class="label label-'+regstateClass+'">'+ regstateText + '</span>') +'</span>'+
                         '</div>';
 
                 tabletEvent = '<div '+eventAttrs+'>'+
@@ -824,10 +825,10 @@ $(document).ready(function(){
                                 }
                             }
                             var userInfo =  '<div style="margin-bottom:15px;">'+
-                                (member ? member['regstate_key'] != '05' && member['regstate_key'] != '03' ? '<a class="btn btn-primary handleRegistration editEventMember" type="button" title="Редактировать данные"><i class="fa fa-pencil icon-white"></i></a> <a class="btn btn-danger rejectRegistration" type="button" title="Отменить регистрацию"><i class="fa fa-times fa-lg icon-white"></i></a> ' : '&nbsp;'  :  '<a class="btn btn-success handleRegistration addEventMember" type="button" title="Зарегистрироваться на мероприятие"> <i class="fa fa-check icon-white"></i> Зарегистрироваться</a>') +
+                                (member ? member['regstate_key'] != '05' && member['regstate_key'] != '03' ? '<a class="btn btn-primary handleRegistration editEventMember" type="button" title="Редактировать данные"><i class="fa fa-pencil icon-white"></i> Изменить</a> <a class="btn btn-danger rejectRegistration" type="button" title="Отменить регистрацию"><i class="fa fa-times fa-lg icon-white"></i> Отменить регистрацию</a> ' : '&nbsp;'  :  '<a class="btn btn-success handleRegistration addEventMember" type="button" title="Зарегистрироваться на мероприятие"> <i class="fa fa-check icon-white"></i> Зарегистрироваться</a>') +
                                 ' <a class="btn send-message" type="button" data-email="'+(memberInfo ? memberInfo['email'] : "")+'" data-name="'+(memberInfo ? memberInfo['name']: "")+'" title="Сообщение команде регистрации"><i class="fa fa-envelop icon-envelope"></i></a>' +
                                 (member ? '<div style="margin-top:10px;" ><span class="label label-'+btnClass+'">'+btnText+'</span></div>' : '&nbsp;') +
-                                ( member && ( member['regstate_key'] == '05' || member['regstate_key'] == '03') && member['admin_comment'].length > 0 ? "<p><div style='color: red;'>Причина отказа: "+member['admin_comment']+"</div></p>" : "")+
+                                ( member && ( member['regstate_key'] == '05' || member['regstate_key'] == '03') && member['admin_comment'].length > 0 ? "<p><div style='color: red;'>Причина отмены: "+member['admin_comment']+"</div></p>" : "")+
                                         '</div>';
 
                             modal.find('.modal-header h4').html(he(event.event_name) + ( !member && (event.close_registration === "1" || event.stop_registration === "1") ? ' <label class="label label-danger">Регистрация закрыта</label>' : '' )).attr('data-stop_registration', event.stop_registration).attr('data-close_registration', event.close_registration);
@@ -1158,7 +1159,7 @@ $(document).ready(function(){
         });
     });
 
-    /*
+
     $("#lnkEventInfo").click (function (){
         $.getJSON('/ajax/get.php', { event_info: window.currentEventId })
         .done (function(data) {
@@ -1168,7 +1169,7 @@ $(document).ready(function(){
             $('#modalEventInfo').modal('show');
         });
     });
-    */
+
 
     $('#btnRegDone').click(function () {
         <?php if (!$isLink) { ?>
@@ -1223,7 +1224,7 @@ $(document).ready(function(){
         if ($(this).hasClass('disabled')) return;
         var isGuest = '<?php echo $isGuest ?>';
 
-        $.ajax({type: "POST", url: "/ajax/set.php", data: {guest: isGuest, event:"", message: $("#sendMsgTextAdmin").val(), name:$("#sendMsgNameAdmin").val(), email:$("#sendMsgEmailAdmin").val(), admins:"Главная index.php"}})
+        $.ajax({type: "POST", url: "/ajax/set.php", data: {guest: isGuest, event:"", message: $("#sendMsgTextAdmin").val(), name:$("#sendMsgNameAdmin").val(), email:$("#sendMsgEmailAdmin").val(), admins:"События index.php"}})
         .done (function() {messageBox ('Ваше сообщение отправлено службе поддержки', $('#messageAdmins'));
             $("#sendMsgTextAdmins").val('');
         });

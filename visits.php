@@ -13,8 +13,8 @@ $categories = db_getCategories();
 $selMeetingLocality = isset ($_COOKIE['selMeetingLocality']) ? $_COOKIE['selMeetingLocality'] : '_all_';
 $selMeetingCategory = isset ($_COOKIE['selMeetingCategory']) ? $_COOKIE['selMeetingCategory'] : '_all_';
 
-$sort_field = isset ($_SESSION['sort_field-meetings']) ? $_SESSION['sort_field-meetings'] : 'date_visit';
-$sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meetings'] : 'desc';
+$sort_field = isset ($_SESSION['sort_field-visits']) ? $_SESSION['sort_field-meetings'] : 'date_visit';
+$sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetings'] : 'asc';
 ?>
 
 <style>body {padding-top: 60px;}</style>
@@ -92,8 +92,8 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                         if (!$isSingleCity)
                             echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
                         ?>
-                        <th style="text-align: center; min-width:100px"><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='act' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: center; min-width:170px"><a id="sort-responsible" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: left; min-width:100px"><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='act' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: left; min-width:170px"><a id="sort-responsible" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: left; width:130px;"><a id="sort-status" href="#" title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                     </tr>
                     </thead>
@@ -110,7 +110,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 </div>
 
 <!-- ADD | EDIT MEETING Modal -->
-<div id="addEditMeetingModal" class="modal hide fade" data-width="500" tabindex="-1" role="dialog" aria-labelledby="regNameEdit" aria-hidden="true">
+<div id="addEditMeetingModal" class="modal hide fade" data-width="500" tabindex="-1" role="dialog" aria-labelledby="regNameEdit" aria-hidden="true" data-status_val="">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h4 id="titleMeetingModal"></h4>
@@ -143,7 +143,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             <option value='call'>Звонок</option>
                           </select>
                           <select id="performedChkbx" class="status-select-plan" style="float: right">
-                            <option selected value='0'>Запланировано</option>
+                            <option selected value='0'>Планируется</option>
                             <option value='1'>Сделано</option>
                             <option value='2'>Не сделано</option>
                             <option value='3'>Удалить карточку</option>
@@ -298,17 +298,17 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 </div>
 
 <!-- MEETING Members Modal -->
-<div id="modalRemoveMeeting" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-header">
+<div id="modalRemoveMeeting" class="modalRemoveVisit modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <!--<div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h4>Удаление собрания</h4>
-    </div>
+    </div>-->
     <div class="modal-body">
-        <h5>Карточка будет удалена! Продолжить?</h5>
+        <h5 style="text-align: center">Карточка будет удалена! Продолжить?</h5>
     </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary remove-meeting" data-dismiss="modal" aria-hidden="true">Удалить</button>
-        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отмена</button>
+    <div class="modal-footer" style="text-align: center">
+        <button class="btn btn-primary remove-meeting" data-dismiss="modal" aria-hidden="true">Да</button>
+        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Нет</button>
     </div>
 </div>
 
@@ -603,7 +603,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v113"></script>
+<script src="/js/visits.js?v118"></script>
 <?php
     include_once './footer.php';
 ?>

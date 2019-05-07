@@ -117,6 +117,12 @@ function f (v) {
 
 function showError(html, autohide) {
 	$("#globalError > span").html (html);
+  var a = $("#globalError > span").text();
+  if (a.length === 0) {
+    //window.location = "login.php?returl="+/\/[^\/]+$/g.exec (document.URL);
+    var b = window.location.href;
+    window.location = b;
+  }
 	$("#globalError").fadeIn();
 	if (autohide || typeof autohide === "undefined") window.setTimeout(function() { $("#globalError").fadeOut (); }, 4000);
 }
@@ -214,7 +220,7 @@ $(document).ready(function(){
             case 'callsAndVisits': window.location = '/visits'; break;
         }
     });
-    
+
     $(".emCollege").focus(function(){
         getColleges();
     });
@@ -433,10 +439,13 @@ function handleAditionalMenu(){
     });
 
     $(document).ajaxError(function(event, jqxhr, settings, thrownError) {
-        if (thrownError=='Unauthorized')
-            window.location = "login.php?returl="+/\/[^\/]+$/g.exec (document.URL);
-        else
+        if (thrownError=='Unauthorized') {
+          var b = window.location.href;
+          window.location = b;
+            //window.location = "login.php?returl="+/\/[^\/]+$/g.exec (document.URL);
+        }else{
             showError (jqxhr.responseText);
+        }
     });
 
     $('.locality-autocomplete').autocomplete({
@@ -984,6 +993,15 @@ function fillEditMember (memberId, info, localities) {
     }
     else{
         $(".contrib-block, .prepaid-block, .currency-block").hide();
+    }
+    console.log(info);
+    if (info["need_status"]>0){
+        $(".emStatusLabel").show();
+        $(".emStatus").show();
+    }
+    else{
+        $(".emStatus").hide();
+        $(".emStatusLabel").hide();
     }
 
     if (info["need_address"] == 0 && location.pathname.split('.')[0] !== '/members'){

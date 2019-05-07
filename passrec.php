@@ -1,7 +1,7 @@
-<?php   
+<?php
     include_once "header.php";
     include_once "nav.php";
-    
+
     if (isset($_POST["code"]) && isset($_POST["password"])){
         $login = UTILS::getMemberKeyByRecoveryCode($_POST["code"]);
 
@@ -17,7 +17,7 @@
         }
     }
     else
-        $login = NULL;        
+        $login = NULL;
 ?>
 
 <div class="container">
@@ -26,28 +26,28 @@
     if (isset($_POST["email"])){
         $email = $_POST["email"];
         $user = db_getUserByLogin($email);
-        
+
         if (!$user)
             $error = "Пользователь с таким email не найден. Вы можете <a href='/signup'>создать учетную запись</a> если вас её еще нет.";
         else
         {
             $code = UTILS::getRecoveryCodeByUserInfo($user);
             $body = "Здравствуйте!".
-                    "<p>Мы получили запрос на восстановление вашего пароля для сайта reg-page.ru.</p>".
+                    "<p>Получен запрос на восстановление вашего пароля для сайта reg-page.ru.</p>".
                     "<p>Чтобы установить новый пароль перейдите по ссылке: <a href='$host/passrec?code=$code'>$host/passrec?code=$code</a> (ссылка действительна в течение 10 минут)</p>" .
                     "<p>Если вы не запрашивали восстановление пароля, просто проигнорируйте это письмо или напишите нам.</p>" .
                     "<p>Команда сайта регистрации</p>";
-            
-            $title = "Восстановление пароля для сайта регистрации reg-page.ru";
-            $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\nFrom: REG-PAGE<info@reg-page.ru>\r\nReply-To: REG-PAGE<info@reg-page.ru>\r\n";
-            
+
+            $title = "Восстановление пароля для сайта reg-page.ru";
+            $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\nFrom: Сайт регистрации<info@reg-page.ru>\r\nReply-To: Сайт регистрации<info@reg-page.ru>\r\n";
+
             EMAILS::sendEmail(htmlspecialchars($email), $title, $body);
             //mail(htmlspecialchars($email), $title, $body, $headers);
         }
     }
     else if ($login===NULL && isset($_GET["code"])){
         $login = UTILS::getMemberKeyByRecoveryCode($_GET["code"]);
-    }        
+    }
 
     if (isset($_POST["email"]) && !isset($error))
         echo '<h3 class="title">Вам отправлена ссылка для восстановления пароля. Пожалуйста, проверьте почту.</h3>';
@@ -72,7 +72,7 @@
             <div class="alert alert-danger" role="alert">Эта ссылка недействительна или уже просрочена. Пожалуйста, закажите новую.</div>
         <?php } else { ?>
             <p>Введите ваш email и мы вышлем на него ссылку для восстановления пароля</p>
-        <?php 
+        <?php
             if(isset($memberId)){
                 ?>
                 <script>
@@ -80,9 +80,9 @@
                 </script>
             <?php
                 db_logoutAdmin($memberId);
-            }            
+            }
         } ?>
-            
+
         <form class="form-inline" role="form" method="POST">
             <div class="form-group">
                 <label class="sr-only" for="email">Email</label>

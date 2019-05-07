@@ -177,7 +177,7 @@
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
         <label class="span12">Время <a href="#" id="tooltipArr" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Время приезда к месту проведения конференции (с учётом времени на дорогу от вокзала/аэропорта)" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-        <input class="span12 emArrTime" type="text" maxlength="5" placeholder="ЧЧ:ММ" valid="time" tooltip="tooltipArr">
+        <input class="span12 emArrTime" type="time" maxlength="5" tooltip="tooltipArr">
     </div>
     <div class="control-group row-fluid " style="width: 48%;">
         <label class="span12">Дата отъезда<sup>*</sup> <a href="#" class="tooltipDepDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
@@ -185,7 +185,7 @@
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
         <label class="span12">Время <a href="#" id="tooltipDep" rel="tooltip" data-placement="right" data-toggle="tooltip" title="Время отъезда от места проведения конференции, а не от вокзала" tabindex="-1"><i class="icon-question-sign"></i></a></label>
-        <input class="span12 emDepTime" type="text" maxlength="5" placeholder="ЧЧ:ММ" valid="time" tooltip="tooltipDep">
+        <input class="span12 emDepTime" type="time" maxlength="5" tooltip="tooltipDep">
     </div>
 </div>
 <div class="controls accom-block">
@@ -304,7 +304,7 @@
 </div>
 <div class="controls">
     <div class="control-group row-fluid">
-        <label class="span12">Статус<sup>*</sup></label>
+        <label class="span12 emStatusLabel">Статус<sup>*</sup></label>
         <select class="span12 emStatus" valid="required">
             <option value='_none_' selected>&nbsp;</option>
             <?php foreach (db_getStatuses() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>

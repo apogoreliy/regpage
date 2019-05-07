@@ -80,15 +80,16 @@
         data-custom_list_item ="<?php echo $event->list_name; ?>"
         data-regend="<?php echo $event->regend_date; ?>" data-event_type="<?php echo $event->event_type; ?>" data-private="<?php echo $event->private; ?>" data-access="<?php echo $memberId == $event->admin_access ? 1: 0 ; ?>"
         data-show-locality-field="<?php echo $showLocalityField ? 1 : 0; ?>"
-        data-need_flight="<?php echo $event->need_flight; ?>" data-need_tp="<?php echo $event->need_tp; ?>" data-min_age="<?php echo $event->min_age; ?>" data-max_age="<?php echo $event->max_age; ?>"
+        data-need_flight="<?php echo $event->need_flight; ?>" data-need_tp="<?php echo $event->need_tp; ?>" data-min_age="<?php echo $event->min_age; ?>" data-max_age="<?php echo $event->max_age; ?>" data-need_status="<?php echo $event->need_status; ?>"
         >
         <div>
         <div class="btn-toolbar">
+            <span class="btn send-message-regteam" tabindex="-1" style="margin-right: 10px; font-family: Arial;" title="Отправить сообщение команде регистрации" data-toggle="modal" data-target="#modalEventSendMsg"><i class="fa fa-envelope"></i>  Написать команде регистрации</span>
             <a class="btn btn-success event-add-member role-edit" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
             <a class="btn btn-primary disabled chk-dep chk-register role-admin" type="button"><i class="fa fa-check icon-white"></i> <span class="hide-name">Зарегистрировать</span></a>
             <a class="btn btn-primary disabled chk-dep chk-bulkedit role-edit" type="button"><i class="fa fa-list icon-white"></i> <span class="hide-name">Изменить</span></a>
             <a class="btn btn-danger disabled chk-dep chk-remove role-edit" type="button"><i class="fa fa-ban icon-white"></i> <span class="hide-name">Отменить</span></a>
-            <a class="btn btn-success chk-invite role-edit" type="button"><i class="fa fa-user icon-white" title="Пригласить"></i> <span class="hide-name">Пригласить</span></a>
+            <a class="btn btn-success chk-invite role-edit" type="button"><i class="fa fa-user icon-white" title="Пригласить пользователя"></i> <span class="hide-name">Пригласить пользователя</span></a>
             <?php if($event->web == 1){ ?>
             <a class="btn btn-warning disabled chk-dep filter-icons bulkedit-prove" type="button"><i class="fa fa-asterisk" aria-hidden="true"></i> <span class="hide-name">Подтвердить</span></a>
             <a class="btn btn-danger disabled chk-dep filter-icons bulkedit-prove" type="button"><i class="fa fa-asterisk" aria-hidden="true"></i> <span class="hide-name">Отменить прибытие</span></a>
@@ -579,7 +580,7 @@
         <div class="invited-users">
 
         </div>
-        <input style="width: 100%; padding: 5px 0 5px 5px;" type="text" class="invite-name" placeholder="Введите имя">
+        <input style="width: 100%; padding: 5px 0 5px 5px;" type="text" class="invite-name" placeholder="Введите фамилию и имя">
         <div class="available-invited-users">
 
         </div>
@@ -1103,8 +1104,8 @@
               m.region = m.country;
             } else {
               m.region = m.region.substring(0, m.region.indexOf(" ("));
-              m.region += ', ';
-              m.region += m.country;
+              // m.region += ', ';
+              // m.region += m.country;
             }
 
             tableRows.push('<tr class="regmem-'+m.id+'" '+ dataItems +' >'+
@@ -2225,9 +2226,6 @@
     function arriveDepart(tagAttr, ClassDates) {
 // Это мой код, получаем данные и сбрасываем настройки виджета календаря для заданного заданого поля
       var getDateArriveOrDepart = $('.tab-pane.active').attr(tagAttr);
-      if (!getDateArriveOrDepart) {
-        console.log(getDateArriveOrDepart);
-      } else {
       getDateArriveOrDepart = getDateArriveOrDepart.split('-');
       getDateArriveOrDepart[1]--;
       $(ClassDates).datepicker('destroy');
@@ -2248,7 +2246,6 @@
               }
           }
       });
-      }
     }
   arriveDepart('data-start','.emArrDate');
   arriveDepart('data-end','.emDepDate');
@@ -2259,7 +2256,7 @@
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v3"></script>
+<script src="/js/reg.js?v2"></script>
 <?php
     include_once "footer.php";
 ?>

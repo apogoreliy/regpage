@@ -361,7 +361,7 @@ include_once "footer.php";
     $("#btnDoSendEventMsgAdmins").click (function (){
         if ($(this).hasClass('disabled')) return;
         
-        $.ajax({type: "POST", url: "/ajax/set.php", data: {event:"", message: $("#sendMsgTextAdmin").val(), name:$("#sendMsgNameAdmin").val(), email:$("#sendMsgEmailAdmin").val(), admins:"Главная index.php"}})
+        $.ajax({type: "POST", url: "/ajax/set.php", data: {event:"", message: $("#sendMsgTextAdmin").val(), name:$("#sendMsgNameAdmin").val(), email:$("#sendMsgEmailAdmin").val(), admins:"События index.php"}})
         .done (function() {messageBox ('Ваше сообщение отправлено службе поддержки', $('#messageAdmins'));
             $("#sendMsgTextAdmins").val('');
         });

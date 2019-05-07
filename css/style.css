@@ -1793,3 +1793,6 @@ input.error, .control-group.error select, textarea.error {
   background-color: white;
   color: black;
 }
+.modalRemoveVisit {
+  width: 330px;
+}

@@ -164,7 +164,7 @@ function handleReferenceFields(data = false){
     if(data){
         modal.find('.name').val(data.name || '');
         modal.find('.link-article').val(data.link_article || '');
-        modal.find('.page').val(data.page || 'Главная');
+        modal.find('.page').val(data.page || 'События');
         modal.find('.block').val(data.block || 0);
         modal.find('.published').val(data.published || 0);
         modal.find('.priority').val(data.priority || 0);
