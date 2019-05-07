@@ -71,10 +71,12 @@ $(document).ready(function(){
 });
 
 $("#loginFormBtn").click (function (e){
+  var loginTrim = $('#login').val();
+  loginTrim = loginTrim.trim();
     var emailValidate = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var password = $("#password").val();
 
-    if(!emailValidate.test($('#login').val())){
+    if(!emailValidate.test(loginTrim)){
         $('#loginError').hide();
         $("#emailError").show ();
         e.stopPropagation();
@@ -89,7 +91,7 @@ $("#loginFormBtn").click (function (e){
         return;
     }
 
-    $.get('ajax/login.php', { login: $("#login").val(), password:$("#password").val() })
+    $.get('ajax/login.php', { login: loginTrim, password:$("#password").val() })
     .done (function(data) {
         $("#ajaxError").hide ();
 
@@ -110,7 +112,7 @@ $("#loginFormBtn").click (function (e){
 /*
 $("#btnDoSendEventMsgAdmins").click (function (){
     if ($(this).hasClass('disabled')) return;
-    $.ajax({type: "POST", url: "/ajax/set.php", data: {event:"", message: $("#sendMsgTextAdmin").val(), name:$("#sendMsgNameAdmin").val(), email:$("#sendMsgEmailAdmin").val(), admins:"Главная admin"}})
+    $.ajax({type: "POST", url: "/ajax/set.php", data: {event:"", message: $("#sendMsgTextAdmin").val(), name:$("#sendMsgNameAdmin").val(), email:$("#sendMsgEmailAdmin").val(), admins:"События admin"}})
      .done (function() {messageBox ('Ваше сообщение было отправлено', $('#messageAdmins'));});
 });
 */

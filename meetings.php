@@ -86,6 +86,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
                         ?>
                         <th style="text-align: center"><a id="sort-saints_count" href="#" title="сортировать">Святых</a>&nbsp;<i class="<?php echo $sort_field=='saints_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th id="pvom_count" style="text-align: center; display: none"><a href="#" title="">ПВОМ</a></th>
                         <th style="text-align: center"><a id="sort-guests_count" href="#" title="сортировать">Гостей</a>&nbsp;<i class="<?php echo $sort_field=='guests_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: center"><a href="#">Всего</a></th>
                     </tr>
@@ -141,28 +142,30 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 
             </div>
 <div class="control-group row-fluid">
-    <label style="margin-right: 105px; margin-bottom: 0px">Дата</label>
-    <label style="margin-right: 30px; margin-bottom: 0px">Cвятых</label>
-    <label style="margin-right: 30px; margin-bottom: 0px">Гостей</label>
-    <label style="margin-right: 30px; margin-bottom: 0px">Всего</label>
-    <label class="traineesClass">ПВОМ</label>
+    <label style="margin-right: 80px; margin-bottom: 0px">Дата</label>
+    <label style="margin-right: 17px; margin-bottom: 0px">Cвятых</label>
+    <label style="margin-right: 18px; margin-bottom: 0px">Гостей</label>
+    <label style="margin-bottom: 0px">Всего</label>
 
   <div class="control-group row-fluid" style="margin-right: 100px; margin-top: -5px">
-    <input class="datepicker meetingDate span2" type="text" placeholder="ДД.ММ.ГГГГ" valid="required,date" style="margin-top: 5px; margin-right: 10px;">
-    <input type="text" readonly class="span2 meeting-saints-count" style="margin-right: 10px; width: 65px;">
-    <input type="text" class="span2 meeting-count-guest" style="margin-right: 10px; width: 65px;">
-    <input disabled type="text" class="span2 meeting-count" style="width: 65px; margin-right: 10px;">
-    <input type="text" style="width: 65px" class="span2 meeting-count-trainees traineesClass">
+    <input class="datepicker meetingDate span2" type="text" placeholder="ДД.ММ.ГГГГ" valid="required,date" style="margin-top: 5px; margin-right: 10px; width: 100px;">
+    <input type="text" readonly class="span2 meeting-saints-count" style="margin-right: 10px; width: 55px;">
+    <input type="text" class="span2 meeting-count-guest" style="margin-right: 10px; width: 55px;">
+    <input disabled type="text" class="span2 meeting-count" style="width: 55px; margin-right: 10px;">
+    </div>
+    <div class="">
+      <label class="traineesClass">ПВОМ</label>
+      <input type="text" style="width: 55px" class="span2 meeting-count-trainees traineesClass">
+      <span style="padding-left: 10px;" class="show-extra-fields fulltimersClass">Полноврем. служащих — <span class="meeting-count-fulltimers"></span></span>
     </div>
 </div>
-            <div class="show-extra-fields control-group row-fluid fulltimersClass">
-              <div>В том числе полновременных служащих - <span class="meeting-count-fulltimers"></span></div>
+            <!--<div class="show-extra-fields control-group row-fluid fulltimersClass">
             </div>
-            <!--<div class="control-group row-fluid">
+            <div class="control-group row-fluid">
                 <label>Детей до 12 лет:</label>
                 <input disabled type="text" style="float:right;" class="span2 meeting-count-children">
             </div> -->
-            <div class="control-group row-fluid">
+            <div class="control-group row-fluid" style="margin-top: 5px">
                 <!--<label class="span12 meeting-label-note note-field">Комментарий:</label> -->
                 <textarea class="span12 meeting-note note-field"></textarea>
             </div>
@@ -631,7 +634,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
 </div>
 
-<script src="/js/meetings.js?v56"></script>
+<script src="/js/meetings.js?v62"></script>
 <?php
     include_once './footer.php';
 ?>

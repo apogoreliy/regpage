@@ -299,31 +299,32 @@ $("#loginFormBtn").click (function (e){
 
     var password = $(this).parents(".form-signup").find(".password").val();
     var login = $(this).parents(".form-signup").find(".login");
+    login.val(login.val().trim());
     var passwordConfirm = $(this).parents(".form-signup").find(".passwordConfirm").val();
-    
+
     if(!isEmailvalid(login.val())){
         login.focus();
         $("#emailError").show ();
         e.stopPropagation();
         e.preventDefault();
         return;
-    }   
+    }
     else{
         $("#emailError").hide ();
-    }                
+    }
 
     if(password !== passwordConfirm){
         $('.password').focus();
-        $("#passError").show ();        
+        $("#passError").show ();
         e.stopPropagation();
         e.preventDefault();
         return;
-    }   
+    }
     else{
         $("#passError").hide ();
-    }          
-    
-    if(password.length < 5 || password.length > 15){   
+    }
+
+    if(password.length < 5 || password.length > 15){
         $("#passLengthError").show ();
         e.stopPropagation();
         e.preventDefault();
@@ -357,7 +358,7 @@ $("#btnDoSendEventMsgAdmins").click (function (){
     var message = $("#sendMsgTextAdmin").val(), name = $("#sendMsgNameAdmin").val(), email = $("#sendMsgEmailAdmin").val();
     $("#messageAdmins").modal('hide');
 
-    $.ajax({type: "POST", url: "/ajax/set.php", data: {event:"", message: message, name: name, email:email, admins:"Главная admin"}})
+    $.ajax({type: "POST", url: "/ajax/set.php", data: {event:"", message: message, name: name, email:email, admins:"События admin"}})
      .done (function() {messageBox ('Ваше сообщение было отправлено', $('#messageAdmins'));});
 });
 */

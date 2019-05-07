@@ -11,7 +11,7 @@ var startSystemFilter = 1;
         window.meetingTemplateParticipantsList = [];
 
 //fillAdminsOfLocations('#responsibleList');
-$.when(fillAdminsOfLocations('#responsibleList')).then(loadMeetings());
+$.when(fillAdminsOfLocations('#responsibleList',window.adminId)).then(loadMeetings());
 //loadMeetings();
 // CALLS AND VISITS CODE
 function loadMeetings(){
@@ -27,8 +27,9 @@ function loadMeetings(){
       });
       if (responsibilesTrue.length === 0) {
           setTimeout(function () {
-              $.when(refreshMeetings(data.meetings)).then(filterMeetingsList());
-          }, 400);
+            loadMeetings();
+            $.when(refreshMeetings(data.meetings)).then(filterMeetingsList());
+          }, 200);
       } else {
         $.when(refreshMeetings(data.meetings)).then(filterMeetingsList());
       }
@@ -54,6 +55,8 @@ function refreshMeetings(meetings,sort){
     $('#responsibleList option').each(function(){
       if (($(this).val() != '_all_')) {
         var tempVar = [];
+
+      // empty admins array
         tempVar.push($(this).val());
         tempVar.push($(this).text());
         responsibiles.push(tempVar);
@@ -61,9 +64,18 @@ function refreshMeetings(meetings,sort){
     });
 
     for (var i in meetings){
-        var m = meetings[i], dataString, moscow=false, shortNameMbl;
+        var m = meetings[i], dataString, moscow = false, shortNameMbl;
+        splitMember = m.members.split(',');
         if (m.members) {
-          splitMember = m.members.split(',');
+          for (var i = 0; i < splitMember.length; i++) {
+            temtArr = splitMember[i].split(':');
+            if (temtArr.length < 8 && temtArr.length > 6) {
+                splitMember[i] = splitMember[i] + splitMember[i+1];
+            } else if (temtArr.length < 7) {
+              splitMember.splice(i, 1);
+            }
+          }
+          m.members = splitMember.join(',');
           if (splitMember[0].indexOf("Москва:") != -1 && !(splitMember[0].indexOf("Москва:0") != -1 || splitMember[0].indexOf("Москва:1") != -1)) {
             splitMember = splitMember[0].split(':');
             var varTempRbld = splitMember.splice(3, 1);
@@ -93,7 +105,6 @@ function refreshMeetings(meetings,sort){
           return shortName;
         }
         responsibleName = twoNames(responsibleName);
-        var br = '<br>';
         function listOfMembersGoals() {
           var arr=[];
           m.members ? splitAllMember = m.members.split(',') : '';
@@ -124,10 +135,10 @@ function refreshMeetings(meetings,sort){
 
         dataString = 'data-members="'+m.members+'" data-responsible="'+m.responsible+'" data-performed="'+m.performed+'"  '+'class="meeting-row '+(parseInt(m.summary) ? 'meeting-summary' : '')+' " data-note="'+he(m.comments || '')+'" data-type="'+m.act+'" data-date="'+m.date_visit+'" data-count="'+m.count_members+'" data-status_name="'+performedStatus+'" data-id="'+m.visit_id+'" '+' data-locality="'+m.locality_key+'" data-admin_key="'+m.admin_key+'" ';
         tableRows.push('<tr '+dataString +'>'+
-            '<td style="text-align:left;"><input style="background-color: inherit; width: 130px" class="visitListDate" type="date" value="' + m.date_visit+'"><br><span class="example day-of-week-in-list">'+dayOfWeek+'</span></td>' +
-            '<td class="meeting-name" style="text-align:left;width:330px; padding-left: 5px;"><div>'+ (shortNameFirst[0] || '')+'</div><div>'+ (shortNameFirst[1] || '')+'</div><div>' + (shortNameFirst[2] || '')+'</div><div>' + (shortNameFirst[3] || '')+'</div><div>' + (shortNameFirst[4] || '')+'</div><div>' + (shortNameMore || '')+'</div></td><td style="text-align: center"><span>'+(!isLocationAlone && m.members ? splitMember[2] : '')+'</span></td>' +
-            '<td style="text-align:center;"><span>'+ he(m.act || '') +'</span></td>' +
-            '<td style="text-align:center;"><span>' + (responsibleName || '') + '</span></td>' +
+            '<td style="text-align:left;"><input style="background-color: inherit; width: 130px" class="visitListDate" type="date" value="' + m.date_visit+'"></td>' +
+            '<td class="meeting-name" style="text-align:left;width:330px; padding-left: 5px;"><div>'+ (shortNameFirst[0] || '')+'</div><div>'+ (shortNameFirst[1] || '')+'</div><div>' + (shortNameFirst[2] || '')+'</div><div>' + (shortNameFirst[3] || '')+'</div><div>' + (shortNameFirst[4] || '')+'</div><div>' + (shortNameMore || '')+'</div></td><td style="text-align: left"><span>'+(!isLocationAlone && m.members ? splitMember[2] : '')+'</span></td>' +
+            '<td style="text-align:left;"><span>'+ he(m.act || '') +'</span><br><span style="margin-left: 0px" class="example day-of-week-in-list">'+dayOfWeek+'</span></td>' +
+            '<td style="text-align:left;"><span>' + (responsibleName || '') + '</span></td>' +
             '<td style="text-align:left;width:130px" class="statusChange"><select class="visitСhangeStts '+performedStatusCss+'" style="width:130px;"><option '+planStts+' value="0">Планируется</option><option value="1" '+doneStts+'>Сделано</option><option value="2" '+failedStts+'>Не сделано</option><option value="3">Удалить карточку</option></select></td>' +
             '</tr>'
         );
@@ -319,7 +330,6 @@ $(".remove-meeting").click(function(e){
       return
     }
     if ($("#addEditMeetingModal").is(':visible')) {
-      console.log('Im here');
       $("#addEditMeetingModal").modal('hide');
     }
     $("#modalRemoveMeeting").modal('hide');
@@ -339,7 +349,7 @@ function fillMeetingModalForm(textMode, date, locality, actionType, note, countL
 // END
     nn = formatDate (new Date());
     nnn = formatDateNew(nn);
-    console.log(date);
+    modal.attr('data-status_val',performed);
     modal.find('#actionDate').val(date || nnn);
     modal.find('#actionType').val(actionType == 'Звонок' ? 'call' : 'visit');
     modal.find('#visitLocalityModal').val(locality || whatIsLocalityAdmin);
@@ -468,7 +478,7 @@ function buildMembersList(modalWindowSelector, list, mode){
 // get admins of localities
 function fillAdminsOfLocations(element, responsible) {
   var localities = []; responsibles = [];
-  element == '#responsibleList' ? responsibles.push('<option selected value="_all_">Все</option>') : '';
+  element == '#responsibleList' ? responsibles.push('<option value="_all_">Все</option>') : '';
   $('#selMeetingLocality option').each(function(){
     $(this).val() != '_all_' ? localities.push($(this).val()): '';
   })
@@ -485,7 +495,7 @@ function fillAdminsOfLocations(element, responsible) {
                 responsibles.push('<option value="'+ id +'">'+ name +'</option>');
               } else if (id == responsible) {
                 if (element == '#responsibleList') {
-                  responsibles.push('<option value="'+ id +'">'+ name +'</option>');
+                  responsibles.push('<option selected value="'+ id +'">'+ name +'</option>');
                 } else {
                     responsibles.push('<option selected value="'+ id +'">'+ name +'</option>');
                 }
@@ -840,12 +850,14 @@ $('#actionType').change(function() {
 })
 $('#performedChkbx').change(function() {
   var statusNew = $(this).val();
+  var statusOld = $('#addEditMeetingModal').attr('data-status_val');
   statusNew == 0 ? statusNameCss = 'status-select-plan' : '' ;
   statusNew == 1 ? statusNameCss = 'status-select-done' : '' ;
   statusNew == 2 ? statusNameCss = 'status-select-failed' : '' ;
 
   if (statusNew == 3) {
     modal = $("#modalRemoveMeeting");
+    $(this).val(statusOld);
     var visitId = $("#addEditMeetingModal").attr('data-id');
     if (visitId) {
       modal.find(".remove-meeting").attr("data-id", visitId);

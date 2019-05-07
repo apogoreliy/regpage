@@ -465,8 +465,8 @@ include_once "modals.php";
 				m.region = m.country;
 			} else {
 				m.region = m.region.substring(0, m.region.indexOf(" ("));
-				m.region += ', ';
-				m.region += m.country;
+				// m.region += ', ';
+				// m.region += m.country;
 			}
 			tableRows.push('<tr ' + dataFields +' class="'+(m.active==0?'inactive-member':'member-row')+'">'+
 				'<td>' + he(m.name) + '<div style="margin-left:0" class="example">'+memberInfo + memberSchoolOrCollegeDegree+'</div></td>' +

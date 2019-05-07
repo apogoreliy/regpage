@@ -290,7 +290,7 @@ $selectEventMember = "SELECT m.key as member_key, m.name, CASE WHEN m.male=1 THE
                       r.mate_key, r.comment, r.admin_comment, r.status_key, m.category_key, m.document_key,
                       m.document_num, m.document_date, m.document_auth, m.new_locality, r.regstate_key, m.citizenship_key,
                       m.admin_key as mem_admin, r.admin_key as reg_admin, r.parking, e.name as event_name,
-                      e.key as event_key, e.need_passport, e.need_transport, e.need_prepayment, e.start_date, e.end_date,
+                      e.key as event_key, e.need_passport, e.need_transport, e.need_prepayment, e.start_date, e.end_date, e.need_status,
                       IF (rg.name='--',l.name,CONCAT (l.name,', ',rg.name)) as locality_name, r.permalink, r.attended,
                       r.place, r.prepaid, e.organizer, e.need_parking, e.need_service, e.need_accom,
                       CASE WHEN r.currency IS NULL THEN e.currency ELSE r.currency END as currency,
@@ -1134,7 +1134,7 @@ function db_getEventsByAdmin($adminId){
 
         $res=db_query ("SELECT DISTINCT * FROM(
         SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
-        e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
+        e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name, e.need_status,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration, e.need_transport, e.need_prepayment, e.private, e.need_tp,
         (SELECT ea.member_key FROM event_access ea WHERE ea.member_key='$admin' AND ea.key=e.key) as admin_access
@@ -1147,7 +1147,7 @@ function db_getEventsByAdmin($adminId){
         WHERE a.member_key='$adminId' AND e.is_active=1 $request
         UNION
         SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
-        e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
+        e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name, e.need_status,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
         e.need_transport, e.need_prepayment, e.private, e.need_tp,
@@ -1161,7 +1161,7 @@ function db_getEventsByAdmin($adminId){
         WHERE e.is_active=1 $request
         UNION
         SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
-        e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
+        e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name, e.need_status,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
         e.need_transport, e.need_prepayment, e.private, e.need_tp,
@@ -1175,7 +1175,7 @@ function db_getEventsByAdmin($adminId){
     else{
         $res = db_query("SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
-        e.need_transport, e.need_prepayment, e.private, e.need_tp,
+        e.need_transport, e.need_prepayment, e.private, e.need_tp, e.need_status,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
         $admin as admin_access
@@ -2228,58 +2228,36 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
     db_query('SET Session group_concat_max_len=100000');
 
     $res = db_query("SELECT DISTINCT * FROM (
-            SELECT me.name, me.id, me.date, 0 as add_list_count, me.list_count, me.saints_count,
+            SELECT me.name, me.id, l.name as locality_name, me.date,  me.list_count, me.saints_count,
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
             me.locality_key, me.note, me.fulltimers_count,
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
-            (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, me.participants)<>0 AND m.category_key='FS') as fulltimers_in_list, me.participants,
+            me.participants,
             me.trainees_count,
             IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
-            d.district as district, 0 as summary
+            0 as summary
             FROM access a
             LEFT JOIN country c ON c.key = a.country_key
             LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
             INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
-            LEFT JOIN district d ON d.district=l.key
             INNER JOIN meetings me ON me.locality_key = l.key
             INNER JOIN meeting_type mt ON mt.key=me.meeting_type
             WHERE a.member_key='$adminId' $requestMeeting $requestLocality $requestDates
             UNION
-            SELECT me.name, GROUP_CONCAT(me.id), me.date,
-            (SELECT COUNT(*) FROM member m WHERE (m.locality_key = l.key) AND (DATEDIFF(CURRENT_DATE, STR_TO_DATE(m.birth_date, '%Y-%m-%d'))/365 >= 12 OR m.birth_date IS NULL)) as add_list_count,
-            GROUP_CONCAT(me.list_count), GROUP_CONCAT(me.saints_count),
-            mt.name as meeting_name, mt.short_name, mt.key as meeting_type, GROUP_CONCAT(me.guests_count),
-            GROUP_CONCAT(me.children_count), d.locality_key,
-            GROUP_CONCAT(me.fulltimers_count),GROUP_CONCAT(me.note),
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
-            (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, me.participants)<>0 AND m.category_key='FS') as fulltimers_in_list, me.participants,
-            GROUP_CONCAT(me.trainees_count),
-            IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
-            GROUP_CONCAT(d.district), 1 as summary
-            FROM access a
-            LEFT JOIN country c ON c.key = a.country_key
-            LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
-            INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
-            INNER JOIN district d ON d.locality_key=l.key
-            INNER JOIN meetings me ON me.locality_key = d.district
-            INNER JOIN meeting_type mt ON mt.key=me.meeting_type
-            WHERE a.member_key='$adminId' $requestMeeting $requestDates $requestLocality GROUP BY me.date, me.meeting_type
-            UNION
-            SELECT me.name, me.id, me.date, 0 as add_list_count, me.list_count, me.saints_count,
+            SELECT me.name, me.id, l.name as locality_name, me.date, me.list_count, me.saints_count,
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
             me.locality_key, me.note, me.fulltimers_count,
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
-            (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, me.participants)<>0 AND m.category_key='FS') as fulltimers_in_list, me.participants,
+            me.participants,
             me.trainees_count,
             IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
-            d.district as district, 0 as summary
+             0 as summary
             FROM meetings me
             INNER JOIN meeting_type mt ON mt.key=me.meeting_type
             INNER JOIN locality l ON l.key = me.locality_key
-            LEFT JOIN district d ON d.locality_key=me.locality_key
             INNER JOIN meeting_template mtl ON mtl.locality_key = l.key
             WHERE FIND_IN_SET('$adminId', mtl.admin)<>0 $requestMeeting $requestDates $requestLocality
-            ) q ORDER BY q.$sort_field ".$sort_type.", q.meeting_name ASC");
+            ) q ORDER BY q.$sort_field ".$sort_type.", q.locality_name ASC");
 
     while ($row = $res->fetch_object()) $meetings[]=$row;
     return $meetings;
@@ -4722,64 +4700,7 @@ function db_updateUserAccessAreaSetting($admin_key, $setting_key, $is_checked){
     }
 }
 /* VISITS */
-/*
-function db_getVisitsOld($adminId, $sort_type, $sort_field, $localityFilter, $meetingTypeFilter, $startDate, $endDate){
-    global $db;
-    $adminId = $db->real_escape_string($adminId);
-    $localityFilter = $db->real_escape_string($localityFilter);
-    $meetingTypeFilter = $db->real_escape_string($meetingTypeFilter);
-    $startDate = $db->real_escape_string($startDate);
-    $endDate = $db->real_escape_string($endDate);
-    $sort_type = $db->real_escape_string($sort_type);
-    $sort_field = $sort_field != 'locality_key' ? $db->real_escape_string($sort_field)."" : " locality_name ";
 
-    $meetings = array ();
-
-    $requestMeeting = $meetingTypeFilter == "_all_" ? "" : " AND vi.act='$meetingTypeFilter' ";
-    $requestLocality = $localityFilter=="_all_" ? "" : " AND l.key='$localityFilter' ";
-    $requestDates = " AND (vi.date_visit BETWEEN '$startDate' AND '$endDate')";
-    $requestCheckMeetingAdditions = "SELECT COUNT(*) count FROM member m WHERE m.locality_key=l.key AND m.category_key='FS'";
-
-    db_query('SET Session group_concat_max_len=100000');
-
-    $res = db_query("SELECT DISTINCT * FROM (
-            SELECT vi.key_visit, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members,
-            (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, vi.list_members)<>0 AND m.category_key='FS') as fulltimers_in_list, vi.list_members
-            FROM access a
-            LEFT JOIN country c ON c.key = a.country_key
-            LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
-            INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
-            LEFT JOIN district d ON d.district=l.key
-            INNER JOIN visits vi ON vi.locality_key = l.key
-            WHERE a.member_key='$adminId' $requestMeeting $requestLocality $requestDates
-            UNION
-            SELECT vi.key_visit, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members,
-            (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, vi.list_members)<>0 AND m.category_key='FS') as fulltimers_in_list, vi.list_members
-            FROM access a
-            LEFT JOIN country c ON c.key = a.country_key
-            LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
-            INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
-            INNER JOIN district d ON d.locality_key=l.key
-            INNER JOIN visits vi ON vi.locality_key = d.district
-            WHERE a.member_key='$adminId' $requestMeeting $requestDates $requestLocality GROUP BY vi.date_visit
-            UNION
-            SELECT vi.key_visit, vi.act, l.name as locality_name, vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members,
-            (SELECT COUNT(*) FROM member m WHERE FIND_IN_SET(m.key, vi.list_members)<>0 AND m.category_key='FS') as fulltimers_in_list, vi.list_members
-            FROM visits vi
-            INNER JOIN locality l ON l.key = vi.locality_key
-            LEFT JOIN district d ON d.locality_key=vi.locality_key
-            INNER JOIN meeting_template mtl ON mtl.locality_key = l.key
-            WHERE FIND_IN_SET('$adminId', mtl.admin)<>0 $requestMeeting $requestDates $requestLocality
-            ) q ORDER BY q.date_visit ".$sort_type.", q.locality_name ASC");
-
-    while ($row = $res->fetch_object()) $meetings[]=$row;
-    return $meetings;
-}
-*/
-/* get visits new version*/
 function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meetingTypeFilter, $startDate, $endDate){
     global $db;
     $adminId = $db->real_escape_string($adminId);
@@ -4805,27 +4726,8 @@ function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meeti
             LEFT JOIN country c ON c.key = a.country_key
             LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
             INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
-            LEFT JOIN district d ON d.district=l.key
             INNER JOIN visits vi ON vi.locality_key = l.key
             WHERE a.member_key='$adminId' $requestMeeting $requestLocality $requestDates
-            UNION
-            SELECT vi.id as visit_id, vi.act,  vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
-            FROM access a
-            LEFT JOIN country c ON c.key = a.country_key
-            LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
-            INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
-            INNER JOIN district d ON d.locality_key=l.key
-            INNER JOIN visits vi ON vi.locality_key = d.district
-            WHERE a.member_key='$adminId' $requestMeeting $requestDates $requestLocality GROUP BY vi.date_visit
-            UNION
-            SELECT vi.id as visit_id, vi.act,  vi.date_visit, vi.admin_key, vi.performed, vi.locality_key, vi.comments, vi.responsible, vi.count_members,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.cell_phone, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, vi.list_members)<>0) as members, vi.list_members
-            FROM visits vi
-            INNER JOIN locality l ON l.key = vi.locality_key
-            LEFT JOIN district d ON d.locality_key=vi.locality_key
-            INNER JOIN meeting_template mtl ON mtl.locality_key = l.key
-            WHERE FIND_IN_SET('$adminId', mtl.admin)<>0 $requestMeeting $requestDates $requestLocality
             ) q ORDER BY q.$sort_field ".$sort_type.", q.locality_key ASC");
 
     while ($row = $res->fetch_object()) $meetings[]=$row;

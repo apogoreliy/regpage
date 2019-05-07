@@ -3,6 +3,7 @@
 include_once "../db.php";
 
 header("Content-Type: application/json; charset=utf-8");
+ini_set('session.cookie_lifetime', 60 * 60 * 24 * 365);  // 365 day cookie lifetime
 session_start ();
 
 function exception_handler($exception) {

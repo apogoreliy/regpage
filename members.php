@@ -548,8 +548,8 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
               m.region = m.country;
             } else {
               m.region = m.region.substring(0, m.region.indexOf(" ("));
-              m.region += ', ';
-              m.region += m.country;
+              // m.region += ', ';
+              // m.region += m.country;
             }
 
             tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-age="'+m.age+'" data-attendance="'+m.attend_meeting+'" data-locality="'+m.locality_key+'" data-category="'+m.category_key+'" class="'+(m.active==0?'inactive-member':'member-row')+'">'+
@@ -557,13 +557,13 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
 (in_array(5, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+m.category_name+'</span>' : '') +
                 '</td>' +
                 <?php if (!$singleCity) { ?>
-                    '<td>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
+                    '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                     (in_array(6, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+(m.region || m.country)+'</span>' : '') +
                     '</td>' +
                 <?php } ?>
                 '<td>' + he(m.cell_phone) + '</td>' +
                 '<td>' + he(m.email) + '</td>' +
-                '<td>' + age + '</td>' +
+                '<td style="width:50px">' + age + '</td>' +
                 '<td><input type="checkbox" class="check-meeting-attend" '+ (m.attend_meeting == 1 ? "checked" : "") +' /></td>' +
                 '<td>' + htmlChanged + htmlEditor + '</td>' +
   <?php if (db_getAdminRole($memberId) != 0) { ?> '<td><i class="'+(m.active==0?'icon-circle-arrow-up':'icon-trash')+' icon-black" title="'+(m.active==0?'Добавить в список':'Удалить из списка')+'"/></td>' <?php } ?> +
