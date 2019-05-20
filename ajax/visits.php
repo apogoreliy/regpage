@@ -30,8 +30,12 @@ if(isset($_GET['get_visits'])){
     echo json_encode(["meetings"=>db_getVisits($adminId, $sort_type, $sort_field, $_GET['localityFilter'], $_GET['meetingFilter'], $_GET['startDate'],$_GET['endDate'])]);
     exit();
 }
-else if(isset($_GET['set_performed_visit'])){
-    echo json_encode(["result" => db_setPerformedVisit($_POST['value'], $_POST['memberId'])]);
+else if(isset($_GET['set_date_visit'])){
+    echo json_encode(["result" => db_setDateVisit($_POST['value'], $_POST['visitId'])]);
+    exit();
+}
+else if(isset($_GET['set_status_visit'])){
+    echo json_encode(["result" => db_setPerformedVisit($_POST['value'], $_POST['visitId'])]);
     exit();
 }
 else if(isset($_GET['get_list']) && isset($_POST['meeting_id'])){

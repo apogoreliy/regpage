@@ -79,7 +79,7 @@
                     window.location = '/passrec';
                 </script>
             <?php
-                db_logoutAdmin($memberId);
+                db_logoutAdmin($memberId, session_id());
             }
         } ?>
 

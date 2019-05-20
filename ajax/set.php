@@ -95,7 +95,7 @@ if (!isset($error))
 if(isset ($_GET['set_login'])){
     if(isset($_POST['login'])){
         if(UTILS::sendConfirmationEmailToChangeLogin($_POST['login'], $adminId)){
-            db_logoutAdmin($adminId);
+            db_logoutAdmin($adminId, session_id());
             echo json_encode(["result"=>true]);
         }
         else{

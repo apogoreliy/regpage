@@ -1,28 +1,28 @@
-<?php 
+<?php
     include_once "header.php";
-    if ($memberId) db_logoutAdmin ($memberId);
+    if ($memberId) db_logoutAdmin ($memberId, session_id());
     $memberId = db_getMemberIdBySessionId (session_id());
     $isGuest = true;
     include_once 'modals.php';
     include_once "nav.php";
-       
+
     $login = null;
     $password = null;
-    
+
     if (isset($_GET["code"])){
         $user = UTILS::getUserInfoByRecoveryCode($_GET["code"], true);
 
         if ($user !== 0){
             $countries1 = db_getCountries(true);
             $countries2 = db_getCountries(false);
-            $localities = db_getLocalities(); 
+            $localities = db_getLocalities();
 
             $login = $user[0];
-            $password = $user[1];                        
+            $password = $user[1];
 ?>
 
-<div class="container signup-container">        
-    <form class="form-signup-full">   
+<div class="container signup-container">
+    <form class="form-signup-full">
         <div class="control-group row-fluid alert alert-info" style="width: 100%; padding: 10px 0px 10px 0px; text-align: center; margin-bottom: 10px;">
             <span class="close" data-dismiss="alert" style="right: 0; padding-right: 10px;">&times;</span>
             <strong>Для завершения создания учётной записи, заполните обязательные поля и нажмите кнопку "Сохранить"</strong>
@@ -34,7 +34,7 @@
         <div class="control-group row-fluid">
             <label class="span12">Дата рождения</label>
             <input class="span12 emBirthdate datepicker" type="text" valid="required" placeholder="ДД.ММ.ГГГГ">
-        </div>      
+        </div>
         <div class="control-group row-fluid">
             <label class="span12">Пол</label>
             <select class="span12 emGender" valid="required">
@@ -48,24 +48,24 @@
             <select class="span12 emCitizenship" valid="required" >
                 <option value='_none_' selected>&nbsp;</option>
                 <?php foreach ($countries1 as $id => $name) {
-                    echo "<option value='$id' >".htmlspecialchars ($name)."</option>"; 
+                    echo "<option value='$id' >".htmlspecialchars ($name)."</option>";
                 }?>
                 <option disabled="disabled">---------------------------</option>
                 <?php foreach ($countries2 as $id => $name) {
-                    echo "<option value='$id' >".htmlspecialchars ($name)."</option>"; 
+                    echo "<option value='$id' >".htmlspecialchars ($name)."</option>";
                 }?>
             </select>
         </div>
-        <div class="control-group row-fluid">    
+        <div class="control-group row-fluid">
             <label class="span12">Населённый пункт</label>
             <select class="span12 emLocality" valid="required">
                 <option value='_none_' selected >&nbsp;</option>
                 <?php
                     foreach ($localities as $id => $name) {
-                        echo "<option value='$id' >".htmlspecialchars ($name)."</option>"; 
+                        echo "<option value='$id' >".htmlspecialchars ($name)."</option>";
                     }
                 ?>
-            </select>                        
+            </select>
         </div>
         <div class="control-group row-fluid">
             <label class="span12">Если населённого пункта в списке нет, то укажите его здесь:</label>
@@ -76,9 +76,9 @@
             <label style="display: inline; font-size: 14px" for="btn-agreement">подтверждаю согласие на обработку моих персональных данных</label>
         </div>
         <div id="textError" class="alert alert-error" style="display:none">Поля не могут быть пустыми</div>
-        
+
         <div class="alert alert-error ajaxError" style="display:none">Ошибка сервера. Обратитесь к разработчикам.</div>
-        <button type="text" id="signUpFormBtn" class="btn btn-large btn-primary">Сохранить</button>            
+        <button type="text" id="signUpFormBtn" class="btn btn-large btn-primary">Сохранить</button>
     </form>
 </div>
 
@@ -88,11 +88,11 @@ $(document).ready(function(){
     $("[valid|='required']").keyup (function () {
         handleSignUpFormBtn();
     });
-    
+
     $("[valid|='required']").change (function () {
         handleSignUpFormBtn();
     });
-    
+
     $('.emLocalityNew').keyup(function(){
         if($(this).val().trim() !== ''){
             $(".emLocality").parents('.control-group').removeClass('error');
@@ -102,7 +102,7 @@ $(document).ready(function(){
         }
         handleSignUpFormBtn();
     });
-    
+
     function handleSignUpFormBtn(){
         var isSetDisabled = false, value;
         $(".form-signup-full [valid|='required']").each(function(){
@@ -126,11 +126,11 @@ $(document).ready(function(){
                 if(value === '_none_' || value === ''){
                     isSetDisabled = true;
                 }
-            }            
+            }
         });
         $('#signUpFormBtn').attr('disabled',isSetDisabled);
     }
-            
+
     handleFullSignupFields();
 
     function handleFullSignupFields(){
@@ -140,11 +140,11 @@ $(document).ready(function(){
         $(".emCitizenship").val('_none_').change();
         $(".emLocality").val('_none_').change();
     }
-    
+
     $("#signUpFormBtn").click (function (e){
         e.stopPropagation();
         e.preventDefault();
-        
+
         var login = '<?php echo $login; ?>',
             password = '<?php echo $password; ?>',
             name = $(".emName").val().trim(),
@@ -153,24 +153,24 @@ $(document).ready(function(){
             citizenship = $(".emCitizenship").val().trim(),
             locality = $(".emLocality").val().trim(),
             newLocality = $(".emLocalityNew").val().trim();
-        
-        if($(this).attr('disabled') === 'disabled'){   
-            $("#textError").show ();        
+
+        if($(this).attr('disabled') === 'disabled'){
+            $("#textError").show ();
             return;
         }
         else{
             $("#textError").hide ();
             $(".form-signup-full").css('display', 'none');
             showHint('Ваши данные отправлены для создания учетной записи.');
-        }        
+        }
 
-        $.get('/ajax/login.php?signup', { 
-            signupLogin: login, 
-            password:password, 
+        $.get('/ajax/login.php?signup', {
+            signupLogin: login,
+            password:password,
             name : name,
             birthDate : parseDate(birthDate),
             gender : gender === 'male' ? 1 : 0,
-            citizenship : citizenship, 
+            citizenship : citizenship,
             locality : locality,
             newLocality : newLocality
         })
@@ -192,14 +192,14 @@ $(document).ready(function(){
 });
 </script>
 <?php
-            include_once "footer.php"; 
+            include_once "footer.php";
             die();
         }
         else{
             echo '<div class="container signup-container"><div class="alert alert-danger" role="alert">Эта ссылка недействительна или просрочена. Для создания учётной записи пройдите процедуру повторно.</div></div>';
-            include_once "footer.php"; 
-        }                
-    }      
+            include_once "footer.php";
+        }
+    }
     else{
 ?>
 
@@ -216,13 +216,13 @@ $(document).ready(function(){
         </div>
         <label class="control-label" for="login">Логин</label>
         <input type="text" class="login" name="login" placeholder="Email" valid="required">
-        
+
         <label class="control-label" for="password">Пароль</label>
         <input type="password" class="password" name="password" valid="required" placeholder="Придумайте пароль" maxlength="15">
-        
+
         <label class="control-label" for="password">Подтверждение пароля</label>
         <input type="password" class="passwordConfirm" valid="required" placeholder="Повторите пароль" name="passwordConfirm" maxlength="15">
-        
+
         <div id="loginError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Учетная запись с таким логином уже существует. <a href="/login">Войти</a>?</div>
         <div id="emailError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Логином должен быть корректный email</div>
         <div id="passError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Пароли не соответствуют друг другу</div>
@@ -246,27 +246,27 @@ $(document).ready(function(){
 <script>
 $(document).ready(function(){
     $(".login").focus();
-    
+
     $('.login').keydown(function(){
         $("#emailError").hide ();
     });
-    
+
     $('.password, .passwordConfirm').keydown(function(){
         $("#passError, #passLengthError").hide ();
     });
-    
+
     $('.password').keydown(function(){
         $(".passwordConfirm").val ('');
     });
-    
+
     $("[valid|='required']").keydown (function () {
         handleLoginFormBtn();
     });
-    
+
     $("[valid|='required']").change (function () {
         handleLoginFormBtn();
     });
-    
+
     function handleLoginFormBtn(){
         var isSetDisabled = false, value;
         $(".form-signup [valid|='required']").each(function(){
@@ -278,11 +278,11 @@ $(document).ready(function(){
                 if(value === ''){
                     isSetDisabled = true;
                 }
-            }            
+            }
         });
         $('#loginFormBtn').attr('disabled',isSetDisabled);
     }
-    
+
     handleSignupFields();
 
     function handleSignupFields(){
@@ -332,12 +332,12 @@ $("#loginFormBtn").click (function (e){
     }
     else{
         $("#passLengthError").hide ();
-    }            
+    }
 
     $.get('/ajax/login.php', { signupLogin: login.val() })
     .done (function(data) {
         $("#ajaxError").hide ();
-        
+
         if(data === "error"){
             $("#emailError").hide ();
             $('#loginError').show();
@@ -366,5 +366,5 @@ $("#btnDoSendEventMsgAdmins").click (function (){
 </script>
 
 <?php
-include_once "footer.php"; 
+include_once "footer.php";
 ?>

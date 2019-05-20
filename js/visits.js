@@ -32,8 +32,7 @@ function loadMeetings(){
           }, 200);
       } else {
         $.when(refreshMeetings(data.meetings)).then(filterMeetingsList());
-      }
-      console.log(responsibilesTrue.length);
+      }      
     });
 }
 

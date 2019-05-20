@@ -6,7 +6,7 @@ body {
 a {
     cursor: pointer;
 }
-.form-signin, .form-signup, .form-signup-full {
+.form-signin, .form-signup, .form-signup-full, .form-logout {
     max-width: 320px;
     padding: 19px 29px 29px;
     margin: 100px auto 20px;

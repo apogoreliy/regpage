@@ -4,11 +4,16 @@ include_once "ajax.php";
 header('Content-type: text/plain');
 
 if(isset($_GET["logout"])){
-    if (isset($_GET["memberId"])){
-        db_logoutAdmin ($_GET['memberId']);
-    }    
+    if (isset($_GET["memberId"]) && isset($_GET['sessionId'])){
+        db_logoutAdmin ($_GET['memberId'], $_GET['sessionId']);
+    }
     exit();
-}
+}/* else if(isset($_GET["logout_total"])){
+    if (isset($_GET["memberId"])){
+        db_logoutAdminTotal ($_GET['memberId']);
+    }
+    exit();
+}*/
 else if (isset($_GET["signup"])) {
     $res = db_signUpMember(session_id(), $_GET['signupLogin'], $_GET['password'], $_GET['name'],  $_GET['birthDate'], $_GET['gender'], $_GET['citizenship'], $_GET['locality'], $_GET['newLocality']);
 
@@ -19,7 +24,7 @@ else if (isset($_GET["signup"])) {
 }
 else if(isset($_GET['remove_account'])){
     db_removeAccount($_POST['member'], $_POST['reason']);
-    
+
     exit();
 }
 else if (isset($_GET["login"]) && isset($_GET["password"])) {
@@ -28,16 +33,16 @@ else if (isset($_GET["login"]) && isset($_GET["password"])) {
 }
 else if (isset($_GET["signupLogin"])) {
     $email = ($_GET["signupLogin"]);
-    $memberId = db_isAdminExist ($email);        
+    $memberId = db_isAdminExist ($email);
 
     if(isset($_GET["password"])){
-        if(!$memberId){        
+        if(!$memberId){
             UTILS::sendConfirmationEmailToCreateAccount($email, $_GET);
         }
     }
     else{
         print !$memberId ? "success" : "error";
-    }    
+    }
 }
 
 ?>

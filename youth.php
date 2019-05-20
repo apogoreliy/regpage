@@ -687,5 +687,5 @@ include_once "modals.php";
 	}
 
 </script>
-
+<script src="/js/youth.js?v1"></script>
 <?php include_once "footer.php"; ?>

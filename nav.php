@@ -4,8 +4,7 @@ $s = $_SERVER["SCRIPT_NAME"];
 $h = ($_SERVER['PHP_SELF']);
 $res = '';
 switch ($h) {
-    case '/main.php':
-    // case '/index.php':
+     case '/index.php':
         $res = 'События';
         break;
     case '/reg.php':
@@ -17,10 +16,13 @@ switch ($h) {
     case '/meetings.php':
         $res = 'Собрания';
         break;
+    case '/visits.php':
+        $res = 'Посещения и звонки';
+        break;
     case '/list.php':
         $res = 'Ответственные';
         break;
-    case '/index.php':
+    case '/login.php':
         $res = 'Войти';
         break;
     case '/signup.php':
@@ -49,7 +51,7 @@ switch ($h) {
 <div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-        <span class="show-name-list"><?php echo $res; ?></span>
+        <span class="show-name-list" style="margin-top:10px;"><?php echo $res; ?></span>
         <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -57,7 +59,7 @@ switch ($h) {
         </button>
 
         <div class="btn-group" style="float: right; margin-right: 10px;">
-            <button class="btn dropdown-toggle fa fa-question fa-lg" data-toggle="dropdown"></button>
+          <a class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-question fa-lg"></i><span class="hide-name" style="padding-left: 5px">Помощь</span></a>
             <ul class="dropdown-menu pull-right">
               <?php
 
@@ -83,19 +85,17 @@ switch ($h) {
         </div>
 
         <!-- <span class="btn fa fa-envelope-o fa-lg send-message-support-phone" style="float: right;" data-toggle="modal" data-target="#messageAdmins" title="Отправить сообщение службе поддержки" aria-hidden="true"></span> -->
-        <?php if(strpos ($s,"/reg")!==FALSE){ ?>
-            <span class="btn fa fa-envelope fa-lg send-message-regteam" tabindex="-1" style="float: right; margin-right: 10px;" title="Отправить сообщение команде регистрации" data-toggle="modal" data-target="#modalEventSendMsg"></span>
-        <?php } ?>
+
         <div class="nav-collapse collapse">
             <ul class="nav">
             <?php
 
             if(!isset($isGuest) && isset($memberId)){
                 echo "<li ";
-                if (strpos ($s,"/main")!==FALSE) echo 'class="active"';
+                if (strpos ($s,"/index")!==FALSE) echo 'class="active"';
                 // if (strpos ($s,"/index")!==FALSE) echo 'class="active"';
                 // echo '><a href="/">События</a></li>';
-                echo '><a href="/main">События</a></li>';
+                echo '><a href="/index">События</a></li>';
             }
 
             if(!isset($isGuest) && db_isAdmin($memberId) || db_hasAdminFullAccess($memberId)) {
@@ -214,10 +214,10 @@ switch ($h) {
         e.preventDefault();
 
         var memberId = '<?php echo $memberId; ?>';
-
-        $.get('ajax/login.php?logout', {memberId: memberId})
+        var getSessionIdLogOut = "<?php print(session_id()); ?>"
+        $.get('ajax/login.php?logout', {memberId: memberId, sessionId: getSessionIdLogOut})
         .done (function() {
-            window.location = "/";
+            window.location ='<?php $_SESSION["sess_last_page"]; ?>';
         })
         .fail(function() {
             window.location = "/";

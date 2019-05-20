@@ -2,7 +2,7 @@
 include_once 'header.php';
 include_once 'nav.php';
 
-$specPage = 'ul';     
+$specPage = 'ul';
 if ($specPage && trim($specPage)!='') {
 	echo '<div class="container"><div style="background-color: white; padding: 20px;">';
     echo db_getCustomPage($specPage);

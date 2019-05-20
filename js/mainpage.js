@@ -11,3 +11,22 @@ $('#modalEditMember').on('show',  function() {
     };
 }, 1000);
 });
+function showEmptyForm (eventId){
+    window.currentEventId = eventId;
+
+    $.getJSON('/ajax/guest.php', { eventId: eventId })
+    .done (function(data){
+        window.currentEventName=data.info.event_name;
+        fillEditMember ('', data.info);
+        $("#modalEditMember").modal('show');
+    });
+}
+
+function showSuccessMessage (text, link){
+    $("#regSuccessTitle").text (window.currentEventName);
+    $("#regSuccessText").html (text);
+    $("#regSuccessLink").html (link);
+    if (link) $("#regSuccessNotes").show (); else $("#regSuccessNotes").hide ();
+    $("#modalEditMember").addClass('hide').modal('hide');
+    $("#modalRegSuccess").modal('show');
+}
