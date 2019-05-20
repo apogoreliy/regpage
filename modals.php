@@ -20,13 +20,13 @@
             <div class="control-group">
                 <label class="control-label" for="sendMsgName">От<sup>*</sup></label>
                 <div class="controls">
-                    <input type="text" id="sendMsgName" class="span4 name-field" placeholder="Имя" valid="required">
+                    <input type="text" id="sendMsgName" class="span4 name-field" placeholder="Имя" valid="required" style="height: 30px">
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="sendMsgEmail">Email<sup>*</sup></label>
                 <div class="controls">
-                    <input type="text" id="sendMsgEmail" class="span4 email-field" placeholder="Email" valid="required, email">
+                    <input type="text" id="sendMsgEmail" class="span4 email-field" placeholder="Email" valid="required, email" style="height: 30px">
                 </div>
             </div>
             <textarea class="span5 text-field" rows="10" id="sendMsgText"></textarea>

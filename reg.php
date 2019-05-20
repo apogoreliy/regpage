@@ -13,7 +13,7 @@
     $categories = db_getCategories();
     $countries1 = db_getCountries(true);
     $countries2 = db_getCountries(false);
-    $selectedEventId = isset($_COOKIE['eventChoose']) ? $_COOKIE['eventChoose'] : false ;
+    $selectedEventId = isset($_COOKIE['eventChoose']) ? $_COOKIE['eventChoose'] : false;
     $adminCountry = db_getAdminCountry($memberId);
 
     $user_settings = db_getUserSettings($memberId);
@@ -84,12 +84,12 @@
         >
         <div>
         <div class="btn-toolbar">
-            <span class="btn send-message-regteam" tabindex="-1" style="margin-right: 10px; font-family: Arial;" title="Отправить сообщение команде регистрации" data-toggle="modal" data-target="#modalEventSendMsg"><i class="fa fa-envelope"></i>  Написать команде регистрации</span>
             <a class="btn btn-success event-add-member role-edit" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
             <a class="btn btn-primary disabled chk-dep chk-register role-admin" type="button"><i class="fa fa-check icon-white"></i> <span class="hide-name">Зарегистрировать</span></a>
             <a class="btn btn-primary disabled chk-dep chk-bulkedit role-edit" type="button"><i class="fa fa-list icon-white"></i> <span class="hide-name">Изменить</span></a>
             <a class="btn btn-danger disabled chk-dep chk-remove role-edit" type="button"><i class="fa fa-ban icon-white"></i> <span class="hide-name">Отменить</span></a>
             <a class="btn btn-success chk-invite role-edit" type="button"><i class="fa fa-user icon-white" title="Пригласить пользователя"></i> <span class="hide-name">Пригласить пользователя</span></a>
+            <span class="btn send-message-regteam" tabindex="-1" style="margin-right: 10px; font-family: Arial;" title="Отправить сообщение команде регистрации" data-toggle="modal" data-target="#modalEventSendMsg"><i class="fa fa-envelope"></i>  <b>Написать команде регистрации</b></span>
             <?php if($event->web == 1){ ?>
             <a class="btn btn-warning disabled chk-dep filter-icons bulkedit-prove" type="button"><i class="fa fa-asterisk" aria-hidden="true"></i> <span class="hide-name">Подтвердить</span></a>
             <a class="btn btn-danger disabled chk-dep filter-icons bulkedit-prove" type="button"><i class="fa fa-asterisk" aria-hidden="true"></i> <span class="hide-name">Отменить прибытие</span></a>
@@ -592,7 +592,7 @@
 </div>
 
 <!-- Users Emails Modal -->
-<div id="modalShowResponseAfterInviteMembers" data-width="600" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="modalShowResponseAfterInviteMembers" data-width="400" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-body">
         <div class="response">
 
@@ -756,6 +756,7 @@
         var eventId = $("#events-list").val();
         var adminRole = '<?php echo db_getAdminRole($memberId); ?>';
         var isEventPrivate = parseInt($("#eventTab-"+eventId).attr("data-private")) === 1;
+
         if(memberId){
             $.post('/ajax/get.php?get_regstate', { eventAdmin:eventId, memberKey: memberId})
             .done (function(data) {
@@ -783,6 +784,9 @@
     $(".invite-name").keyup(function(e){
         e.stopPropagation();
         var value = $(this).val().trim();
+        if (value.length < 3) {
+          return;
+        }
         var modal = $("#modalInviteUser");
 
         $.post('/ajax/get.php?get_users_to_invite', {name : value})
@@ -858,11 +862,11 @@
 
                 if(result.alreadyAddedArr.length>0){
                     text = text + "<div style='margin-top:10px;'>" +
-                    "<div>Эти люди уже добавлены на мероприятие:</div>" + result.alreadyAddedArr.join('<br>') + "</div>";
+                    "<div><b>Эти люди уже были добавлены в список:</b></div>" + result.alreadyAddedArr.join('<br>') + "</div>";
                 }
                 else if(result.emptyEmailArr.length>0){
                     text = text + "<div style='margin-top:10px;'>" +
-                    "<div>У этих людей не указан email. Возможности отправить им письмо нет:</div>" + result.emptyEmailArr.join('<br>') + "</div>";
+                    "<div><b>У этих людей нет электронного адреса:</b></div>" + result.emptyEmailArr.join('<br>') + "</div>";
                 }
                 else if(result.errorMembeEmailArr.length>0){
                     text = text + "<div style='margin-top:10px;'>" +
@@ -874,7 +878,7 @@
                 }
                 else if(result.sendEmailsArr.length>0){
                     text = text + "<div style='margin-top:10px;'>"+
-                    "<div>Эти люди приглашены для регистрации на мероприятие:</div>"+result.sendEmailsArr.join('<br/>')+ "</div>";
+                    "<div><b>Приглашение отправлено следующим людям:</b></div>"+result.sendEmailsArr.join('<br/>')+ "</div>";
                 }
 
                 showResponseAfterInviteMembers(text);
@@ -1054,6 +1058,19 @@
         var tableRows = [];
         var phoneRows = [];
 
+        function get_localities(){
+            $.get('/ajax/members.php?get_localities')
+            .done (function(data) {
+                $(data.localities).each(function(i) {
+                  var localityTemp = data.localities[i];
+                  a = localityTemp.id;
+                  b = localityTemp.name;
+                  localities[a] = b;
+                });
+            });
+        }
+        get_localities();
+setTimeout(function () {
         buildFilterLocalitiesList(eventId, localities);
 
         var showLocalityField = $("#eventTab-"+eventId).attr("data-show-locality-field") ===  '1';
@@ -1293,6 +1310,7 @@
                 }
             });
         });
+      }, 150);
     }
 
     function buildUserEmailsList(emails){
@@ -1537,6 +1555,7 @@
     });
 
     $("#btnDoRegisterMember").click (function (){
+
       var btn = $(this).attr('id');
 
       if (!$(this).hasClass('disabled')) {
@@ -1571,22 +1590,27 @@
         setAdminRole();
     });
 
-    function checkStopEventRegistration(eventId){
-        $.post('/ajax/event.php?check_stop_reg', {eventId: eventId})
-        .done(function(data){
-            var text = '';
-            if (parseInt(data.res.participants_count) > 0){
-                if(data.res.close_registration === '1' || parseInt(data.res.count_members) >= parseInt(data.res.participants_count)){
-                    text = "<span class='label label-important registration-closed'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Регистрация закрыта</a></span>";
-                }
-                else{
-                    text = "<span class='label label-info'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Осталось мест — "+ (parseInt(data.res.participants_count) - parseInt(data.res.count_members))+"</a></span>";
-                }
+function checkStopEventRegistration(eventId){
+    $.post('/ajax/event.php?check_stop_reg', {eventId: eventId})
+    .done(function(data){
+        var text = '';
+        if (parseInt(data.res.participants_count) > 0){
+            if(data.res.close_registration === '1' || parseInt(data.res.count_members) >= parseInt(data.res.participants_count)){
+                text = "<span class='label label-important registration-closed'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Регистрация закрыта</a></span>";
             }
+            else{
+                text = "<span class='label label-info'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Осталось мест — "+ (parseInt(data.res.participants_count) - parseInt(data.res.count_members))+"</a></span>";
+            }
+        } else if (parseInt(data.res.participants_count) === 0) {
+          if(data.res.close_registration === '1'){
+              text = "<span class='label label-important registration-closed'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Регистрация закрыта</a></span>";
+          }
+        }
 
-            $(".close-event-registration").html(text);
-        });
-    }
+        $(".close-event-registration").html(text);
+    });
+}
+
 
     $("#btnDoSaveBulk").click (function (){
         if (!$(this).hasClass('disabled')){
@@ -1670,6 +1694,7 @@
     }
 
     $(".event-add-member").click (function (){
+
         if($('.registration-closed').children().length > 0){
             var access = $(this).parents('.tab-pane.active').attr('data-access');
 
@@ -1698,6 +1723,7 @@
     });
 
     function chkRegister(){
+
         var eventId = $("#events-list").val(), ids = [];
 
         if($(document).width() > 980) {
@@ -1707,6 +1733,7 @@
         }
         else {
             $("div.tab-pane.active tr[class|='regmem'] input[type='checkbox']:checked").parents("tr[class|='regmem']").find(".mname").each(function () {
+
                 ids.push($(this).parents("tr[class|='regmem']").attr('class').replace(/^regmem-/, ''));
             });
         }
@@ -2256,7 +2283,7 @@
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v2"></script>
+<script src="/js/reg.js?v5"></script>
 <?php
     include_once "footer.php";
 ?>

@@ -274,7 +274,7 @@ $countries = db_getCountriesList();
             });
         }
     </script>
-
+<script src="/js/list.js?v1"></script>
 <?php
 include_once "footer.php";
 ?>

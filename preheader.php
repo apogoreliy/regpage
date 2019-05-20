@@ -9,7 +9,7 @@ session_start ();
 if (!isset($isGuest))
 {
     $memberId = db_getMemberIdBySessionId (session_id());
-
+    $memberId ? db_lastVisitTimeUpdate(session_id()) : '';
     if ((!$memberId && isset ($_GET["link"])) || (!$memberId && isset ($_GET["invited"]))){
 
     }
@@ -35,18 +35,19 @@ if (!isset($isGuest))
             include 'footer.php';
         }
         else{
-            header("Location: ".$appRootPath."?returl=".urlencode ($_SERVER["REQUEST_URI"]));
+            header("Location: ".$appRootPath."login?returl=".urlencode ($_SERVER["REQUEST_URI"]));
         }
         exit;
     }
-    else if (!$memberId && preg_match("/(index.php)|(signup.php)|(passrec.php)/", $_SERVER["SCRIPT_NAME"])==0){
-        header("Location: ".$appRootPath."?returl=".urlencode ($_SERVER["REQUEST_URI"]));
+    else if (!$memberId && preg_match("/(login.php)|(signup.php)|(passrec.php)/", $_SERVER["SCRIPT_NAME"])==0){
+        header("Location: ".$appRootPath."login?returl=".urlencode ($_SERVER["REQUEST_URI"]));
     	exit;
     }
-    else if($memberId && count(db_getAdminEventsRespForReg($memberId)) == 0 && !db_isAdmin($memberId) && !db_isAvailableMeetingPage($memberId) && preg_match("/(main.php)|(signup.php)|(passrec.php)|(index.php)|(profile.php)|(links.php)/", $_SERVER["SCRIPT_NAME"])==0){
+    else if($memberId && count(db_getAdminEventsRespForReg($memberId)) == 0 && !db_isAdmin($memberId) && !db_isAvailableMeetingPage($memberId) && preg_match("/(signup.php)|(passrec.php)|(index.php)|(profile.php)|(links.php)/", $_SERVER["SCRIPT_NAME"])==0){
         header("Location: ".$appRootPath);
     	exit;
     }
 
     include_once "textblock.php";
+
 }

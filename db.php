@@ -67,7 +67,7 @@ function db_getSelfRegPwd ()
     if ($row = $res->fetch_assoc()) return $row['value'];
     return null;
 }
-
+/*
 function db_getMemberIdBySessionId ($sessionId)
 {
     global $db;
@@ -77,7 +77,7 @@ function db_getMemberIdBySessionId ($sessionId)
     if ($row = $res->fetch_assoc()) return $row['member_key'];
     return NULL;
 }
-
+*/
 function db_getCategories ()
 {
     $res=db_query ("SELECT `key` as id, name FROM category");
@@ -329,31 +329,6 @@ function db_getEventMemberByLink ($link)
     $res=db_query ("$selectEventMember WHERE r.permalink='$link'");
     if ($row = $res->fetch_assoc()) return $row;
     return NULL;
-}
-
-function db_loginAdmin ($sessionId, $login, $password)
-{
-    global $db;
-    $sessionId = $db->real_escape_string($sessionId);
-    $login = $db->real_escape_string($login);
-    $password = $db->real_escape_string($password);
-
-    $res=db_query ("SELECT member_key FROM admin a inner join member m ON m.key=a.member_key WHERE a.login='$login' and a.password='$password' and m.active=1");
-    if ($row = $res->fetch_assoc())
-    {
-        $adminId = $row['member_key'];
-
-        db_query ("UPDATE admin SET session='$sessionId' WHERE member_key='$adminId'");
-        return $adminId;
-    }
-    return NULL;
-}
-
-function db_logoutAdmin ($adminId)
-{
-    global $db;
-    $adminId = $db->real_escape_string($adminId);
-    db_query ("UPDATE admin SET session=NULL WHERE member_key='$adminId'");
 }
 
 function db_getAdminCountry($adminId){
@@ -1252,10 +1227,10 @@ function db_setEventMember ($adminId, $get, $post){
     $_page = $db->real_escape_string($post['page']);
 
     $isUserAuth = $db->real_escape_string($adminId) !== '';
-    $_adminId = $_page != '/index' ? $db->real_escape_string($adminId) : (isset($post['member']) && strlen($post ['member']) ? $db->real_escape_string($post['member']) : null);
-    $_memberId = $_page == '/index' || $_page == '/main' ? (isset($post['member']) && strlen($post ['member']) ? $db->real_escape_string($post['member']) : null) : ($_page == '/members' ? isset($get ['create']) ? "dont_register" : $db->real_escape_string($get ['update_member'] ) : $db->real_escape_string($get['member']));
-    $_eventId = $_page == '/index' || $_page == '/main' ? $db->real_escape_string($post['event']) : ($_page == '/members' ? null : $db->real_escape_string($get['event']));
-    $doRegister = $_page == '/index' || $_page == '/main' ? true : ( $_page == '/reg' || $_page == '/admin' ? isset ($get ['register']) : false );
+    $_adminId = $_page != '/login' ? $db->real_escape_string($adminId) : (isset($post['member']) && strlen($post ['member']) ? $db->real_escape_string($post['member']) : null);
+    $_memberId = $_page == '/login' || $_page == '/index' ? (isset($post['member']) && strlen($post ['member']) ? $db->real_escape_string($post['member']) : null) : ($_page == '/members' ? isset($get ['create']) ? "dont_register" : $db->real_escape_string($get ['update_member'] ) : $db->real_escape_string($get['member']));
+    $_eventId = $_page == '/login' || $_page == '/index' ? $db->real_escape_string($post['event']) : ($_page == '/members' ? null : $db->real_escape_string($get['event']));
+    $doRegister = $_page == '/login' || $_page == '/index' ? true : ( $_page == '/reg' || $_page == '/admin' ? isset ($get ['register']) : false );
     $_name = preg_replace("/#/", " ", $db->real_escape_string($post['name']));
     $_address = isset($post['address']) && strlen($post ['address']) ? $db->real_escape_string($post['address']) : '';
     $_arr_date = $_page == '/members' ? (DONT_CHANGE) : (isset($post['arr_date']) ? $db->real_escape_string($post['arr_date']) : null);
@@ -1271,7 +1246,7 @@ function db_setEventMember ($adminId, $get, $post){
     $_document_num = isset($post['document_num']) && strlen($post ['document_num']) ? $db->real_escape_string($post['document_num']) : null;
     $_document_date = isset($post['document_date']) && strlen($post ['document_date']) ? $db->real_escape_string($post['document_date']) : null;
     $_document_auth = isset($post['document_auth']) && strlen($post ['document_auth']) ? $db->real_escape_string($post['document_auth']) : null;
-    $_category_key = $_page =='/index' || $_page == '/main' ? (DONT_CHANGE) : (isset($post['category_key']) && strlen($post ['category_key']) ? $db->real_escape_string($post['category_key']) : null);
+    $_category_key = $_page =='/login' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['category_key']) && strlen($post ['category_key']) ? $db->real_escape_string($post['category_key']) : null);
     $_document_key = isset($post['document_key']) && strlen($post ['document_key']) ? $db->real_escape_string($post['document_key']) : null;
     $_tp_num = isset($post['tp_num']) && strlen($post ['tp_num']) ? $db->real_escape_string($post['tp_num']) : null;
     $_tp_date = isset($post['tp_date']) && strlen($post ['tp_date']) ? $db->real_escape_string($post['tp_date']) : null;
@@ -1281,25 +1256,25 @@ function db_setEventMember ($adminId, $get, $post){
     $_flight_num_arr = $_page =='/members' ? (DONT_CHANGE) : (isset($post['flight_num_arr']) ? $db->real_escape_string($post['flight_num_arr']) : null);
     $_flight_num_dep = $_page =='/members' ? (DONT_CHANGE) : (isset($post['flight_num_dep']) ? $db->real_escape_string($post['flight_num_dep']) : null);
     $_note = $_page =='/members' ? (DONT_CHANGE) : (isset($post['note']) ? $db->real_escape_string($post['note']) : null);
-    $_status_key = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['status_key']) ? $db->real_escape_string($post['status_key']) : null);
+    $_status_key = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['status_key']) ? $db->real_escape_string($post['status_key']) : null);
     $_male = $post["gender"]=="male" ? 1 : ($post["gender"]=="female" ? 0 : null);
-    $_mate_key = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['mate_key']) ? $db->real_escape_string($post['mate_key']) : '');
+    $_mate_key = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['mate_key']) ? $db->real_escape_string($post['mate_key']) : '');
     $_accom = $_page =='/members' ? (DONT_CHANGE) : (isset($post['accom']) && $post['accom']!='' ? $db->real_escape_string($post['accom']) : null);
-    $_coord = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : $db->real_escape_string($post['coord']);
+    $_coord = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : $db->real_escape_string($post['coord']);
     $_temp_phone = DONT_CHANGE;
     $_transport = $_page =='/members' ? (DONT_CHANGE) : (isset($post['transport']) && $post['transport']!='' ? $db->real_escape_string($post['transport']) : null);
     $_citizenship_key = $db->real_escape_string($post['citizenship_key']);
     $_parking = $_page =='/members' ? (DONT_CHANGE) : (isset($post['parking']) && $post['parking']!='' ? $db->real_escape_string($post['parking']) : null);
     $_avtomobile = $_page =='/members' ? (DONT_CHANGE) : (isset($post['avtomobile']) && $post['avtomobile']!='' ? $db->real_escape_string($post['avtomobile']) : '');
     $_avtomobile_number = $_page =='/members' ? (DONT_CHANGE) : (isset($post['avtomobile_number']) && $post['avtomobile_number']!='' ? $db->real_escape_string($post['avtomobile_number']) : '');
-    $_prepaid = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (int)$post['prepaid'];
-    $_currency = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['currency']) ? $db->real_escape_string($post['currency']) : null);
-    $_service_key = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['service_key']) ? $db->real_escape_string($post['service_key']) : null);
-    $is_guest = $_page == '/index';
-    $_aid = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['aid']) ? (int)$post['aid'] : 0);
-    $_contr_amount = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['contr_amount']) ? (int)$post['contr_amount'] : 0);
-    $_trans_amount = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['trans_amount']) ? (int)$post['trans_amount'] : 0);
-    $_fellowship = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['fellowship']) ? (int)$post['fellowship'] : 0);
+    $_prepaid = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (int)$post['prepaid'];
+    $_currency = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['currency']) ? $db->real_escape_string($post['currency']) : null);
+    $_service_key = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['service_key']) ? $db->real_escape_string($post['service_key']) : null);
+    $is_guest = $_page == '/login';
+    $_aid = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['aid']) ? (int)$post['aid'] : 0);
+    $_contr_amount = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['contr_amount']) ? (int)$post['contr_amount'] : 0);
+    $_trans_amount = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['trans_amount']) ? (int)$post['trans_amount'] : 0);
+    $_fellowship = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['fellowship']) ? (int)$post['fellowship'] : 0);
     $_schoolStart = $_page !== '/members' ? (DONT_CHANGE) : (isset($post['schoolStart']) ? (int)$post['schoolStart'] : 0);
     $_schoolEnd = $_page != '/members' ? (DONT_CHANGE) : (isset($post['schoolEnd']) ? (int)$post['schoolEnd'] : 0);
     $_collegeStart = $_page != '/members' ? (DONT_CHANGE) : (isset($post['collegeStart']) ? (int)$post['collegeStart'] : 0);
@@ -1310,7 +1285,7 @@ function db_setEventMember ($adminId, $get, $post){
     $_schoolComment = $_page !='/members' ? (DONT_CHANGE) : (isset($post['school_comment']) ? $db->real_escape_string($post['school_comment']) : '');
     $_visa = $_page =='/members' ? (DONT_CHANGE ): $db->real_escape_string($post['visa']);
     $_baptized = $_page !='/members' ? (DONT_CHANGE) : (isset($post['baptized']) ? $post['baptized'] : null);
-    $_termsUse = $_page === '/index' ? $post['termsUse'] : DONT_CHANGE;
+    $_termsUse = $_page === '/login' ? $post['termsUse'] : DONT_CHANGE;
     $isInvitation = isset($post['isInvitation']) && $post['isInvitation'] == true ? !!$post['isInvitation'] : false;
     $regListName = $_page == '/members' ? (DONT_CHANGE) : (isset($post['regListName']) ? $db->real_escape_string($post['regListName']) : null);
 
@@ -1512,7 +1487,7 @@ function db_setEventMember ($adminId, $get, $post){
         $stmt->close ();
     }
 
-    if($_page == '/index'){
+    if($_page == '/login'){
         db_sendMessagesToMembersAdmins($_eventId, $_name, $_locality_key);
     }
 
@@ -1924,7 +1899,7 @@ function db_removeAccount($memberId, $reason){
     $reason = $db->real_escape_string($reason);
 
     db_query("UPDATE member SET active=0, comment='$reason', changed=1 WHERE `key`='$memberId' ");
-    db_logoutAdmin($memberId);
+    db_logoutAdminTotal($memberId);
 }
 
 function db_getCurrencies(){
@@ -2635,7 +2610,9 @@ function db_signUpMember($session_id, $login, $password, $name, $birthDate, $gen
         $stmt->bind_param('ss', $localityData, $newLocalityData);
         $stmt->execute();
 
-        db_query ("INSERT INTO admin (member_key, login, password, session, role, created, changed) VALUES ('$newMemberId', '$_login', '$_password', '$_session_id', 0, now(), 1)");
+        db_query ("INSERT INTO admin (member_key, login, password, session, role, created, changed) VALUES ('$newMemberId', '$_login', '$_password', 'NULL', 0, now(), 1)");
+
+        db_query ("INSERT INTO admin_session (id_session, admin_key) VALUES ('$_session_id','$newMemberId')");
 
         //db_sendMessageNewMember($_login,  $_name);
         $data = [];
@@ -3325,7 +3302,7 @@ function db_loginUserByLogin($sessionId, $login){
     global $db;
     $sessionId = $db->real_escape_string($sessionId);
     $login = $db->real_escape_string($login);
-    db_query ("UPDATE admin SET session='$sessionId' WHERE login='$login'");
+    db_query ("UPDATE admin_session SET id_session='$sessionId' WHERE id_session='$sessionId'");
 }
 
 function db_isAdminExist ($login)
@@ -4828,3 +4805,85 @@ function db_getAdminsListByLocalities ()
     while ($row = $res->fetch_object()) $members[]=$row;
     return $members;
 }
+/*Login new*/
+function db_getMemberIdBySessionId ($sessionId)
+{
+    global $db;
+    $sessionId = $db->real_escape_string($sessionId);
+
+    $res=db_query ("SELECT admin_key from admin_session where id_session='$sessionId'");
+    if ($row = $res->fetch_assoc()) return $row['admin_key'];
+    return NULL;
+}
+function db_loginAdmin ($sessionId, $login, $password)
+{
+    global $db;
+    $sessionId = $db->real_escape_string($sessionId);
+    $login = $db->real_escape_string($login);
+    $password = $db->real_escape_string($password);
+/*$res=db_query ("SELECT member_key FROM admin a inner join member m ON m.key=a.member_key WHERE a.login='$login' and a.password='$password' and m.active=1");
+if ($row = $res->fetch_assoc())
+{
+    $adminId = $row['member_key'];
+
+    db_query ("UPDATE admin SET session='$sessionId' WHERE member_key='$adminId'");
+    return $adminId;
+}*/
+    $res=db_query ("SELECT member_key FROM admin a inner join member m ON m.key=a.member_key
+      WHERE a.login='$login' and a.password='$password' and m.active=1");
+    if ($row = $res->fetch_assoc())
+    {
+        $adminId = $row['member_key'];
+
+        db_query ("INSERT INTO admin_session (id_session, admin_key) VALUES ('$sessionId','$adminId')");
+
+        return $adminId;
+    }
+    return NULL;
+}
+function db_logoutAdmin ($adminId,$sessionIdLogout)
+{
+    global $db;
+    $adminId = $db->real_escape_string($adminId);
+    $sessionIdLogout = $db->real_escape_string($sessionIdLogout);
+    db_query ("DELETE FROM admin_session WHERE admin_key='$adminId' AND id_session='$sessionIdLogout'");
+}
+function db_logoutAdminTotal ($adminId)
+{
+    global $db;
+    $adminId = $db->real_escape_string($adminId);
+    db_query ("DELETE FROM admin_session WHERE admin_key='$adminId'");
+}
+function db_lastVisitTimeUpdate ($sessionId)
+{
+    global $db;
+    $datatime = date("Y-m-d H:i:s");
+    $sessionId = $db->real_escape_string($sessionId);
+    db_query ("UPDATE admin_session SET time_last_visit = '$datatime' WHERE id_session='$sessionId'");
+}
+/*
+function db_loginAdmin ($sessionId, $login, $password)
+{
+    global $db;
+    $sessionId = $db->real_escape_string($sessionId);
+    $login = $db->real_escape_string($login);
+    $password = $db->real_escape_string($password);
+
+    $res=db_query ("SELECT member_key FROM admin a inner join member m ON m.key=a.member_key WHERE a.login='$login' and a.password='$password' and m.active=1");
+    if ($row = $res->fetch_assoc())
+    {
+        $adminId = $row['member_key'];
+
+        db_query ("UPDATE admin SET session='$sessionId' WHERE member_key='$adminId'");
+        return $adminId;
+    }
+    return NULL;
+}
+
+function db_logoutAdmin ($adminId)
+{
+    global $db;
+    $adminId = $db->real_escape_string($adminId);
+    db_query ("UPDATE admin SET session=NULL WHERE member_key='$adminId'");
+}
+*/

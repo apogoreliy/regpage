@@ -92,7 +92,7 @@ if(!$hasMemberRightToSeePage){
 	});
 
 </script>
-
+<script src="/js/settings.js?v1"></script>
 <?php
 
 include_once 'footer.php';

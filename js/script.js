@@ -9,6 +9,8 @@ function he(str) {
             .replace(/>/g, '&gt;') : "";
 }
 
+window.location.pathname === '/login' ? '' : setCookie('sess_last_page', window.location.pathname, 356);
+getCookie('sess_last_page') === '/login' ? setCookie('sess_last_page', '/index', 356) : '';
 function isValidDate(d) {
   if ( Object.prototype.toString.call(d) !== "[object Date]" )
     return false;
@@ -904,7 +906,7 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
         school_comment : form.find(".emSchoolComment").val(),
         member: window.currentEditMemberId,
         baptized : parseDate (form.find(".emBaptized").val()),
-        page : page !== '/members' && page !== '/reg' && page !== '/admin' ? '/index' : page,
+        page : page !== '/members' && page !== '/reg' && page !== '/admin' ? '/login' : page,
 
         termsUse : form.find('#terms-use-checkbox').prop('checked'),
         isInvitation : isInvitation ? 1 : 0,
@@ -994,7 +996,7 @@ function fillEditMember (memberId, info, localities) {
     else{
         $(".contrib-block, .prepaid-block, .currency-block").hide();
     }
-    console.log(info);
+
     if (info["need_status"]>0){
         $(".emStatusLabel").show();
         $(".emStatus").show();

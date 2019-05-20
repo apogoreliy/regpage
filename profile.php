@@ -1,14 +1,14 @@
-<?php 
+<?php
     include_once "header.php";
     include_once "nav.php";
     include_once './modals.php';
-    
+
     $countries1 = db_getCountries(true);
     $countries2 = db_getCountries(false);
-    $localities = db_getLocalities();   
+    $localities = db_getLocalities();
     $member = db_getProfile($memberId);
     $adminMember = db_getAdminAsMember($memberId);
-    $currentLogin = $member['email'];        
+    $currentLogin = $member['email'];
     $isMemberAdmin = db_isAdmin($memberId);
 ?>
 <div class="container" id="user-profile">
@@ -20,17 +20,17 @@
     <div style="margin: 10px 0 15px 0;" >
         <div class="btn btn-change-login" style="padding: 5px; display: inline">Изменить логин</div>
         <div class="btn btn-change-password" style="padding: 5px; display: inline">Изменить пароль</div>
-    </div>    
+    </div>
     <div class="control-group row-fluid" style="margin-bottom: 5px;">
         <label class="span12">ФИО<span class="example">Пример: Орлов Пётр Иванович</span></label>
         <input class="span12 emName"  style="margin-bottom: 0;" tooltip="tooltipName" value="<?php echo $member['name']; ?>" type="text" maxlength="70" placeholder="Фамилия Имя Отчество">
         <i class="icon-pencil unblock-input" style="display: none;"></i>
         <span style="margin-left: 0; font-size: 11px;" class="example">Если фамилия недавно изменялась, укажите в скобках прежнюю фамилию</span>
-    </div>    
+    </div>
     <div class="control-group row-fluid">
         <label class="span12">Дата рождения</label>
         <input class="span12 emBirthdate datepicker" value="<?php echo UTILS::formatDate($member['birth_date']); ?>" type="text"  maxlength="10" placeholder="ДД.ММ.ГГГГ">
-    </div>      
+    </div>
     <div class="control-group row-fluid">
         <label class="span12">Пол</label>
         <select class="span12 emGender" value="<?php echo $member['gender']; ?>">
@@ -46,17 +46,17 @@
             <?php foreach ($countries1 as $id => $name) {
                 echo "<option value='$id'";
                 echo $member['citizenship_key'] == $id ? 'selected' : '';
-                echo " >".htmlspecialchars ($name)."</option>"; 
+                echo " >".htmlspecialchars ($name)."</option>";
             }?>
             <option disabled="disabled">---------------------------</option>
             <?php foreach ($countries2 as $id => $name) {
-                echo "<option value='$id'"; 
+                echo "<option value='$id'";
                 echo $member['citizenship_key'] == $id ? 'selected' : '';
-                echo " >".htmlspecialchars ($name)."</option>"; 
+                echo " >".htmlspecialchars ($name)."</option>";
             }?>
         </select>
     </div>
-    <div class="control-group row-fluid">    
+    <div class="control-group row-fluid">
         <label class="span12">Населённый пункт</label>
         <select class="span12 emLocality">
             <option value='_none_' selected>&nbsp;</option>
@@ -64,10 +64,10 @@
                 foreach ($localities as $id => $name) {
                     echo "<option value='$id'";
                     echo $member['locality_key'] == $id ? 'selected' : '';
-                    echo " >".htmlspecialchars ($name)."</option>"; 
+                    echo " >".htmlspecialchars ($name)."</option>";
                 }
             ?>
-        </select>                        
+        </select>
     </div>
     <div style="margin-bottom: 10px; color: cadetblue;">
         <span class="handle-new-locality">Вашего населённого пункта нет в списке?</span>
@@ -84,11 +84,11 @@
         <label class="span12">Домашний телефон</label>
         <input class="span12 emHomePhone" type="text" value="<?php echo $member['home_phone']; ?>" maxlength="50" placeholder="+XXXXXXXXXX">
     </div>    -->
-    <div class="control-group row-fluid" style="margin-bottom: 5px;">    
+    <div class="control-group row-fluid" style="margin-bottom: 5px;">
         <label class="span12">Мобильный телефон</label>
         <input style="margin-bottom: 0;" class="span12 emCellPhone" value="<?php echo $member['cell_phone']; ?>" type="text" maxlength="50" placeholder="+XXXXXXXXXX" tooltip="tooltipCellphone">
         <span style="margin-left: 0;" class="example">Если имеется несколько номеров, укажите их через запятую</span>
-    </div>   
+    </div>
     <!--<div style="margin-top: 5px;" class="control-group row-fluid">
         <label class="span12">Уровень английского</label>
         <select class="span12 emEnglishLevel">
@@ -96,7 +96,7 @@
             <option value="1" <?php echo $member['english'] == 1 ? "selected" : ""; ?> >Начальный уровень</option>
             <option value="2" <?php echo $member['english']==2 ? "selected" : ""; ?> >Хороший уровень</option>
         </select>
-    </div>   
+    </div>
     <div class="control-group row-fluid">
         <div class="handle-passport-info" style="margin-bottom: 10px;color: cadetblue" ><strong>Паспортные данные</strong><i style="margin-left: 10px;" class="fa fa-chevron-down fa-lg"></i></div>
     </div>
@@ -167,7 +167,7 @@
     <div class="control-group row-fluid" style="margin-bottom: 10px;">
         <input style="margin-top: 0" type="checkbox" id="btn-notice" class="emNotice" <?php echo $adminMember['notice_reg'] ==1 ? 'checked' : '' ?>>
         <label style="display: inline; font-weight: normal" for="btn-notice">получать уведомления о регистрации участников</label>
-    </div>    
+    </div>
     <?php } ?>
     <div class="control-group row-fluid " style="margin-bottom: 10px; margin-top: 5px;">
         <a class="remove-account" href="#">Удалить учётную запись</a>
@@ -179,7 +179,7 @@
     <div class="control-group row-fluid " style="margin-bottom: 10px; margin-top: 5px;">
         <a class="btn btn-primary" style="width: 100%; padding: 5px 0;" href="/profile" style="color: white;" >Отмена</a>
     </div>
-</div>   
+</div>
 </div>
 <div style="clear: both;"></div>
 
@@ -224,7 +224,7 @@
             </div>
             <input style="width: 100%; padding: 5px 0 5px 5px; margin-top: 10px" class="span12 emNewPassword" placeholder="Введите новый пароль" type="password" maxlength="50">
             <input style="width: 100%; padding: 5px 0 5px 5px; margin-top: 10px" class="span12 emPasswordConfirm" placeholder="Повторите новый пароль" type="password" maxlength="50">
-            
+
             <div class="alert alert-danger" id="passError" style="display: none; width: 100%; padding: 10px 0px 10px 0px; text-align: center; margin-bottom: 10px;">
                 Пароли не соответствуют друг другу
             </div>
@@ -233,7 +233,7 @@
             </div>
             <div class="alert alert-danger" id="passWhiteSpacesError" style="display: none; width: 100%; padding: 10px 0px 10px 0px; text-align: center; margin-bottom: 10px;">
                 Пароль не может содержать пробельные символы
-            </div>            
+            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -254,37 +254,37 @@
     </div>
 </div>
 
-<?php 
+<?php
 include_once "footer.php";
  ?>
 
-<script>        
+<script>
     $(".remove-account").click(function(e){
         e.preventDefault();
         $("#reasonDeleteAccountModal").modal('show');
     });
-    
+
     $(".confirmRemoveAccount").click(function(){
         var reason = $(".reason-remove-account").val().trim();
-        
+
         if(reason === ''){
             showError("Необходимо указать причину удаления учётной записи");
             return;
         }
-        
+
         $.post('/ajax/login.php?remove_account', {member: '<?php echo $memberId; ?>', reason : reason}).done(function(){
             window.location = '/';
         });
-    });    
-    
+    });
+
     $(".btn-change-login").click(function(){
         $(".new-login").val('');
         $("#modalChangeLogin").modal('show');
         setTimeout(function(){
             $(".new-login").focus();
-        }, 1000);        
+        }, 1000);
     });
-    
+
     $(".btn-change-password").click(function(){
         $(".btn-save-password").attr('disabled', true);
         $(".emPassword, .emNewPassword, .emPasswordConfirm").val('');
@@ -293,25 +293,25 @@ include_once "footer.php";
             $(".emPassword").focus();
         }, 1000);
     });
-    
+
     function handlePasswordAlerts(){
         var confirmPassVal = $('.emPasswordConfirm').val(),
             passVal = $('.emNewPassword').val(),
             pass = $('.emPassword').val(),
-            isPasswordHasError = false;  
-        
+            isPasswordHasError = false;
+
         if((pass.length < 5 && pass.length >= 0) || (passVal.length < 5 && passVal.length >= 0) || (passVal !== confirmPassVal && confirmPassVal.length >= 0)){
             isPasswordHasError = true;
         }
-        
+
         if(isStringContainsWhitespace(confirmPassVal) || isStringContainsWhitespace(passVal)) {
-            $('#passWhiteSpacesError').show(); 
+            $('#passWhiteSpacesError').show();
             isPasswordHasError = true;
         }
         else{
             $('#passWhiteSpacesError').hide();
         }
-        
+
         if(passVal.length < 5 && passVal.length > 0){
             $('#passLengthError').show();
             isPasswordHasError = true;
@@ -319,7 +319,7 @@ include_once "footer.php";
         else{
             $('#passLengthError').hide();
         }
-        
+
         if(passVal !== confirmPassVal && confirmPassVal.length > 0){
             $('#passError').show();
             isPasswordHasError = true;
@@ -327,14 +327,14 @@ include_once "footer.php";
         else{
             $('#passError').hide();
         }
-        
+
         $(".btn-save-password").attr('disabled', isPasswordHasError);
         return isPasswordHasError;
     }
-    
-    $('.emPassword').keyup(function(){                
+
+    $('.emPassword').keyup(function(){
         var pass = $(this).val().trim();
-        
+
         if(pass.length >= 5){
             $.post('/ajax/get.php?check_password', {pass: pass})
             .done(function(data){
@@ -352,43 +352,43 @@ include_once "footer.php";
             $(".passRecProfile").css('display', 'none');
         }
     });
-    
-    $('.emNewPassword, .emPasswordConfirm').keyup(function(){                
+
+    $('.emNewPassword, .emPasswordConfirm').keyup(function(){
         handlePasswordAlerts();
-    });       
-    
+    });
+
     /*
     $("#btnDoSendEventMsgAdmins").click (function (){
         if ($(this).hasClass('disabled')) return;
-        
+
         $.ajax({type: "POST", url: "/ajax/set.php", data: {event:"", message: $("#sendMsgTextAdmin").val(), name:$("#sendMsgNameAdmin").val(), email:$("#sendMsgEmailAdmin").val(), admins:"События index.php"}})
         .done (function() {messageBox ('Ваше сообщение отправлено службе поддержки', $('#messageAdmins'));
             $("#sendMsgTextAdmins").val('');
         });
     });
     */
-    
+
     function isStringContainsWhitespace(str){
         return str.indexOf(' ') >= 0;
     }
-    
+
     $(".btn-save-login").click(function(){
         var login = $(".new-login").val().trim();
         var currentLogin = '<?php echo $currentLogin; ?>';
-        
+
         if(currentLogin.trim() === login){
             showError("Ваш новый логин такой же как и старый.");
             return;
         }
         else if(login === '' || !isEmailvalid(login)){
             login === '' ? showError("Логин не может быть пустой строкой") : showError("Логин некорректный. Проверьте правильность написания");
-            return;                        
+            return;
         }
         else{
             $("#modalChangeLogin").modal('hide');
             $("#modalShowChangeLoginInfo").modal('show');
-            $("#modalShowChangeLoginInfo").parents('.modal-scrollable').css('z-index', 9999);            
-            
+            $("#modalShowChangeLoginInfo").parents('.modal-scrollable').css('z-index', 9999);
+
             $.post('/ajax/set.php?set_login', {login : login})
             .done(function(data){
                 if(data.result){
@@ -398,20 +398,20 @@ include_once "footer.php";
                     showError("Укажите логин");
                 }
             });
-        }                
+        }
     });
-    
+
     $(".btn-save-password").click(function(){
         var pass = $(".emPassword").val().trim();
         var newPass = $(".emNewPassword").val().trim();
         var newPassConfirm = $(".emPasswordConfirm").val().trim();
-        
+
         if($(".btn-save-password").attr('disabled') === 'disabled' || handlePasswordAlerts() || (newPass!== '' && newPass !== newPassConfirm)){
             $(".btn-save-password").attr('disabled', true);
             showError("Введите корректные данные для паролей");
             return;
-        }                
-        
+        }
+
         $.post('/ajax/set.php?set_password', {pass:pass, newPass: newPass})
         .done(function(data){
             if(data.result){
@@ -424,10 +424,10 @@ include_once "footer.php";
             }
         });
     });
-    
+
     $('.saveProfile').click(function(){
         var el = $('#user-profile');
-        
+
         $.post("/ajax/set.php?set_profile",{
             name: el.find(".emName").val (),
             birth_date: parseDate (el.find(".emBirthdate").val()),
@@ -443,6 +443,6 @@ include_once "footer.php";
             $('.user-name').text(el.find(".emName").val ());
             showHint("Ваши данные успешно сохранены!");
         });
-    });    
+    });
 </script>
-    
+<script src="/js/profile.js?v1"></script>
