@@ -884,7 +884,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
     $res=db_query ("SELECT DISTINCT * FROM
   (
     SELECT m.key as id, m.name as name, IF (COALESCE(l.name,'')='', m.new_locality, l.name) as locality, m.email as email,
-        m.cell_phone as cell_phone, reg.arr_date, reg.arr_time, reg.dep_date, reg.dep_time, reg.regstate_key as regstate,
+        m.cell_phone as cell_phone, m.locality_key as locality_key, reg.arr_date, reg.arr_time, reg.dep_date, reg.dep_time, reg.regstate_key as regstate,
         (reg.changed>0 or m.changed>0) as changed, m.admin_key as mem_admin_key, e.web,
         reg.admin_key as reg_admin_key, (SELECT name FROM member m2 WHERE m2.key=m.admin_key) as mem_admin_name, m.male,
         (SELECT name FROM member m3 WHERE m3.key=reg.admin_key) as reg_admin_name, reg.send_result, stts.name as status, srv.name as service,
@@ -913,7 +913,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
     WHERE a.member_key='$adminId' AND reg.event_key='$eventId' $searchText $_regstate $_locality
     UNION
     SELECT m.key as id, m.name as name, IF (COALESCE(l.name,'')='', m.new_locality, l.name) as locality, m.email as email,
-        m.cell_phone as cell_phone, reg.arr_date, reg.arr_time, reg.dep_date, reg.dep_time, reg.regstate_key as regstate,
+        m.cell_phone as cell_phone, m.locality_key as locality_key, reg.arr_date, reg.arr_time, reg.dep_date, reg.dep_time, reg.regstate_key as regstate,
         (reg.changed>0 or m.changed>0) as changed, m.admin_key as mem_admin, e.web,
         reg.admin_key as reg_admin, (SELECT name FROM member m2 WHERE m2.key=m.admin_key) as mem_admin_name, m.male,
         (SELECT name FROM member m3 WHERE m3.key=reg.admin_key) as reg_admin_name, reg.send_result, stts.name as status, srv.name as service,
@@ -980,7 +980,7 @@ function db_getDashboardMembersService ($eventId, $attended, $regstate, $sortFie
 
     $res=db_query ("SELECT DISTINCT * FROM (
         SELECT m.key as id, m.name as name, IF (COALESCE(l.name,'')='', m.new_locality, l.name) as locality,
-        m.email as email, m.cell_phone as cell_phone, m.birth_date,
+        m.email as email, m.cell_phone as cell_phone, m.birth_date, m.locality_key as locality_key,
         (SELECT name FROM member m2 WHERE m2.key=m.admin_key) as mem_admin_name,
         m.admin_key as mem_admin_key, m.male, m.document_num as document_num,
         m.document_auth as document_auth, m.document_date as document_date, stts.name as status,
@@ -1010,7 +1010,7 @@ function db_getDashboardMembersService ($eventId, $attended, $regstate, $sortFie
         WHERE reg.event_key=$eventId $searchText $_attended $_regstate $_service $_coord $_locality
         UNION
         SELECT m.key as id, m.name as name, '' as locality,
-        m.email as email, m.cell_phone as cell_phone, m.birth_date,
+        m.email as email, m.cell_phone as cell_phone, m.birth_date, m.locality_key as locality_key,
         (SELECT name FROM member m2 WHERE m2.key=m.admin_key) as mem_admin_name,
         m.admin_key as mem_admin_key, m.male, m.document_num as document_num,
         m.document_auth as document_auth, m.document_date as document_date, stts.name as status,
