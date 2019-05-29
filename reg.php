@@ -971,12 +971,18 @@
 
         var localityFilter = $(".filterLocality-"+eventId+" option:selected").text().trim();
         var regstateFilter = $("#eventTab-"+eventId+" .filter-regstate").val();
-        var memberLocality, memberRegstate;
+        var memberLocality, memberRegstate, localityList = [], memberLocalityKey;
+        var localityFilterList = $(".filterLocality-"+eventId).val();
 
+        if(localityFilterList){
+            localityList = localityFilterList.split(',');
+        }
+console.log('Im here ',localityList);
         $("#eventTab-"+eventId+mode+" tbody tr[class!='regmem']").each(function(){
             memberLocality = $(this).attr('data-locality');
+            memberLocalityKey = $(this).attr('data-locality_key');
             memberRegstate = $(this).attr('data-regstate');
-            (localityFilter === 'Все местности' || memberLocality === localityFilter || (memberLocality==='' && localityFilter === 'Местность не указана' ))
+            (localityFilter === 'Все местности' || in_array(memberLocalityKey, localityList) || (memberLocality==='' && localityFilter === 'Местность не указана' ))
             && (regstateFilter === '_all_' || (memberRegstate === 'null' && regstateFilter==='01') || (memberRegstate === '03' && regstateFilter==='03') || (memberRegstate === '04' && regstateFilter==='04') || (memberRegstate === '05' && regstateFilter==='05') || ((memberRegstate === '01' || memberRegstate === '02') && regstateFilter==='02')) ?
             $(this).show() : $(this).hide();
         });
@@ -1111,7 +1117,7 @@ setTimeout(function () {
             var htmlService = m.service ? '<i class="fa fa-wrench" title="'+he(m.service)+'" aria-hidden="true"></i>' :'';
             var coordFlag = m.coord == '1' ? '<i title="Координатор" class="fa fa-random" aria-hidden="true"></i>' : '';
 
-            var dataItems = 'data-accom="'+m.accom+'" data-transport="'+m.transport+'" data-male="'+m.male+'" '+
+            var dataItems = 'data-accom="'+m.accom+'" data-transport="'+m.transport+'" data-locality_key="'+m.locality_key+'" data-male="'+m.male+'" '+
                     'data-parking="'+m.parking+'" data-regstate="'+m.regstate+'" data-prepaid="'+m.prepaid+'" data-locality="'+he(m.locality)+'"' +
                     'data-attended="'+m.attended+'" data-aid_paid="'+(m.aid_paid || 0)+'" data-paid="'+m.paid+'" '+
                     'data-place="'+(m.place || "") +'" data-service="'+m.service_key+'" data-status="'+m.status_key+'" data-coord="'+m.coord+'" data-mate="'+m.mate_key+'" '+
