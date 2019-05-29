@@ -43,7 +43,7 @@ if (!isset($isGuest))
         header("Location: ".$appRootPath."login?returl=".urlencode ($_SERVER["REQUEST_URI"]));
     	exit;
     }
-    else if($memberId && count(db_getAdminEventsRespForReg($memberId)) == 0 && !db_isAdmin($memberId) && !db_isAvailableMeetingPage($memberId) && preg_match("/(signup.php)|(passrec.php)|(index.php)|(profile.php)|(links.php)/", $_SERVER["SCRIPT_NAME"])==0){
+    else if($memberId && count(db_getAdminEventsRespForReg($memberId)) == 0 && !db_isAdmin($memberId) && !db_isAvailableMeetingPage($memberId) && preg_match("/(index.php)|(signup.php)|(passrec.php)|(login.php)|(profile.php)|(links.php)/", $_SERVER["SCRIPT_NAME"])==0){
         header("Location: ".$appRootPath);
     	exit;
     }

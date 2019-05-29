@@ -650,6 +650,18 @@ input.error, .control-group.error select, textarea.error {
 .GM-meeting{
     background-color: #a4ecb7;
 }
+.CM-meeting{
+    background-color: yellow;
+}
+.HM-meeting{
+    background-color: darkgray;
+}
+.YM-meeting{
+    background-color: orange;
+}
+.KM-meeting{
+    background-color: violet;
+}
 .statistic-bar-form{
     margin-left: 2px;
     margin-right: 5px;

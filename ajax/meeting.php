@@ -30,6 +30,10 @@ if(isset($_GET['get_meetings'])){
     echo json_encode(["meetings"=>db_getMeetings($adminId, $sort_type, $sort_field, $_GET['localityFilter'], $_GET['meetingFilter'], $_GET['startDate'],$_GET['endDate'])]);
     exit();
 }
+if(isset($_GET['get_meetings_for_statistics'])){
+    echo json_encode(["meetings"=>db_getMeetingsForStatistics($_GET['adminId'], $_GET['localityFilter'], $_GET['meetingFilter'], $_GET['startDate'],$_GET['endDate'])]);
+    exit();
+}
 else if(isset($_GET['get_list']) && isset($_POST['meeting_id'])){
     echo json_encode(["list"=>db_getMeetingMembersList($adminId, $_POST['meeting_id'], $_POST['locality'], $_POST['date'], $_POST['is_summary_meeting'], $_POST['meeting_type'])]);
     exit();
@@ -46,8 +50,8 @@ else if(isset ($_GET['remove'])){
 }
 else if(isset($_GET['set_meeting'])){
     $isDoubleMeeting = db_setMeeting($_POST);
-            
-    echo json_encode(["meetings"=>db_getMeetings($adminId, $sort_type, $sort_field, $_GET['localityFilter'], $_GET['meetingFilter'], $_GET['startDate'],$_GET['endDate']), 
+
+    echo json_encode(["meetings"=>db_getMeetings($adminId, $sort_type, $sort_field, $_GET['localityFilter'], $_GET['meetingFilter'], $_GET['startDate'],$_GET['endDate']),
                       "isDoubleMeeting"=>$isDoubleMeeting]);
     exit();
 }
@@ -101,7 +105,7 @@ elseif(isset ($_GET['add_template_meeting'])){
 elseif(isset ($_GET['delete_participants'])){
     db_deleteTemplateParticipant($_POST['memberId'], $_POST['mode'], $_POST['templateId']);
 
-    echo json_encode(["participants"=> db_getMeetingTemplateParticipantList($_POST['templateId'], $_POST['mode']), 
+    echo json_encode(["participants"=> db_getMeetingTemplateParticipantList($_POST['templateId'], $_POST['mode']),
                       "templates" => db_getMeetingTemplates($adminId)]);
     exit;
 }
@@ -112,7 +116,7 @@ elseif(isset ($_GET['get_available_members'])){
 elseif(isset ($_GET['add_participants'])){
     db_addTemplateParticipant($_POST['mode'], $_POST['participantId'], $_POST['templateId']);
 
-    echo json_encode(["participants"=> db_getMeetingTemplateParticipantList($_POST['templateId'], $_POST['mode']), 
+    echo json_encode(["participants"=> db_getMeetingTemplateParticipantList($_POST['templateId'], $_POST['mode']),
                       "templates" => db_getMeetingTemplates($adminId)]);
     exit;
 }
@@ -121,6 +125,6 @@ elseif(isset($_GET['get_locality_members'])){
     exit;
 }
 elseif(isset ($_GET['get_member'])){
-    echo json_encode(["members" => db_getMembersByLocality($_POST['localityId'])]);    
+    echo json_encode(["members" => db_getMembersByLocality($_POST['localityId'])]);
     exit;
 }

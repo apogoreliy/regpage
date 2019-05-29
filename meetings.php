@@ -29,7 +29,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <a class="btn btn-success add-meeting" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
                 <a class="btn btn-primary show-templates" type="button"><i class="fa fa-list"></i> <span class="hide-name">Шаблоны</span></a>
                 <a class="btn btn-meeting-members-statistic" href="#">
-                    <i class="fa fa-bar-chart" title="Поименная статистика" aria-hidden="true"></i>
+                    <i class="fa fa-bar-chart" title="Поимённая статистика" aria-hidden="true"></i>
                 </a>
                 <a class="btn btn-meeting-general-statistic" href="#">
                     <i class="fa fa-area-chart" title="Общая статистика" aria-hidden="true"></i>
@@ -49,7 +49,6 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                         </li>
                         <li><a id="sort-meeting_type" href="#" title="сортировать">Собрание</a>&nbsp;<i class="<?php echo $sort_field=='meeting_type' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                         <li><a id="sort-list_count" href="#" title="сортировать">На собрании</a>&nbsp;<i class="<?php echo $sort_field=='list_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
-                        <li><a id="sort-members_count" href="#" title="сортировать">По списку</a>&nbsp;<i class="<?php echo $sort_field=='members_count' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                     </ul>
                 </div>
                 <div class="input-group input-daterange datepicker">
@@ -248,7 +247,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 <div id="modalMeetingStatistic" data-width="900" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3>Поименная статистика</h3>
+        <h3>Поимённая статистика</h3>
     </div>
     <div class="modal-body">
         <select id="meetingTypeStatistic" class="span2">
@@ -273,6 +272,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <input type="text" class="span2 end-date-statistic-members" value="<?php echo date('d.m.Y'); ?>">
         </div>
         <i class="btn btn-meeting-download-members-statistic fa fa-download" title="Скачать общую статистику" aria-hidden="true"></i>
+        <input id="showAllMembersCkbx" type="checkbox"style="margin-bottom: 7px;  margin-left: 15px;"><span style="margin-left: 7px;">Только участники</span>
         <div style="margin-bottom: 10px;">
             <?php
                     foreach ($meetingsTypes as $type => $name){
@@ -634,7 +634,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     </div>
 </div>
 
-<script src="/js/meetings.js?v62"></script>
+<script src="/js/meetings.js?v90"></script>
 <?php
     include_once './footer.php';
 ?>

@@ -34,6 +34,10 @@ elseif(isset($_GET['get_team_email'])){
     echo json_encode(["email"=> isset($_POST['eventId']) ? db_getTeamEmail($_POST['eventId']) : null]);
     exit();
 }
+elseif(isset($_GET['get_team_email_event'])){
+    echo json_encode(["email"=> isset($_POST['eventId']) ? db_getTeamEmailFromEvents($_POST['eventId']) : null]);
+    exit();
+}
 elseif(isset($_GET['get_user_emails'])){
     echo json_encode(["emails"=> db_getUserEventEmails($_POST['memberId'], $_POST['eventId'])]);
     exit();

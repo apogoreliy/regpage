@@ -8,12 +8,13 @@ if(isset($_GET["logout"])){
         db_logoutAdmin ($_GET['memberId'], $_GET['sessionId']);
     }
     exit();
-}/* else if(isset($_GET["logout_total"])){
+}
+else if(isset($_GET["logout_total"])){
     if (isset($_GET["memberId"])){
         db_logoutAdminTotal ($_GET['memberId']);
     }
     exit();
-}*/
+}
 else if (isset($_GET["signup"])) {
     $res = db_signUpMember(session_id(), $_GET['signupLogin'], $_GET['password'], $_GET['name'],  $_GET['birthDate'], $_GET['gender'], $_GET['citizenship'], $_GET['locality'], $_GET['newLocality']);
 

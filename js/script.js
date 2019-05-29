@@ -9,13 +9,18 @@ function he(str) {
             .replace(/>/g, '&gt;') : "";
 }
 
-window.location.pathname === '/login' ? '' : setCookie('sess_last_page', window.location.pathname, 356);
-getCookie('sess_last_page') === '/login' ? setCookie('sess_last_page', '/index', 356) : '';
+//window.location.pathname === '/login' || '/login.php' ? '' : setCookie('sess_last_page', window.location.pathname, 356);
+//getCookie('sess_last_page') === '/login' ? setCookie('sess_last_page', '/reg', 356) : '';
 function isValidDate(d) {
   if ( Object.prototype.toString.call(d) !== "[object Date]" )
     return false;
   return !isNaN(d.getTime());
 }
+function DateSplitAndParce(item) {
+  var dateParts = item.split(".");
+  var date = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
+  return  date
+  }
 
 function formatDate (date) {
 	var d = new Date(date);

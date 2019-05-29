@@ -24,7 +24,7 @@ include_once "preheader.php";
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
     <link href="css/bootstrap-modal.css" rel="stylesheet" />
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet" />
-    <link href="css/style.css?v21" rel="stylesheet" />
+    <link href="css/style.css?v25" rel="stylesheet" />
 
     <script src="js/jquery.min.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js" type="text/javascript"></script>
