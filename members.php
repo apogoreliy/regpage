@@ -633,9 +633,13 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
 
         $("#check-all-download-checkboxes").change(function(){
             var checkAll = $(this).prop('checked');
+            var a = 0;
 
             $(this).parents("#modalDownloadMembers").find(".download-checkboxes input[type='checkbox']").each(function(){
+              $(this).attr('id')==='member-name' ? a = 1 : a = 0;              
+              if (a === 0) {
                 $(this).prop('checked', checkAll);
+              }
             });
         });
 

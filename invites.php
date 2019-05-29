@@ -25,10 +25,10 @@
 
         $invitationEvent = db_getEvent((int)$invitation[0]);
         $invitationMember = db_getMember(str_repeat("0", 9 - strlen((int)$invitation[1])).''.(int)$invitation[1]);
-
-        if($invitationEvent !== null && $invitationMember !== null){
+        $_SESSION["logged-in"]=$isInvited=true;
+      /*  if($invitationEvent !== null && $invitationMember !== null){
             $_SESSION["logged-in"]=$isInvited=true;
-        }
+        }*/
     }
     /* ******************* */
 
@@ -59,25 +59,9 @@
 ?>
 
 <div class="container">
-    <form class="form-signin">
-        <label class="control-label" for="login" style="margin-top: 50px;">Логин</label>
-        <input type="text" id="login" name="login" placeholder="Email">
-        <label class="control-label" for="password">Пароль</label>
-        <input type="password" id="password" name="password" maxlength="15">
-        <!--<div id="passRec" style="display:none"><a href="/passrec">Забыли пароль?</a></div>-->
-        <div id="loginError" class="alert alert-error" style="display:none">Неверно введены логин или пароль</div>
-        <div id="emailError" class="alert alert-error" style="display:none">Логином должен быть корректный email</div>
-        <div id="ajaxError" class="alert alert-error" style="display:none">Ошибка сервера. Обратитесь к разработчикам.</div>
-        <div id="passLengthError" class="alert alert-error" style="display:none">Длинна пароля должна быть не меньше 5 и не больше 15 символов</div>
-        <div><a href="/passrec">Забыли пароль?</a></div>
-        <button type="submit" id="loginFormBtn" class="btn btn-large btn-primary">Войти</button>
-    </form>
-</div>
-<div class="container">
-    <div class="form-logout" style="text-align: center">
-        <h3 style="text-align: center">Выйти из аккаунта?</h3>
-        <a type="button" id="" href="/" class="btn btn-large btn-primary logoutFormBtn">Выйти</a>
-    </div>
+  <form class="form-signin">
+        <button type="button" id="escapeFormInvites" class="btn btn-large btn-primary" style="margin-left: auto; margin-right: auto">Вернуться на главную страницу</button>
+  </form>
 </div>
 <!-- Edit Member Modal -->
 <div id="modalEditMember" data-width="600" class="modal-edit-member modal hide<?php if ($isLink || $isInvited) echo ' fade'; ?>" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-labelledby="editMemberEventTitle">
@@ -110,21 +94,7 @@
 <script>
 
 $(document).ready(function(){
-  $('.logoutFormBtn').click(function(e){
-      e.preventDefault();
 
-      var memberId = '<?php echo $memberId; ?>';
-      var getSessionId = "<?php print(session_id()); ?>"
-      $.get('ajax/login.php?logout', {memberId: memberId, sessionId: getSessionId})
-      .done (function() {
-          window.location = "/";
-          //document.cookie = "sess_last_page; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      })
-      .fail(function() {
-          window.location = "/";
-      })
-
-  });
     function showSuccessMessage (text, link){
         $("#regSuccessTitle").text (window.currentEventName);
         $("#regSuccessText").html (text);
@@ -201,7 +171,7 @@ $(document).ready(function(){
                 <?php if(!isset($memberId)){?>
                     showSuccessMessage (<?php echo $isLink ? "data.messages.save_message, null" : "data.messages.reg_message, data.permalink"; ?>);
                 <?php }else{ ?>
-                    window.location = '/';
+                    window.location = location.host;
                 <?php } ?>
             }
         });
@@ -244,63 +214,13 @@ $(document).ready(function(){
 
     <?php } ?>
 
-    $('#password').keydown(function(){
-        $("#passLengthError").hide ();
-    });
-
-    $('#login').keydown(function(){
-        $("#loginError,#emailError").hide ();
-    });
 });
 
-$("#loginFormBtn").click (function (e){
-  var loginTrim = $('#login').val();
-  loginTrim = loginTrim.trim();
-    var emailValidate = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    var password = $("#password").val();
-
-    if(!emailValidate.test(loginTrim)){
-        $('#loginError').hide();
-        $("#emailError").show ();
-        e.stopPropagation();
-        e.preventDefault();
-        return;
-    }
-
-    if(password.length < 5 || password.length > 15){
-        $("#passLengthError").show ();
-        e.stopPropagation();
-        e.preventDefault();
-        return;
-    }
-
-    $.get('ajax/login.php', { login: loginTrim, password:$("#password").val() })
-    .done (function(data) {
-        $("#ajaxError").hide ();
-
-        if(data === "error"){
-            $("#emailError").hide ();
-            $('#loginError').show();
-            //$('#passRec').show();
-        }
-        else{
-            $("#loginError").hide ();
-
-            if(!getCookie('sess_last_page')) {
-               setCookie('sess_last_page', '/index', 356);
-            }
-            window.location = "<?php print(substr($appRootPath, 0, -1).(isset ($_GET['returl'])?urldecode($_GET['returl']):$_SESSION["sess_last_page"])); ?>";
-            //var getSessionId = "<?php print(session_id()); ?>"
-            //(in_array(9, window.user_settings) ? '':'';
-            //setCookie('sess_page_default','', 356);
-        }
-    })
-    .fail(function() { $("#ajaxError").show (); });
-    return false;
+$("#escapeFormInvites").click (function (){
+      window.location = '/';
 });
 
 </script>
-<script src="/js/login.js?v5"></script>
 <?php
 include_once "footer.php";
 ?>

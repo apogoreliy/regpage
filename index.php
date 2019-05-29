@@ -792,7 +792,7 @@ $(document).ready(function(){
                   var eventName = modal.attr ('data-name');
                   window.currentEventId = eventId;
 
-                  $('#modalRejectMember span').html('Вы действительно хотите отменить регистрацию на <h4>' + eventName + '?</h4>');
+                  $('#modalRejectMember span').html('Вы действительно хотите отменить регистрацию на мероприятие <h4>' + eventName + '?</h4>');
                   $('#modalRejectMember').modal('show');
                 });
 
@@ -1303,7 +1303,7 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
             $(this).parents ('div.modal').modal('hide');
         <?php } else { ?>
         var locHost = location.host, host;
-        host = locHost == 'localhost:8080' ? 'http://localhost:8080/' : locHost.substr(4,3) !== 'dev'? 'http://reg-page.ru/' : 'http://www.dev.reg-page.ru/';
+        host locHost.substr(4,3) !== 'dev'? 'http://reg-page.ru/' : 'http://www.dev.reg-page.ru/';
         window.location = host ;
         <?php } ?>
     });

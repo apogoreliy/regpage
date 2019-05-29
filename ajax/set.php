@@ -195,7 +195,7 @@ elseif (isset ($_GET ['set_profile'])) {
 }
 elseif (isset ($_GET ['set_password'])) {
     if(isset($_POST['pass']) && db_isPasswordValid($adminId, $_POST['pass']) && isset($_POST['newPass']) && strlen($_POST['newPass']) >= 5){
-        db_setUserPassword($adminId, $_POST['newPass']);
+        db_setUserPassword($adminId, $_POST['newPass'],session_id());
         echo json_encode(["result"=> true]);
     }
     else{

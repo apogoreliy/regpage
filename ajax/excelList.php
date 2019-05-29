@@ -27,13 +27,13 @@ if(isset($_POST['data'])){
     $file = $_POST['data'];
     unlink($file);
 }
-else if ($_POST['page'] == 'reg' && isset($_POST ['parking'])) {    
+else if ($_POST['page'] == 'reg' && isset($_POST ['parking'])) {
     $memberslength = $_POST ['memberslength'];
     $membersAll = json_decode($_POST ['members'], TRUE);
 
     $title =  'Данные о парковке';
-    $num=1;       
-    
+    $num=1;
+
     $objPHPExcel = new PHPExcel();
     $objPHPExcel->getProperties()->setCreator("PHP")
         ->setLastModifiedBy("reg-page")
@@ -42,7 +42,7 @@ else if ($_POST['page'] == 'reg' && isset($_POST ['parking'])) {
         ->setDescription("Office 2007 XLSX, сгенерированный PHPExcel.")
         ->setKeywords("office 2007 openxml php")
         ->setCategory("Тестовый файл");
-    
+
     $active_sheet = $objPHPExcel->getActiveSheet();
     $active_sheet->setTitle($title);
     $active_sheet->getColumnDimension('A')->setWidth(6);
@@ -74,8 +74,8 @@ else if ($_POST['page'] == 'reg' && isset($_POST ['parking'])) {
         'alignment' => array(
             'horizontal' => PHPExcel_STYLE_ALIGNMENT::HORIZONTAL_CENTER,
         )
-    );           
-    
+    );
+
     $objPHPExcel->setActiveSheetIndex(0)
         ->setCellValue('A1', '№')
         ->setCellValue('B1', 'Номер')
@@ -83,28 +83,28 @@ else if ($_POST['page'] == 'reg' && isset($_POST ['parking'])) {
         ->setCellValue('D1', 'ФИО')
         ->setCellValue('E1', 'Телефон')
         ->setCellValue('F1', 'Дата приезда')
-        ->setCellValue('G1', 'Дата отъезда');         
+        ->setCellValue('G1', 'Дата отъезда');
 
-    for($i=2, $m=0; $m < $memberslength; $m++){   
+    for($i=2, $m=0; $m < $memberslength; $m++){
         if($membersAll[$m]['parking']){
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue("A$i", $num)
                 ->setCellValue("B$i", $membersAll[$m]['avtomobile_number'])
                 ->setCellValue("C$i", $membersAll[$m]['avtomobile'])
-                ->setCellValue("D$i", $membersAll[$m]['name'])                    
+                ->setCellValue("D$i", $membersAll[$m]['name'])
                 ->setCellValue("E$i", $membersAll[$m]['cell_phone'])
                 ->setCellValue("F$i", $membersAll[$m]['arr_date'])
                 ->setCellValue("G$i", $membersAll[$m]['dep_date']);
             $i++;
             $num ++;
-        }        
+        }
     }
 
     $active_sheet->getStyle('A1:G1')->applyFromArray($style_wrap);
-    
+
     //$admin = isset($_POST['adminId']) ? $_POST['adminId'] : '';
     $event = 'parking';
-    
+
     $date = date('Y-m-d');
     $time = date('H:i');
     $file = $date.'_'.$event.' ('.$time.')';
@@ -314,6 +314,9 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
     $ind = 'B';
     for ($d=0; $d < $fieldsCount; $d++) {
         switch ($fields[$d]) {
+            case 'name':
+              $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Участник');
+              break;
             case 'locality':
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Город');
                 break;
@@ -417,19 +420,19 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
                         $birthDate = $birthDate ? $birthDate : 'Не указан';
                         // $birthDate = $membersAll[$m]['age'] ? $birthDate.$suffix : 'Не указан';
                         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $birthDate);
-                        break;   
-                    case 'male':  
+                        break;
+                    case 'male':
                         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['male'] == 1 ? "Брат" : "Сестра");
-                        break;  
-                    case 'attend_meeting':  
+                        break;
+                    case 'attend_meeting':
                         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['attend_meeting'] == 1 ? "Посещает" : "");
-                        break;             
+                        break;
                     case 'school':
                         $category = $membersAll[$m]['category_key'];
                         $age = (int)$membersAll[$m]['age'];
                         $isSchool = $category == "SC" || $category == "PS" || ( $age < 18 && $age > 6 );
                         $isCollege = $category == "ST" || ($category == "SC" && $age > 15) ;
-                        
+
                         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $isCollege ? "" : ( $isSchool ? "Школа" : ""));
                         break;
                     case 'school_start':
@@ -474,7 +477,7 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
                                 $courseLevel = $courseLevel+" курс";
                             }
                         }
-        
+
                         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $courseLevel);
                         break;
                     case 'college_comment':
@@ -509,12 +512,12 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
 
     $fieldsCount = $fields['name']['arr_date'] ? count($fields)+1 : count($fields);
     $eventType = $_POST["event_type"];
-    
+
     $title = (isset($_POST ['coord']))? ('Список координаторов') : (isset($_POST ['service'])? 'Список служащих' : 'Полный список');
     $num=1;
-    
+
     $shouldTranslateFields =  $_POST['need_translation'] == 'yes';
-    
+
     $objPHPExcel = new PHPExcel();
     $objPHPExcel->getProperties()->setCreator("PHP")
                     ->setLastModifiedBy("reg-page")
@@ -576,8 +579,8 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
         )
     );
 
-    $active_sheet->getStyle('A1:'.$ind_count.'1')->applyFromArray($style_wrap);        
-    
+    $active_sheet->getStyle('A1:'.$ind_count.'1')->applyFromArray($style_wrap);
+
     function translitWords($str){
         $rus = array('/Rossiya/', '/Ukraina/', '/Moskva/', '/Sankt-Peterburg/', '/Rostov-na-Donu/', '/Украина/',
             '/Россия/', '/Армения/', '/Азербайджан/', '/Белоруссия/', '/Bulgaria/', '/Грузия/', '/Израиль/',
@@ -590,13 +593,13 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
             'Latvia', 'Lithuania', 'Moldova','Mongolia','Romania', 'Turkmenistan', 'Uzbekistan', 'Estonia','', 'Crimea');
         return preg_replace ( $rus , $lat, $str);
     }
-    
+
     function translitLetters($str) {
         $rus = array('А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я');
         $lat = array('A', 'B', 'V', 'G', 'D', 'E', 'E', 'Zh', 'Z', 'I', 'Y', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', 'Kh', 'Ts', 'Ch', 'Sh', 'Sch', 'Y', 'Y', 'Y', 'Eh', 'Yu', 'Ya', 'a', 'b', 'v', 'g', 'd', 'e', 'e', 'zh', 'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', 'kh', 'ts', 'ch', 'sh', 'sch', 'y', 'y', 'y', 'eh', 'yu', 'ya');
         return str_replace($rus, $lat, $str);
-    }              
-    
+    }
+
     if(isset($_POST ['all'])){
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', '№')
@@ -607,6 +610,9 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
             switch ($fields[$d]['name']) {
                 case 'birth_date':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Birth date' : 'Дата рождения');
+                    break;
+                case 'age':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Возраст');
                     break;
                 case 'locality':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Locality' : 'Город');
@@ -685,7 +691,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Комментарий участника');
                     break;
                 case 'paid':
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Внесенный взнос');
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Внесённый взнос');
                     break;
             }
             $ind ++;
@@ -704,10 +710,10 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
             ->setCellValue('I1', 'Дата приезда')
             ->setCellValue('J1', 'Дата отъезда')
             ->setCellValue('K1', 'Время приезда')
-            ->setCellValue('L1', 'Время отъезда')            
+            ->setCellValue('L1', 'Время отъезда')
             ->setCellValue('M1', 'Состояние регистрации');
     }
-    
+
     for($i=2, $m=0; $m<$memberslength; $m++){
         if((isset($_POST ['coord']))? ($membersAll[$m]['coord']=='1') : (isset($_POST ['service'])? $membersAll[$m]['service']!='' : "true")) {
             for($j=0; $j<9; $j++) {
@@ -739,8 +745,8 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                         break;
                     default :
                         $registrate = 'не зарегистрирован';
-                }                                
-                
+                }
+
                 switch ($membersAll[$m]['visa']) {
                     case '1':
                         $visa = 'Не требуется';
@@ -753,8 +759,8 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                         break;
                     default :
                         $visa = 'Не заполнено';
-                }   
-                
+                }
+
                 switch ($membersAll[$m]['english']) {
                     case '0':
                         $english = 'не владеет';
@@ -767,8 +773,8 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                         break;
                     default :
                         $english = 'не заполнено';
-                }   
-                
+                }
+
                 if (isset($_POST ['all'])) {
                     $ind = 'C';
                     foreach ($fields as $d) {
@@ -776,6 +782,9 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                         switch ($d['name']) {
                             case 'birth_date':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['birth_date']);
+                                break;
+                            case 'age':
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, getAge($membersAll[$m]['birth_date']));
                                 break;
                             case 'locality':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $shouldTranslateFields ? translitWords(translitLetters($locality)) : $locality);
@@ -817,7 +826,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                                 break;
                             case 'document':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['document_name']." ". $membersAll[$m]['document_num']." ".$membersAll[$m]['document_auth']." ".$membersAll[$m]['document_date']);
-                                break;               
+                                break;
                             case 'visa':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $visa);
                                 break;
@@ -871,7 +880,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                         ->setCellValue("K$i", $membersAll[$m]['arr_time'])
                         ->setCellValue("L$i", $membersAll[$m]['dep_time'])
                         ->setCellValue("M$i", $registrate);
-                }                
+                }
             }
         $i++;
         $num++;
@@ -880,7 +889,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
 
     $admin = $_POST['adminId'];
     $event = (isset($_POST ['coord']))? ('-coord') : (isset($_POST ['service'])? '-service' : '-all');
-    
+
     $date = date('Y-m-d');
     $time = date('H:i');
     $file = $date.'_'.$eventType.' ('.$time.')';
@@ -891,7 +900,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
 
     $filename = $file.'.xlsx';
     echo $filename;
-        
+
 }
 else if (isset($_POST ['members']) && ($_POST['page'] == 'meeting_members')) {
     $members = json_decode($_POST ['members'], TRUE);
@@ -904,9 +913,9 @@ else if (isset($_POST ['members']) && ($_POST['page'] == 'meeting_members')) {
         ->setDescription("Office 2007 XLSX, сгенерированный PHPExcel.")
         ->setKeywords("office 2007 openxml php")
         ->setCategory("Тестовый файл");
-    
+
     $active_sheet = $objPHPExcel->getActiveSheet();
-    $active_sheet->setTitle('Статистика посещения');    
+    $active_sheet->setTitle('Статистика посещения');
     $active_sheet->getColumnDimension('A')->setWidth(4);
     $active_sheet->getColumnDimension('B')->setWidth(40);
     $active_sheet->getColumnDimension('C')->setWidth(15);
@@ -932,75 +941,75 @@ else if (isset($_POST ['members']) && ($_POST['page'] == 'meeting_members')) {
         'alignment' => array(
             'horizontal' => PHPExcel_STYLE_ALIGNMENT::HORIZONTAL_CENTER,
         )
-    );   
-    
+    );
+
     $meetingsDates = [];
-    
+
     $objPHPExcel->setActiveSheetIndex(0)
         ->setCellValue('A1', '№')
         ->setCellValue('B1', 'ФИО')
         ->setCellValue('C1', 'Местность');
-    
+
     $rowIndex = 'D';
-    $columnNumber=1;    
+    $columnNumber=1;
     $rowNumber=2;
-    
+
     $members_count = isset($_POST['members_count']) ? (int)$_POST['members_count'] : 0;
     $list_count = isset($_POST['list_count']) ? (int)$_POST['list_count'] : 0;
     $startDate = isset($_POST['start_date']) ? $_POST['start_date'] : '';
     $endDate = isset($_POST['end_date']) ? $_POST['end_date'] : '';
-    
-    // get dates for headers. 
-    foreach($members as $member){        
+
+    // get dates for headers.
+    foreach($members as $member){
         $meetings = explode(',', $member['meetings']);
-        
+
         foreach($meetings as $meeting){
             $meetingDate = substr($meeting, 3);
             if(!in_array($meetingDate, $meetingsDates)){
-                $meetingsDates [] = $meetingDate;                
-            }                       
+                $meetingsDates [] = $meetingDate;
+            }
         }
     }
-    
-    // sort dates by desc 
+
+    // sort dates by desc
     usort($meetingsDates, "sortFunction");
-    
+
      // add dates to a spreadsheet's header
     foreach($meetingsDates as $meetingDate){
         $active_sheet->getColumnDimension($rowIndex)->setWidth(12);
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($rowIndex.'1', $meetingDate);
         $rowIndex ++;
     }
-        
+
     // add user info to a spreadsheet
-    foreach($members as $member){        
+    foreach($members as $member){
         $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue("A$rowNumber", $columnNumber)
                 ->setCellValue("B$rowNumber", $member['memberName'])
                 ->setCellValue("C$rowNumber", $member['locality']);
-        
+
         $meetings = explode(',', $member['meetings']);
 
         $rowIndexMeeting = 'D';
         foreach($meetingsDates as $meetingDate){
             foreach($meetings as $meeting){
                 if($meetingDate == substr($meeting, 3)){
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($rowIndexMeeting.''.$rowNumber, substr($meeting, 0,2) == 'LT' ? 'Трапеза' : 'Молитвенное');                     
-                }                                
-            }                 
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($rowIndexMeeting.''.$rowNumber, substr($meeting, 0,2) == 'LT' ? 'Трапеза' : 'Молитвенное');
+                }
+            }
             $rowIndexMeeting ++;
         }
         $rowNumber++;
         $columnNumber++;
     }
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$rowNumber, "По списку — ".$list_count." чел.");   
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$rowNumber, "По списку — ".$list_count." чел.");
     $rowNumber++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$rowNumber, "Участвовали в собраниях — ".$members_count." чел.");                     
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$rowNumber, "Участвовали в собраниях — ".$members_count." чел.");
     $rowNumber++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$rowNumber, "Период (".$startDate." — ".$endDate." )");                     
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$rowNumber, "Период (".$startDate." — ".$endDate." )");
 
     $active_sheet->getStyle('A1:'.$rowIndex.'1')->applyFromArray($style_wrap);
-    
+
     $admin = isset($_POST['adminId']) ? $_POST['adminId'] : '';
     $event = '-meeting_members';
     $file = $admin.$event;
@@ -1013,7 +1022,7 @@ else if (isset($_POST ['members']) && ($_POST['page'] == 'meeting_members')) {
 }
 else if (isset($_POST ['list']) && ($_POST['page'] == 'meeting_general')) {
     $list = json_decode($_POST ['list'], TRUE);
-    
+
     $objPHPExcel = new PHPExcel();
     $objPHPExcel->getProperties()->setCreator("PHP")
         ->setLastModifiedBy("reg-page")
@@ -1022,9 +1031,9 @@ else if (isset($_POST ['list']) && ($_POST['page'] == 'meeting_general')) {
         ->setDescription("Office 2007 XLSX, сгенерированный PHPExcel.")
         ->setKeywords("office 2007 openxml php")
         ->setCategory("Тестовый файл");
-    
+
     $active_sheet = $objPHPExcel->getActiveSheet();
-    $active_sheet->setTitle('Статистика посещения');    
+    $active_sheet->setTitle('Статистика посещения');
     $active_sheet->getColumnDimension('A')->setWidth(12);
     $active_sheet->getColumnDimension('B')->setWidth(20);
     $active_sheet->getColumnDimension('C')->setWidth(25);
@@ -1051,35 +1060,35 @@ else if (isset($_POST ['list']) && ($_POST['page'] == 'meeting_general')) {
         'alignment' => array(
             'horizontal' => PHPExcel_STYLE_ALIGNMENT::HORIZONTAL_CENTER,
         )
-    );           
-    
+    );
+
     $objPHPExcel->setActiveSheetIndex(0)
         ->setCellValue('A1', 'Дата')
         ->setCellValue('B1', 'Местность')
         ->setCellValue('C1', 'Вид собрания')
-        ->setCellValue('D1', 'Количество святых');           
-    
+        ->setCellValue('D1', 'Количество святых');
+
     $meetingsDates = [];
-    
-    // get dates for headers. 
-    foreach($list as $item){        
-        $meetingsDates [] = $item['date'];                
+
+    // get dates for headers.
+    foreach($list as $item){
+        $meetingsDates [] = $item['date'];
     }
-    
-    // sort dates by desc 
+
+    // sort dates by desc
     usort($meetingsDates, "sortFunction");
-    
+
     $rowNumber=2;
-    
+
     // add dates to a spreadsheet's column
     foreach($meetingsDates as $meetingDate){
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue("A$rowNumber", $meetingDate);
         $rowNumber ++;
     }
-    
+
     $rowNumber=2;
     // add user info to a spreadsheet
-    foreach($list as $item){        
+    foreach($list as $item){
         $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue("B$rowNumber", $item['locality_name'])
                 ->setCellValue("C$rowNumber", $item['meeting_name']);
@@ -1089,29 +1098,29 @@ else if (isset($_POST ['list']) && ($_POST['page'] == 'meeting_general')) {
                 $fulltimersInSaintsList =  (int)array_reduce(explode(',', $item['fulltimers_in_list']), add);
                 $listCount = (int)array_reduce(explode(',', $item['list_count']), add) + (int)($item['add_list_count']);
                 $saintsCount = (int)array_reduce(explode(',', $item['saints_count']), add) - (int)$fulltimersInSaintsList;
-                $guestCount = (int)array_reduce(explode(',', $item['guests_count']), add); 
+                $guestCount = (int)array_reduce(explode(',', $item['guests_count']), add);
                 $childrenCount = (int)array_reduce(explode(',', $item['children_count']), add);
-                
+
                 $fulltimersCount = 0;
                 $traineesCount = 0;
-                
+
                 if($item.show_additions == '1'){
                     $fulltimersCount = (int)array_reduce(explode(',', $item['fulltimers_count']), add);
                     $traineesCount = (int)array_reduce(explode(',', $item['trainees_count']), add);
-                }            
+                }
 
                 $countMembers = $saintsCount + $guestCount + $fulltimersCount + $traineesCount;
-        
+
                 $value = "Общее количество: ".$countMembers." "." Количество по списку: ".$listCount." "." Количество святых из списка: ".$saintsCount." Количество гостей: ".$guestCount." Количество детей: ".$childrenCount." Количество служащих: ".$fulltimersCount." Количество обучающихся: ".$traineesCount;
-                
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$rowNumber, $value);                     
-            }                                
+
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$rowNumber, $value);
+            }
         }
         $rowNumber++;
     }
-    
+
     $active_sheet->getStyle('A1:D1')->applyFromArray($style_wrap);
-    
+
     $admin = isset($_POST['adminId']) ? $_POST['adminId'] : '';
     $event = '-meeting_members';
     $file = $admin.$event;
@@ -1122,22 +1131,22 @@ else if (isset($_POST ['list']) && ($_POST['page'] == 'meeting_general')) {
     $filename = $file.'.xlsx';
     echo $filename;
 }
-else if(isset($_GET['upload_file'])){   
+else if(isset($_GET['upload_file'])){
     if ( 0 < $_FILES['file']['error'] ) {
         echo json_encode(array ("res"=>'error'));
     }
-    else {        
+    else {
         $path_to_file = $_FILES['file']['name'];
         move_uploaded_file($_FILES['file']['tmp_name'], $path_to_file);
         $res = handle_excel_file($path_to_file, $_GET['admin_id']);
         unlink ($path_to_file);
 
         echo json_encode(array ("res"=>$res));
-    }        
+    }
     exit;
 }
 
-function handle_excel_file($path_to_file, $adminId){    
+function handle_excel_file($path_to_file, $adminId){
     $objPHPExcel = PHPExcel_IOFactory::load($path_to_file);
 
     //$list = [];
@@ -1150,7 +1159,7 @@ function handle_excel_file($path_to_file, $adminId){
             $nrColumns = ord($highestColumn) - 64;
 
             $desiredFields = ['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения', 'Местность', 'Состояние', 'Трапеза', 'Дата крещения'];
-            $nameFields = ['Фамилия', 'Имя', 'Отчество']; 
+            $nameFields = ['Фамилия', 'Имя', 'Отчество'];
             $desiredFieldIndexes = [];
 
             for ($row = 1; $row <= $highestRow; ++ $row) {
@@ -1162,22 +1171,22 @@ function handle_excel_file($path_to_file, $adminId){
                     $cell = $worksheet->getCellByColumnAndRow($col, $row);
                     $val = $cell->getValue();
 
-                    if($row == 1 and in_array(trim($val), $desiredFields)){                        
+                    if($row == 1 and in_array(trim($val), $desiredFields)){
                         $desiredFieldIndexes[$col] = $val;
                     }
                     else if(array_key_exists ($col, $desiredFieldIndexes)){
-                        if(in_array($desiredFieldIndexes[$col], $nameFields)){                            
+                        if(in_array($desiredFieldIndexes[$col], $nameFields)){
                             array_push($fullMemberName, $val);
                         }
                         $member[$desiredFieldIndexes[$col]] = $val;
                     }
                 }
-                
+
                 if(count($member) > 0){
                     $member['ФИО'] = join($fullMemberName, ' ');
                     handleMember($member, $adminId);
-                }                
-            }            
+                }
+            }
         }
         return true;
     }
@@ -1190,8 +1199,8 @@ function handleMember($member, $adminId){
     $name = null;
     $locality_key = null;
     $locality_name = null;
-    $gender = null; 
-    $birth_date = null; 
+    $gender = null;
+    $birth_date = null;
     $category_key = null;
     $attend_meeting = null;
     $baptize_date = null;
@@ -1220,10 +1229,10 @@ function handleMember($member, $adminId){
                 $age = getAge($member['Дата рождения']);
                 if($age < 17){
                     $category_key = 'SC';
-                }   
+                }
                 else{
                     $category_key = 'SN';
-                }                             
+                }
             }
             else if($value == 'Остыл' || $value == 'Контакт'){
                 $category_key = 'BL';
@@ -1240,8 +1249,8 @@ function handleMember($member, $adminId){
         }
         $citizenship = 'UA';
     }
-    
-    db_addNewMember ($name, $locality_key, $gender, $birth_date, $category_key, $attend_meeting, $locality_name, $citizenship, 
+
+    db_addNewMember ($name, $locality_key, $gender, $birth_date, $category_key, $attend_meeting, $locality_name, $citizenship,
         $baptize_date, $adminId);
 }
 

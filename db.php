@@ -191,16 +191,23 @@ function db_getPermalink ($memberId, $eventId)
     $row = $res->fetch_assoc();
     return $row ? $row['permalink'] : '';
 }
-
-function db_getTeamEmail ($eventId)
+/*
+function db_getTeamEmailOld ($eventId)
 {
     global $db;
     $eventId = $db->real_escape_string($eventId);
     $res=db_query ("SELECT t.email FROM team t INNER JOIN event e ON e.team_key=t.key WHERE e.key='$eventId'");
     $row = $res->fetch_assoc();
     return $row ? $row['email'] : null;
+}*/
+function db_getTeamEmail ($eventId)
+{
+    global $db;
+    $eventId = $db->real_escape_string($eventId);
+    $res=db_query ("SELECT team_email FROM event WHERE `key`='$eventId'");
+    $row = $res->fetch_assoc();
+    return $row ? $row['team_email'] : null;
 }
-
 function db_getDocuments ()
 {
     global $db;
@@ -3282,20 +3289,22 @@ function db_getUserByLogin($login){
     return NULL;
 }
 
-function db_setUserPassword($adminId, $password){
+function db_setUserPassword($adminId, $password, $sessionId){
     global $db;
     $password = $db->real_escape_string($password);
     $adminId = $db->real_escape_string($adminId);
-
+    $sessionId = $db->real_escape_string($sessionId);
     db_query("UPDATE admin SET password='$password', changed=1 WHERE member_key='$adminId'");
+    db_logoutAdminExcActive($adminId, $sessionId);
 }
 
 function db_setUserPasswordByLogin($login, $password){
     global $db;
     $password = $db->real_escape_string($password);
     $login = $db->real_escape_string($login);
-
+    $memberId = db_getAdminIdByLogin($login);
     db_query("UPDATE admin SET password='$password', changed=1 WHERE login='$login'");
+    db_logoutAdminTotal($memberId);
 }
 
 function db_loginUserByLogin($sessionId, $login){
@@ -4222,7 +4231,7 @@ function db_getMeetingTemplate($templateId){
 
     $res = db_query(
         "SELECT mt.id, mt.name as meeting_name, mt.meeting_type_key, mt.locality_key,
-        (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, l.name, m.attend_meeting, m.category_key) ORDER BY m.name ASC SEPARATOR ',') FROM member m INNER JOIN locality l ON l.key=m.locality_key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
+        (SELECT GROUP_CONCAT( CONCAT_WS(':', m.key, m.name, l.name, m.attend_meeting, m.category_key, m.locality_key, m.birth_date) ORDER BY m.name ASC SEPARATOR ',') FROM member m INNER JOIN locality l ON l.key=m.locality_key WHERE FIND_IN_SET(m.key, mt.participant)<>0) as participants,
         (SELECT GROUP_CONCAT( CONCAT_WS(':', ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(m.birth_date, '%Y-%m-%d'))/365),
                     m.category_key) SEPARATOR  ',') as members FROM member m WHERE FIND_IN_SET(m.key, mt.participant)<>0) as members
         FROM meeting_template mt
@@ -4854,6 +4863,13 @@ function db_logoutAdminTotal ($adminId)
     $adminId = $db->real_escape_string($adminId);
     db_query ("DELETE FROM admin_session WHERE admin_key='$adminId'");
 }
+function db_logoutAdminExcActive ($adminId,$sessionIdLogout)
+{
+    global $db;
+    $adminId = $db->real_escape_string($adminId);
+    $sessionIdLogout = $db->real_escape_string($sessionIdLogout);
+    db_query ("DELETE FROM admin_session WHERE admin_key='$adminId' AND id_session<>'$sessionIdLogout'");
+}
 function db_lastVisitTimeUpdate ($sessionId)
 {
     global $db;
@@ -4861,6 +4877,70 @@ function db_lastVisitTimeUpdate ($sessionId)
     $sessionId = $db->real_escape_string($sessionId);
     db_query ("UPDATE admin_session SET time_last_visit = '$datatime' WHERE id_session='$sessionId'");
 }
+function db_getAdminIdByLogin($login){
+    global $db;
+    $login = $db->real_escape_string($login);
+    $res=db_query ("SELECT member_key FROM admin WHERE login='$login'");
+
+    if ($row = $res->fetch_assoc()) return $row['member_key'];
+    return NULL;
+}
+
+function db_getMeetingsForStatistics($adminId, $localityFilter, $meetingTypeFilter, $startDate, $endDate){
+    global $db;
+    $adminId = $db->real_escape_string($adminId);
+    $localityFilter = $db->real_escape_string($localityFilter);
+    $meetingTypeFilter = $db->real_escape_string($meetingTypeFilter);
+    $startDate = $db->real_escape_string($startDate);
+    $endDate = $db->real_escape_string($endDate);
+    /* $sort_type = $db->real_escape_string($sort_type);
+    $sort_field = $sort_field != 'locality_key' ? $db->real_escape_string($sort_field)."" : " locality_key ";
+*/
+    $meetings = array ();
+
+    $requestMeeting = $meetingTypeFilter == "_all_" ? "" : " AND me.meeting_type='$meetingTypeFilter' ";
+    $requestLocality = $localityFilter=="_all_" ? "" : " AND l.key='$localityFilter' ";
+    $requestDates = " AND (me.date BETWEEN '$startDate' AND '$endDate')";
+    $requestCheckMeetingAdditions = "SELECT COUNT(*) count FROM member m WHERE m.locality_key=l.key AND m.category_key='FS'";
+
+    db_query('SET Session group_concat_max_len=100000');
+
+    $res = db_query("SELECT DISTINCT * FROM (
+            SELECT me.name, me.id, l.name as locality_name, me.date,  me.list_count, me.saints_count,
+            mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
+            me.locality_key, me.note, me.fulltimers_count,
+            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
+            me.participants,
+            me.trainees_count,
+            IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
+            0 as summary
+            FROM access a
+            LEFT JOIN country c ON c.key = a.country_key
+            LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
+            INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
+            INNER JOIN meetings me ON me.locality_key = l.key
+            INNER JOIN meeting_type mt ON mt.key=me.meeting_type
+            WHERE a.member_key='$adminId' $requestMeeting $requestLocality $requestDates
+            UNION
+            SELECT me.name, me.id, l.name as locality_name, me.date, me.list_count, me.saints_count,
+            mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
+            me.locality_key, me.note, me.fulltimers_count,
+            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
+            me.participants,
+            me.trainees_count,
+            IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
+             0 as summary
+            FROM meetings me
+            INNER JOIN meeting_type mt ON mt.key=me.meeting_type
+            INNER JOIN locality l ON l.key = me.locality_key
+            INNER JOIN meeting_template mtl ON mtl.locality_key = l.key
+            WHERE FIND_IN_SET('$adminId', mtl.admin)<>0 $requestMeeting $requestDates $requestLocality
+            ) q ORDER BY q.locality_name ASC");
+
+    while ($row = $res->fetch_object()) $meetings[]=$row;
+    return $meetings;
+}
+
 /*
 function db_loginAdmin ($sessionId, $login, $password)
 {

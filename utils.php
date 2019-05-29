@@ -167,7 +167,7 @@ class UTILS
     static function sendEmailToInviteMember($linkCode, $from_email, $email, $memberName, $eventName, $eventStartDate, $eventEndDate, $eventRegendDate, $eventInfo){
         global $appRootPath;
 
-        $path = $appRootPath.'?invited='.$linkCode;
+        $path = $appRootPath.'invites?invited='.$linkCode;
 
         $htmlText = "<p>Вы приглашены на мероприятие  ". $eventName ."</p>".
                     "<p>Для онлайн-регистрации перейдите <a href='{$path}'>по этой ссылке</a>.</p>".
@@ -175,7 +175,6 @@ class UTILS
                     "<p>Команда регистрации</p>";
 
         $subject = "Приглашение для регистрации на сайте reg-page.ru";
-
 
         EMAILS::sendEmail($email, $subject, $htmlText, $from_email, 'Сайт регистрации');
         return true;

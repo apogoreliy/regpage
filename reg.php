@@ -401,6 +401,10 @@
                     <label for="download-birth-date">Дата рождения</label>
                 </div>
                 <div>
+                    <input type="checkbox" data-download="age" id="download-age">
+                    <label for="download-how-old">Возраст</label>
+                </div>
+                <div>
                     <input type="checkbox" data-download="locality" id="download-city">
                     <label for="download-city">Город</label>
                 </div>
@@ -864,19 +868,19 @@
                     text = text + "<div style='margin-top:10px;'>" +
                     "<div><b>Эти люди уже были добавлены в список:</b></div>" + result.alreadyAddedArr.join('<br>') + "</div>";
                 }
-                else if(result.emptyEmailArr.length>0){
+                if(result.emptyEmailArr.length>0){
                     text = text + "<div style='margin-top:10px;'>" +
                     "<div><b>У этих людей нет электронного адреса:</b></div>" + result.emptyEmailArr.join('<br>') + "</div>";
                 }
-                else if(result.errorMembeEmailArr.length>0){
+                if(result.errorMembeEmailArr.length>0){
                     text = text + "<div style='margin-top:10px;'>" +
                     "<div>У этих людей некорректный email. Возможности отправить им письмо нет:</div>" + result.errorMembeEmailArr.join('<br/>') + "</div>";
                 }
-                else if(result.errorMembeIdArr.length>0){
+                if(result.errorMembeIdArr.length>0){
                     text = text + "<div style='margin-top:10px;'>"+
                     "<div>Людей с такими id нет в базе данных:</div>" + result.errorMembeIdArr.join('<br/>') + "</div>";
                 }
-                else if(result.sendEmailsArr.length>0){
+                if(result.sendEmailsArr.length>0){
                     text = text + "<div style='margin-top:10px;'>"+
                     "<div><b>Приглашение отправлено следующим людям:</b></div>"+result.sendEmailsArr.join('<br/>')+ "</div>";
                 }
@@ -2087,7 +2091,7 @@ function checkStopEventRegistration(eventId){
             editor.show ();
             var locHost = location.host, host;
             host = '<?php echo $appRootPath; ?>';
-            editor.val (host+window.permalink);
+            editor.val (host+'invites?link='+window.permalink);
             editor.select();
             $(this).text ("Скрыть ссылку");
         }
