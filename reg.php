@@ -977,7 +977,7 @@
         if(localityFilterList){
             localityList = localityFilterList.split(',');
         }
-console.log('Im here ',localityList);
+
         $("#eventTab-"+eventId+mode+" tbody tr[class!='regmem']").each(function(){
             memberLocality = $(this).attr('data-locality');
             memberLocalityKey = $(this).attr('data-locality_key');
@@ -1606,21 +1606,25 @@ function checkStopEventRegistration(eventId){
         var text = '';
         if (parseInt(data.res.participants_count) > 0){
             if(data.res.close_registration === '1' || parseInt(data.res.count_members) >= parseInt(data.res.participants_count)){
-                text = "<span class='label label-important registration-closed'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Регистрация закрыта</a></span>";
+                text = "<span class='label label-important registration-closed'><a style='color:white;' data-toggle='modal'>Регистрация закрыта</a></span>";
             }
             else{
-                text = "<span class='label label-info'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Осталось мест — "+ (parseInt(data.res.participants_count) - parseInt(data.res.count_members))+"</a></span>";
+                text = "<span class='label label-info' id='labelExtraInfo' data-max-participants='"+ (parseInt(data.res.participants_count))+"'><span style='color:white; cursor: pointer' data-toggle='modal' >Осталось мест — "+ (parseInt(data.res.participants_count) - parseInt(data.res.count_members))+"</span></span>";
             }
         } else if (parseInt(data.res.participants_count) === 0) {
           if(data.res.close_registration === '1'){
-              text = "<span class='label label-important registration-closed'><a style='color:white;' data-toggle='modal' data-target='#modalHintWindow'>Регистрация закрыта</a></span>";
+              text = "<span class='label label-important registration-closed'><a style='color:white;' data-toggle='modal' >Регистрация закрыта</a></span>";
           }
         }
-
         $(".close-event-registration").html(text);
+        $('#labelExtraInfo').click(function () {  
+          var a = $(this).attr('data-max-participants');
+          var b = 'Максимальное количество участников для этого мероприятия — ' + a + ' чел.';
+          $('#modalHintWindow').modal('show');
+          $('#modalHintWindow .modal-body').text(b);
+        })
     });
 }
-
 
     $("#btnDoSaveBulk").click (function (){
         if (!$(this).hasClass('disabled')){

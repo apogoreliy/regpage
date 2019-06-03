@@ -105,8 +105,8 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                         ?>
                         <th>Телефон</th>
                         <th>Email</th>
-                        <th><a id="sort-birth_date" href="#" title="сортировать">Возраст</a>&nbsp;<i class="<?php echo $sort_field=='birth_date' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th><a id="sort-attend_meeting" href="#" title="Посещает собрания">С</a>&nbsp;<i class="<?php echo $sort_field=='attend_meeting' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="width: 80px"><a id="sort-birth_date" href="#" title="сортировать">Возраст</a>&nbsp;<i class="<?php echo $sort_field=='birth_date' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="width: 40px"><a id="sort-attend_meeting" href="#" title="Посещает собрания">С</a>&nbsp;<i class="<?php echo $sort_field=='attend_meeting' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th> </th>
                         <th>&nbsp;</th>
                     </tr>
@@ -636,7 +636,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
             var a = 0;
 
             $(this).parents("#modalDownloadMembers").find(".download-checkboxes input[type='checkbox']").each(function(){
-              $(this).attr('id')==='member-name' ? a = 1 : a = 0;              
+              $(this).attr('id')==='member-name' ? a = 1 : a = 0;
               if (a === 0) {
                 $(this).prop('checked', checkAll);
               }
@@ -646,7 +646,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
         $('.downloadItems').click(function(){
             var checkedFields = [];
             $("#modalDownloadMembers").find("input[type='checkbox']").each(function(){
-                if ($(this).prop('checked')==true){
+                if ($(this).prop('checked')==true && ($(this).attr('id') != "check-all-download-checkboxes")){
                     checkedFields.push($(this).attr('data-download'));
                 }
             });
