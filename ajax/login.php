@@ -45,5 +45,4 @@ else if (isset($_GET["signupLogin"])) {
         print !$memberId ? "success" : "error";
     }
 }
-
 ?>
