@@ -969,7 +969,7 @@ function handleSchoolAndCollegeFields(age, categoryKey, schoolStart, schoolEnd, 
     }
 }
 
-function fillEditMember (memberId, info, localities) {
+function fillEditMember (memberId, info, localities, newMemberBlank) {
     window.currentEditMemberId = memberId;
     var windowWidth = $(document).width() < 980, age = parseInt(info['age']);
     var formEl = $('#modalEditMember');
@@ -1146,6 +1146,7 @@ function fillEditMember (memberId, info, localities) {
     //$(".emHomePhone").val (info["home_phone"] ? info["home_phone"] : "");
 
     if ($(".emLocality").size()==0){
+
         // GUEST
         if (info["locality_key"]){
             window.selLocId = info["locality_key"];
@@ -1164,7 +1165,11 @@ function fillEditMember (memberId, info, localities) {
     }
     else{
     	// ADMIN
+      if (newMemberBlank) {
+        $('#modalEditMember').find('.emLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
+      } else {
         $(".emLocality").val (info["locality_key"] ? info["locality_key"] : "_none_").change();
+      }
         $(".emNewLocality").val (info["new_locality"] ? info["new_locality"] : "").removeAttr ("disabled").next (".unblock-input").hide ();
         if(!info["locality_key"]) $(".emNewLocality").val (info["new_locality"] ? info["new_locality"] : "").keyup();
         $(".emComment").val (info["admin_comment"] ? info["admin_comment"] : "");
@@ -1181,6 +1186,22 @@ function fillEditMember (memberId, info, localities) {
             $("#emNoSharedComment").show();
         }
         */
+        function chchfields() {
+          var a = $(".emNewLocality").val();
+          var b = $(".emLocality").val();
+          if (a.length > 0 || b.length > 0) {
+            $('#modalEditMember').find('.emLocality').attr('style', 'background-color: none; border-color: gray;')
+          } else if (a.length < 1 && b.length < 1) {
+            $('#modalEditMember').find('.emLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
+            $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
+          }
+        }
+        $(".emLocality").change(function () {
+          chchfields();
+        });
+        $(".emNewLocality").keyup(function () {
+          chchfields();
+        })
     }
 
     $(".block-new-locality").css("display", info["new_locality"] ? 'block' : 'none');
