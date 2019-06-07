@@ -708,12 +708,12 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
 
             countScholarsByAge = 0, countStudentsByAge = 0, countSaintsByAge = 0,
             countAttendancesScholarsByAge = 0, countAttendancesStudentsByAge = 0, countAttendancesSaintsByAge = 0,
-            countAttendancesByAge = 0, countByAge = 0,
+            countAttendancesByAge = 0, countByAge = 0, countOlderByAge = 0,
 
             countAttendancesMembers = 0, countAttendancesBelivers=0, countAttendancesScholars = 0,
             countAttendancesPreScholars = 0, countAttendancesStudents = 0, countAttendancesSaints = 0,
             countAttendancesRespBrothers = 0, countAttendancesFullTimers = 0, countAttendancesTrainees = 0,
-            countAttendancesOthers = 0,
+            countAttendancesOthers = 0, countAttendancesSaintsByOldAge = 0,
             averageAge = 0, averageAgeAttendances = 0;
 
         $(".members-list " + ( isTabletMode ? " #membersPhone " : " #members " ) + " tbody tr").each(function(){
@@ -745,7 +745,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                             countAttendancesStudentsByAge ++;
                         }
                     }
-                    else if (age > 25){
+                    else if (age > 25 && age <= 60){
                         averageAge += parseInt(age);
                         countSaintsByAge++;
                         if($(this).attr('data-attendance') == 1){
@@ -753,7 +753,14 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                             countAttendancesSaintsByAge ++;
                         }
                     }
-
+                    else if (age > 60){
+                        averageAge += parseInt(age);
+                        countOlderByAge++;
+                        if($(this).attr('data-attendance') == 1){
+                            averageAgeAttendances += parseInt(age);
+                            countAttendancesSaintsByOldAge ++;
+                        }
+                    }
                     if($(this).attr('data-attendance') == 1){
                         countAttendancesByAge++;
                     }
@@ -811,19 +818,20 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
             (countScholarsByAge >0 ? "<tr><td>12-17 лет</td><td class='text-align'>"+countScholarsByAge+"</td><td class='text-align'>"+
                 countAttendancesScholarsByAge+"</td></tr>" : "")+
             ( countStudentsByAge >0 ? "<tr><td>18-25 лет</td><td class='text-align'>"+countStudentsByAge+"</td><td class='text-align'>"+countAttendancesStudentsByAge+"</td></tr>" : "" ) +
-            ( countSaintsByAge >0 ? "<tr><td>26 лет и старше</td><td class='text-align'>"+countSaintsByAge+"</td><td class='text-align'>"+countAttendancesSaintsByAge+"</td></tr>" : "" )+
-            "<tr><td><strong>Всего</strong></td><td class='text-align'><strong>" + (countScholarsByAge+countStudentsByAge+countSaintsByAge) + "</strong></td><td class='text-align'><strong>"+(countAttendancesScholarsByAge+countAttendancesStudentsByAge+countAttendancesSaintsByAge)+"</strong></td></tr>"+
+            ( countSaintsByAge >0 ? "<tr><td>26-60 лет</td><td class='text-align'>"+countSaintsByAge+"</td><td class='text-align'>"+countAttendancesSaintsByAge+"</td></tr>" : "" )+
+            ( countOlderByAge >0 ? "<tr><td>60 лет и старше</td><td class='text-align'>"+countOlderByAge+"</td><td class='text-align'>"+countAttendancesSaintsByOldAge+"</td></tr>" : "" )+
+            "<tr><td><strong>Всего</strong></td><td class='text-align'><strong>" + (countScholarsByAge+countStudentsByAge+countSaintsByAge + countOlderByAge) + "</strong></td><td class='text-align'><strong>"+(countAttendancesScholarsByAge+countAttendancesStudentsByAge+countAttendancesSaintsByAge + countAttendancesSaintsByOldAge)+"</strong></td></tr>"+
             ( countScholarsByAge>0 || countStudentsByAge> 0 || countSaintsByAge >0 ? "<tr><td>Средний возраст</td><td class='text-align'>"+(
-                parseInt(averageAge / (countScholarsByAge + countStudentsByAge + countSaintsByAge)))+"</td>"+
+                parseInt(averageAge / (countScholarsByAge + countStudentsByAge + countSaintsByAge + countOlderByAge)))+"</td>"+
             "<td class='text-align'>"+ (
-                parseInt(averageAgeAttendances / (countAttendancesScholarsByAge + countAttendancesStudentsByAge + countAttendancesSaintsByAge))) +"</td></tr>" : "" );
+                parseInt(averageAgeAttendances / (countAttendancesScholarsByAge + countAttendancesStudentsByAge + countAttendancesSaintsByAge + countAttendancesSaintsByOldAge))) +"</td></tr>" : "" );
 
         if(memberAgeIsNullList.length == 0){
-            var additionalTableTemplate = '<h3>Данные для статистики</h3>'+
+            var additionalTableTemplate = '<h3>По возрастам</h3>'+
                 '<table class="table table-hover">'+
                   '<thead>'+
                     '<tr>'+
-                      '<th>По возрастам</th>'+
+                      '<th>Возраст</th>'+
                       '<th class="text-align">По списку</th>'+
                       '<th class="text-align">Посещают собрания</th>'+
                     '</tr>'+
@@ -835,10 +843,10 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
             var additionalTableTemplate = '<h3>Данные для статистики (по возрастам) не сформированы, поскольку не указана дата рождения:</h3> <div>'+ memberAgeIsNullList.join(', ') + '</div>';
         }
 
-        var tableTemplate = '<h3>Сводные данные</h3><table class="table table-hover">'+
+        var tableTemplate = '<h3>По категориям</h3><table class="table table-hover">'+
               '<thead>'+
                 '<tr>'+
-                  '<th>По категориям</th>'+
+                  '<th>Категория</th>'+
                   '<th class="text-align">По списку</th>'+
                   '<th class="text-align">Посещают собрания</th>'+
                 '</tr>'+
