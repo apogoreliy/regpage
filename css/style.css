@@ -122,6 +122,13 @@ a {
 #modalStatistic .text-align{
     text-align: right;
 }
+#modalStatistic .table td {
+  line-height: 14px !important;
+
+}
+#modalStatistic .modal-body {
+  padding-top: 0 !important;
+}
 
 .modal-edit-member .controls-row input, .modal-edit-member .controls-row select,
 .modal-edit-member .controls-row textarea, .modal-edit-member .controls-row div[class*="span"],
@@ -642,7 +649,7 @@ input.error, .control-group.error select, textarea.error {
     margin-top: 10px;
 }
 .LT-meeting{
-    background-color: #f345ad;
+    background-color: #DC143C;
 }
 .PM-meeting{
     background-color: #a6cce8;
@@ -666,13 +673,13 @@ input.error, .control-group.error select, textarea.error {
     margin-left: 2px;
     margin-right: 5px;
     padding-left: 20px;
-    padding-top: 5px;
+    /*padding-top: 5px;*/
 }
 .statistic-bar{
     margin-left: 2px;
     margin-right: 2px;
     padding-left: 20px;
-    padding-top: 6px;
+    /*padding-top: 6px;*/
 }
 .archive-bar{
     margin-left: 2px;
@@ -682,6 +689,10 @@ input.error, .control-group.error select, textarea.error {
 }
 .statistic-part{
     padding-top: 10px !important;
+    line-height: 14px !important;
+}
+.statistic-date-part{
+  line-height: 14px !important;
 }
 .general-event-archive-list td{
     padding: 0 !important;
