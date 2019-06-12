@@ -4814,6 +4814,33 @@ function db_getAdminsListByLocalities ()
     while ($row = $res->fetch_object()) $members[]=$row;
     return $members;
 }
+function db_getAdminsListByLocalitiesCombobox ()
+{
+    global $db;
+    $res=db_query ("SELECT DISTINCT m.key as id, m.name as name, m.email as email, m.cell_phone as cell_phone, lo.name as locality_name, ad.comment as note, lo.key as locality_key
+    FROM access as a
+    INNER JOIN admin ad ON ad.member_key=a.member_key
+    INNER JOIN member m ON a.member_key = m.key
+    INNER JOIN locality lo ON lo.key=m.locality_key ORDER BY name");
+
+    $members = array ();
+    while ($row = $res->fetch_assoc()) $members[$row['id']]=$row['name'];
+    return $members;
+}
+function db_getActivityList ()
+{
+    global $db;
+    $res=db_query ("SELECT act.id as id_string, act.admin_key as id, act.page as page, act.time_create as time, m.name as name, lo.name as locality_name, lo.key as locality_key
+    FROM activity_log as act
+    INNER JOIN admin ad ON ad.member_key=act.admin_key
+    INNER JOIN member m ON act.admin_key = m.key
+    INNER JOIN locality lo ON lo.key=m.locality_key ORDER BY name");
+
+    $members = array ();
+    while ($row = $res->fetch_object()) $members[]=$row;
+    return $members;
+}
+
 /*Login new*/
 function db_getMemberIdBySessionId ($sessionId)
 {
@@ -4824,6 +4851,7 @@ function db_getMemberIdBySessionId ($sessionId)
     if ($row = $res->fetch_assoc()) return $row['admin_key'];
     return NULL;
 }
+
 function db_loginAdmin ($sessionId, $login, $password)
 {
     global $db;
@@ -4941,6 +4969,14 @@ function db_getMeetingsForStatistics($adminId, $localityFilter, $meetingTypeFilt
     return $meetings;
 }
 
+function db_activityLogInsert ($adminId, $page)
+{
+  global $db;
+  $adminId = $db->real_escape_string($adminId);
+  $page = $db->real_escape_string($page);
+
+  db_query ("INSERT INTO activity_log (admin_key, page) VALUES ('$adminId', '$page')");
+}
 /*
 function db_loginAdmin ($sessionId, $login, $password)
 {
