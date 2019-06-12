@@ -4,6 +4,7 @@ include_once "nav.php";
 include_once "modals.php";
 
 $localities = db_getAdminMeetingLocalities ($memberId);
+$localitiesWithFilters = db_getAdminLocalitiesNotRegTbl($adminId);
 $meetingsTypes = db_getMeetingsTypes();
 $isSingleCity = db_isSingleCityAdmin($memberId);
 $singleLocality = db_getSingleAdminLocality($memberId);
@@ -260,7 +261,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <select id="localityStatistic" class="span2">
             <option value='_all_' <?php echo $selMeetingLocality =='_all_' ? 'selected' : '' ?> >Все местности (районы)</option>
             <?php
-                foreach ($localities as $id => $name) {
+                foreach ($localitiesWithFilters as $id => $name) {
                     echo "<option value='$id' ". ($id==$selMeetingLocality ? 'selected' : '') ." >".htmlspecialchars ($name)."</option>";
                 }
             ?>
@@ -271,14 +272,15 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <i class="btn fa fa-calendar" aria-hidden="true"></i>
             <input type="text" class="span2 end-date-statistic-members" value="<?php echo date('d.m.Y'); ?>">
         </div>
-        <i class="btn btn-meeting-download-members-statistic fa fa-download" title="Скачать общую статистику" aria-hidden="true"></i>
-        <input id="showAllMembersCkbx" type="checkbox"style="margin-bottom: 7px;  margin-left: 15px;"><span style="margin-left: 7px;">Только участники</span>
-        <div style="margin-bottom: 10px;">
+        <i class="btn btn-meeting-download-members-statistic fa fa-download" title="Скачать общую статистику" aria-hidden="true"></i> <input type="button" name="" value="Обозначения собраний" id="meetingsLegendsShow" style="margin-left: 10px; margin-bottom: 8px;"><br>
+        <label style="margin-left: 7px;" for="showAllMembersCkbx"><input id="showAllMembersCkbx" type="checkbox"style="margin-bottom: 7px;"> только те, кто посещал собрания.</label>
+        <div id="meetingsLegends" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="regNameEdit" aria-hidden="true" data-width="200">
             <?php
                     foreach ($meetingsTypes as $type => $name){
-                        echo '<span class="statistic-bar-form '.$type.'-meeting"></span><span>'.$name.'</span>';
+                        echo '<span class="statistic-bar-form '.$type.'-meeting"></span><span>'.$name.'</span><br>';
                     }
             ?>
+            <input type="button" name="" value="Закрыть" id="meetingsLegendsClose" style="margin-left: 65px !important; margin-top: 10px; margin-bottom: 10px;">
         </div>
         <div id="general-statistic"></div>
         <table class="table table-hover table-condensed statistic-meeting-list">
@@ -633,8 +635,11 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <button class="btn" data-dismiss="modal" aria-hidden="true">Отменить</button>
     </div>
 </div>
+<script type="text/javascript">
+var gloLocalityAgmin = '<?php echo $localitiesWithFilters; ?>';
+</script>
 
-<script src="/js/meetings.js?v90"></script>
+<script src="/js/meetings.js?v111"></script>
 <?php
     include_once './footer.php';
 ?>

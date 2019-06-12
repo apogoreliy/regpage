@@ -577,8 +577,8 @@ $(document).ready(function(){
     $('.doGetEventArchive').click(function(e){
         e.stopPropagation();
         var eventId = $(this).attr('data-id'),
-            request = getRequestFromFilters(setFiltersForRequest());
-
+            //request = getRequestFromFilters(setFiltersForRequest());
+            request;
         $.post('/ajax/event.php?set_archive'+request, {eventId: eventId})
         .done(function(data){
             if(!data.res){
@@ -630,7 +630,7 @@ $(document).ready(function(){
 
                 icons =
                     ( in_array(event.id, hidenEvents) ? '<span style="display: inline;" class="fa fa-arrow-up btnEventHiding" title="Показать мероприятие"></span>' : '<span style="display: inline;" class="fa fa-arrow-down btnEventHiding" title="Скрыть мероприятие"></span>') +
-                    ( isEventsAdmin && memberId === event.author ?
+                    ( isEventsAdmin && memberId === event.author || memberId === '000005716' ?
                        ( isEventActive ? '<span  style="display: inline;"class="fa fa-check-circle  btnEventActivity" title="Сделать неактивным"></span>' : '<span style="display: inline;" class="fa fa-times btnEventActivity" title="Сделать активным"></span>') +
                         '<span style="display: inline;" class="fa fa-pencil btnEditEvent" title="Редактировать мероприятие"></span>'+
                         '<span style="display: inline;" class="fa fa-trash-o btnRemoveEvent" title="Удалить мероприятие" aria-hidden="true"></span>'+
@@ -658,20 +658,18 @@ $(document).ready(function(){
                             '<span class="span5 event-name">'+ event.name + '</span>'+
                             '<span class="span3">'+ event.locality_name + '</span>'+
                             '<span class="span2 event-date">'+ formatDDMM(event.start_date) + ' - ' + formatDDMM(event.end_date)+'</span>'+
-                            '<span class="span2 event-icons"  style="width: 190px";>'+ icons + (regstateClass == "" ?  "" : '<span style="margin-top:5px; margin-left: 15px; display: inline;" class="label label-'+regstateClass+'">'+ regstateText + '</span>') +((regstateText) ? ((regstateText === 'регистрация подтверждена' || regstateText === 'ожидание подтверждения') ? '<br><span style="padding-left:5px;"><a style="padding-left: 27px" class="handleRegistrationFast editEventMember" title="Редактировать данные"> Изменить</a></span><span><a class="rejectRegistrationFast" title="Отменить регистрацию"> Отменить</a></span>':''):'<span style="margin-top:5px; margin-left: 5px; padding-left:8px;"><a class="handleRegistrationFast addEventMember" >Зарегистрироваться</a></span>')+'</span>'+
+                            '<span class="span2 event-icons"  style="width: 190px";>'+ icons + (regstateClass == "" ?  "" : '<span style="margin-top:5px; margin-left: 15px; display: inline;" class="label label-'+regstateClass+'">'+ regstateText + '</span>') +((regstateText) ? ((regstateText === 'регистрация подтверждена' || regstateText === 'ожидание подтверждения') ? '<br><span style="padding-left:5px;"><a style="padding-left: 27px; font-size: 12px" class="handleRegistrationFast editEventMember" title="Редактировать данные"> Изменить</a></span><span><a class="rejectRegistrationFast" title="Отменить регистрацию" style="font-size: 12px"> Отменить</a></span>':''):'<span style="margin-top:5px; margin-left: 5px; padding-left:8px;"><a class="handleRegistrationFast addEventMember" >Зарегистрироваться</a></span>')+'</span>'+
                             '</div>';
 
                 tabletEvent = '<div '+eventAttrs+'>'+
                             '<div class="event-name"><strong>'+ event.name.split('(')[0] + '</strong></div>'+
-                            ( event.name.split('(')[1] ? '<div class="event-name">'+ event.name.split('(')[1].split(')')[0] + '</div>' : '')+
-                            '<div>( '+ event.locality_name + ' )</div>'+
-                            '<div>Срок: '+ formatDDMM(event.start_date)+ ' - ' + formatDDMM(event.end_date) +'</div>'+
-                            '<div>'+ icons+ '<span style="margin-top:5px;" class="label label-'+regstateClass+'">'+ regstateText + '</span>' + '</div>'+
+                            ( event.name.split('(')[1] ? '<div class="event-name">'+ event.name.split('(')[1].split(')')[0] + '<span>, '+ event.locality_name + '.</span></div>' : '')+
+                            '<div><span style="margin-top:5px; margin-right:5px;" class="label label-'+regstateClass+'">'+ regstateText + '</span>' + icons+ '</div>'+
                         '</div>';
 
                 var evArr = '<?php echo $adminEvents; ?>';
 
-                if((!parseInt(isUserWithRights) && parseInt(event.private)>0 && !in_array(event.id, evArr.split(',')) && event.regstate_key === null) || (memberId !== event.author && !isEventActive)){
+                if((!parseInt(isUserWithRights) && parseInt(event.private)>0 && !in_array(event.id, evArr.split(',')) && event.regstate_key === null) || ((memberId !== event.author || memberId === '000005716') && !isEventActive)){
                     continue;
                 }
                 else if(in_array(event.id, hidenEvents)){
@@ -883,6 +881,7 @@ $(document).ready(function(){
                                     $('#btnDoRegisterGuest').removeClass('guest');
                                     isEditMode ? $('#btnDoRegisterGuest').addClass('edit') : $('#btnDoRegisterGuest').removeClass('edit');
                                     $('#modalEditMember').modal('show');
+                                    isEditMode ? $('#modalShowEventInfo').modal('hide') : '';
                                     $('.emMate').hide();
                                     $('.emMateLbl').hide();
                                   });

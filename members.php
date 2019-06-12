@@ -819,7 +819,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                 countAttendancesScholarsByAge+"</td></tr>" : "")+
             ( countStudentsByAge >0 ? "<tr><td>18-25 лет</td><td class='text-align'>"+countStudentsByAge+"</td><td class='text-align'>"+countAttendancesStudentsByAge+"</td></tr>" : "" ) +
             ( countSaintsByAge >0 ? "<tr><td>26-60 лет</td><td class='text-align'>"+countSaintsByAge+"</td><td class='text-align'>"+countAttendancesSaintsByAge+"</td></tr>" : "" )+
-            ( countOlderByAge >0 ? "<tr><td>60 лет и старше</td><td class='text-align'>"+countOlderByAge+"</td><td class='text-align'>"+countAttendancesSaintsByOldAge+"</td></tr>" : "" )+
+            ( countOlderByAge >0 ? "<tr><td>старше 60</td><td class='text-align'>"+countOlderByAge+"</td><td class='text-align'>"+countAttendancesSaintsByOldAge+"</td></tr>" : "" )+
             "<tr><td><strong>Всего</strong></td><td class='text-align'><strong>" + (countScholarsByAge+countStudentsByAge+countSaintsByAge + countOlderByAge) + "</strong></td><td class='text-align'><strong>"+(countAttendancesScholarsByAge+countAttendancesStudentsByAge+countAttendancesSaintsByAge + countAttendancesSaintsByOldAge)+"</strong></td></tr>"+
             ( countScholarsByAge>0 || countStudentsByAge> 0 || countSaintsByAge >0 ? "<tr><td>Средний возраст</td><td class='text-align'>"+(
                 parseInt(averageAge / (countScholarsByAge + countStudentsByAge + countSaintsByAge + countOlderByAge)))+"</td>"+

@@ -9,7 +9,27 @@ var isFillTemplate = 0;
         window.meetingTemplateParticipantsList = [];
         //window.selectedTemplateMembers = [];
         //window.selectedMeetingMembers = [];
+        function get_localities(){
+            $.get('/ajax/members.php?get_localities')
+            .done (function(data) {
+                renderLocalities(data.localities);
+            });
+        }
 
+        function renderLocalities(localities){
+            var localities_list = [];
+                selectedLocality = gloLocalityAgmin;
+
+            localities_list.push("<option value='_all_' " + (selectedLocality =='_all_' ? 'selected' : '') +" >Все местности (районы)</option>");
+
+            for (var l in localities){
+                var locality = localities[l];
+                localities_list.push("<option value='"+locality['id']+"' " + (selectedLocality == l ? 'selected' : '') +" >"+he(locality['name'])+"</option>");
+            }
+
+            $("#localityStatistic").html(localities_list.join(''));
+        }
+        get_localities();
         loadMeetings();
         setAdminRole_0('.add-meeting');
         $('.checkbox-block input').change(function(){
@@ -537,20 +557,20 @@ var isFillTemplate = 0;
                 showMeetingType = $("#meetingTypeGeneralStatistic").val() === '_all_',
                 showLocalityName = $("#localityGeneralStatistic").val() === '_all_';
 
-            info.push(['Дата', 'Святых', 'Служащих', 'Обучающихся', 'Гостей', 'Всего']);
+            info.push(['Дата', 'Всего', 'Святых', 'Гостей', 'Служащих', 'Обучающихся']);
 
             information.forEach(function(item){
                 var meetingCounts = getMeetingCounts(item);
 
                 if((meetingCounts.countMembers + meetingCounts.childrenCount)>0){
                     info.push( [
-                        formatDate(item.date) + (showLocalityName ? '\n( '+he(item.locality_name)+' )' : '') + (showMeetingType ? '\n'+he(item.short_name) : ''),
+                        formatDate(item.date) + (showLocalityName ? '\n' +he(item.locality_name) : '') + (showMeetingType ? '\n'+he(item.short_name) : ''),
                         //meetingCounts.listCount,
+                        meetingCounts.countMembers,
                         meetingCounts.saintsCount,
+                        meetingCounts.guestCount,
                         meetingCounts.fulltimersCount,
                         meetingCounts.traineesCount,
-                        meetingCounts.guestCount,
-                        meetingCounts.countMembers,
                     ]);
                 }
             });
@@ -562,6 +582,7 @@ var isFillTemplate = 0;
                 title: '',
                 subtitle: '',
               },
+              colors: ['grey', '#db4437', '#f4b400', '#0f9d58', '#ab47bc' ],
               bars: 'horizontal'
             };
 
@@ -660,9 +681,13 @@ var isFillTemplate = 0;
             loadMeetings();
         });
 
-        $("#localityStatistic, #meetingTypeStatistic, .start-date-statistic-members, .end-date-statistic-members, #showAllMembersCkbx").change(function(){
+        $(".start-date-statistic-members, .end-date-statistic-members").change(function(){
             getMembersStatistic();
         });
+        $("#localityStatistic, #meetingTypeStatistic, #showAllMembersCkbx").change(function(){
+            filterMembersListSttst();
+        });
+
 
         $("a[id|='sort']").click (function (){
             var id = $(this).attr("id");
@@ -2032,17 +2057,47 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
       }
       $(modal).find('tbody').html(members.join(''));
      }
-// STATISTIC begin
+
+// STATISTICS begin
+
+    function filterMembersListSttst(){
+        var locality = $("#localityStatistic").val();
+        var meetingType = $("#meetingTypeStatistic").val();
+        var showAllMembersCkbx = $("#showAllMembersCkbx").prop('checked');
+        var counterMember = 0, generalCounter = 0;
+        if(locality){
+            localityList = locality.split(',');
+        }
+        $("#modalMeetingStatistic tbody tr").each(function(){
+          var memberLocalityCount = $(this).attr('data-locality');
+          if (in_array(memberLocalityCount, localityList) || locality === '_all_') {
+            generalCounter++;
+            if ((meetingType === '_all_' && $(this).find('.statistic-bar').attr('title') != 'undefined') || $(this).find('.statistic-bar').attr('data-type') === meetingType) {
+              counterMember++;
+            }
+          }
+
+        });
+        $("#modalMeetingStatistic tbody tr").each(function(){
+          var memberLocality = $(this).attr('data-locality');
+            if (((in_array(memberLocality, localityList) || locality === '_all_') || (locality === undefined && localityList.length === 0)) && ($(this).find('.statistic-bar').attr('data-type') === meetingType || meetingType === '_all_') && !(showAllMembersCkbx === true && $(this).find('.statistic-bar').attr('title') === 'undefined')) {
+              $(this).show()
+            } else {
+              $(this).hide();
+            }
+          });
+          $("#modalMeetingStatistic #general-statistic").html('По списку — '+generalCounter+' чел. Участвовали в собраниях — '+counterMember+' чел.');
+     }
+
      function getMembersStatistic() {
 
-var statDataMembers, statDataMeetings;
+     var statDataMembers, statDataMeetings;
 
      var membersMeetingStatistics=[], generalCount = 0;
      var localityGlo = $("#localityStatistic").val() || '_all_';
      var meetingTypeGlo = $("#meetingTypeStatistic").val() || '_all_';
      var startDateGlo = $(".start-date-statistic-members").val();
      var endDateGlo = $(".end-date-statistic-members").val();
-     var showAllMembersCkbx = $("#showAllMembersCkbx").prop('checked');
      $("#modalMeetingStatistic").modal('show');
      $("#modalMeetingStatistic .scroll-up").hide();
 
@@ -2052,7 +2107,7 @@ var statDataMembers, statDataMeetings;
          //var request = getRequestFromFilters(setFiltersForRequest());
          $.getJSON('/ajax/meeting.php?get_meetings_for_statistics', {adminId: getAdminId, localityFilter: localityGlo, meetingFilter: meetingTypeGlo, startDate: parseDate(startDateGlo), endDate: parseDate(endDateGlo)}).done(function(data){
              meetingArray = data.meetings;
-             getMeStatistics(statDataMembers, meetingArray);             
+             getMeStatistics(statDataMembers, meetingArray);
          });
      }
 
@@ -2065,8 +2120,6 @@ var statDataMembers, statDataMeetings;
               getMeetingsForStatistics(data.members);
          });
        }
-
-
 
          function getMeStatistics (listMembers, meetingArray) {
 
@@ -2103,16 +2156,26 @@ var statDataMembers, statDataMeetings;
              });
              attendedMeeting[0] ? generalCount++ : '';
 
-             if (!(showAllMembersCkbx === true && attendedMeeting.length === 0)) {
               membersMeetingStatistics.push({member_key: memberKey, name: memberName, locality_name: memberLocality, locality_key: memberLocality_key, meeting: attendedMeeting, general_count: generalCount});
-             }
+
            });
            buildStatisticMembersList(membersMeetingStatistics, generalCount);
            $("#modalMeetingStatistic").modal('show');
            $("#modalMeetingStatistic .scroll-up").hide();
          }
+
          getMembersForStatistics();
        }
+       $("#modalMeetingStatistic").on('hide', function(){
+          $("#meetingTypeStatistic").val('_all_');
+          $("#localityStatistic").val('_all_');
+       });
+       $("#meetingsLegendsShow").click( function() {
+          $("#meetingsLegends").modal('show');
+       });
+       $("#meetingsLegendsClose").click( function() {
+          $("#meetingsLegends").modal('hide');
+       });
     });
 })();
 function screenSizeMdl() {
