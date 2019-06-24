@@ -392,6 +392,10 @@
         </div>
         <div class="search-checkbox">
             <div class="search-checkbox-first-column">
+              <div>
+                  <input type="checkbox" id="member_name" disabled checked>
+                  <label for="member_name">ФИО</label>
+              </div>
                 <div class="translate">
                     <input type="checkbox" id="download-translate">
                     <label for="download-translate">Переводить на английский</label>
@@ -402,7 +406,7 @@
                 </div>
                 <div>
                     <input type="checkbox" data-download="age" id="download-age">
-                    <label for="download-how-old">Возраст</label>
+                    <label for="download-age">Возраст</label>
                 </div>
                 <div>
                     <input type="checkbox" data-download="locality" id="download-city">
@@ -435,6 +439,14 @@
                 <div>
                     <input type="checkbox" data-download="email" id="download-email">
                     <label for="download-email">Email</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="mate" id="download-mate">
+                    <label for="download-mate">Разместить с</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="status" id="download-status">
+                    <label for="download-status">Статус</label>
                 </div>
             </div>
             <div style="display: inline-block;">
@@ -1218,7 +1230,7 @@ setTimeout(function () {
         $('.downloadItems').click(function(){
             var fields = [];
             $("#modalDownloadItems").find(".search-checkbox input[type='checkbox']").each(function(){
-                if ($(this).prop('checked')===true){
+                if ($(this).prop('checked')===true && $(this).attr('id') != 'member_name'){
                     fields.push({'name': $(this).attr('data-download'), 'value': $(this).siblings("label").text()});
                 }
             });
@@ -1382,7 +1394,9 @@ setTimeout(function () {
 
     function handleCheckboxForDownloading(checkedAll){
         $("#modalDownloadItems .search-checkbox input[type='checkbox']").each(function(){
+          if ($(this).attr('id') != 'member_name') {
             $(this).prop('checked', checkedAll);
+          }
         });
     }
 
@@ -1617,7 +1631,7 @@ function checkStopEventRegistration(eventId){
           }
         }
         $(".close-event-registration").html(text);
-        $('#labelExtraInfo').click(function () {  
+        $('#labelExtraInfo').click(function () {
           var a = $(this).attr('data-max-participants');
           var b = 'Максимальное количество участников для этого мероприятия — ' + a + ' чел.';
           $('#modalHintWindow').modal('show');

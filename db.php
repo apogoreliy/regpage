@@ -9,7 +9,7 @@ date_default_timezone_set ("Europe/Moscow");
 require_once 'FirePHP.class.php';
 require_once 'config.php';
 include_once 'utils.php';
-
+include_once 'db2.php';
 /*
 class ValidationException extends Exception
 {
@@ -158,6 +158,7 @@ function db_getMemberNameEmail ($memberId)
     $row = $res->fetch_assoc();
     return $row ? array ($row['name'], $row['email']) : array ('','');
 }
+
 
 function db_getMemberNameEmailShort ($memberId)
 {
@@ -4814,27 +4815,37 @@ function db_getAdminsListByLocalities ()
     while ($row = $res->fetch_object()) $members[]=$row;
     return $members;
 }
-function db_getAdminsListByLocalitiesCombobox ()
+
+function db_getAdminsListByLocalitiesCombobox ($locality)
 {
     global $db;
+    $locality = $db->real_escape_string($locality);
     $res=db_query ("SELECT DISTINCT m.key as id, m.name as name, m.email as email, m.cell_phone as cell_phone, lo.name as locality_name, ad.comment as note, lo.key as locality_key
     FROM access as a
     INNER JOIN admin ad ON ad.member_key=a.member_key
     INNER JOIN member m ON a.member_key = m.key
-    INNER JOIN locality lo ON lo.key=m.locality_key ORDER BY name");
+    INNER JOIN locality lo ON lo.key=m.locality_key
+    WHERE lo.key = '$locality' ORDER BY name");
 
     $members = array ();
     while ($row = $res->fetch_assoc()) $members[$row['id']]=$row['name'];
     return $members;
 }
-function db_getActivityList ()
+function db_getActivityList ($start, $stop, $locality, $page, $admins)
 {
     global $db;
+    $locality = $db->real_escape_string($locality);
+    $page = $db->real_escape_string($page);
+    $admins = $db->real_escape_string($admins);
+    $requestLocality = $locality=="_all_" ? "" : " AND lo.key='$locality' ";
+    $requestPage = $page == "_all_" ? "" : " AND act.page='$page' ";
+    $requestAdmins = $admins == "_all_" ? "" : " AND ad.member_key='$admins' ";
     $res=db_query ("SELECT act.id as id_string, act.admin_key as id, act.page as page, act.time_create as time, m.name as name, lo.name as locality_name, lo.key as locality_key
     FROM activity_log as act
     INNER JOIN admin ad ON ad.member_key=act.admin_key
     INNER JOIN member m ON act.admin_key = m.key
-    INNER JOIN locality lo ON lo.key=m.locality_key ORDER BY name");
+    INNER JOIN locality lo ON lo.key=m.locality_key
+    WHERE act.time_create > '$start' AND act.time_create < '$stop' $requestLocality $requestPage $requestAdmins ORDER BY name");
 
     $members = array ();
     while ($row = $res->fetch_object()) $members[]=$row;
@@ -4929,7 +4940,6 @@ function db_getMeetingsForStatistics($adminId, $localityFilter, $meetingTypeFilt
     $requestMeeting = $meetingTypeFilter == "_all_" ? "" : " AND me.meeting_type='$meetingTypeFilter' ";
     $requestLocality = $localityFilter=="_all_" ? "" : " AND l.key='$localityFilter' ";
     $requestDates = " AND (me.date BETWEEN '$startDate' AND '$endDate')";
-    $requestCheckMeetingAdditions = "SELECT COUNT(*) count FROM member m WHERE m.locality_key=l.key AND m.category_key='FS'";
 
     db_query('SET Session group_concat_max_len=100000');
 
@@ -4940,7 +4950,6 @@ function db_getMeetingsForStatistics($adminId, $localityFilter, $meetingTypeFilt
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
             me.participants,
             me.trainees_count,
-            IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
             0 as summary
             FROM access a
             LEFT JOIN country c ON c.key = a.country_key
@@ -4956,7 +4965,6 @@ function db_getMeetingsForStatistics($adminId, $localityFilter, $meetingTypeFilt
             (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
             me.participants,
             me.trainees_count,
-            IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
              0 as summary
             FROM meetings me
             INNER JOIN meeting_type mt ON mt.key=me.meeting_type
@@ -4977,29 +4985,20 @@ function db_activityLogInsert ($adminId, $page)
 
   db_query ("INSERT INTO activity_log (admin_key, page) VALUES ('$adminId', '$page')");
 }
-/*
-function db_loginAdmin ($sessionId, $login, $password)
+function db_getMemberNameMate ($memberId)
 {
     global $db;
-    $sessionId = $db->real_escape_string($sessionId);
-    $login = $db->real_escape_string($login);
-    $password = $db->real_escape_string($password);
-
-    $res=db_query ("SELECT member_key FROM admin a inner join member m ON m.key=a.member_key WHERE a.login='$login' and a.password='$password' and m.active=1");
-    if ($row = $res->fetch_assoc())
-    {
-        $adminId = $row['member_key'];
-
-        db_query ("UPDATE admin SET session='$sessionId' WHERE member_key='$adminId'");
-        return $adminId;
-    }
-    return NULL;
+    $memberId = $db->real_escape_string($memberId);
+    $res=db_query ("SELECT name FROM member WHERE `key`='$memberId'");
+    $row = $res->fetch_assoc();
+    return $row ? $row['name'] : '';
 }
-
-function db_logoutAdmin ($adminId)
+function db_getStatus ($status_key)
 {
     global $db;
-    $adminId = $db->real_escape_string($adminId);
-    db_query ("UPDATE admin SET session=NULL WHERE member_key='$adminId'");
+    $status_key == $db->real_escape_string($status_key);
+    $res=db_query ("SELECT name FROM status WHERE `key`='$status_key'");
+    $row = $res->fetch_assoc();
+    return $row ? $row['name'] : '';
 }
-*/
+// continue file db2.php

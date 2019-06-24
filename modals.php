@@ -337,7 +337,7 @@
             <div class="download-checkboxes-first-column">
                 <div>
                     <input type="checkbox" data-download="member_name" id="member-name" checked disabled>
-                    <label for="member_name">Участник</label>
+                    <label for="member_name">ФИО</label>
                 </div>
                 <div>
                     <input type="checkbox" data-download="locality" id="download-city">

@@ -678,8 +678,12 @@ input.error, .control-group.error select, textarea.error {
 .statistic-bar{
     margin-left: 2px;
     margin-right: 2px;
-    padding-left: 20px;
+    padding-left: 6px;
+    padding-right: 6px;
     /*padding-top: 6px;*/
+    color: white;
+    /*font-size: 14px;*/
+    text-align: center;
 }
 .archive-bar{
     margin-left: 2px;
