@@ -128,18 +128,18 @@ switch ($h) {
                 echo"><a href='/list'>Ответственные</a></li>";
             }*/
 
-            /*if(isset($memberId) && $memberId == '000008601' && !isset($isGuest) && db_isAdmin($memberId)) {
+            if(isset($memberId) && $memberId == '000005716' && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/statistic")!==FALSE) {echo " class='active'";}
                 echo"><a href='/statistic'>Архив</a></li>";
             }
 
-            if(isset($memberId) && $memberId == '000008601' && !isset($isGuest) && db_isAdmin($memberId)) {
+            if(isset($memberId) && $memberId == '000005716' && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/event")!==FALSE) {echo " class='active'";}
                 echo"><a href='/event'>Мероприятия</a></li>";
             }
-            */
+
 
             if(isset($memberId)){
                 echo '<li';
@@ -147,7 +147,7 @@ switch ($h) {
                 echo"><a href='/links'>Ссылки</a></li>";
             }
 
-            if(isset($memberId) && ($memberId == '000008601' || $memberId == '000001679')){
+            if(isset($memberId) && ($memberId == '000008601' || $memberId == '000001679' || $memberId == '000005716')){
 
                 echo '<li';
                 if (strpos ($s,"/reference")!==FALSE) {echo " class='active'";}
@@ -210,6 +210,34 @@ switch ($h) {
 
 </div>
 <script>
+function referenceSysAnew() {
+  var memberId = '<?php echo $memberId; ?>';
+  if (window.location.pathname.length === 3 && memberId) {
+    var linksArr=[];
+    var pathpath = window.location.pathname;
+    pathpath = pathpath[1] + pathpath[2];
+    $.post('/ajax/reference.php', {})
+    .done(function(data){
+
+      $(data.references).each(function (i) {
+        var reference = data.references[i];
+         if (reference['page'] == pathpath) {
+            linksArr.push('<li class="modal-reference"><a href="'+reference["link_article"]+'" target="_blank">'+reference["name"]+'</a></li>');
+
+         }
+      })
+      if (linksArr.length != 0) {
+        $('.dropdown-menu.pull-right').html(linksArr);
+      } else {
+        linksArr = '<li class="modal-reference"><a href="#">Справочной информации по этому разделу пока нет</a></li>';
+        $('.dropdown-menu.pull-right').html(linksArr);
+      }
+    });
+  }
+}
+
+referenceSysAnew();
+
     $('.logout').click(function(e){
         e.preventDefault();
 
