@@ -10,29 +10,14 @@ var startSystemFilter = 1;
         window.meetingTemplateAdminsList = [];
         window.meetingTemplateParticipantsList = [];
 
-//fillAdminsOfLocations('#responsibleList');
-$.when(fillAdminsOfLocations('#responsibleList',window.adminId)).then(loadMeetings());
+loadMeetings();
 //loadMeetings();
 // CALLS AND VISITS CODE
 function loadMeetings(){
     var request = getRequestFromFilters(setFiltersForRequest());
     $.getJSON('/ajax/visits.php?get_visits'+request).done(function(data){
-      var responsibilesTrue = [];
-      $('#responsibleList option').each(function(){
-        if (($(this).val() != '_all_')) {
-          var tempVar = [];
-          tempVar.push($(this).val());
-          responsibilesTrue.push(tempVar);
-        }
-      });
-      if (responsibilesTrue.length === 0) {
-          setTimeout(function () {
-            loadMeetings();
-            $.when(refreshMeetings(data.meetings)).then(filterMeetingsList());
-          }, 200);
-      } else {
-        $.when(refreshMeetings(data.meetings)).then(filterMeetingsList());
-      }      
+      refreshMeetings(data.meetings);
+      filterMeetingsList();
     });
 }
 
@@ -475,9 +460,10 @@ function buildMembersList(modalWindowSelector, list, mode){
     membersCounterMeeting();
 }
 // get admins of localities
+
 function fillAdminsOfLocations(element, responsible) {
   var localities = []; responsibles = [];
-  element == '#responsibleList' ? responsibles.push('<option value="_all_">Все</option>') : '';
+  //element == '#responsibleList' ? responsibles.push('<option value="_all_">Все</option>') : '';
   $('#selMeetingLocality option').each(function(){
     $(this).val() != '_all_' ? localities.push($(this).val()): '';
   })
@@ -514,9 +500,10 @@ function fillAdminsOfLocations(element, responsible) {
       });
 }
 
-function filterMeetingsList(start){
-    start === 1 ? $('#selMeetingCategory').val('plan') : '';
-    //start === 1 ? $('#responsibleList').val(window.adminId) : '';
+function filterMeetingsList(){
+    startSystemFilter === 1 ? $('#selMeetingCategory').val('plan') : '';
+    startSystemFilter === 1 ? $('#responsibleList').val(window.adminId) : '';
+    startSystemFilter === 1 ? startSystemFilter = 0 : '';
     var responsible = $("#responsibleList").val();
     var locality = $("#selMeetingLocality").val();
     var meetingType = $("#selMeetingCategory").val();
