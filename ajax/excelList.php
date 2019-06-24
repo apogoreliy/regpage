@@ -603,7 +603,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
     if(isset($_POST ['all'])){
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', '№')
-            ->setCellValue('B1', $shouldTranslateFields ? 'Member' : 'Участник');
+            ->setCellValue('B1', $shouldTranslateFields ? 'Member' : 'ФИО');
 
         $ind = 'C';
         for ($d=0; $d < $fieldsCount; $d++) {
@@ -650,6 +650,12 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                     break;
                 case 'regstate':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Состояние регистрации');
+                    break;
+                case 'mate':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Разместить с');
+                    break;
+                case 'status':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Статус');
                     break;
                 case 'custom_item':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $fields[$d]['value']);
@@ -778,6 +784,9 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                 if (isset($_POST ['all'])) {
                     $ind = 'C';
                     foreach ($fields as $d) {
+                      $abcdes = strval($membersAll[$m]['mate_key']);
+                      $namesmembers = db_getMemberNameMate($abcdes);
+                      $getStatus = db_getStatus($membersAll[$m]['status_key']);
                         $locality = explode(':', $membersAll[$m]['locality'])[0];
                         switch ($d['name']) {
                             case 'birth_date':
@@ -820,6 +829,12 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                                 break;
                             case 'regstate':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $registrate);
+                                break;
+                            case 'mate':
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $namesmembers);
+                                break;
+                            case 'status':
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $getStatus);
                                 break;
                             case 'custom_item':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['reg_list_name']);

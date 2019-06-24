@@ -272,7 +272,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <i class="btn fa fa-calendar" aria-hidden="true"></i>
             <input type="text" class="span2 end-date-statistic-members" value="<?php echo date('d.m.Y'); ?>">
         </div>
-        <i class="btn btn-meeting-download-members-statistic fa fa-download" title="Скачать общую статистику" aria-hidden="true"></i> <input type="button" name="" value="Обозначения собраний" id="meetingsLegendsShow" style="margin-left: 10px; margin-bottom: 8px;"><br>
+        <i class="btn btn-meeting-download-members-statistic fa fa-download" title="Скачать общую статистику" aria-hidden="true"></i><br>
         <label style="margin-left: 7px;" for="showAllMembersCkbx"><input id="showAllMembersCkbx" type="checkbox"style="margin-bottom: 7px;"> только те, кто посещал собрания.</label>
         <div id="meetingsLegends" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="regNameEdit" aria-hidden="true" data-width="200">
             <?php
@@ -282,7 +282,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             ?>
             <input type="button" name="" value="Закрыть" id="meetingsLegendsClose" style="margin-left: 65px !important; margin-top: 10px; margin-bottom: 10px;">
         </div>
-        <div id="general-statistic"></div>
+        <div><span id="general-statistic"></span><input type="button" name="" value="Обозначения собраний" id="meetingsLegendsShow" style="margin-left: 10px; margin-bottom: 8px; float:right"></div>
         <table class="table table-hover table-condensed statistic-meeting-list">
             <thead><tr><th style="width: 30%;">Фамилия Имя Отчество</th><th></th></tr></thead>
             <tbody></tbody>
@@ -639,7 +639,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var gloLocalityAgmin = '<?php echo $localitiesWithFilters; ?>';
 </script>
 
-<script src="/js/meetings.js?v111"></script>
+<script src="/js/meetings.js?v127"></script>
 <?php
     include_once './footer.php';
 ?>

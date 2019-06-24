@@ -7,8 +7,9 @@ $localities = db_getAdminMeetingLocalities ($memberId);
 $meetingsTypes = db_getMeetingsTypes();
 $isSingleCity = db_isSingleCityAdmin($memberId);
 $singleLocality = db_getSingleAdminLocality($memberId);
-
+$adminLocality = db_getAdminLocality($memberId);
 $categories = db_getCategories();
+$listAdminLocality = db_getAdminsListByLocalitiesCombobox($adminLocality);
 
 $selMeetingLocality = isset ($_COOKIE['selMeetingLocality']) ? $_COOKIE['selMeetingLocality'] : '_all_';
 $selMeetingCategory = isset ($_COOKIE['selMeetingCategory']) ? $_COOKIE['selMeetingCategory'] : '_all_';
@@ -80,6 +81,9 @@ $sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetin
                 <?php } ?>
                 <select id="responsibleList" data-id_admin="" class="col-sm span2">
                   <option value="_all_">Все</option>
+                  <?php foreach ($listAdminLocality as $id => $name) {
+                  echo "<option value='$id'>".htmlspecialchars ($name)."</option>";
+                } ?>
                 </select>
             </div>
             <div class="desctopVisible" id="visitsListTbl">
@@ -603,7 +607,7 @@ $sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetin
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v118"></script>
+<script src="/js/visits.js?v119"></script>
 <?php
     include_once './footer.php';
 ?>
