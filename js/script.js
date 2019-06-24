@@ -1960,6 +1960,7 @@ $(document).ready(function(){
           case 'members': window.location = '/members'; break;
           case 'youth': window.location = '/youth'; break;
           case 'list': window.location = '/list'; break;
+          case 'activity': window.location = '/activity'; break;
       }
   });
   $('.continue-closed-registration').click(function(){
