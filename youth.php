@@ -597,25 +597,24 @@ include_once "modals.php";
 			} else {
 				courseLevel = '';
 			}
-// End Roman's code
-			if(startCollege && endCollege){
+// End Roman's code убрал && endCollege из следующего следом условия
+			if(startCollege){
 				if(currentYear < startCollege){
 					courseLevel = "планирует поступить";
 				}
 				else if (currentYear === startCollege && currentMonth < 6) {
 					courseLevel = "планирует поступить";
 				}
-				else if(currentYear === endCollege){
+				else if(endCollege && (currentYear === endCollege)){
 					courseLevel = currentMonth >= 6 ? "обучение завершено" : courseLevel + " курс, окончание в этом году";
 				}
-				else if(currentYear > endCollege){
+				else if(endCollege && (currentYear > endCollege)){
 					courseLevel = "учёба завершена";
 				}
 				else{
 					courseLevel = courseLevel+" курс";
 				}
 			}
-
 			return courseLevel ? ', '+ courseLevel : courseLevel;
 		}
 	}
