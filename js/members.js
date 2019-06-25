@@ -1,1 +1,1 @@
-
+renewComboLists('.members-lists-combo');

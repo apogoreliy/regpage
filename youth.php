@@ -206,6 +206,13 @@ include_once "modals.php";
 		//Roman's code ver 5.0.1
 		window.user_settings = "<?php echo $userSettings; ?>".split(',');
 
+		if (window.history && window.history.pushState) {
+
+			$(window).on('popstate', function() {
+			  alert('Back button was pressed.');
+			});
+		}
+
 		loadYouthList();
 		setAdminRole_0('.add-member','#btnDoSaveMember');
 		$(".clear-college").click(function(e){
@@ -686,5 +693,5 @@ include_once "modals.php";
 	}
 
 </script>
-<script src="/js/youth.js?v1"></script>
+<script src="/js/youth.js?v4"></script>
 <?php include_once "footer.php"; ?>

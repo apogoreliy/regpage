@@ -1072,7 +1072,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
         setTimeout(function() {$(".emName").focus();}, 1000);
     });
 </script>
-<script src="/js/members.js?v1"></script>
+<script src="/js/members.js?v3"></script>
 <?php
 include_once "footer.php";
 ?>

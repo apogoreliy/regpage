@@ -513,7 +513,7 @@ function filterMeetingsList(){
     $(".meetings-list tbody tr").each(function(){
         (($(this).attr('data-responsible') === responsible || responsible == '_all_') && ($(this).attr('data-locality') === locality || $(this).attr('data-district') === locality || locality === '_all_') && ($(this).attr('data-performed') === meetingType || meetingType === '_all_')) ? ($(this).show(), countIteration++) : $(this).hide();
     });
-    if (countIteration === 0 && start === 1) {
+    if (countIteration === 0 && startSystemFilter === 1) {
       $('#selMeetingCategory').val('_all_');
       $("#responsibleList").val('_all_');
       filterMeetingsList();
@@ -2185,3 +2185,4 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
       });
     });
 })();
+renewComboLists('.meeting-lists-combo');

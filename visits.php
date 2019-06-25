@@ -24,7 +24,7 @@ $sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetin
         <div class="tab-content">
           <select class="controls span4 meeting-lists-combo" tooltip="Выберите нужный вам список здесь">
               <option value="meetings">Собрания</option>
-              <option selected value="callsAndVisits">Посещения и звонки</option>
+              <option selected value="visits">Посещения и звонки</option>
           </select>
             <div class="btn-toolbar" style="margin-top:10px !important">
                 <a class="btn btn-success add-meeting" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
@@ -607,7 +607,7 @@ $sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetin
 var nameAdmin = "<?php echo db_getAdminNameById($memberId); ?>";
 var whatIsLocalityAdmin = "<?php echo db_getLocalityKeyByName(db_getMemberLocality($memberId)); ?>";
 </script>
-<script src="/js/visits.js?v119"></script>
+<script src="/js/visits.js?v122"></script>
 <?php
     include_once './footer.php';
 ?>

@@ -18,7 +18,7 @@
     </div>
     <div class="control-group row-fluid" style="width: 48%">
         <label id="emBirthdateLabelSup" class="span12">Дата рождения</label>
-        <input class="span12 emBirthdate datepicker" type="text"  maxlength="10" placeholder="ДД.ММ.ГГГГ" valid="">
+        <input class="span12 emBirthdate" type="date"  maxlength="10" valid="">
     </div>
     <div class="control-group row-fluid" style="width: 48%; float: right;">
         <label class="span12">Пол<sup>*</sup></label>
