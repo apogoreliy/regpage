@@ -2240,4 +2240,3 @@ screenSizeMdl();
 $(window).resize(function(){
   screenSizeMdl();
 });
-renewComboLists('.meeting-lists-combo');

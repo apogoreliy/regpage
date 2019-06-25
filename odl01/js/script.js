@@ -224,7 +224,7 @@ $(document).ready(function(){
         listsType = $(".meeting-lists-combo").val();
         switch (listsType) {
             case 'meetings': window.location = '/meetings'; break;
-            case 'visits': window.location = '/visits'; break;
+            case 'callsAndVisits': window.location = '/visits'; break;
         }
     });
 
@@ -551,15 +551,6 @@ function handleAditionalMenu(){
         handleBirthDateAndCategoryFields();
     });
 
-    $(".emBirthdate").change(function(){
-      var a = $(".emBirthdate").val();
-      if (a.length === 0) {
-          setFieldError($(this), true);
-      } else {
-          setFieldError($(this), false);
-      }
-    });
-
     $(".handle-new-locality").click(function(){
         $('.block-new-locality').css('display', 'block');
         $(".handle-new-locality").hide();
@@ -862,7 +853,7 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
         dep_date: parseDDMM (form.find(".emDepDate").val(), new Date (form.find(".tooltipDepDate").data ('date'))),
         arr_time: parseTime (form.find(".emArrTime").val()),
         dep_time: parseTime (form.find(".emDepTime").val()),
-        birth_date: form.find(".emBirthdate").val(),
+        birth_date: parseDate (form.find(".emBirthdate").val()),
         cell_phone: form.find(".emCellPhone").val(),
         comment: page !== '/reg' && page !== '/members' && page !== '/admin' ? form.find(".emUserComment").val() : form.find(".emComment").val(),
         email: form.find(".emEmail").val(),
@@ -1146,7 +1137,7 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
 
     $(".emArrDate").val (info["arr_date"] ? formatDDMM (info["arr_date"]) : "").attr('data-double_date', info["arr_date"]).keyup();
     $(".emArrTime").val (info["arr_time"] ? formatTime (info["arr_time"]) : "").keyup();
-    $(".emBirthdate").val (info["birth_date"] ? info["birth_date"] : "").keyup();
+    $(".emBirthdate").val (info["birth_date"] ? formatDate (info["birth_date"]) : "").keyup();
     $(".emCellPhone").val (info["cell_phone"] ? info["cell_phone"] : "");
     //$(".emTempPhone").val (info["temp_phone"] ? info["temp_phone"] : "");
     $(".emDepDate").val (info["dep_date"] ? formatDDMM (info["dep_date"]) : "").attr('data-double_date', info["dep_date"]).keyup();
@@ -2280,11 +2271,4 @@ function showModalHintWindow(text){
     var modalWindow = $("#modalHintWindow");
     modalWindow.find(".modal-body").html(text);
     modalWindow.modal('show');
-}
-function renewComboLists(comboboxSelector) {
-  var pathpath = window.location.pathname;
-  pathpath = pathpath.slice(1);
-  if (pathpath != $(comboboxSelector).val()) {
-    $(comboboxSelector).val(pathpath);
-  }
 }

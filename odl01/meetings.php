@@ -24,7 +24,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         <div class="tab-content">
           <select class="controls span4 meeting-lists-combo" tooltip="Выберите нужный вам список здесь">
               <option selected value="meetings">Собрания</option>
-              <option value="visits">Посещения и звонки</option>
+              <option value="callsAndVisits">Посещения и звонки</option>
           </select>
             <div class="btn-toolbar" style="margin-top:10px !important">
                 <a class="btn btn-success add-meeting" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
@@ -639,7 +639,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var gloLocalityAgmin = '<?php echo $localitiesWithFilters; ?>';
 </script>
 
-<script src="/js/meetings.js?v128"></script>
+<script src="/js/meetings.js?v127"></script>
 <?php
     include_once './footer.php';
 ?>
