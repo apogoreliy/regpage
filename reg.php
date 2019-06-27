@@ -46,6 +46,15 @@
     if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
 
     $events = db_getEventsByAdmin($memberId);
+    $checkEventsArr = false;
+    foreach($events as $index => $event){
+      if ($event->id == $selectedEventId)
+      {
+        $checkEventsArr = true;
+      };
+    }
+    if ($checkEventsArr != true) $selectedEventId =false;
+
     if(!$events){
         echo '<p class="absent-events">В настоящее время нет мероприятий для регистрации.</p>';
     }
@@ -622,8 +631,9 @@
 <script>
     $(document).ready (function (){
         window.user_settings = "<?php echo $userSettings; ?>".split(',');
-
         setAdminRole();
+
+
         // data-close_registration="'+m.close_registration+'" data-stop_registration="'+m.stop_registration+'"
         <?php
         list ($adminName, $adminEmail) = db_getMemberNameEmail ($memberId);
@@ -2311,7 +2321,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v5"></script>
+<script src="/js/reg.js?v15"></script>
 <?php
     include_once "footer.php";
 ?>

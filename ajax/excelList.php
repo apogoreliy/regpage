@@ -600,6 +600,43 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
         return str_replace($rus, $lat, $str);
     }
 
+    function replaceSomeWords($str) {
+      $arr = explode(" ", $str);
+      for($i = 0; $i < count($arr);$i ++) {
+          $arr[$i];
+
+          if ($arr[$i] == 'obl.' || $arr[$i] == 'oblast.' || $arr[$i] == 'oblasty.' || $arr[$i] == 'obl' || $arr[$i] == 'oblast' || $arr[$i] == 'oblasty' || $arr[$i] == 'obl.,' || $arr[$i] == 'oblast.,' || $arr[$i] == 'oblasty.,' || $arr[$i] == 'obl,' || $arr[$i] == 'oblast,' || $arr[$i] == 'oblasty,')
+          {
+            $arr[$i] = 'reg.';
+          } elseif ($arr[$i] == 'kr.' || $arr[$i] == 'kray.' || $arr[$i] == 'kraya.' || $arr[$i] == 'k-y.' || $arr[$i] == 'kr-y.' || $arr[$i] == 'kr-ya.' || $arr[$i] == 'kr' || $arr[$i] == 'kray' || $arr[$i] == 'kraya' || $arr[$i] == 'k-y' || $arr[$i] == 'kr-y' || $arr[$i] == 'kr-ya' || $arr[$i] == 'kr.,' || $arr[$i] == 'kray.,' || $arr[$i] == 'kraya.,' || $arr[$i] == 'k-y.,' || $arr[$i] == 'kr-y.,' || $arr[$i] == 'kr-ya.,' || $arr[$i] == 'kr,' || $arr[$i] == 'kray,' || $arr[$i] == 'kraya,' || $arr[$i] == 'k-y,' || $arr[$i] == 'kr-y,' || $arr[$i] == 'kr-ya,') {
+            $arr[$i] = 'area';
+          };
+
+          if ($arr[$i] == 'ul.,' || $arr[$i] == 'ul.' || $arr[$i] == 'pr.,' || $arr[$i] == 'pr-t.,' || $arr[$i] == 'ul' || $arr[$i] == 'pr' || $arr[$i] == 'pr-t' || $arr[$i] == 'per' || $arr[$i] == 'per.' || $arr[$i] == 'per.,')
+          {
+            $arr[$i] = $arr[$i+1];
+            $arr[$i+1] = 'str.';
+          };
+
+          if ($arr[$i] == 'dom' || $arr[$i] == 'd.' || $arr[$i] == 'd') {
+            $arr[$i] = '';
+            $arrNextElement = substr($arr[$i+1], -1);
+            if ( $arrNextElement == ',') {
+              $arr[$i+1] = substr($arr[$i+1],0, -1);
+            };
+          };
+          if ($arr[$i] == 'kv.' || $arr[$i] == 'kv')
+          {
+            $arr[$i] = '-';
+            $arrNextElement = substr($arr[$i-1], -1);
+            if ( $arrNextElement == ',') {
+              $arr[$i-1] = substr($arr[$i-1],0, -1);
+            };
+          };
+      }
+      return $result = implode(" ", $arr);
+    }
+
     if(isset($_POST ['all'])){
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', '№')
@@ -723,9 +760,10 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
     for($i=2, $m=0; $m<$memberslength; $m++){
         if((isset($_POST ['coord']))? ($membersAll[$m]['coord']=='1') : (isset($_POST ['service'])? $membersAll[$m]['service']!='' : "true")) {
             for($j=0; $j<9; $j++) {
+              $tpNameTemp = $membersAll[$m]['tp_name'] ? $membersAll[$m]['tp_name']: $membersAll[$m]['name'];
                 $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue("A$i", $num)
-                    ->setCellValue("B$i", $membersAll[$m]['name']);
+                    ->setCellValue("B$i", $shouldTranslateFields ? $tpNameTemp : $membersAll[$m]['name']);
 
                 if ($membersAll[$m]['coord'] == "1") {
                     $coordinate = "Рекомендуется";
@@ -817,7 +855,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['email']);
                                 break;
                             case 'post':
-                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $shouldTranslateFields ? translitWords(translitLetters($membersAll[$m]['address'])) : $membersAll[$m]['address']);
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $shouldTranslateFields ? replaceSomeWords(translitWords(translitLetters($membersAll[$m]['address']))) : $membersAll[$m]['address']);
                                 break;
                             case 'arr_date':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['arr_date']); $ind ++;
