@@ -395,31 +395,32 @@
         <h4 id="documentItemsTitle">Выберите необходимые данные</h4>
     </div>
     <div class="modal-body">
-        <div style="margin-bottom: 10px;">
+        <div>
             <input type="checkbox" id="check-all">
             <label for="check-all">Установить все флажки / Снять все флажки</label>
         </div>
+        <div class="translate" style="border-bottom: 1px solid lightgrey; margin-bottom: 5px;">
+            <input type="checkbox" id="download-translate">
+            <label for="download-translate">Переводить на английский</label>
+        </div>
+
         <div class="search-checkbox">
             <div class="search-checkbox-first-column">
               <div>
                   <input type="checkbox" id="member_name" disabled checked>
                   <label for="member_name">ФИО</label>
               </div>
-                <div class="translate">
-                    <input type="checkbox" id="download-translate">
-                    <label for="download-translate">Переводить на английский</label>
+                <div>
+                    <input type="checkbox" data-download="birth_date" id="download-birth-date-member">
+                    <label for="download-birth-date-member">Дата рождения</label>
                 </div>
                 <div>
-                    <input type="checkbox" data-download="birth_date" id="download-birth-date">
-                    <label for="download-birth-date">Дата рождения</label>
+                    <input type="checkbox" data-download="age" id="download-member-age">
+                    <label for="download-member-age">Возраст</label>
                 </div>
                 <div>
-                    <input type="checkbox" data-download="age" id="download-age">
-                    <label for="download-age">Возраст</label>
-                </div>
-                <div>
-                    <input type="checkbox" data-download="locality" id="download-city">
-                    <label for="download-city">Город</label>
+                    <input type="checkbox" data-download="locality" id="download-city-member">
+                    <label for="download-city-member">Город</label>
                 </div>
                 <div>
                     <input type="checkbox" data-download="region" id="download-region">
@@ -442,12 +443,12 @@
                     <label for="download-coord">Координатор</label>
                 </div>
                 <div>
-                    <input type="checkbox" data-download="cell_phone" id="download-phone">
-                    <label for="download-phone">Телефон</label>
+                    <input type="checkbox" data-download="cell_phone" id="download-phone-member">
+                    <label for="download-phone-member">Телефон</label>
                 </div>
                 <div>
-                    <input type="checkbox" data-download="email" id="download-email">
-                    <label for="download-email">Email</label>
+                    <input type="checkbox" data-download="email" id="download-email-member">
+                    <label for="download-email-member">Email</label>
                 </div>
                 <div>
                     <input type="checkbox" data-download="mate" id="download-mate">
@@ -461,10 +462,12 @@
             <div style="display: inline-block;">
                 <div>
                     <input type="checkbox" data-download="arr_date" id="download-arr-dep-date">
+                    <input style="display: none;" type="checkbox" data-download="dep_date" id="download-dep-date">
                     <label for="download-arr-dep-date">Даты приезда и отъезда</label>
                 </div>
                 <div>
                     <input type="checkbox" data-download="arr_time" id="download-arr-dep-time">
+                    <input style="display: none;" type="checkbox" data-download="dep_time" id="download-dep-time">
                     <label for="download-arr-dep-time">Время приезда и отъезда</label>
                 </div>
                 <div>
@@ -478,6 +481,7 @@
                 <div>
                     <input type="checkbox" data-download="tp" id="download-tp">
                     <label for="download-tp">Данные загранпаспорта</label>
+                    <input style="display:none" type="checkbox" data-download="tp_name" id="download-tp-name">
                 </div>
                 <div>
                     <input type="checkbox" data-download="english" id="download-english">
@@ -516,12 +520,28 @@
                     <label for="download-admin-comment">Комментарий администратора</label>
                 </div>
                 <div>
-                    <input type="checkbox" data-download="comment" id="download-comment">
-                    <label for="download-comment">Комментарий участника</label>
+                    <input type="checkbox" data-download="comment" id="download-member-comment" >
+                    <label for="download-member-comment" >Комментарий участника</label>
                 </div>
                 <div>
                     <input type="checkbox" data-download="paid" id="download-paid">
                     <label for="download-paid">Внесённый взнос</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="airport-arrival" id="download-airport-arrival">
+                    <label for="download-airport-arrival">Аэропорт прибытия</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="airport-departure" id="download-airport-departure">
+                    <label for="download-airport-departure">Аэропорт вылета</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="outline-language" id="download-outline-language">
+                    <label for="download-outline-language">Планы на русском</label>
+                </div>
+                <div>
+                    <input type="checkbox" data-download="study-group-language" id="download-study-group-language">
+                    <label for="download-study-group-language">Группы изучения на русском</label>
                 </div>
             </div>
         </div>
@@ -633,7 +653,6 @@
         window.user_settings = "<?php echo $userSettings; ?>".split(',');
         setAdminRole();
 
-
         // data-close_registration="'+m.close_registration+'" data-stop_registration="'+m.stop_registration+'"
         <?php
         list ($adminName, $adminEmail) = db_getMemberNameEmail ($memberId);
@@ -652,6 +671,7 @@
 
         handleControlButtons();
     });
+
 
     $('.searchMemberToAdd').keyup(function(){
        loadMembersList ();
@@ -1239,16 +1259,43 @@ setTimeout(function () {
         $(".downloadItems").unbind('click');
         $('.downloadItems').click(function(){
             var fields = [];
-            $("#modalDownloadItems").find(".search-checkbox input[type='checkbox']").each(function(){
-                if ($(this).prop('checked')===true && $(this).attr('id') != 'member_name'){
-                    fields.push({'name': $(this).attr('data-download'), 'value': $(this).siblings("label").text()});
-                }
-            });
+            if ($('.tab-pane.active').attr('data-need_tp') === '1') {
+              function checkForInternationalEvent(elementId) {
+                if ($(elementId).prop('checked')===true) {
+                  fields.push({'name': $(elementId).attr('data-download'), 'value': $(elementId).siblings("label").text()});
+                };
+              }
+              checkForInternationalEvent('#download-city-member');
+              checkForInternationalEvent('#download-country');
+              checkForInternationalEvent('#download-birth-date-member');
+              checkForInternationalEvent('#download-tp');
+              checkForInternationalEvent('#download-post');
+              checkForInternationalEvent('#download-phone-member');
+              checkForInternationalEvent('#download-email-member');
+              checkForInternationalEvent('#download-outline-language');
+              checkForInternationalEvent('#download-study-group-language');
+              checkForInternationalEvent('#download-arr-dep-date');
+              checkForInternationalEvent('#download-flight-arr');
+              checkForInternationalEvent('#download-arr-dep-time');
+              checkForInternationalEvent('#download-airport-arrival');
+              checkForInternationalEvent('#download-dep-date');
+              checkForInternationalEvent('#download-flight-dep');
+              checkForInternationalEvent('#download-dep-time');
+              checkForInternationalEvent('#download-airport-departure');
+            } else {
+              $("#modalDownloadItems").find(".search-checkbox input[type='checkbox']").each(function(){
+                  if ($(this).prop('checked')===true && $(this).attr('id') != 'member_name'){
+                      fields.push({'name': $(this).attr('data-download'), 'value': $(this).siblings("label").text()});
+                  }
+              });
+            }
 
             var item = $('.downloadExl').data('download'),
                 eventIdReal = $("#events-list").val(),
                 eventType = $("#eventTab-"+eventIdReal).attr("data-event_type"),
                 needTranslate = $("#modalDownloadItems #download-translate").prop('checked');
+
+
 
             getDataToDownload(item, eventIdReal, eventType, fields, needTranslate);
         });
@@ -1281,8 +1328,32 @@ setTimeout(function () {
                 }
 
                 modal.modal('show').find("input[type='checkbox']").each(function(){
-                    !eventNeedFlight && $(this).parents('div').hasClass('translate') ? $(this).prop('checked', false) : $(this).prop('checked', true);
+                  if (!eventNeedFlight && $(this).parents('div').hasClass('translate')) {
+                    if ($(this).attr('id') != 'member_name') {
+                      $(this).prop('checked', false);
+                      $(this).attr('disabled', false);
+                      //$(this).parent().show();
+                    }
+                  } else if ($('.tab-pane.active').attr('data-need_tp') === '1'){
+                    if ($(this).attr('id') != 'member_name') {
+                      $(this).prop('checked', true);
+                      //$(this).parent().show();
+                      //$(this).attr('disabled', false);
+                    }
+                  } else {
+                    if ($(this).attr('id') != 'member_name') {
+                      $(this).prop('checked', true);
+                      $(this).attr('disabled', false);
+                      //$(this).parent().show();
+                    }
+                  }
                 });
+/*
+                $('#modalDownloadItems').on('show', function() {
+
+                })
+*/
+            xlxCheckboxesInternationalDisabled();
             }
             else{
                 getDataToDownload(item, eventIdReal, eventType);
@@ -1408,6 +1479,7 @@ setTimeout(function () {
             $(this).prop('checked', checkedAll);
           }
         });
+          xlxCheckboxesInternationalDisabled();
     }
 
     function downloadMembersList(item, countMembersAll, members, eventType, fields=false, needTranslate=false){
@@ -2321,7 +2393,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v15"></script>
+<script src="/js/reg.js?v27"></script>
 <?php
     include_once "footer.php";
 ?>
