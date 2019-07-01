@@ -59,7 +59,7 @@ switch ($h) {
         </button>
 
         <div class="btn-group" style="float: right; margin-right: 10px;">
-          <a class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-question fa-lg"></i><span class="hide-name" style="padding-left: 5px">Помощь</span></a>
+          <a class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: 1px; height: 19px;"><i class="fa fa-question fa-lg"></i><span class="hide-name" style="padding-left: 5px">Помощь</span></a>
             <ul class="dropdown-menu pull-right">
               <?php
 

@@ -625,14 +625,23 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
               $arr[$i+1] = substr($arr[$i+1],0, -1);
             };
           };
-          if ($arr[$i] == 'kv.' || $arr[$i] == 'kv')
-          {
+          if ($arr[$i] == 'kv.' || $arr[$i] == 'kv') {
             $arr[$i] = '-';
             $arrNextElement = substr($arr[$i-1], -1);
             if ( $arrNextElement == ',') {
               $arr[$i-1] = substr($arr[$i-1],0, -1);
             };
           };
+
+          if (strlen($arr[$i]) > 3 && $arr[$i][0] === 'k' && $arr[$i][1] === 'v' && $arr[$i][2] === '.') {
+            $arr[$i][0] = ' ';
+            $arr[$i][1] = '-';
+            $arr[$i][2] = ' ';
+          }
+          if (strlen($arr[$i]) > 2 && $arr[$i][0] === 'd' && $arr[$i][1] === '.') {
+            $arr[$i][0] = ' ';
+            $arr[$i][1] = ' ';
+          }
       }
       return $result = implode(" ", $arr);
     }
@@ -640,7 +649,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
     if(isset($_POST ['all'])){
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', '№')
-            ->setCellValue('B1', $shouldTranslateFields ? 'Member' : 'ФИО');
+            ->setCellValue('B1', $shouldTranslateFields ? 'Last name, first name' : 'ФИО');
 
         $ind = 'C';
         for ($d=0; $d < $fieldsCount; $d++) {
@@ -658,7 +667,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Region' : 'Область');
                     break;
                 case 'country':
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Country' :'Страна');
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Citizenship' :'Страна');
                     break;
                 case 'service':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Служение');
@@ -667,23 +676,25 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Координатор');
                     break;
                 case 'cell_phone':
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Cellphone' :'Телефон');
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Mobile phone' :'Телефон');
                     break;
                 case 'email':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Email');
                     break;
                 case 'post':
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Post address' : 'Почтовый адрес');
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Mailing address' : 'Почтовый адрес');
                     break;
                 case 'arr_date':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Arrival date' : 'Дата приезда');
-                    $ind ++;
+                    break;
+                case 'dep_date':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Departure date' :'Дата отъезда');
                     break;
                 case 'arr_time':
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Arrival time' : 'Время приезда');
-                    $ind ++;
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Departure time' :'Время отъезда');
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Time' : 'Время приезда');
+                    break;
+                case 'dep_time':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Time' :'Время отъезда');
                     break;
                 case 'regstate':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Состояние регистрации');
@@ -700,23 +711,37 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                 case 'document':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Паспортные данные');
                     break;
+                case 'tp_name':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Name in a passport' : 'Имя в загранпаспорте');
+                    break;
                 case 'tp':
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Name in a passport' : 'Имя в загранпаспорте'); $ind ++;
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Passport number' : 'Номер загранпаспорта'); $ind ++;
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Country of issue' : 'Страна выдачи загранпаспорта'); $ind ++;
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Period of validity' : 'Срок действия загранпаспорта');
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Issued by' : 'Страна выдачи загранпаспорта'); $ind ++;
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Expiration date' : 'Срок действия загранпаспорта');
                     break;
                 case 'english':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'English level' : 'Уровень английского');
                     break;
                 case 'flight-arr':
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Arrival flight' : 'Авиарейс прибытия');
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Arrival carrier and flight' : 'Авиарейс прибытия');
                     break;
                 case 'flight-dep':
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Departure flight' : 'Авиарейс вылета');
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Departure carrier and flight' : 'Авиарейс вылета');
                     break;
                 case 'visa':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Visa' : 'Виза');
+                    break;
+                case 'airport-arrival':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Airport arrival' : 'Аэропорт прибытия');
+                    break;
+                case 'airport-departure':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Airport departure' : 'Аэропорт убытия');
+                    break;
+                case 'outline-language':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Outline language' : 'Язык планов');
+                    break;
+                case 'study-group-language':
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', $shouldTranslateFields ? 'Study group language' : 'Язык группы изучения');
                     break;
                 case 'accom':
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Размещение');
@@ -858,11 +883,15 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $shouldTranslateFields ? replaceSomeWords(translitWords(translitLetters($membersAll[$m]['address']))) : $membersAll[$m]['address']);
                                 break;
                             case 'arr_date':
-                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['arr_date']); $ind ++;
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['arr_date']);
+                                break;
+                            case 'dep_date':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['dep_date']);
                                 break;
                             case 'arr_time':
-                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['arr_time']); $ind ++;
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['arr_time']);
+                                break;
+                            case 'dep_time':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['dep_time']);
                                 break;
                             case 'regstate':
@@ -882,6 +911,18 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                                 break;
                             case 'visa':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $visa);
+                                break;
+                            case 'airport-arrival':
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, ' ');
+                                break;
+                            case 'airport-departure':
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, ' ');
+                                break;
+                            case 'outline-language':
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, 'Russian');
+                                break;
+                            case 'study-group-language':
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, 'Russian');
                                 break;
                             case 'accom':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['accom'] == '0' ? 'не требуется' : 'требуется');
@@ -910,8 +951,10 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                             case 'english':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $english);
                                 break;
+                            case 'tp_name':
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['tp_name']);
+                                break;
                             case 'tp':
-                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['tp_name']); $ind ++;
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['tp_num']); $ind ++;
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['tp_auth']); $ind ++;
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['tp_date']);
