@@ -15,7 +15,7 @@
     $countries2 = db_getCountries(false);
     $selectedEventId = isset($_COOKIE['eventChoose']) ? $_COOKIE['eventChoose'] : false;
     $adminCountry = db_getAdminCountry($memberId);
-
+    $singleCity = db_isSingleCityAdmin($memberId);
     $user_settings = db_getUserSettings($memberId);
 
     $userSettings = implode (',', $user_settings);
@@ -649,6 +649,7 @@
 </div>
 
 <script>
+var globalSingleCity = "<?php echo $singleCity; ?>"; 
     $(document).ready (function (){
         window.user_settings = "<?php echo $userSettings; ?>".split(',');
         setAdminRole();
@@ -2393,7 +2394,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v27"></script>
+<script src="/js/reg.js?v37"></script>
 <?php
     include_once "footer.php";
 ?>
