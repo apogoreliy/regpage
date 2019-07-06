@@ -824,6 +824,51 @@ function rebuildLocationsList(localities, selectedItem, arr){
     return arr;
 }
 
+function rebuildLocationsListForInput(localities, selectedItem, arr){
+    for( var l in localities){
+        if(l.trim() !== ''){
+            arr.push("<option value='"+he (localities[l])+"'>");
+        }
+    }
+    return arr;
+}
+
+function showBlankEvents(zero) {
+  var tempVarLocality, tempVarLocalityValue;
+  zero ? tempVarLocalityText = '' : tempVarLocalityText = $('.emLocality option:selected').text();
+  zero ? tempVarLocalityValue = '' : tempVarLocalityValue = $('.emLocality option:selected').val();
+  tempVarLocalityValue === '_none_' ? tempVarLocalityText = '': '';
+  $('#inputEmLocalityId').val(tempVarLocalityText);
+  $('.emLocality').attr('data-value',tempVarLocalityValue);
+  $('.emLocality').attr('data-text',tempVarLocalityText);
+  $('#inputEmLocalityId').attr('data-value_input',tempVarLocalityValue);
+  $('#inputEmLocalityId').attr('data-text_input',tempVarLocalityText);
+}
+
+function inputSelectParallels() {
+  var a = $('#inputEmLocalityId').val();
+  var counter = 0;
+
+    $('.emLocality option').each(function () {
+      var b = this.text;
+      if (b == a) {
+        counter++;
+        var c = this.value;
+        $('.emLocality').val(c);
+        $('.emLocality').attr('data-value',c);
+        $('.emLocality').attr('data-text',b);
+        $('#inputEmLocalityId').attr('data-value_input',c);
+        $('#inputEmLocalityId').attr('data-text_input',b);
+      }
+    });
+    if (counter === 0) {
+      $('.emLocality').attr('data-value','');
+      $('.emLocality').attr('data-text','');
+      $('#inputEmLocalityId').attr('data-value_input','');
+      $('#inputEmLocalityId').attr('data-text_input','');
+    }
+}
+
 function sortedFields(){
     var sort_type = 'desc',
         sort_field = 'name',
@@ -982,10 +1027,10 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
     window.currentEditMemberId = memberId;
     var windowWidth = $(document).width() < 980, age = parseInt(info['age']);
     var formEl = $('#modalEditMember');
-
-    var arr = [];
+    var arr = [], arr2 = [];
     arr.push("<option value='_none_' selected>&nbsp;</option>");
     $(".emLocality").html(rebuildLocationsList(localities, '', arr));
+    $(".inputEmLocality").html(rebuildLocationsListForInput(localities, '', arr2));
     $(".emBaptized").val(info['baptized'] ? formatDate(info['baptized']) : '');
 
     if(info['country_key'] === 'UA'){
@@ -1195,22 +1240,42 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
             $("#emNoSharedComment").show();
         }
         */
+// Locality and new locality fields behavior
+        function clearNewLocalityFieldByInput() {
+          var el = $(".emNewLocality");
+          if (el.val () != ""){
+              el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
+              $(".emAddress").focus();
+          }
+        }
+
         function chchfields() {
           var a = $(".emNewLocality").val();
           var b = $(".emLocality").val();
-          if (a.length > 0 || b.length > 0) {
-            $('#modalEditMember').find('.emLocality').attr('style', 'background-color: none; border-color: gray;')
-          } else if (a.length < 1 && b.length < 1) {
-            $('#modalEditMember').find('.emLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
+          var e = $('.emLocality').attr('data-value');
+          var f = $('#inputEmLocalityId').attr('data-value_input');
+
+          if (a.length > 0 || e.length > 0) {
+            $('#modalEditMember').find('#inputEmLocalityId').attr('style', 'background-color: none; border-color: gray;');
+            $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: none; border-color: gray;');
+            $('#modalEditMember').find('.block-new-locality').removeClass('error');
+            console.log('Im there');
+          } else if (a.length < 1 && e.length < 1) {
+            $('#modalEditMember').find('#inputEmLocalityId').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
             $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
+            console.log('Im here');
           }
         }
-        $(".emLocality").change(function () {
+        $("#inputEmLocalityId").change(function () {
+          inputSelectParallels();
           chchfields();
+          clearNewLocalityFieldByInput();
         });
-        $(".emNewLocality").keyup(function () {
+        $("#inputEmLocalityId").keyup(function () {
+          inputSelectParallels();
           chchfields();
-        })
+          clearNewLocalityFieldByInput();
+        });
     }
 
     $(".block-new-locality").css("display", info["new_locality"] ? 'block' : 'none');
@@ -1398,16 +1463,23 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
 
     $(".emNewLocality").keyup (function (){
         var el = $(".emLocality");
-        if (el.val ()!="_none_" && window.selLocName != $(".emNewLocality").val())
+        if (el.val ()!="_none_" && window.selLocName != $(".emNewLocality").val()){
             el.val ("_none_");
+            showBlankEvents(true);
+        }
+        chchfields();
     });
 
+    function clearNewLocalityField() {
+      var el = $(".emNewLocality");
+      if (el.val () != ""){
+          el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
+          $(".emAddress").focus();
+      }
+    }
+
     $(".emLocality").change (function (){
-        var el = $(".emNewLocality");
-        if (el.val () != ""){
-            el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
-            $(".emAddress").focus();
-        }
+        clearNewLocalityField();
     });
 }
 /*

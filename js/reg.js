@@ -1,7 +1,7 @@
   $('#emBirthdateLabelSup').html('Дата рождения<sup>*</sup>');
   $('.emBirthdate').attr('valid', 'required');
 // check date fields
-  $('#modalEditMember').on('show',  function() {
+  $('#modalEditMember').on('show', function() {
     setTimeout(function () {
       var form = $('#modalEditMember');
       var a = parseDDMM (form.find(".emArrDate").val());
@@ -12,8 +12,30 @@
         if(!$('.emDepDate').parent().hasClass('error') && !b){
           $('.emDepDate').parent().addClass('error');
       };
-  }, 1000);
+    }, 1000);
+    setTimeout(function () {
+      showBlankEvents();
+    }, 50);
+    setTimeout(function () {
+      $('.emLocality').hide();
+    }, 10);
+    if ($('#modalEditMember').find('.emNewLocality').is(':visible')) {
+      var newLocalityLength = $('#modalEditMember').find('.emNewLocality').val();
+    }
+    if (globalSingleCity && $('#modalEditMember').find('.emLocality').val() === '_none_' && newLocalityLength.length < 1) {
+      $('.emLocality option').each(function () {
+          $(this).val() === '_none_' ? '' : $('.emLocality').val($(this).val());
+      });
+    }
   });
+
+$('#modalEditMember').on('hide', function() {
+  $('#modalEditMember').find('.emLocality').attr('data-value','');
+  $('#modalEditMember').find('.emLocality').attr('data-text','');
+  $('#modalEditMember').find('#inputEmLocalityId').attr('data-value_input','');
+  $('#modalEditMember').find('#inputEmLocalityId').attr('data-text_input','');
+});
+
   // start back button bahevior
 /*
   if (window.history && window.history.pushState) {
