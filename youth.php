@@ -684,7 +684,8 @@ include_once "modals.php";
 
 		return filteredMembers;
 	}
+var globalSingleCity = "<?php echo $singleCity; ?>";
 
 </script>
-<script src="/js/youth.js?v4"></script>
+<script src="/js/youth.js?v5"></script>
 <?php include_once "footer.php"; ?>
