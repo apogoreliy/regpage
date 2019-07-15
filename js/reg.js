@@ -27,6 +27,7 @@
           $(this).val() === '_none_' ? '' : $('.emLocality').val($(this).val());
       });
     }
+    $('.modalListInput').hide();
   });
 
 $('#modalEditMember').on('hide', function() {
@@ -38,16 +39,36 @@ $('#modalEditMember').on('hide', function() {
 
   // start back button bahevior
 /*
+  window.onpopstate = function(event) {
+    alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
+  };
   if (window.history && window.history.pushState) {
 
+    console.log('Im here');
+
     $(window).on('popstate', function() {
+
+      console.log('Im there');
       alert('Back button was pressed.');
     });
   }
 */
 // start button back
-//window.onbeforeunload = function() { return "Your work will be lost."; };
-/*document.addEventListener("backbutton", onBackKeyDown(), false);
+/*
+history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+//onBackKeyDown();
+function onBackKeyDown() {
+  window.location = '/reg';
+};
+//onBackKeyDown();
+
+window.onbeforeunload = function() {
+  return "Your work will be lost.";
+};
+
   function onBackKeyDown() {
     alert('sdasdasdsd');
     //window.location = '/reg'
@@ -58,7 +79,6 @@ console.log(event.state);
 alert('sdasdasdsd');
 });
 }*/
-// end button back
 // end back button bahevior
 
 //START stop automatic scrolling on modal window

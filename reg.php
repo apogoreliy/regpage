@@ -649,7 +649,7 @@
 </div>
 
 <script>
-var globalSingleCity = "<?php echo $singleCity; ?>"; 
+var globalSingleCity = "<?php echo $singleCity; ?>";
     $(document).ready (function (){
         window.user_settings = "<?php echo $userSettings; ?>".split(',');
         setAdminRole();
@@ -2394,7 +2394,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v37"></script>
+<script src="/js/reg.js?v42"></script>
 <?php
     include_once "footer.php";
 ?>
