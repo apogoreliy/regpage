@@ -200,12 +200,30 @@ a {
 .modal-send-message {
     width: 33%;
 }
+.modalListInput {
+  position: absolute;
+  background-color: white;
+  padding: 5px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  margin-top: -11px;
+  width: 350px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+.modalListInput div:hover {
+  cursor: pointer;
+  background-color: lightgrey;
+}
 .autocomplete-suggestions {
-    border: 1px solid #999;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
     background: #FFF;
     padding: 2px 5px;
     white-space: nowrap;
     overflow: hidden;
+    width: 350px !important;
+    overflow-y: auto;
 }
 .autocomplete-selected {
     background: #F0F0F0;
@@ -213,6 +231,13 @@ a {
 .autocomplete-suggestions strong {
     font-weight: normal;
     color: #3399FF;
+}
+.belowInput {
+width:313px;
+min-height: 250px;
+background-color:#bfcdde;
+position:absolute;
+overflow-y:auto;
 }
 .guest-success{
     min-height: 100px;
@@ -234,6 +259,13 @@ a {
     margin-left: -20px;
     cursor: pointer;
     margin-top: 28px;
+}
+
+.block-new-locality > .unblock-input {
+    float: right;
+    margin-top: -32px;
+    margin-left: 0;
+    margin-right: 7px;
 }
 
 .modal-send-message .control-label {

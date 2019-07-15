@@ -110,10 +110,14 @@ function setFieldError(field, isError){
     else
         field.removeClass ("error");
 
-    if (field.parents ("div.modal").find (".control-group.error").length>0 || field.parents ("div.modal").find (" select.error").length>0)
+    if (field.parents ("div.modal").find (".control-group.error").length>0 || field.parents ("div.modal").find (" select.error").length>0){
         field.parents("div.modal").find(".disable-on-invalid").addClass("disabled");
-    else
+        field.parents("div.modal").find("#btnDoSaveMember").addClass("disabled");
+
+    } else{
         field.parents("div.modal").find(".disable-on-invalid").removeClass("disabled");
+        field.parents("div.modal").find("#btnDoSaveMember").removeClass("disabled");
+    }
 }
 
 function f (v) {
@@ -455,10 +459,17 @@ function handleAditionalMenu(){
         }
     });
 
+    $("#inputEmLocalityId").autocomplete({
+      serviceUrl: '/ajax/localities2.php',
+      onSelect: function (suggestion) {
+          $("#inputEmLocalityId").focus();
+      }
+    });
+
     $('.locality-autocomplete').autocomplete({
         serviceUrl: '/ajax/localities.php',
         onSelect: function (suggestion) {
-            $("#emLocality").val (suggestion.data);
+            $(".emLocality").val (suggestion.data);
             window.selLocId = suggestion.data;
             window.selLocName = suggestion.value;
             $(this).attr ("disabled", "disabled");
@@ -827,7 +838,7 @@ function rebuildLocationsList(localities, selectedItem, arr){
 function rebuildLocationsListForInput(localities, selectedItem, arr){
     for( var l in localities){
         if(l.trim() !== ''){
-            arr.push("<option value='"+he (localities[l])+"'>");
+            arr.push("<div class='listItemLocality' data-value='"+l+"'>"+he (localities[l])+"</div>");
         }
     }
     return arr;
@@ -862,6 +873,7 @@ function inputSelectParallels() {
       }
     });
     if (counter === 0) {
+      $('.emLocality').val('_none_');
       $('.emLocality').attr('data-value','');
       $('.emLocality').attr('data-text','');
       $('#inputEmLocalityId').attr('data-value_input','');
@@ -1028,9 +1040,13 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
     var windowWidth = $(document).width() < 980, age = parseInt(info['age']);
     var formEl = $('#modalEditMember');
     var arr = [], arr2 = [];
+    /*for (l in localities) {
+      arr2.push(localities[l]);
+    }*/
     arr.push("<option value='_none_' selected>&nbsp;</option>");
     $(".emLocality").html(rebuildLocationsList(localities, '', arr));
     $(".inputEmLocality").html(rebuildLocationsListForInput(localities, '', arr2));
+
     $(".emBaptized").val(info['baptized'] ? formatDate(info['baptized']) : '');
 
     if(info['country_key'] === 'UA'){
@@ -1240,16 +1256,16 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
             $("#emNoSharedComment").show();
         }
         */
-// Locality and new locality fields behavior
+// START Locality and new locality fields behavior
         function clearNewLocalityFieldByInput() {
           var el = $(".emNewLocality");
           if (el.val () != ""){
               el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
-              $(".emAddress").focus();
           }
         }
+        isTabletWidth = $(document).width() < 980;
 
-        function chchfields() {
+  /*      function chchfields() {
           var a = $(".emNewLocality").val();
           var b = $(".emLocality").val();
           var e = $('.emLocality').attr('data-value');
@@ -1259,25 +1275,87 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
             $('#modalEditMember').find('#inputEmLocalityId').attr('style', 'background-color: none; border-color: gray;');
             $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: none; border-color: gray;');
             $('#modalEditMember').find('.block-new-locality').removeClass('error');
-            console.log('Im there');
+            $('#modalEditMember').find('.localityControlGroup').parent().removeClass('error');
           } else if (a.length < 1 && e.length < 1) {
             $('#modalEditMember').find('#inputEmLocalityId').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
             $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
-            console.log('Im here');
+          }
+
+          if (b === '_none_' && !$("#btnDoSaveMember").hasClass('disabled') && a.length < 1) {
+            $("#btnDoSaveMember").addClass('disabled');
+            $("#btnDoRegisterMember").addClass('disabled');
+          } else if (b !== '_none_' && $("#btnDoSaveMember").hasClass('disabled')) {
+            $("#btnDoSaveMember").removeClass('disabled');
+          } else if (b === '_none_' && $("#btnDoSaveMember").hasClass('disabled') && a.length > 0) {
+            $("#btnDoSaveMember").removeClass('disabled');
+          } else if (b === '_none_' && $("#btnDoSaveMember").hasClass('disabled') && a.length < 1) {
+            $("#btnDoRegisterMember").addClass('disabled');
           }
         }
-        $("#inputEmLocalityId").change(function () {
-          inputSelectParallels();
-          chchfields();
-          clearNewLocalityFieldByInput();
+        */
+        function checkLocalityFieldsBlankAndKartochka() {
+          setFieldError ($("#inputEmLocalityId"),
+              $("#inputEmLocalityId").parents (".controls").css('display')!='none' &&
+              $("#inputEmLocalityId").parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
+              $("#inputEmLocalityId").attr('disabled')!='disabled' &&
+              (!$("#modalEditMember").find(".emLocality").val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
+          setFieldError ($(".emNewLocality"),
+              $(".emNewLocality").parents (".controls").css('display')!='none' &&
+              $(".emNewLocality").parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
+              $(".emNewLocality").attr('disabled')!='disabled' &&
+              (!$(".emNewLocality").val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
+        }
+        function listInputLocality() {
+          var y = $("#inputEmLocalityId").val();
+          if (y.length < 1 && !$(".listItemLocality").is(':visible')) {
+            $('.modalListInput').show();
+          } else {
+            $('.modalListInput').hide();
+          }
+        }
+        $("#inputEmLocalityId").click(function () {
+          listInputLocality();
+          //checkLocalityFieldsBlankAndKartochka();
         });
         $("#inputEmLocalityId").keyup(function () {
-          inputSelectParallels();
-          chchfields();
           clearNewLocalityFieldByInput();
+          inputSelectParallels();
+          listInputLocality();
+          checkLocalityFieldsBlankAndKartochka();
+        });
+
+        $("#inputEmLocalityId").on('focus', function () {
+          inputSelectParallels();
+          checkLocalityFieldsBlankAndKartochka();
+        });
+        $("#inputEmLocalityId").focusout(function(){
+          if ($(".modalListInput").is(':visible')) {
+            setTimeout(function () {
+              if ($(".modalListInput").is(':visible')) {
+                  $('.modalListInput').hide();
+              }
+            }, 150);
+          }
+        });
+        $(".listItemLocality").click(function () {
+          var a = $(this).text();
+          var b = $(this).attr('data-value');
+          $("#inputEmLocalityId").val(a);
+          $('.modalListInput').hide();
+          inputSelectParallels();
+          clearNewLocalityFieldByInput();
+          checkLocalityFieldsBlankAndKartochka();
+          $("#inputEmLocalityId").focus();
+        });
+        $(".emNewLocality").click (function (){
+          setFieldError ($(this),
+              $(this).parents (".controls").css('display')!='none' &&
+              $(this).parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
+              $(this).attr('disabled')!='disabled' &&
+              (!$(this).val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
         });
     }
-
+// END Locality and new locality fields behavior
     $(".block-new-locality").css("display", info["new_locality"] ? 'block' : 'none');
     $(".handle-new-locality").css("display", info["new_locality"] ? 'none' : 'block');
 
@@ -1463,24 +1541,28 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
 
     $(".emNewLocality").keyup (function (){
         var el = $(".emLocality");
-        if (el.val ()!="_none_" && window.selLocName != $(".emNewLocality").val()){
+        var elVal = $("#inputEmLocalityId").val();
+        var thisVal = $(this).val();
+        if (el.val ()!="_none_" && window.selLocName != $(".emNewLocality").val() || elVal.lengh > 0){
             el.val ("_none_");
             showBlankEvents(true);
         }
-        chchfields();
+        thisVal.length > 0 && elVal.length > 0 ? showBlankEvents(true) : '';
+        setFieldError ($(this),
+            $(this).parents (".controls").css('display')!='none' &&
+            $(this).parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
+            $(this).attr('disabled')!='disabled' &&
+            (!$(this).val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
+
     });
 
-    function clearNewLocalityField() {
+    /*function clearNewLocalityField() {
       var el = $(".emNewLocality");
       if (el.val () != ""){
           el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
           $(".emAddress").focus();
       }
-    }
-
-    $(".emLocality").change (function (){
-        clearNewLocalityField();
-    });
+    }*/
 }
 /*
 function checkLocalityFieldsFieldWithValue(locality, newLocality){
