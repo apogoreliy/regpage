@@ -431,6 +431,7 @@ function db_getAdminLocalitiesNotRegTbl ($adminId)
 function db_getAdminLocalitiesAdmin($query, $adminId){
     global $db;
     $adminId = $db->real_escape_string($adminId);
+    $query = $db->real_escape_string($query);
 
     $res=db_query ("SELECT l.key as data, l.name as value
                     FROM access a
@@ -438,6 +439,21 @@ function db_getAdminLocalitiesAdmin($query, $adminId){
                     LEFT JOIN region r ON r.key = a.region_key or c.key=r.country_key
                     INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
                     WHERE a.member_key='$adminId' and l.key is not null AND l.name LIKE '$query%'
+                    ORDER BY l.name");
+
+    $localities = array ();
+    while ($row = $res->fetch_object()) $localities[]=$row;
+    return $localities;
+
+}
+function db_getAllAdminsLocalitiesAutocomplete($query){
+    global $db;
+    $query = $db->real_escape_string($query);
+
+    $res=db_query ("SELECT l.key as data, l.name as value
+                    FROM locality as l
+                    LEFT JOIN region r ON l.region_key=r.key
+                    WHERE l.name LIKE '$query%'
                     ORDER BY l.name");
 
     $localities = array ();

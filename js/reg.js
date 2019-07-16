@@ -28,6 +28,24 @@
       });
     }
     $('.modalListInput').hide();
+
+    if ($("#eventTabs").find(".tab-pane.active").attr('data-access') != 1) {
+      $("#inputEmLocalityId").autocomplete('disable');
+      $("#inputEmLocalityId").autocomplete({
+        serviceUrl: '/ajax/localities2.php',
+        onSelect: function (suggestion) {
+            $("#inputEmLocalityId").focus();
+        }
+      });
+    } else {
+      $("#inputEmLocalityId").autocomplete('disable');
+      $("#inputEmLocalityId").autocomplete({
+        serviceUrl: '/ajax/localities3.php',
+        onSelect: function (suggestion) {
+            $("#inputEmLocalityId").focus();
+        }
+      });
+    };
   });
 
 $('#modalEditMember').on('hide', function() {

@@ -843,7 +843,7 @@ function rebuildLocationsListForInput(localities, selectedItem, arr){
     }
     return arr;
 }
-
+// START autocomplete locality fieild
 function showBlankEvents(zero) {
   var tempVarLocality, tempVarLocalityValue;
   zero ? tempVarLocalityText = '' : tempVarLocalityText = $('.emLocality option:selected').text();
@@ -855,7 +855,12 @@ function showBlankEvents(zero) {
   $('#inputEmLocalityId').attr('data-value_input',tempVarLocalityValue);
   $('#inputEmLocalityId').attr('data-text_input',tempVarLocalityText);
 }
-
+function clearNewLocalityFieldByInput() {
+  var el = $(".emNewLocality");
+  if (el.val () != ""){
+      el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
+  }
+}
 function inputSelectParallels() {
   var a = $('#inputEmLocalityId').val();
   var counter = 0;
@@ -880,6 +885,26 @@ function inputSelectParallels() {
       $('#inputEmLocalityId').attr('data-text_input','');
     }
 }
+function checkLocalityFieldsBlankAndKartochka() {
+  setFieldError ($("#inputEmLocalityId"),
+      $("#inputEmLocalityId").parents (".controls").css('display')!='none' &&
+      $("#inputEmLocalityId").parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
+      $("#inputEmLocalityId").attr('disabled')!='disabled' &&
+      (!$("#modalEditMember").find(".emLocality").val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
+  setFieldError ($(".emNewLocality"),
+      $(".emNewLocality").parents (".controls").css('display')!='none' &&
+      $(".emNewLocality").parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
+      $(".emNewLocality").attr('disabled')!='disabled' &&
+      (!$(".emNewLocality").val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
+}
+/*function clearNewLocalityField() {
+  var el = $(".emNewLocality");
+  if (el.val () != ""){
+      el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
+      $(".emAddress").focus();
+  }
+}*/
+// STOP autocomplete locality fieild
 
 function sortedFields(){
     var sort_type = 'desc',
@@ -1256,106 +1281,9 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
             $("#emNoSharedComment").show();
         }
         */
-// START Locality and new locality fields behavior
-        function clearNewLocalityFieldByInput() {
-          var el = $(".emNewLocality");
-          if (el.val () != ""){
-              el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
-          }
-        }
-        isTabletWidth = $(document).width() < 980;
 
-  /*      function chchfields() {
-          var a = $(".emNewLocality").val();
-          var b = $(".emLocality").val();
-          var e = $('.emLocality').attr('data-value');
-          var f = $('#inputEmLocalityId').attr('data-value_input');
-
-          if (a.length > 0 || e.length > 0) {
-            $('#modalEditMember').find('#inputEmLocalityId').attr('style', 'background-color: none; border-color: gray;');
-            $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: none; border-color: gray;');
-            $('#modalEditMember').find('.block-new-locality').removeClass('error');
-            $('#modalEditMember').find('.localityControlGroup').parent().removeClass('error');
-          } else if (a.length < 1 && e.length < 1) {
-            $('#modalEditMember').find('#inputEmLocalityId').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
-            $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
-          }
-
-          if (b === '_none_' && !$("#btnDoSaveMember").hasClass('disabled') && a.length < 1) {
-            $("#btnDoSaveMember").addClass('disabled');
-            $("#btnDoRegisterMember").addClass('disabled');
-          } else if (b !== '_none_' && $("#btnDoSaveMember").hasClass('disabled')) {
-            $("#btnDoSaveMember").removeClass('disabled');
-          } else if (b === '_none_' && $("#btnDoSaveMember").hasClass('disabled') && a.length > 0) {
-            $("#btnDoSaveMember").removeClass('disabled');
-          } else if (b === '_none_' && $("#btnDoSaveMember").hasClass('disabled') && a.length < 1) {
-            $("#btnDoRegisterMember").addClass('disabled');
-          }
-        }
-        */
-        function checkLocalityFieldsBlankAndKartochka() {
-          setFieldError ($("#inputEmLocalityId"),
-              $("#inputEmLocalityId").parents (".controls").css('display')!='none' &&
-              $("#inputEmLocalityId").parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
-              $("#inputEmLocalityId").attr('disabled')!='disabled' &&
-              (!$("#modalEditMember").find(".emLocality").val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
-          setFieldError ($(".emNewLocality"),
-              $(".emNewLocality").parents (".controls").css('display')!='none' &&
-              $(".emNewLocality").parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
-              $(".emNewLocality").attr('disabled')!='disabled' &&
-              (!$(".emNewLocality").val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
-        }
-        function listInputLocality() {
-          var y = $("#inputEmLocalityId").val();
-          if (y.length < 1 && !$(".listItemLocality").is(':visible')) {
-            $('.modalListInput').show();
-          } else {
-            $('.modalListInput').hide();
-          }
-        }
-        $("#inputEmLocalityId").click(function () {
-          listInputLocality();
-          //checkLocalityFieldsBlankAndKartochka();
-        });
-        $("#inputEmLocalityId").keyup(function () {
-          clearNewLocalityFieldByInput();
-          inputSelectParallels();
-          listInputLocality();
-          checkLocalityFieldsBlankAndKartochka();
-        });
-
-        $("#inputEmLocalityId").on('focus', function () {
-          inputSelectParallels();
-          checkLocalityFieldsBlankAndKartochka();
-        });
-        $("#inputEmLocalityId").focusout(function(){
-          if ($(".modalListInput").is(':visible')) {
-            setTimeout(function () {
-              if ($(".modalListInput").is(':visible')) {
-                  $('.modalListInput').hide();
-              }
-            }, 150);
-          }
-        });
-        $(".listItemLocality").click(function () {
-          var a = $(this).text();
-          var b = $(this).attr('data-value');
-          $("#inputEmLocalityId").val(a);
-          $('.modalListInput').hide();
-          inputSelectParallels();
-          clearNewLocalityFieldByInput();
-          checkLocalityFieldsBlankAndKartochka();
-          $("#inputEmLocalityId").focus();
-        });
-        $(".emNewLocality").click (function (){
-          setFieldError ($(this),
-              $(this).parents (".controls").css('display')!='none' &&
-              $(this).parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
-              $(this).attr('disabled')!='disabled' &&
-              (!$(this).val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
-        });
     }
-// END Locality and new locality fields behavior
+
     $(".block-new-locality").css("display", info["new_locality"] ? 'block' : 'none');
     $(".handle-new-locality").css("display", info["new_locality"] ? 'none' : 'block');
 
@@ -1555,14 +1483,16 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
             (!$(this).val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
 
     });
-
-    /*function clearNewLocalityField() {
-      var el = $(".emNewLocality");
-      if (el.val () != ""){
-          el.val ("").removeAttr ("disabled").next (".unblock-input").hide ();
-          $(".emAddress").focus();
-      }
-    }*/
+    $(".listItemLocality").click(function () {
+      var a = $(this).text();
+      var b = $(this).attr('data-value');
+      $("#inputEmLocalityId").val(a);
+      $('.modalListInput').hide();
+      inputSelectParallels();
+      clearNewLocalityFieldByInput();
+      checkLocalityFieldsBlankAndKartochka();
+      $("#inputEmLocalityId").focus();
+    });
 }
 /*
 function checkLocalityFieldsFieldWithValue(locality, newLocality){
@@ -2133,6 +2063,84 @@ $(document).ready(function(){
   $('.openCollegesModal').click(function(){
       getColleges(false);
   });
+
+  // START Locality and new locality fields behavior
+
+          isTabletWidth = $(document).width() < 980;
+
+    /*      function chchfields() {
+            var a = $(".emNewLocality").val();
+            var b = $(".emLocality").val();
+            var e = $('.emLocality').attr('data-value');
+            var f = $('#inputEmLocalityId').attr('data-value_input');
+
+            if (a.length > 0 || e.length > 0) {
+              $('#modalEditMember').find('#inputEmLocalityId').attr('style', 'background-color: none; border-color: gray;');
+              $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: none; border-color: gray;');
+              $('#modalEditMember').find('.block-new-locality').removeClass('error');
+              $('#modalEditMember').find('.localityControlGroup').parent().removeClass('error');
+            } else if (a.length < 1 && e.length < 1) {
+              $('#modalEditMember').find('#inputEmLocalityId').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
+              $('#modalEditMember').find('.emNewLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
+            }
+
+            if (b === '_none_' && !$("#btnDoSaveMember").hasClass('disabled') && a.length < 1) {
+              $("#btnDoSaveMember").addClass('disabled');
+              $("#btnDoRegisterMember").addClass('disabled');
+            } else if (b !== '_none_' && $("#btnDoSaveMember").hasClass('disabled')) {
+              $("#btnDoSaveMember").removeClass('disabled');
+            } else if (b === '_none_' && $("#btnDoSaveMember").hasClass('disabled') && a.length > 0) {
+              $("#btnDoSaveMember").removeClass('disabled');
+            } else if (b === '_none_' && $("#btnDoSaveMember").hasClass('disabled') && a.length < 1) {
+              $("#btnDoRegisterMember").addClass('disabled');
+            }
+          }
+          */
+
+          function listInputLocality() {
+            var y = $("#inputEmLocalityId").val();
+            if (y.length < 1 && !$(".listItemLocality").is(':visible')) {
+              $('.modalListInput').show();
+            } else {
+              $('.modalListInput').hide();
+            }
+          }
+          $("#inputEmLocalityId").click(function () {
+            listInputLocality();
+            //checkLocalityFieldsBlankAndKartochka();
+          });
+          $("#inputEmLocalityId").keyup(function () {
+            clearNewLocalityFieldByInput();
+            inputSelectParallels();
+            listInputLocality();
+            checkLocalityFieldsBlankAndKartochka();
+          });
+
+          $("#inputEmLocalityId").on('focus', function () {
+            inputSelectParallels();
+            checkLocalityFieldsBlankAndKartochka();
+          });
+          $(".listItemLocality").hover(function () {
+            console.log(' be beb e ');
+          });
+
+          $("#inputEmLocalityId").focusout(function(){
+            if ($(".modalListInput").is(':visible')) {
+              setTimeout(function () {
+                if ($(".modalListInput").is(':visible')) {
+                    $('.modalListInput').hide();
+                }
+              }, 150);
+            }
+          });
+          $(".emNewLocality").click (function (){
+            setFieldError ($(this),
+                $(this).parents (".controls").css('display')!='none' &&
+                $(this).parents (isTabletWidth ? ".controls" : ".control-group").css('visibility')!='hidden' &&
+                $(this).attr('disabled')!='disabled' &&
+                (!$(this).val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
+          });
+          // END Locality and new locality fields behavior
 
   $(".sort_college_locality").click(function(){
       var colleges = [], sortDirectionIcon = $(".sort-direction"), sortDirection = 'asc';
