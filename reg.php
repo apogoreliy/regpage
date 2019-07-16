@@ -15,6 +15,7 @@
     $countries2 = db_getCountries(false);
     $selectedEventId = isset($_COOKIE['eventChoose']) ? $_COOKIE['eventChoose'] : false;
     $adminCountry = db_getAdminCountry($memberId);
+
     $singleCity = db_isSingleCityAdmin($memberId);
     $user_settings = db_getUserSettings($memberId);
 
@@ -2394,7 +2395,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v42"></script>
+<script src="/js/reg.js?v56"></script>
 <?php
     include_once "footer.php";
 ?>
