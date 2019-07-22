@@ -22,3 +22,10 @@ $('#modalEditMember').on('hide', function() {
   $('#modalEditMember').find('#inputEmLocalityId').attr('data-value_input','');
   $('#modalEditMember').find('#inputEmLocalityId').attr('data-text_input','');
 });
+history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+      if ($('#modalEditMember').is(':visible')) {
+        history.go(1);
+        $('#modalEditMember').modal('hide');
+      }
+    };

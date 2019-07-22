@@ -97,6 +97,18 @@ console.log(event.state);
 alert('sdasdasdsd');
 });
 }*/
+console.log('Im there');
+history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+      if ($('#modalEditMember').is(':visible')) {
+        history.go(1);
+        $('#modalEditMember').modal('hide');
+      }
+    };
+
+
+    //Do your code here
+
 // end back button bahevior
 
 //START stop automatic scrolling on modal window
