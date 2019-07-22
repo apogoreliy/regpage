@@ -2,6 +2,40 @@ $(document).ready (function (){
 
   loadDashboard (false);
 
+  function getAdminsByCountry(){
+    $.get('/ajax/activity_log.php?get_admins_name')
+    .done (function(data) {
+    });
+    /*$.get('/ajax/activity_log.php?get_all_my_admin')
+    .done (function(data) {
+      console.log(data);
+    });
+    $.get('/ajax/activity_log.php?get_admins_by_region')
+     .done (function(data) {
+       console.log(data);
+     });
+    $.get('/ajax/activity_log.php?get_admins_by_country')
+      .done (function(data) {
+        console.log(data);
+      });
+    $.get('/ajax/activity_log.php?get_admins_by_locality')
+      .done (function(data) {
+          console.log(data);
+      });
+    $.get('/ajax/activity_log.php?get_locality_by_admin')
+      .done (function(data) {
+           console.log(data);
+      });
+    $.get('/ajax/activity_log.php?get_regions_by_admin')
+      .done (function(data) {
+            console.log(data);
+       });
+    $.get('/ajax/activity_log.php?get_country_by_admin')
+      .done (function(data) {
+          console.log(data);
+       });*/
+    }
+getAdminsByCountry();
 // LOCALITY FILTER START
   function renderLocalities(localities){
       var localities_list = [],
@@ -29,10 +63,9 @@ $(document).ready (function (){
   function getAdminReg() {
     $.post('/ajax/visits.php?get_list_admins', {})
       .done(function(data){
-        console.log(data.members);
       });
   }
-
+// START DASHBOARD
   function loadDashboard (reload){
     if (reload) {
       var startDate = formatDateDotToDash($('.start-date').val(), false),
@@ -45,7 +78,7 @@ $(document).ready (function (){
           console.log(startDate, ' and, ',stopDate);
         $.getJSON('/ajax/activity_log.php?get_activity', {start:startDate,stop:stopDate, locality: localityFilter, page: pageFilter, admins: listAdminsFilter})
             .done (function(data) {
-              console.log(data);
+              //console.log(data);
                 refreshActivity (data.members);
               });
     } else {
@@ -55,18 +88,82 @@ $(document).ready (function (){
       stopDate +='%';
       $.getJSON('/ajax/activity_log.php?get_activity', {start:startDate,stop:stopDate, locality: '_all_', page: '_all_', admins: '_all_'})
           .done (function(data) {
-            console.log(data);
               refreshActivity (data.members);
             });
     }
   }
+  function refreshNewList(adminId) {
+    $('.desctopVisible tbody').find('tr').each(function(){
+      if (adminId == $(this).attr('data-id') && !$(this).hasClass('ruler-string')) {
+        $(this).is(':visible') ? $(this).hide() : $(this).show();
+      } else if ($(this).hasClass('ruler-string')) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+    $('.show-phone tbody').find('tr').each(function(){
+      if (adminId == $(this).attr('data-id') && !$(this).hasClass('ruler-string')) {
+        $(this).is(':visible') ? $(this).hide() : $(this).show();
+      } else if ($(this).hasClass('ruler-string')) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  }
+  function refreshActivity (list, isSort){
+      var tableRows = [], phoneRows = [], checkList = [];
+      if (!isSort) {
+        list.sort(function (a, b) {
+          if (a.time < b.time) {
+            return 1;
+          }
+          if (a.time > b.time) {
+            return -1;
+          }
+          return 0;
+        });
+        list.sort(function (a, b) {
+          if (a.name > b.name) {
+            return 1;
+          }
+          if (a.name < b.name) {
+            return -1;
+          }
+          return 0;
+        });
+      }
 
-  function refreshActivity (list){
-      var tableRows = [], phoneRows = [];
       for (var i in list){
-          var m = list[i];
+        var m = list[i];
+        if (checkList.indexOf(m.id) === -1) {
+          checkList.push(m.id);
+          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="ruler-string" style="background-color: lightblue;">'+
+              '<td class="stts-count">' + he(m.id_string) +
+              /*if (!globalSingleCity) {
+                  '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
+                  '</td>' +
+               }*/
+              '<td>' + he(m.name) + '</td>' +
+              '<td class="stts-pages">' + he(m.page) + '</td>' +
+              '<td style="width:100px">' + he(m.time) + '</td>' +
+              '<td>' + he(m.locality_name) + '</td>' +
+              '<td>' + he(m.locality) + '</td></tr>'
+          );
 
-          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="">'+
+          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="ruler-string" style="background-color: lightblue">'+
+              /*if (!globalSingleCity) {
+                  '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
+                  '</td>' +
+               }*/
+              '<td>' + he(m.name) + '</td>' +
+              '<td>' + he(m.page) + '</td>' +
+              '<td style="width:100px">' + he(m.time) + '</td>' +
+              '<td>' + he(m.locality_name) + '</td></tr>'
+          );
+        }
+          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="" style="display:none">'+
               '<td>' + he(m.id_string) +
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
@@ -79,7 +176,7 @@ $(document).ready (function (){
               '<td>' + he(m.locality) + '</td></tr>'
           );
 
-          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="">'+
+          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="" style="display:none">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                   '</td>' +
@@ -94,12 +191,54 @@ $(document).ready (function (){
       $(".desctopVisible tbody").html (tableRows.join(''));
       $(".show-phone tbody").html (phoneRows.join(''));
 
-
-/*
-      $(".member-row").unbind('click');
-      $(".member-row").click (function (e) {
+      $(".ruler-string").unbind('click');
+      $(".ruler-string").click (function (e) {
           e.stopPropagation();
           var memberId = $(this).attr('data-id');
+          refreshNewList(memberId);
+      });
+      if (checkList) {
+        var sessionsCount = [], sessionsCounter, pagersCounter = [];
+        for (var i = 0; i < checkList.length; i++) {
+          sessionsCounter = 0;
+          pagersCounter =[];
+          sessionsCount.push(checkList[i]);
+          for (var ii = 0; ii < list.length; ii++) {
+            if (checkList[i] == list[ii].id) {
+              sessionsCounter++;
+            }
+          }
+          sessionsCount.push(sessionsCounter);
+          for (var iii = 0; iii < list.length; iii++) {
+            if (checkList[i] == list[iii].id) {
+
+              if (pagersCounter.indexOf(list[iii].page) === -1) {
+                pagersCounter.push(list[iii].page);
+              }
+            }
+          }
+          sessionsCount.push(pagersCounter);
+        }
+          $('.ruler-string').each(function() {
+            for (var i = 0; i < sessionsCount.length; i=i+3) {
+              if ($(this).attr('data-id') == sessionsCount[i]) {
+                  var ab = sessionsCount[i+1];
+                  ab = ab + ' визитов';
+                  ac = sessionsCount[i+2];
+                  ac = 'Посещены:' + ac;
+                $(this).find('.stts-count').text(ab);
+                $(this).find('.stts-pages').text(ac);
+              }
+            }
+          });
+      }
+/*
+      $(".").unbind('click');
+      $(".").click (function (e) {
+          e.stopPropagation();
+          var memberId = $(this).attr('data-id');
+          refreshNewList(memberId);
+
           $.getJSON('/ajax/get.php', { member: memberId })
               .done (function(data) {
                   fillEditMember (memberId, data.member, data.localities);
@@ -141,9 +280,10 @@ $(document).ready (function (){
       });
       */
   }
-
 // LOCALITY FILTER END
-// SortedFields start
+// START DASHBOARD
+
+// Sorted Fields start
   $("a[id|='sort']").click (function (){
     //clickOnSort = 1;
     var id = $(this).attr("id");
@@ -169,19 +309,38 @@ $(document).ready (function (){
 });
 function sortingActivity(sortType) {
   var list = [], tableRows = [], phoneRows = [], isLocationAlone = $('#selMeetingLocality option').length == 2 ?  true : false;
-  $('.members-list').find('tr:visible').each(function(){
-      var memberName = $(this).attr('data-name'),
-          timeActivity = $(this).attr('data-time'),
-          id_string = $(this).attr('data-id_string'),
-          page = $(this).attr('data-id_page'),
-          id = $(this).attr('data-id'),
-          locality = $(this).attr('data-locality_key'),
-          localityName = $(this).attr('data-locality');
-    if (id) {
-      list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName});
+   var aLenght = $('.show-phone:visible');
+   if (aLenght.length === 0) {
+  $('#members').find('tr').each(function(){
+    if (!$(this).hasClass('ruler-string')) {
+        var memberName = $(this).attr('data-name'),
+            timeActivity = $(this).attr('data-time'),
+            id_string = $(this).attr('data-id_string'),
+            page = $(this).attr('data-id_page'),
+            id = $(this).attr('data-id'),
+            locality = $(this).attr('data-locality_key'),
+            localityName = $(this).attr('data-locality');
+          if (id) {
+        list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName});
+      }
     }
   });
-
+  } else {
+    $('#membersPhone').find('tr').each(function(){
+        if (!$(this).hasClass('ruler-string')) {
+          var memberName = $(this).attr('data-name'),
+              timeActivity = $(this).attr('data-time'),
+              id_string = $(this).attr('data-id_string'),
+              page = $(this).attr('data-id_page'),
+              id = $(this).attr('data-id'),
+              locality = $(this).attr('data-locality_key'),
+              localityName = $(this).attr('data-locality');
+              if (id) {
+                list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName});
+              }
+            }
+          });
+        }
 if (sortType == 1) {
   list.sort(function (a, b) {
     if (Number(a.id_string) > Number(b.id_string)) {
@@ -238,6 +397,15 @@ if (sortType == 5) {
     }
     return 0;
   });
+  list.sort(function (a, b) {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (a.name < b.name) {
+      return -1;
+    }
+    return 0;
+  });
 }
 
 if (sortType == 6) {
@@ -246,6 +414,15 @@ if (sortType == 6) {
       return 1;
     }
     if (a.page > b.page) {
+      return -1;
+    }
+    return 0;
+  });
+  list.sort(function (a, b) {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (a.name < b.name) {
       return -1;
     }
     return 0;
@@ -261,6 +438,15 @@ if (sortType == 7) {
     }
     return 0;
   });
+  list.sort(function (a, b) {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (a.name < b.name) {
+      return -1;
+    }
+    return 0;
+  });
 }
 if (sortType == 8) {
   list.sort(function (a, b) {
@@ -268,6 +454,15 @@ if (sortType == 8) {
       return 1;
     }
     if (a.time > b.time) {
+      return -1;
+    }
+    return 0;
+  });
+  list.sort(function (a, b) {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (a.name < b.name) {
       return -1;
     }
     return 0;
@@ -319,7 +514,7 @@ if (sortType == 12) {
   });
 }
 */
-  refreshActivity(list);
+  refreshActivity(list, true);
 /*
   $('.btn-remove-meeting').unbind('click');
   $('.btn-remove-meeting').click(function(e){
@@ -419,6 +614,82 @@ if (sortType == 12) {
     var getNewDate = dateParts[2] + '-' + dateParts[1] + '-' + day;
 	   return getNewDate;
    }
+renewComboLists('.meeting-lists-combo');
+
+//START NEW LIST
+/*
+  function newListActivity() {
+    var startDate = formatDateDotToDash($('.start-date').val(), false),
+    stopDate = formatDateDotToDash($('.end-date').val(), true);
+    startDate+='%';
+    stopDate +='%';
+    $.getJSON('/ajax/activity_log.php?get_activity', {start:startDate,stop:stopDate, locality: '_all_', page: '_all_', admins: '_all_'})
+        .done (function(data) {
+          //console.log(data);
+            newListActivityRefresh (data.members);
+          });
+  }
+  function newListActivityRefresh(list) {
+    list.sort(function (a, b) {
+      if (a.time < b.time) {
+        return 1;
+      }
+      if (a.time > b.time) {
+        return -1;
+      }
+      return 0;
+    });
+    var listArr = [], checkList = [];
+    for (var i = 0; i < list.length; i++) {
+      var b = list[i].id, c = list[i].time;
+      //&& checkDate > c
+      if (checkList.indexOf(b) === -1) {
+        checkList.push(b);
+        listArr.push(list[i]);
+      }
+    }
+    var tableRows = [], phoneRows = [];
+    for (var i in listArr){
+        var m = listArr[i];
+
+        tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="ruler-string" style="background-color: lightblue">'+
+            '<td>' + he(m.id_string) +
+            *//*if (!globalSingleCity) {
+                '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
+                '</td>' +
+             }*//*
+            '<td>' + he(m.name) + '</td>' +
+            '<td>' + he(m.page) + '</td>' +
+            '<td style="width:100px">' + he(m.time) + '</td>' +
+            '<td>' + he(m.locality_name) + '</td>' +
+            '<td>' + he(m.locality) + '</td></tr>'
+        );
+
+        phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="ruler-string" style="background-color: lightblue">'+
+            *//*if (!globalSingleCity) {
+                '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
+                '</td>' +
+             }*//*
+            '<td>' + he(m.name) + '</td>' +
+            '<td>' + he(m.page) + '</td>' +
+            '<td style="width:100px">' + he(m.time) + '</td>' +
+            '<td>' + he(m.locality_name) + '</td></tr>'
+        );
+    }
+    $(".desctopVisible tbody").prepend (tableRows.join(''));
+    $(".show-phone tbody").prepend (phoneRows.join(''));
+
+    $(".ruler-string").unbind('click');
+    $(".ruler-string").click (function (e) {
+        e.stopPropagation();
+        var memberId = $(this).attr('data-id');
+        refreshNewList(memberId);
+    });
+    console.log(listArr);
+  }
+  newListActivity();
+  */
+  //STOP NEW LIST
 });
 
 
