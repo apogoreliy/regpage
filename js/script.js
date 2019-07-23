@@ -112,11 +112,11 @@ function setFieldError(field, isError){
 
     if (field.parents ("div.modal").find (".control-group.error").length>0 || field.parents ("div.modal").find (" select.error").length>0){
         field.parents("div.modal").find(".disable-on-invalid").addClass("disabled");
-        field.parents("div.modal").find("#btnDoSaveMember").addClass("disabled");
+        //field.parents("div.modal").find("#btnDoSaveMember").addClass("disabled");
 
     } else{
         field.parents("div.modal").find(".disable-on-invalid").removeClass("disabled");
-        field.parents("div.modal").find("#btnDoSaveMember").removeClass("disabled");
+        //field.parents("div.modal").find("#btnDoSaveMember").removeClass("disabled");
     }
 }
 

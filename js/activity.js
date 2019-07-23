@@ -2,40 +2,6 @@ $(document).ready (function (){
 
   loadDashboard (false);
 
-  function getAdminsByCountry(){
-    $.get('/ajax/activity_log.php?get_admins_name')
-    .done (function(data) {
-    });
-    /*$.get('/ajax/activity_log.php?get_all_my_admin')
-    .done (function(data) {
-      console.log(data);
-    });
-    $.get('/ajax/activity_log.php?get_admins_by_region')
-     .done (function(data) {
-       console.log(data);
-     });
-    $.get('/ajax/activity_log.php?get_admins_by_country')
-      .done (function(data) {
-        console.log(data);
-      });
-    $.get('/ajax/activity_log.php?get_admins_by_locality')
-      .done (function(data) {
-          console.log(data);
-      });
-    $.get('/ajax/activity_log.php?get_locality_by_admin')
-      .done (function(data) {
-           console.log(data);
-      });
-    $.get('/ajax/activity_log.php?get_regions_by_admin')
-      .done (function(data) {
-            console.log(data);
-       });
-    $.get('/ajax/activity_log.php?get_country_by_admin')
-      .done (function(data) {
-          console.log(data);
-       });*/
-    }
-getAdminsByCountry();
 // LOCALITY FILTER START
   function renderLocalities(localities){
       var localities_list = [],
@@ -78,7 +44,6 @@ getAdminsByCountry();
           console.log(startDate, ' and, ',stopDate);
         $.getJSON('/ajax/activity_log.php?get_activity', {start:startDate,stop:stopDate, locality: localityFilter, page: pageFilter, admins: listAdminsFilter})
             .done (function(data) {
-              //console.log(data);
                 refreshActivity (data.members);
               });
     } else {
@@ -93,24 +58,61 @@ getAdminsByCountry();
     }
   }
   function refreshNewList(adminId) {
+    pageFilter = $("#selMemberCategory").val();
     $('.desctopVisible tbody').find('tr').each(function(){
-      if (adminId == $(this).attr('data-id') && !$(this).hasClass('ruler-string')) {
+      if (adminId == $(this).attr('data-id') && !$(this).hasClass('ruler-string') && (pageFilter == $(this).attr('data-id_page') || pageFilter == '_all_')) {
         $(this).is(':visible') ? $(this).hide() : $(this).show();
-      } else if ($(this).hasClass('ruler-string')) {
+      } else if ($(this).hasClass('ruler-string') && $(this).is(':visible')) {
         $(this).show();
       } else {
         $(this).hide();
       }
     });
     $('.show-phone tbody').find('tr').each(function(){
-      if (adminId == $(this).attr('data-id') && !$(this).hasClass('ruler-string')) {
+      if (adminId == $(this).attr('data-id') && !$(this).hasClass('ruler-string') && (pageFilter == $(this).attr('data-id_page') || pageFilter == '_all_')) {
         $(this).is(':visible') ? $(this).hide() : $(this).show();
-      } else if ($(this).hasClass('ruler-string')) {
+      } else if ($(this).hasClass('ruler-string') && $(this).is(':visible')) {
         $(this).show();
       } else {
         $(this).hide();
       }
     });
+  }
+  function pageNameTranslator(page) {
+    var pageBack;
+    switch (page) {
+      case "index" : pageBack = 'События'; break;
+      case "reg" : pageBack = 'Регистрация'; break;
+      case "members" : pageBack = 'Общий список'; break;
+      case "youth" : pageBack = 'Молодые люди'; break;
+      case "list" : pageBack = 'Ответственные за регистрацию'; break;
+      case "meetings" : pageBack = 'Собрания'; break;
+      case "visits" : pageBack = 'Посещения'; break;
+      case "links" : pageBack = 'Ссылки'; break;
+      case "help" : pageBack = 'Помощь'; break;
+      case "profile" : pageBack = 'Профиль'; break;
+      case "settings" : pageBack = 'Настройки'; break;
+      case "login" : pageBack = 'Логин'; break;
+      case "passrec" : pageBack = 'Восстановление пароля'; break;
+      case "signup" : pageBack = 'Новый аккаунт'; break;
+      case "invites" : pageBack = 'Пермалинки'; break;
+      case "reference" : pageBack = 'Настройка помощи'; break;
+      case "vt" : pageBack = 'Видеообучение'; break;
+      case "pd" : pageBack = 'Официальные документы'; break;
+      case "pm" : pageBack = 'Молитвенная рассылка'; break;
+      case "st" : pageBack = 'Статистика'; break;
+      case "rb" : pageBack = 'Обучение в Индии'; break;
+      case "os" : pageBack = 'Обучение братьев'; break;
+      case "mc" : pageBack = 'Мини-конференции'; break;
+      case "ul" : pageBack = 'Избранные ссылки'; break;
+      case "event" : pageBack = 'Мероприятия (разр.)'; break;
+      case "statistic" : pageBack = 'Архив (разр.)'; break;
+      case "activity" : pageBack = 'Активность'; break;
+      case "panel" : pageBack = 'Админка (разр.)'; break;
+    }
+    if (!pageBack) return null
+
+    return pageBack
   }
   function refreshActivity (list, isSort){
       var tableRows = [], phoneRows = [], checkList = [];
@@ -137,55 +139,53 @@ getAdminsByCountry();
 
       for (var i in list){
         var m = list[i];
-        if (checkList.indexOf(m.id) === -1) {
+        if ((!isSort && checkList.indexOf(m.id) === -1) || (isSort && m.header && checkList.indexOf(m.id) === -1)) {
           checkList.push(m.id);
-          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="ruler-string" style="background-color: lightblue;">'+
-              '<td class="stts-count">' + he(m.id_string) +
+          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="" class="ruler-string" style="background-color: lightblue; '+m.visible+'">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
-                  '</td>' +
                }*/
-              '<td>' + he(m.name) + '</td>' +
-              '<td class="stts-pages">' + he(m.page) + '</td>' +
-              '<td style="width:100px">' + he(m.time) + '</td>' +
-              '<td>' + he(m.locality_name) + '</td>' +
-              '<td>' + he(m.locality) + '</td></tr>'
+              '<td style="width: 250px;"><b>' + he(m.name) + ' - <span class="stts-count" style="padding-left:3px; width: 250px;"></span></b></td>' +
+              '<td><strong class="stts-pages"></strong></td>' +
+              '<td style="width:100px"><b>Последнее<br>' + he(m.time) + '</b></td>' +
+              '<td><b>' + he(m.locality_name) + '</b></td>' +
+              '<td><b>' + he(m.locality) + '</b></td></tr>'
           );
 
-          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="ruler-string" style="background-color: lightblue">'+
+          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="" class="ruler-string" style="background-color: lightblue; '+m.visible+'">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
-                  '</td>' +
                }*/
-              '<td>' + he(m.name) + '</td>' +
+              '<td>' + he(m.name) + ' - <span class="stts-count" style="padding-left:3px;"</td>' +
               '<td>' + he(m.page) + '</td>' +
               '<td style="width:100px">' + he(m.time) + '</td>' +
               '<td>' + he(m.locality_name) + '</td></tr>'
           );
         }
-          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="" style="display:none">'+
-              '<td>' + he(m.id_string) +
+        if (!isSort  || (isSort && m.header === false)) {
+          var pageRus = pageNameTranslator(m.page);
+          !isSort ? m.visible = 'display: none' : '';
+          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="" style="'+ he(m.visible) +'">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
-                  '</td>' +
                }*/
               '<td>' + he(m.name) + '</td>' +
-              '<td>' + he(m.page) + '</td>' +
+              '<td>' + pageRus + '</td>' +
               '<td style="width:100px">' + he(m.time) + '</td>' +
               '<td>' + he(m.locality_name) + '</td>' +
               '<td>' + he(m.locality) + '</td></tr>'
           );
 
-          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="" style="display:none">'+
+          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="" style="'+ he(m.visible) +'">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
-                  '</td>' +
                }*/
               '<td>' + he(m.name) + '</td>' +
-              '<td>' + he(m.page) + '</td>' +
+              '<td>' + pageRus + '</td>' +
               '<td style="width:100px">' + he(m.time) + '</td>' +
               '<td>' + he(m.locality_name) + '</td></tr>'
           );
+        }
       }
 
       $(".desctopVisible tbody").html (tableRows.join(''));
@@ -198,10 +198,10 @@ getAdminsByCountry();
           refreshNewList(memberId);
       });
       if (checkList) {
-        var sessionsCount = [], sessionsCounter, pagersCounter = [];
+        var sessionsCount = [], sessionsCounter, pagersCounter = [], pagersCounterRus = [];
         for (var i = 0; i < checkList.length; i++) {
-          sessionsCounter = 0;
-          pagersCounter =[];
+          isSort ? sessionsCounter = -1:sessionsCounter = 0;
+          pagersCounter =[], pagersCounterRus =[];
           sessionsCount.push(checkList[i]);
           for (var ii = 0; ii < list.length; ii++) {
             if (checkList[i] == list[ii].id) {
@@ -213,19 +213,21 @@ getAdminsByCountry();
             if (checkList[i] == list[iii].id) {
 
               if (pagersCounter.indexOf(list[iii].page) === -1) {
+                var rusPageName = pageNameTranslator(list[iii].page);
                 pagersCounter.push(list[iii].page);
+                pagersCounterRus.push(rusPageName);
               }
             }
           }
-          sessionsCount.push(pagersCounter);
+          sessionsCount.push(pagersCounterRus);
         }
           $('.ruler-string').each(function() {
             for (var i = 0; i < sessionsCount.length; i=i+3) {
               if ($(this).attr('data-id') == sessionsCount[i]) {
                   var ab = sessionsCount[i+1];
-                  ab = ab + ' визитов';
+                  ab = 'визитов ' + ab ;
                   ac = sessionsCount[i+2];
-                  ac = 'Посещены:' + ac;
+                  ac = 'Посещены: ' + ac.join(' ');
                 $(this).find('.stts-count').text(ab);
                 $(this).find('.stts-pages').text(ac);
               }
@@ -292,7 +294,7 @@ getAdminsByCountry();
     icon.attr ("class", icon.hasClass("icon-chevron-down") ? "icon-chevron-up" : "icon-chevron-down");
 
     if (id === 'sort-number') {
-      icon.hasClass("icon-chevron-down") ? sortingActivity(1) : sortingActivity(2);
+      //icon.hasClass("icon-chevron-down") ? sortingActivity(1) : sortingActivity(2);
     } else if (id === 'sort-name') {
       icon.hasClass("icon-chevron-down") ? sortingActivity(3) :sortingActivity(4);
     } else if (id === 'sort-page') {
@@ -302,7 +304,7 @@ getAdminsByCountry();
     } else if (id === 'sort-locality') {
       icon.hasClass("icon-chevron-down") ? sortingActivity(9) :sortingActivity(10);
     } else if (id === 'sort-status') {
-      icon.hasClass("icon-chevron-down") ? sortingActivity(11) :sortingActivity(12);
+      //icon.hasClass("icon-chevron-down") ? sortingActivity(11) :sortingActivity(12);
     } else {
       loadDashboard (true);
     }
@@ -312,18 +314,22 @@ function sortingActivity(sortType) {
    var aLenght = $('.show-phone:visible');
    if (aLenght.length === 0) {
   $('#members').find('tr').each(function(){
-    if (!$(this).hasClass('ruler-string')) {
         var memberName = $(this).attr('data-name'),
             timeActivity = $(this).attr('data-time'),
             id_string = $(this).attr('data-id_string'),
             page = $(this).attr('data-id_page'),
             id = $(this).attr('data-id'),
             locality = $(this).attr('data-locality_key'),
-            localityName = $(this).attr('data-locality');
+            localityName = $(this).attr('data-locality'),
+            visibleStts = $(this).is(':visible') ? '':'display: none',
+            headerString = false;
+            if ($(this).hasClass('ruler-string')) {
+              headerString = true;
+            }
           if (id) {
-        list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName});
+        list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName, visible: visibleStts, header: headerString});
       }
-    }
+
   });
   } else {
     $('#membersPhone').find('tr').each(function(){
@@ -335,36 +341,28 @@ function sortingActivity(sortType) {
               id = $(this).attr('data-id'),
               locality = $(this).attr('data-locality_key'),
               localityName = $(this).attr('data-locality');
+              visibleStts = $(this).is(':visible') ? '':'display: none';
+              headerString = false;
+              if ($(this).hasClass('ruler-string')) {
+                headerString = true;
+              }
               if (id) {
-                list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName});
+                list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName, visible: visibleStts, header: headerString});
               }
             }
           });
         }
-if (sortType == 1) {
-  list.sort(function (a, b) {
-    if (Number(a.id_string) > Number(b.id_string)) {
-      return 1;
-    }
-    if (Number(a.id_string) < Number(b.id_string)) {
-      return -1;
-    }
-    return 0;
-  });
-}
 
-if (sortType == 2) {
+if (sortType == 3) {
   list.sort(function (a, b) {
-    if (Number(a.id_string) < Number(b.id_string)) {
+    if (a.time < b.time) {
       return 1;
     }
-    if (Number(a.id_string) > Number(b.id_string)) {
+    if (a.time > b.time) {
       return -1;
     }
     return 0;
   });
-}
-if (sortType == 3) {
   list.sort(function (a, b) {
     if (a.name > b.name) {
       return 1;
@@ -377,6 +375,15 @@ if (sortType == 3) {
 }
 
 if (sortType == 4) {
+  list.sort(function (a, b) {
+    if (a.time < b.time) {
+      return 1;
+    }
+    if (a.time > b.time) {
+      return -1;
+    }
+    return 0;
+  });
   list.sort(function (a, b) {
     if (a.name < b.name) {
       return 1;
@@ -418,6 +425,7 @@ if (sortType == 6) {
     }
     return 0;
   });
+
   list.sort(function (a, b) {
     if (a.name > b.name) {
       return 1;
@@ -478,6 +486,15 @@ if (sortType == 9) {
     }
     return 0;
   });
+  list.sort(function (a, b) {
+    if (a.name < b.name) {
+      return 1;
+    }
+    if (a.name > b.name) {
+      return -1;
+    }
+    return 0;
+  });
 }
 if (sortType == 10) {
   list.sort(function (a, b) {
@@ -489,47 +506,19 @@ if (sortType == 10) {
     }
     return 0;
   });
-}
-/*
-if (sortType == 11) {
   list.sort(function (a, b) {
-    if (a.performed > b.performed) {
+    if (a.name > b.name) {
       return 1;
     }
-    if (a.performed < b.performed) {
+    if (a.name < b.name) {
       return -1;
     }
     return 0;
   });
 }
-if (sortType == 12) {
-  list.sort(function (a, b) {
-    if (a.performed < b.performed) {
-      return 1;
-    }
-    if (a.performed > b.performed) {
-      return -1;
-    }
-    return 0;
-  });
-}
-*/
+
   refreshActivity(list, true);
-/*
-  $('.btn-remove-meeting').unbind('click');
-  $('.btn-remove-meeting').click(function(e){
-      e.stopPropagation();
-      var meetingId = $(this).parents('tr').attr('data-id'),
-          modal = $("#modalRemoveMeeting");
-      modal.find(".remove-meeting").attr("data-id", meetingId);
-      modal.modal("show");
-  });
-    $("tbody tr").each(function(){
-        if ($(this).find('.meeting-name') == 'Посещения') {
-          $(this).find('.meeting-name').attr('style', 'font-weight: bold');
-        }
-    });
-    */
+
   }
 // SortedFields end
 // filters start
@@ -541,8 +530,9 @@ if (sortType == 12) {
           listAdminsFilter = $("#listAdmins").val(),
           text = $('.search-text').val().trim().toLowerCase(),
           filteredMembers = [],
-          localityList = [];
-          hideDevelopers = $("#hideDevelopers").prop('checked') ? '000005716' : false;
+          localityList = [],
+          counterVisits = [],
+          counterAdmins = [];
       if(localityFilter){
           localityList = localityFilter.split(',');
       }
@@ -554,27 +544,53 @@ if (sortType == 12) {
               memberName = $(this).attr('data-name').toLowerCase(),
               memberKey = $(this).attr('data-id');
 
-
-          if(((localityFilter === '_all_' || localityFilter === undefined) && pageFilter === '_all_' && text === '' && listAdminsFilter === '_all_' && hideDevelopers === false) ||
+          if(((localityFilter === '_all_' || localityFilter === undefined) && pageFilter === '_all_' && text === '' && listAdminsFilter === '_all_' && $(this).hasClass('ruler-string')) ||
 
               (
-                  (in_array(memberLocality, localityList) || localityFilter === '_all_' || (localityFilter === undefined && localityList.length === 0))  &&
-                  (memberPage === pageFilter || pageFilter === '_all_') && (memberKey === listAdminsFilter || listAdminsFilter === '_all_') &&  (hideDevelopers === false || memberKey != '000005716')) && (memberName.search(text) !== -1))
+                  ((in_array(memberLocality, localityList) && ($(this).hasClass('ruler-string') || $(this).is(':visible'))) || localityFilter === '_all_' || (localityFilter === undefined && localityList.length === 0))  &&
+                  ((memberPage === pageFilter && $(this).is(':visible')) || pageFilter === '_all_' || $(this).hasClass('ruler-string')) && ((memberKey === listAdminsFilter && ($(this).hasClass('ruler-string') || $(this).is(':visible'))) || listAdminsFilter === '_all_')) && (memberName.search(text) !== -1) && (!(localityFilter === '_all_' && pageFilter === '_all_' && listAdminsFilter === '_all_') || $(this).is(':visible')))
               {
+                $(this).hasClass('ruler-string') ? counterAdmins.push(memberKey):'';
+                if (!$(this).hasClass('ruler-string') && (pageFilter === memberPage || pageFilter ==='_all_')) {
+                  counterVisits.push({id:memberKey, page: memberPage});
+                }
+                $(this).show();
+                filteredMembers.push(memberKey);
 
-              $(this).show();
-              filteredMembers.push(memberKey);
-          }
-          else{
-              $(this).hide();
-          }
+              } else {
+                $(this).hasClass('ruler-string') ? counterAdmins.push(memberKey):'';
+                if (!$(this).hasClass('ruler-string') && (pageFilter === memberPage || pageFilter ==='_all_')) {
+                  counterVisits.push({id:memberKey, page: memberPage});
+                }
+                $(this).hide();
+              }
       });
-      console.log(filteredMembers);
+
+      if (counterAdmins) {
+
+        var sessionsCount = [], sessionsCounter;
+        for (var i = 0; i < counterAdmins.length; i++) {
+          sessionsCounter = 0;
+          sessionsCount.push(counterAdmins[i]);
+          for (var ii = 0; ii < counterVisits.length; ii++) {
+            if (counterAdmins[i] == counterVisits[ii].id) {
+              sessionsCounter++;
+            }
+          }
+          sessionsCount.push(sessionsCounter);
+        }
+          $('.ruler-string').each(function() {
+            for (var i = 0; i < sessionsCount.length; i=i+2) {
+              if ($(this).attr('data-id') == sessionsCount[i]) {
+                  var ab = sessionsCount[i+1];
+                  ab = 'визитов ' + ab ;
+                $(this).find('.stts-count').text(ab);
+              }
+            }
+          });
+      }
       return filteredMembers;
   }
-  $("#hideDevelopers").change (function (){
-      filterMembers();
-  });
 
   $("#selMemberLocality").change (function (){
       setCookie('selMemberLocality', $(this).val());
