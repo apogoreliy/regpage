@@ -18,14 +18,13 @@ $roleThisAdmin = db_getAdminRole($memberId);
 $noEvent = true;
 $selMemberLocality = isset ($_COOKIE['selMemberLocality']) ? $_COOKIE['selMemberLocality'] : '_all_';
 $selMemberCategory = isset ($_COOKIE['selMemberCategory']) ? $_COOKIE['selMemberCategory'] : '_all_';
-
+$adminCountry = db_getAdminCountry($memberId);
 $allLocalities = db_getLocalities();
 $adminLocality = db_getAdminLocality($memberId);
-
 $user_settings = db_getUserSettings($memberId);
 $userSettings = implode (',', $user_settings);
-$ogogo = db_getAdminByLocalityCombobox($adminLocality);
-$listAdminLocality = db_getAdminsListByLocalitiesCombobox($adminLocality);
+$admisListLRC = db_getAdminsByLRC($memberId);
+$listAdminLocality = db_getAdminsNameByMembersKeys($admisListLRC);
 include_once 'modals.php';
 
 ?>
@@ -44,7 +43,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
           <option value="youth">Молодые люди</option>
           <option value="list">Ответственные за регистрацию</option>
           <?php if ($roleThisAdmin===2) { ?>
-            <option value="activity" selected>Активность админов</option>
+            <option value="activity" selected>Активность администраторов</option>
           <?php } ?>
       </select>
         <div class="btn-toolbar">
@@ -81,9 +80,9 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     <option value="os">Обучение братьев</option>
                     <option value="mc">Мини-конференции</option>
                     <option value="ul">Избранные ссылки</option>
+                    <option value="activity">Журнал активности пользователей</option>
                     <option value="event">Мероприятия (разр.)</option>
                     <option value="statistic">Архив (разр.)</option>
-                    <option value="activity">Активность (разр.)</option>
                     <option value="panel">Админка</option>
                 </select>
             </div>
@@ -112,9 +111,6 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     <i class="icon-remove admin-list clear-search-members" style="margin-left: -20px; margin-top: -6px;"></i>
                 </div>
             </div>
-            <div class="btn-group">
-                <label for="hideDevelopers"><input type="checkbox" id="hideDevelopers" style="margin-top: 0px;" name="" value=""> Скрыть разработчиков</label>
-            </div>
             <div class="btn-group" data-locality="<?php echo $adminLocality; ?>">
             </div>
             </div>
@@ -122,10 +118,9 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                 <table id="members" class="table table-hover">
                     <thead>
                     <tr>
-                        <th><a id="sort-number" href="#" title="сортировать">No</a>&nbsp;<i class="<?php echo $sort_field=='number' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th><a id="sort-name" href="#" title="сортировать">Ф.И.О.</a>&nbsp;<i class="<?php echo $sort_field=='name' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th><a id="sort-page" href="#" title="сортировать">Page</a>&nbsp;<i class="<?php echo $sort_field=='page' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th><a id="sort-time" href="#" title="сортировать">Time</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th><a id="sort-page" href="#" title="сортировать">Страница</a>&nbsp;<i class="<?php echo $sort_field=='page' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th><a id="sort-time" href="#" title="сортировать">Время посещения</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <?php
                         if (!$singleCity)
                             echo '<th><a id="sort-locality" href="#" title="сортировать">Город</a>&nbsp;<i class="'.($sort_field=='locality' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
@@ -150,8 +145,8 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                             }
                             ?>
                         </li>
-                        <li><a id="sort-birth_date" data-sort="Возраст" href="#" title="сортировать">Возраст</a>&nbsp;<i class="<?php echo $sort_field=='page' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
-                        <li><a id="sort-attend_meeting" href="#" data-sort="Посещает собрание" title="сортировать">Посещает собрание</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-page" data-sort="Страница" href="#" title="сортировать">Страница</a>&nbsp;<i class="<?php echo $sort_field=='page' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-time" href="#" data-sort="Время посещения" title="сортировать">Время посещения</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                     </ul>
                 </div>
                 <table id="membersPhone" class="table table-hover">
@@ -160,142 +155,17 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
             </div>
         </div>
     </div>
-
-</div>
-
-<!-- Edit Member Modal -->
-<div id="modalEditMember" data-width="560" class="modal hide fade modal-edit-member" tabindex="-1" role="dialog" aria-labelledby="editMemberTitle" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 id="editMemberTitle">Карточка участника</h3>
-    </div>
-    <div class="modal-body">
-        <?php
-        //require_once 'form.php';
-        require_once 'formTab.php';
-        ?>
-    </div>
-    <div class="modal-footer">
-        <!--<span class="footer-status">
-            <input type="checkbox" class="emActive" />Активный
-        </span> -->
-        <button class="btn btn-info disable-on-invalid" id="btnDoSaveMember">Сохранить</button>
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Отменить</button>
-    </div>
-</div>
-
-<!-- Name Editing Message Modal -->
-<div id="modalNameEdit" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="regNameEdit" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 id="regNameEdit">Внимание!</h3>
-        <p>Правила изменения ФИО участника</p>
-    </div>
-    <div class="modal-body">
-        <ol>
-            <li>Вводите ФИО в строгой последовательности: <b>Фамилия Имя Отчество</b>.</li>
-            <li>Если фамилия недавно была изменена, напишите прежнюю фамилию после отчества в скобках.</li>
-            <li><span style="color:red">Не заменяйте ФИО и другие поля данными другого участника!</span> Для нового участника необходимо создать новую карточку.</li>
-            <ol>
-    </div>
-    <div class="modal-footer">
-        <button id="btnDoNameEdit" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Изменить ФИО</button>
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
-    </div>
-</div>
-
-<!-- Name Editing Message Modal -->
-<div id="modalUploadExcel" class="modal hide fade" data-width="1100" tabindex="-1" role="dialog" aria-labelledby="regNameEdit" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3>Загрузить файл</h3>
-    </div>
-    <div class="modal-body">
-        <div class="btn-group">
-            <a type="button" class="btn btn-default send_file" style="margin-right: 10px;"><i class="fa fa-download" title="Отправить файл"></i></a>
-            <input type="file" class="uploaded_excel_file" placeholder="Выберите файл">
-        </div>
-        <div class="list_data">
-
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
-    </div>
-</div>
-
-<!-- Name Editing Message Modal -->
-<div id="modalFilters" class="modal hide fade" data-width="400" tabindex="-1" role="dialog">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3>Фильтры</h3>
-    </div>
-    <div class="modal-body">
-        <div class="btn-group">
-            <span class="btn btn-success fa fa-plus create_filter" title="Создать фильтр"></span>
-
-        </div>
-        <div class="btn-group filter_name_block" >
-            <input class="filter_name" type="text" placeholder="Название" style="margin-bottom: 0; margin-left: 10px;"/>
-            <span class="fa fa-check add-filter" title="Сохранить фильтр" style="font-size: 20px;"></span>
-        </div>
-        <div class="filters_list" style="margin-top: 20px;">
-
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
-    </div>
-</div>
-
-<!-- Name Editing Message Modal -->
-<div id="modalShowFilter" class="modal hide fade" data-width="400" tabindex="-1" role="dialog">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3></h3>
-    </div>
-    <div class="modal-body">
-        <div class="show_filters_list">
-
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-success save-filter-localities" data-dismiss="modal" aria-hidden="true">Сохранить</button>
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
-    </div>
-</div>
-
-<!-- Name Editing Message Modal -->
-<div id="modalRemoveFilterConfirmation" class="modal hide fade" data-width="500" tabindex="-1" role="dialog">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3>Подтверждение удаления фильтра</h3>
-    </div>
-    <div class="modal-body">
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-danger remove_filter_confirm" data-dismiss="modal" aria-hidden="true">Подтвердить</button>
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
-    </div>
 </div>
 
 <script>
-console.log("<?php echo $ogogo[0]; ?>");
-console.log("<?php echo $ogogo[1]; ?>");
-console.log("<?php echo $ogogo[2]; ?>");
-console.log("<?php echo $ogogo[3]; ?>");
-console.log("<?php echo $ogogo[4]; ?>");
-console.log("<?php echo $ogogo[5]; ?>");
-console.log("<?php echo $ogogo[6]; ?>");
-console.log("<?php echo $ogogo[7]; ?>");
-console.log("<?php echo $ogogo[8]; ?>");
+
     window.user_settings = "<?php echo $userSettings; ?>".split(',');
     var globalAdminId = '<?php echo $memberId; ?>';
     var globalSelMemberLocality = "<?php echo $selMemberLocality; ?>";
     var globalAdminRole = "<?php echo db_getAdminRole($memberId); ?>"
     var globalSingleCity = "<?php echo $singleCity; ?>"
 </script>
-<script src="/js/activity.js?v23"></script>
+<script src="/js/activity.js?v28"></script>
 <?php
 include_once "footer.php";
 ?>
