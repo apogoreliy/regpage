@@ -68,10 +68,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     <option value="profile">Профиль</option>
                     <option value="settings">Настройки</option>
                     <option value="login">Логин</option>
-                    <option value="passrec">Восстановление пароля</option>
-                    <option value="signup">Новый аккаунт</option>
                     <option value="invites">Пермалинки</option>
-                    <option value="reference">Настройка помощи</option>
                     <option value="vt">Видеообучение</option>
                     <option value="pd">Официальные документы</option>
                     <option value="pm">Молитвенная рассылка</option>
@@ -80,10 +77,8 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     <option value="os">Обучение братьев</option>
                     <option value="mc">Мини-конференции</option>
                     <option value="ul">Избранные ссылки</option>
+                    <option value="reference">Настройка помощи</option>
                     <option value="activity">Журнал активности пользователей</option>
-                    <option value="event">Мероприятия (разр.)</option>
-                    <option value="statistic">Архив (разр.)</option>
-                    <option value="panel">Админка</option>
                 </select>
             </div>
             <div class="btn-group">

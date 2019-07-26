@@ -639,7 +639,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
 var gloLocalityAgmin = '<?php echo $localitiesWithFilters; ?>';
 </script>
 
-<script src="/js/meetings.js?v128"></script>
+<script src="/js/meetings.js?v129"></script>
 <?php
     include_once './footer.php';
 ?>

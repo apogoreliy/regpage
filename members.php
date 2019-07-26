@@ -15,7 +15,7 @@ $countries1 = db_getCountries(true);
 $countries2 = db_getCountries(false);
 $singleCity = db_isSingleCityAdmin($memberId);
 $noEvent = true;
-
+$roleThisAdmin = db_getAdminRole($memberId);
 $selMemberLocality = isset ($_COOKIE['selMemberLocality']) ? $_COOKIE['selMemberLocality'] : '_all_';
 $selMemberCategory = isset ($_COOKIE['selMemberCategory']) ? $_COOKIE['selMemberCategory'] : '_all_';
 
@@ -42,6 +42,9 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
           <option selected value="members">Общий список</option>
           <option value="youth">Молодые люди</option>
           <option value="list">Ответственные за регистрацию</option>
+          <?php if ($roleThisAdmin===2) { ?>
+            <option value="activity" selected>Активность администраторов</option>
+          <?php } ?>
       </select>
         <div class="btn-toolbar">
             <div class="btn-group">

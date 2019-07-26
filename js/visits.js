@@ -32,6 +32,7 @@ function getMeetingCounts(item){
 }
 
 function refreshMeetings(meetings,sort){
+
     var tableRows = [], phoneRows = [], responsibiles = [], responsibleName, performedStatus, listOfMembersGoals, idDatePicker=[];
     var isSingleCity = parseInt('<?php echo $isSingleCity; ?>');
     var isLocationAlone = $('#selMeetingLocality option').length == 2 ?  true : false;
@@ -53,12 +54,13 @@ function refreshMeetings(meetings,sort){
         if (m.members) {
           for (var i = 0; i < splitMember.length; i++) {
             temtArr = splitMember[i].split(':');
-            if (temtArr.length < 8 && temtArr.length > 6) {
+            if ((temtArr.length < 8 && temtArr.length > 6) && splitMember[i+1]) {
                 splitMember[i] = splitMember[i] + splitMember[i+1];
             } else if (temtArr.length < 7) {
               splitMember.splice(i, 1);
             }
           }
+
           m.members = splitMember.join(',');
           if (splitMember[0].indexOf("Москва:") != -1 && !(splitMember[0].indexOf("Москва:0") != -1 || splitMember[0].indexOf("Москва:1") != -1)) {
             splitMember = splitMember[0].split(':');
@@ -324,7 +326,7 @@ $(".remove-meeting").click(function(e){
 });
 
 function fillMeetingModalForm(textMode, date, locality, actionType, note, countList, performed, adminKey, responsible, actionId, members){
-  fillAdminsOfLocations('#responsible', responsible);
+  //fillAdminsOfLocations('#responsible', responsible);
     //window.selectedMeetingMembers = [];
 // figure it out START
     var modal = $("#addEditMeetingModal"), isSingleCity = parseInt('<?php echo $isSingleCity; ?>');
@@ -339,6 +341,20 @@ function fillMeetingModalForm(textMode, date, locality, actionType, note, countL
     modal.find('#visitLocalityModal').val(locality || whatIsLocalityAdmin);
     modal.find('#performedChkbx').val(performed || 0);
     modal.find('#visitNote').val(note || '');
+
+// START Change color
+
+    performed == 0 ? statusNameCss = 'status-select-plan' : '' ;
+    performed == 1 ? statusNameCss = 'status-select-done' : '' ;
+    performed == 2 ? statusNameCss = 'status-select-failed' : '' ;
+
+    var oldClass = modal.find('#performedChkbx').attr('class');
+    if (statusNameCss != oldClass) {
+      modal.find('#performedChkbx').removeClass(oldClass);
+      modal.find('#performedChkbx').addClass(statusNameCss);
+    }
+
+// STOP Change color
     //modal.find('#responsible').val(responsible);
     if (textMode == 'Карточка события') {
       (actionType == 'Посещение') ? modal.find("#titleMeetingModal").text('Посещение') : modal.find("#titleMeetingModal").text('Звонок');
@@ -462,7 +478,7 @@ function buildMembersList(modalWindowSelector, list, mode){
 // get admins of localities
 
 function fillAdminsOfLocations(element, responsible) {
-  var localities = []; responsibles = [];
+/*  var localities = []; responsibles = [];
   //element == '#responsibleList' ? responsibles.push('<option value="_all_">Все</option>') : '';
   $('#selMeetingLocality option').each(function(){
     $(this).val() != '_all_' ? localities.push($(this).val()): '';
@@ -488,7 +504,7 @@ function fillAdminsOfLocations(element, responsible) {
                 if (element == '#responsibleList') {
                   responsibles.push('<option value="'+ id +'">'+ name +'</option>');
                 } else {
-                  responsibles.push('<option selected value="'+ id +'">'+ name +'</option>');
+                  responsibles.push('<optio n selected value="'+ id +'">'+ name +'</option>');
                 }
               } else {
                 responsibles.push('<option value="'+ id +'">'+ name +'</option>');
@@ -497,7 +513,7 @@ function fillAdminsOfLocations(element, responsible) {
           })
         })
         $(element).html(responsibles.join(''));
-      });
+      }); */
 }
 
 function filterMeetingsList(){
@@ -2113,11 +2129,10 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
               var locality = modal.find('#visitLocalityModal').val();
               var actionType = $("#actionType").find(':selected').text();
               var note = modal.find('#visitNote').val();
-              var responsible = modal.find('#responsible option:selected').val();
+              var responsible = $('#responsibleList').val() != '_all_' ? $('#responsibleList').val() : window.adminId;
               var request = getRequestFromFilters(setFiltersForRequest());
               var performed = modal.find('#performedChkbx').val();
               var admin_key = window.adminId;
-
 
               if(!date || !locality || !actionType){
                   showError('Необходимо заполнить все обязательные поля выделенные розовым цветом');
@@ -2139,24 +2154,31 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
                   countMembers: countMembers
               }).done(function(data){
                   if(data.isDoubleMeeting){
-                      showError('Данное собрание является дублирующим и не было сохранено!');
+                      showError('Данное событие является дублирующим и не было сохранено!');
                   }
                   $(".localities-available").html('');
                   $(".localities-added").html('');
                   $(".searchLocality").val('');
-
-                  loadMeetings();
-                  $("#addEditMeetingModal").modal('hide');
               });
           }
-        } else if (visitMember.length === 0) {
+            $("#addEditMeetingModal").hasClass('new-visit-create') ? $("#addEditMeetingModal").removeClass('new-visit-create') : '';
             $("#addEditMeetingModal").modal('hide');
-        } else {
-          console.log("normal way");
+            $("#modalAddMembersTemplate").modal('hide');
+            setTimeout(function () {
+              loadMeetings();
+            }, 500);
+            return
+        } else if (visitMember.length === 0) {
+            $("#addEditMeetingModal").hasClass('new-visit-create') ? $("#addEditMeetingModal").removeClass('new-visit-create') : '';
+            $("#addEditMeetingModal").modal('hide');
+            $("#modalAddMembersTemplate").modal('hide');
+            return
         }
       }
       $("#addEditMeetingModal").hasClass('new-visit-create') ? $("#addEditMeetingModal").removeClass('new-visit-create') : '';
 //checking exist list
+    var responsibleDefault = $("#responsibleList").val() != '_all_' ? $("#responsibleList").val() : window.adminId ;
+    $("#addEditMeetingModal").find('#responsible').val(responsibleDefault)
       addEditMeetingModal.find("tbody tr").each(function(){
          arrMembersTemplateCheck.push($(this).attr('data-id'))
       });
@@ -2184,5 +2206,13 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
         loadMembersListFilter ();
       });
     });
+// button back (browser, mobile)
+    history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+          if ($('#addEditMeetingModal').is(':visible')) {
+            history.go(1);
+            $('#addEditMeetingModal').modal('hide');
+          }
+        };
 })();
 renewComboLists('.meeting-lists-combo');

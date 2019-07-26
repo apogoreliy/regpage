@@ -2241,3 +2241,11 @@ $(window).resize(function(){
   screenSizeMdl();
 });
 renewComboLists('.meeting-lists-combo');
+// button back (browser, mobile)
+    history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+          if ($('#addEditMeetingModal').is(':visible')) {
+            history.go(1);
+            $('#addEditMeetingModal').modal('hide');
+          }
+        };

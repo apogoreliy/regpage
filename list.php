@@ -6,7 +6,7 @@ include_once "modals.php";
 $sort_field = isset ($_SESSION['sort_field']) ? $_SESSION['sort_field'] : 'name';
 $sort_type = isset ($_SESSION['sort_type']) ? $_SESSION['sort_type'] : 'asc';
 $listCountry = isset($_COOKIE['selCountry']) ? $_COOKIE['selCountry'] : null;
-
+$roleThisAdmin = db_getAdminRole($memberId);
 $countries = db_getCountriesList();
 ?>
     <div class="container">
@@ -20,6 +20,9 @@ $countries = db_getCountriesList();
                   <option value="members">Общий список</option>
                   <option value="youth">Молодые люди</option>
                   <option selected value="list">Ответственные за регистрацию</option>
+                  <?php if ($roleThisAdmin===2) { ?>
+                    <option value="activity" selected>Активность администраторов</option>
+                  <?php } ?>
               </select>
                 <div class="btn-toolbar">
                     <select class="span3" id="selCountry">

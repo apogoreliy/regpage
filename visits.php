@@ -135,6 +135,9 @@ $sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetin
                               ?>
                             </select>
                             <select style="float: right" id="responsible" data-id_admin="" class="col-sm">
+                              <?php foreach ($listAdminLocality as $id => $name) {
+                              echo "<option value='$id'>".htmlspecialchars ($name)."</option>";
+                            } ?>
                             </select>
                             <!--<span style="float: right" id="responsible" data-id_admin='
                             <?php echo $memberId; ?>' class="col-sm">
