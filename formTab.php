@@ -59,7 +59,7 @@
     <div class="control-group row-fluid">
         <label class="span12">Населенный пункт<sup>*</sup></label>
         <div class="localityControlGroup">
-          <input type="text" id="inputEmLocalityId" class="span12" name="" value="" valid="required" data-value_input="" data-text_input="">
+          <input type="text" id="inputEmLocalityId" class="span12 inputEmLocalityClass" name="" value="" valid="required" data-value_input="" data-text_input="">
           <!--  <input type="text" id="inputEmLocalityId2" class="span12" data-value_input="" data-text_input="">-->
           <!--<datalist id="inputEmLocalityData" class="inputEmLocality">
           </datalist>-->

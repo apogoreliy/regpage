@@ -1577,7 +1577,7 @@ setTimeout(function () {
             el = $('#modalEditMember');
             //el = $('#modalEditMember').find($(document).width() > 980 ? '.desctop-visible' : '.tablets-visible');
         if ((el.find(".emLocality").val () == "_none_" && el.find(".emNewLocality").val().trim().length==0) || el.find(".emCitizenship").val () == "_none_" || el.find(".emGender").val () == "_none_" || el.find(".emName").val().trim().length==0 || el.find(".emParking").val () == "_none_") {
-          showError("Необходимо выбрать гражданство и населенный пункт из списка или если его нет, то указать его название");
+          showError("Укажите гражданство, пол, ФИО и населенный пункт");
           $(".localityControlGroup").addClass ("error");
           window.setTimeout(function() { $(".localityControlGroup").removeClass ("error"); }, 2000);
           return;
