@@ -343,7 +343,7 @@ function fillMeetingModalForm(textMode, date, locality, actionType, note, countL
     modal.find('#visitNote').val(note || '');
 
 // START Change color
-
+    var statusNameCss = 'status-select-plan';
     performed == 0 ? statusNameCss = 'status-select-plan' : '' ;
     performed == 1 ? statusNameCss = 'status-select-done' : '' ;
     performed == 2 ? statusNameCss = 'status-select-failed' : '' ;
@@ -2120,10 +2120,10 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
           }
         })
         if (visitMember.length > 1) {
+          var counterVisits = 0;
           for (var i in visitMember) {
-
+              counterVisits++;
               var modal = $("#addEditMeetingModal");
-
               var visitId = '';
               var date = modal.find('#actionDate').val();
               var locality = modal.find('#visitLocalityModal').val();
@@ -2138,7 +2138,6 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
                   showError('Необходимо заполнить все обязательные поля выделенные розовым цветом');
                   return
               }
-
               var members = visitMember[i];
               var countMembers = 1;
               $.post('/ajax/visits.php?set_visit'+request, {
@@ -2159,26 +2158,40 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
                   $(".localities-available").html('');
                   $(".localities-added").html('');
                   $(".searchLocality").val('');
+                  if (visitMember.length == counterVisits) {
+                      loadMeetings();
+                  }
               });
           }
             $("#addEditMeetingModal").hasClass('new-visit-create') ? $("#addEditMeetingModal").removeClass('new-visit-create') : '';
             $("#addEditMeetingModal").modal('hide');
             $("#modalAddMembersTemplate").modal('hide');
-            setTimeout(function () {
-              loadMeetings();
-            }, 500);
-            return
+
         } else if (visitMember.length === 0) {
             $("#addEditMeetingModal").hasClass('new-visit-create') ? $("#addEditMeetingModal").removeClass('new-visit-create') : '';
             $("#addEditMeetingModal").modal('hide');
             $("#modalAddMembersTemplate").modal('hide');
-            return
-        }
-      }
+        } else if (visitMember.length === 1) {
+            $("#addEditMeetingModal").hasClass('new-visit-create') ? $("#addEditMeetingModal").removeClass('new-visit-create') : '';
+            var responsibleDefault = $("#responsibleList").val() != '_all_' ? $("#responsibleList").val():window.adminId ;
+            $("#addEditMeetingModal").find('#responsible').val(responsibleDefault);
+                  modalAddMembersTemplate.find("tbody tr").each(function(){
+                    u = $(this).attr('data-member_key');
+                    if ($(this).find('.form-check-input').prop("checked") && u[0] == 0) {
+                      arrMembersTemplate.push({id: $(this).attr('data-member_key'), category_key: $(this).attr('data-category_key'), locality: $(this).attr('data-locality'), name: $(this).find('label').text(), locality_key: $(this).attr('data-locality_key'), attend_meeting: $(this).attr('data-attend_meeting'), cell_phone: $(this).attr('data-cell_phone'), birth_date: $(this).attr('data-birth_date')});
+                    }
+                  });
+
+                  if (arrMembersTemplate.length != 0) {
+                      if ($('.addEditMode').length != 0) {
+                        buildMembersList('#addEditMeetingModal', arrMembersTemplate, 'add_mode');
+                      }
+                  }
+                  $('#modalAddMembersTemplate').modal('hide');
+                }
+      } else {
       $("#addEditMeetingModal").hasClass('new-visit-create') ? $("#addEditMeetingModal").removeClass('new-visit-create') : '';
 //checking exist list
-    var responsibleDefault = $("#responsibleList").val() != '_all_' ? $("#responsibleList").val() : window.adminId ;
-    $("#addEditMeetingModal").find('#responsible').val(responsibleDefault)
       addEditMeetingModal.find("tbody tr").each(function(){
          arrMembersTemplateCheck.push($(this).attr('data-id'))
       });
@@ -2196,6 +2209,7 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
           }
       }
       $('#modalAddMembersTemplate').modal('hide');
+     }
     });
 
     $('#modalAddMembersTemplate').on('show', function (e){
