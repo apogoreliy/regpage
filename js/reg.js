@@ -97,7 +97,6 @@ console.log(event.state);
 alert('sdasdasdsd');
 });
 }*/
-console.log('Im there');
 history.pushState(null, null, location.href);
     window.onpopstate = function () {
       if ($('#modalEditMember').is(':visible')) {
