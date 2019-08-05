@@ -1855,3 +1855,6 @@ input.error, .control-group.error select, textarea.error {
 .modalRemoveVisit {
   width: 330px;
 }
+.active_ruler {
+  background-color: lightblue;
+}

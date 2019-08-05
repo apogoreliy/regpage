@@ -114,11 +114,11 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     <thead>
                     <tr>
                         <th><a id="sort-name" href="#" title="сортировать">Ф.И.О.</a>&nbsp;<i class="<?php echo $sort_field=='name' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th><a id="sort-page" href="#" title="сортировать">Страница</a>&nbsp;<i class="<?php echo $sort_field=='page' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th><a id="sort-time" href="#" title="сортировать">Время посещения</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th>Посещённые страницы</th>
+                        <th><a id="sort-time" href="#" title="сортировать">Даты посещения</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <?php
                         if (!$singleCity)
-                            echo '<th><a id="sort-locality" href="#" title="сортировать">Город</a>&nbsp;<i class="'.($sort_field=='locality' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
+                            echo '<th><a id="sort-locality" href="#" title="сортировать">Местность</a>&nbsp;<i class="'.($sort_field=='locality' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
                         ?>
                     </tr>
                     </thead>

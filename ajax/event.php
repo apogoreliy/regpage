@@ -45,16 +45,16 @@ if (!$adminId)
 }
 
 if(isset ($_GET['handle_event'])){
-    db_handleEvent($_POST['name'], $_POST['locality'], $adminId, $_POST['start_date'], $_POST['end_date'], 
-        $_POST['reg_end_date'], $_POST['passport'], $_POST['prepayment'], $_POST['private'], $_POST['transport'], 
-        $_POST['tp'], $_POST['flight'], $_POST['info'], $_POST['reg_members'], $_POST['reg_members_email'], 
+    db_handleEvent($_POST['name'], $_POST['locality'], $adminId, $_POST['start_date'], $_POST['end_date'],
+        $_POST['reg_end_date'], $_POST['passport'], $_POST['prepayment'], $_POST['private'], $_POST['transport'],
+        $_POST['tp'], $_POST['flight'], $_POST['info'], $_POST['reg_members'], $_POST['reg_members_email'],
         isset($_GET['teamKey']) ? $_GET['teamKey'] : null,
-        isset($_GET['eventId']) ? $_GET['eventId'] : null, $_POST['event_type'], $_POST['zones'], 
+        isset($_GET['eventId']) ? $_GET['eventId'] : null, $_POST['event_type'], $_POST['zones'],
         $_POST['parking'],$_POST['service'],$_POST['accom'], $_POST['close_registration'], $_POST['participants_count']);
     echo json_encode(["result"=> "ok"]);
     exit;
 }
-elseif (isset ($_GET ['check_stop_reg'])){        
+elseif (isset ($_GET ['check_stop_reg'])){
     echo json_encode(["res" => db_checkEventStopRegistration ($_POST['eventId'])]);
     exit;
 }
@@ -71,7 +71,7 @@ elseif(isset ($_GET['remove_event'])){
 elseif(isset($_GET['get_member_event'])){
     if($adminId && isset($_POST['eventId'])){
         echo json_encode(["event"=> db_getGuestEvent($_POST['eventId']), "member"=> db_getEventMember ($adminId, $_POST['eventId']), "member_info"=> db_getEventMemberInfo ($adminId)]);
-    }  
+    }
     else{
         echo json_encode(["error"=> "ok"]);
     }
@@ -82,12 +82,17 @@ elseif(isset ($_GET['get_event'])){
     exit;
 }
 elseif(isset ($_GET['set_activity'])){
-    db_setEventActivity($_POST['eventId'], $_POST['isActive'], $adminId);    
+    db_setEventActivity($_POST['eventId'], $_POST['isActive'], $adminId);
 }
 elseif(isset($_GET['set_archive'])){
     if(isset($_POST['eventId'])){
-        echo json_encode(["res"=> db_setEventArchive($_POST['eventId'], $adminId)]);        
-    }  
+        echo json_encode(['res'=> db_setEventArchive($_POST['eventId'], $adminId),
+        "events"=> db_getEventsForEventsPage($adminId, $sort_type, $sort_field),
+        "localities"=>db_getEventsLocalities(),
+        "authors"=>db_getEventsAuthors()]);
+        exit;
+    }
+    exit;
 }
 elseif(isset ($_GET['get_zones'])){
     echo json_encode(["zones"=> db_getZonesForEvent($_POST['text'], $_POST['field'])]);
@@ -99,14 +104,14 @@ elseif(isset ($_GET['get_participants'])){
 }
 elseif (isset ($_GET ['eventIdReject'])){
     db_rejectMemberRegistration ($adminId, $_GET['eventIdReject']);
-    
+
     echo json_encode(["member"=>"ok"]);
     exit;
 }
 elseif (isset ($_GET ['eventIdRegistration'])){
     $member = isset($_GET['edit_registration']) ? db_getEventMember ($adminId, $_GET['eventIdRegistration']) : db_getMemberMain ($adminId, $_GET['eventIdRegistration']);
     if ($member){
-        echo json_encode(array ("eventmember"=>$member, 
+        echo json_encode(array ("eventmember"=>$member,
             "localities"=>db_getLocalities()));
         exit;
     }

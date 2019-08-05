@@ -2465,7 +2465,7 @@ function db_setMeeting($data){
     //$listCount = $members ? count(explode(',', $data['members'])) : db_getCountMembersByLocality($locality);
 
     if($meetingId){
-        if(($date != $oldDate || $locality != $oldLocality || $meetingType != $oldMeetingType) && checkDoubleMeeting($date, $locality, $meetingType)){
+        if(($date != $oldDate || $locality != $oldLocality || $meetingType != $oldMeetingType) && checkDoubleMeeting($date, $locality, $meetingType, $name)){
             return true;
         }
 
@@ -2507,8 +2507,8 @@ function db_getCountMembersByLocality($locality){
     return 0;
 }
 
-function checkDoubleMeeting($date, $locality, $meetingType){
-    $res = db_query("SELECT * FROM meetings WHERE date='$date' AND meeting_type='$meetingType' AND locality_key='$locality'");
+function checkDoubleMeeting($date, $locality, $meetingType, $name){
+    $res = db_query("SELECT * FROM meetings WHERE date='$date' AND meeting_type='$meetingType' AND name='$name' AND locality_key='$locality'");
 
     if($res->num_rows>0){
         return true;
@@ -3283,7 +3283,7 @@ function db_setEventArchive($eventId, $adminId){
     else{
         db_query('SET Session group_concat_max_len=100000');
 
-        $res = db_query("SELECT e.event_type, e.name, e.start_date, e.end_date, e.locality_key, e.author,
+        $res = db_query("SELECT e.event_type, e.name, e.start_date, e.end_date, e.locality_key, e.author, e.contrib, e.currency,
                 GROUP_CONCAT(r.member_key) as members,
                 (SELECT GROUP_CONCAT(re.member_key) FROM reg re WHERE re.event_key=e.key AND re.coord<>0 AND re.attended=1) as coordinators,
                 (SELECT GROUP_CONCAT(CONCAT_WS(':',re.service_key, re.member_key)) FROM reg re WHERE re.event_key=e.key AND re.service_key IS NOT NULL AND re.service_key<>'' AND re.attended=1) as service_key,
@@ -3298,13 +3298,11 @@ function db_setEventArchive($eventId, $adminId){
         // set different info into event_archive.props field
         if($archive !== NULL){
             db_query("INSERT INTO event_archive
-                (event_type, name, created, locality_key, start_date, end_date, author, members, coordinators, service_key, service_ones, members_count)
-                VALUES ('".$archive['event_type']."', '".(explode('(', $archive['name'])[0])."', NOW(), '".$archive['locality_key']."',
-                '".$archive['start_date']."', '".$archive['end_date']."', '".$archive['author']."',
-                '".$archive['members']."', '".(count(explode(',',$archive['members'])))."')");
+                (event_type, name, created, locality_key, start_date, end_date, author, members, coordinators, service_key, service_ones, members_count, contrib, currency)
+                VALUES ('".$archive['event_type']."', '".(explode('(', $archive['name'])[0])."', NOW(), '".$archive['locality_key']."', '".$archive['start_date']."', '".$archive['end_date']."', '".$archive['author']."','".$archive['members']."', '".$archive['coordinators']."', '".$archive['service_key']."', '".$archive['service_ones']."', '".(count(explode(',',$archive['members'])))."', '".$archive['contrib']."', '".$archive['currency']."')");
 
             db_query("UPDATE event SET archived=1 WHERE `key`='$eventId'");
-            db_query("DELETE FROM message WHERE event_key='$eventId'");
+            db_query("DELETE FROM message WHERE `event_key`='$eventId'");
             return true;
         }
     }
@@ -4794,9 +4792,9 @@ function db_setVisit($data){
     //$listCount = $members ? count(explode(',', $data['members'])) : db_getCountMembersByLocality($locality);
 
     if($visitId){
-       if(checkDoubleMeeting($date, $locality, $actionType)){
-            return true;
-        }
+       //if(checkDoubleMeeting($date, $locality, $actionType)){
+       //     return true;
+       // }
 
         db_query("UPDATE visits SET act='$actionType', admin_key='$adminIdIs',
                 date_visit='$date', locality_key='$locality', comments='$note', responsible='$responsible',
@@ -4879,7 +4877,28 @@ function db_getAdminsListByLocalitiesCombobox ($locality)
     while ($row = $res->fetch_assoc()) $members[$row['id']]=$row['name'];
     return $members;
 }
-function db_getActivityList ($start, $stop, $locality, $page, $admins)
+function db_getActivityList ($start, $stop, $locality, $page, $admins, $availableAdmins)
+{
+    global $db;
+    $availableAdmins = implode( "','", $availableAdmins);
+    $locality = $db->real_escape_string($locality);
+    $page = $db->real_escape_string($page);
+    $admins = $db->real_escape_string($admins);
+    $requestLocality = $locality=="_all_" ? "" : " AND lo.key='$locality' ";
+    $requestPage = $page == "_all_" ? "" : " AND act.page='$page' ";
+    $requestAdmins = $admins == "_all_" ? " AND ad.member_key IN ('".$availableAdmins."') " : " AND ad.member_key='$admins' ";
+    $res=db_query ("SELECT act.id as id_string, act.admin_key as id, act.page as page, act.time_create as time, m.name as name, lo.name as locality_name, lo.key as locality_key
+    FROM activity_log as act
+    INNER JOIN admin ad ON ad.member_key=act.admin_key
+    INNER JOIN member m ON act.admin_key = m.key
+    INNER JOIN locality lo ON lo.key=m.locality_key
+    WHERE act.time_create > '$start' AND act.time_create < '$stop' $requestLocality $requestPage $requestAdmins ORDER BY name");
+
+    $members = array ();
+    while ($row = $res->fetch_object()) $members[]=$row;
+    return $members;
+}
+function db_getActivityListLog ($start, $stop, $locality, $page, $admins)
 {
     global $db;
     $locality = $db->real_escape_string($locality);
@@ -4899,7 +4918,6 @@ function db_getActivityList ($start, $stop, $locality, $page, $admins)
     while ($row = $res->fetch_object()) $members[]=$row;
     return $members;
 }
-
 /*Login new*/
 function db_getMemberIdBySessionId ($sessionId)
 {
