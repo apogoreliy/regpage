@@ -2208,6 +2208,8 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
 
          getMembersForStatistics();
        }
+
+
        $("#modalMeetingStatistic").on('hide', function(){
           $("#meetingTypeStatistic").val('_all_');
           $("#localityStatistic").val('_all_');

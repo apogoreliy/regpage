@@ -579,10 +579,10 @@ $(document).ready(function(){
         var eventId = $(this).attr('data-id'),
             //request = getRequestFromFilters(setFiltersForRequest());
             request;
-        $.post('/ajax/event.php?set_archive'+request, {eventId: eventId})
+        $.post('/ajax/event.php?set_archive', {eventId: eventId})
         .done(function(data){
             if(!data.res){
-                showError("Архивирование данных отклонено. Записи в БД еще не синхронизированы с 1С.");
+                showError("Архивирование данных отклонено. Записи в БД еще не синхронизированы с 1С или вы не ответственный за это мероприятие.");
             }
             buildEventsList(data.events);
             $("#modalGetEventArchiveConfirm").modal('hide');
@@ -627,10 +627,10 @@ $(document).ready(function(){
             for(var i in events){
                 var event = events[i],
                     isEventActive = parseInt(event.is_active);
-
+console.log(isEventsAdmin, ', ', memberId);
                 icons =
                     ( in_array(event.id, hidenEvents) ? '<span style="display: inline;" class="fa fa-arrow-up btnEventHiding" title="Показать мероприятие"></span>' : '<span style="display: inline;" class="fa fa-arrow-down btnEventHiding" title="Скрыть мероприятие"></span>') +
-                    ( isEventsAdmin && memberId === event.author || memberId === '000005716' ?
+                    ( (isEventsAdmin && memberId === event.author) ?
                        ( isEventActive ? '<span  style="display: inline;"class="fa fa-check-circle  btnEventActivity" title="Сделать неактивным"></span>' : '<span style="display: inline;" class="fa fa-times btnEventActivity" title="Сделать активным"></span>') +
                         '<span style="display: inline;" class="fa fa-pencil btnEditEvent" title="Редактировать мероприятие"></span>'+
                         '<span style="display: inline;" class="fa fa-trash-o btnRemoveEvent" title="Удалить мероприятие" aria-hidden="true"></span>'+
@@ -1075,7 +1075,7 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
                 }
             }
         }
-
+        form.modal('show');
         // author
         form.find('.event-name').val(event ? event.event_name : '').keyup();
         form.find('.event-type').val(event ? event.event_type : '_none_').change();
@@ -1101,7 +1101,6 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
 
         form.find('.btnHandleEventForm').addClass(event ? 'doSetEvent' : 'doAddEvent').removeClass(event ? 'doAddEvent' : 'doSetEvent');
         form.find('.modal-header').html('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h3 id="regEndedTitle">'+ (event ? "Редактировать мероприятие" : "Добавление мероприятия") + '</h3>');
-        form.modal('show');
     }
 
     $('.btnHandleEventForm').click(function(e){

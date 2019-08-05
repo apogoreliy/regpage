@@ -1,6 +1,6 @@
 <?php
 $s = $_SERVER["SCRIPT_NAME"];
-
+$isEventAdminNav = isset($memberId) ? db_hasRightToHandleEvents($memberId) : false;
 $h = ($_SERVER['PHP_SELF']);
 $res = '';
 switch ($h) {
@@ -128,7 +128,7 @@ switch ($h) {
                 echo"><a href='/list'>Ответственные</a></li>";
             }*/
 
-            if(isset($memberId) && $memberId == '000005716' && !isset($isGuest) && db_isAdmin($memberId)) {
+            if(isset($memberId) && $isEventAdminNav && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/statistic")!==FALSE) {echo " class='active'";}
                 echo"><a href='/statistic'>Архив</a></li>";
@@ -207,7 +207,6 @@ switch ($h) {
       <div class='notifications center'></div>
     </div>
   </div>
-
 </div>
 <script>
 function referenceSysAnew() {

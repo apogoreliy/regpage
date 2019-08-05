@@ -140,17 +140,17 @@ $(document).ready (function (){
         var m = list[i];
         if ((!isSort && checkList.indexOf(m.id) === -1) || (isSort && m.header && checkList.indexOf(m.id) === -1)) {
           checkList.push(m.id);
-          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="" class="ruler-string" style="background-color: lightblue; '+m.visible+'">'+
+          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="" class="ruler-string" style="'+m.visible+'">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                }*/
-              '<td style="width: 250px;"><b>' + he(m.name) + ' - <span class="stts-count" style="padding-left:3px; width: 250px;"></span></b></td>' +
+              '<td style="width: 250px;"><b>' + he(m.name) + '</b><br><span class="stts-count" style="width: 250px;"></span></td>' +
               '<td><strong class="stts-pages"></strong></td>' +
               '<td style="width:100px"><b>Последнее<br>' + he(m.time) + '</b></td>' +
               '<td><b>' + he(m.locality_name) + '</b></td></tr>'
           );
 
-          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="" class="ruler-string" style="background-color: lightblue; '+m.visible+'">'+
+          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="" class="ruler-string" style="'+m.visible+'">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                }*/
@@ -190,6 +190,14 @@ $(document).ready (function (){
       $(".ruler-string").click (function (e) {
           e.stopPropagation();
           var memberId = $(this).attr('data-id');
+          if ($(this).hasClass('active_ruler')) {
+            $(this).removeClass('active_ruler')
+          } else {
+            $('.ruler-string').each(function () {
+              $(this).removeClass('active_ruler');
+            });
+            $(this).addClass('active_ruler');
+          }
           refreshNewList(memberId);
       });
       if (checkList) {
@@ -209,8 +217,8 @@ $(document).ready (function (){
 
               if (pagersCounter.indexOf(list[iii].page) === -1) {
                 var rusPageName = pageNameTranslator(list[iii].page);
-                pagersCounter.push(list[iii].page);
-                pagersCounterRus.push(rusPageName);
+                rusPageName ? pagersCounter.push(list[iii].page) : '';
+                rusPageName ? pagersCounterRus.push(rusPageName) : '';
               }
             }
           }
@@ -222,7 +230,9 @@ $(document).ready (function (){
                   var ab = sessionsCount[i+1];
                   ab = 'визитов ' + ab ;
                   ac = sessionsCount[i+2];
-                  ac = 'Посещены: ' + ac.join(' ');
+                  console.log('First ',ac);
+                  ac = ac.join(', ');
+                  console.log('Second ', ac);
                 $(this).find('.stts-count').text(ab);
                 $(this).find('.stts-pages').text(ac);
               }
@@ -334,7 +344,7 @@ if (sortType == 4) {
     return 0;
   });
 }
-if (sortType == 5) {
+/*if (sortType == 5) {
   list.sort(function (a, b) {
     if (a.page > b.page) {
       return 1;
@@ -354,7 +364,6 @@ if (sortType == 5) {
     return 0;
   });
 }
-
 if (sortType == 6) {
   list.sort(function (a, b) {
     if (a.page < b.page) {
@@ -375,7 +384,7 @@ if (sortType == 6) {
     }
     return 0;
   });
-}
+}*/
 if (sortType == 7) {
   list.sort(function (a, b) {
     if (a.time > b.time) {
@@ -386,7 +395,7 @@ if (sortType == 7) {
     }
     return 0;
   });
-  list.sort(function (a, b) {
+  /*list.sort(function (a, b) {
     if (a.name > b.name) {
       return 1;
     }
@@ -394,7 +403,7 @@ if (sortType == 7) {
       return -1;
     }
     return 0;
-  });
+  });*/
 }
 if (sortType == 8) {
   list.sort(function (a, b) {
@@ -405,7 +414,7 @@ if (sortType == 8) {
       return -1;
     }
     return 0;
-  });
+  });/*
   list.sort(function (a, b) {
     if (a.name > b.name) {
       return 1;
@@ -414,7 +423,7 @@ if (sortType == 8) {
       return -1;
     }
     return 0;
-  });
+  });*/
 }
 if (sortType == 9) {
   list.sort(function (a, b) {
@@ -425,7 +434,7 @@ if (sortType == 9) {
       return -1;
     }
     return 0;
-  });
+  });/*
   list.sort(function (a, b) {
     if (a.name < b.name) {
       return 1;
@@ -434,7 +443,7 @@ if (sortType == 9) {
       return -1;
     }
     return 0;
-  });
+  });*/
 }
 if (sortType == 10) {
   list.sort(function (a, b) {
@@ -445,7 +454,7 @@ if (sortType == 10) {
       return -1;
     }
     return 0;
-  });
+  });/*
   list.sort(function (a, b) {
     if (a.name > b.name) {
       return 1;
@@ -454,7 +463,7 @@ if (sortType == 10) {
       return -1;
     }
     return 0;
-  });
+  });*/
 }
 
   refreshActivity(list, true);
