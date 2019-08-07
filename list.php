@@ -21,7 +21,7 @@ $countries = db_getCountriesList();
                   <option value="youth">Молодые люди</option>
                   <option selected value="list">Ответственные за регистрацию</option>
                   <?php if ($roleThisAdmin===2) { ?>
-                    <option value="activity" selected>Активность администраторов</option>
+                    <option value="activity" selected>Активность ответственных</option>
                   <?php } ?>
               </select>
                 <div class="btn-toolbar">

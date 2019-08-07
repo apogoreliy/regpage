@@ -6,6 +6,7 @@ echo '<div style="text-align: center; margin-top:50px; padding-top:20px; color: 
 <!-- Yandex.Metrika counter -->
 
         <script type="text/javascript">
+        /*
             (function (d, w, c) {
                 (w[c] = w[c] || []).push(function() {
                     try {
@@ -25,6 +26,7 @@ echo '<div style="text-align: center; margin-top:50px; padding-top:20px; color: 
                     d.addEventListener("DOMContentLoaded", f, false);
                 } else { f(); }
             })(document, window, "yandex_metrika_callbacks");
+            */
         </script>
         <!--<noscript><div><img src="//mc.yandex.ru/watch/23700652" style="position:absolute; left:-9999px;" alt="" /></div></noscript>-->
         <!-- /Yandex.Metrika counter -->

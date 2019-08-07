@@ -43,7 +43,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
           <option value="youth">Молодые люди</option>
           <option value="list">Ответственные за регистрацию</option>
           <?php if ($roleThisAdmin===2) { ?>
-            <option value="activity" selected>Активность администраторов</option>
+            <option value="activity" selected>Активность ответственных</option>
           <?php } ?>
       </select>
         <div class="btn-toolbar">
@@ -94,11 +94,11 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                 <i class="btn fa fa-calendar" aria-hidden="true" style="margin-bottom: -10px"></i>
                 <input type="text" class="span2 end-date" value="<?php echo date('d.m.Y'); ?>" style="margin-bottom: -10px">
             </div>
-            <div class="btn-group">
+            <!--<div class="btn-group">
                 <a class="btn dropdown-toggle btnShowStatistic" data-toggle="dropdown" href="#" disabled>
                     <i class="fa fa-bar-chart"></i> <span class="hide-name">Статистика</span>
                 </a>
-            </div>
+            </div>-->
             <div class="btn-group">
                 <a type="button" class="btn btn-default search"><i class="icon-search" title="Поле поиска"></i></a>
                 <div class="not-display" data-toggle="1">
@@ -115,10 +115,11 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     <tr>
                         <th><a id="sort-name" href="#" title="сортировать">Ф.И.О.</a>&nbsp;<i class="<?php echo $sort_field=='name' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th>Посещённые страницы</th>
-                        <th><a id="sort-time" href="#" title="сортировать">Даты посещения</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th><a id="sort-visits" href="#" title="сортировать">Визиты</a>&nbsp;<i class="<?php echo $sort_field=='visits' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th><a id="sort-time" href="#" title="сортировать">Время</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <?php
                         if (!$singleCity)
-                            echo '<th><a id="sort-locality" href="#" title="сортировать">Местность</a>&nbsp;<i class="'.($sort_field=='locality' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
+                            echo '<th style="width:100px"><a id="sort-locality" href="#" title="сортировать">Местность</a>&nbsp;<i class="'.($sort_field=='locality' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
                         ?>
                     </tr>
                     </thead>
@@ -133,15 +134,15 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     </button>
                     <ul class="dropdown-menu" id="dropdownMenu2" aria-labelledby="dropdownMenu">
                         <li><a id="sort-name" data-sort="ФИО" href="#" title="сортировать">ФИО</a>&nbsp;<i class="<?php echo $sort_field=='name' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-visits" data-sort="Визитов" href="#" title="сортировать">Визиты</a>&nbsp;<i class="<?php echo $sort_field=='visits' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-time" href="#" data-sort="Время посещения" title="сортировать">Время</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                         <li>
                             <?php
                             if (!$singleCity){
-                                echo '<a id="sort-locality" data-sort="Город" href="#" title="сортировать">Город</a>&nbsp;<i class="'.($sort_field=='locality' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i>';
+                                echo '<a id="sort-locality" data-sort="Город" href="#" title="сортировать">Местность</a>&nbsp;<i class="'.($sort_field=='locality' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i>';
                             }
                             ?>
                         </li>
-                        <li><a id="sort-page" data-sort="Страница" href="#" title="сортировать">Страница</a>&nbsp;<i class="<?php echo $sort_field=='page' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
-                        <li><a id="sort-time" href="#" data-sort="Время посещения" title="сортировать">Время посещения</a>&nbsp;<i class="<?php echo $sort_field=='time' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                     </ul>
                 </div>
                 <table id="membersPhone" class="table table-hover">
