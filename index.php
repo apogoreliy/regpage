@@ -75,12 +75,12 @@ else if (isset ($_SESSION["logged-in"])){
                 <?php
                     if($isEventAdmin){
                     echo '
-                        <div class="btn-group">
+                        <!--<div class="btn-group">
                             <a class="btn btn-success btnAddEvent" title="Добавить мероприятие" href="#">
                                 <i class="fa fa-plus"></i>
                                 <span class="hide-name">Добавить</span>
                             </a>
-                        </div>
+                        </div>-->
                         ';
                     }
                 ?>
@@ -627,7 +627,6 @@ $(document).ready(function(){
             for(var i in events){
                 var event = events[i],
                     isEventActive = parseInt(event.is_active);
-console.log(isEventsAdmin, ', ', memberId);
                 icons =
                     ( in_array(event.id, hidenEvents) ? '<span style="display: inline;" class="fa fa-arrow-up btnEventHiding" title="Показать мероприятие"></span>' : '<span style="display: inline;" class="fa fa-arrow-down btnEventHiding" title="Скрыть мероприятие"></span>') +
                     ( (isEventsAdmin && memberId === event.author) ?

@@ -75,8 +75,9 @@ $(document).ready (function (){
       } else {
         $(this).hide();
       }
-    });
+    });    
   }
+
   function pageNameTranslator(page) {
     var pageBack;
     switch (page) {
@@ -105,8 +106,8 @@ $(document).ready (function (){
       case "mc" : pageBack = 'Мини-конференции'; break;
       case "ul" : pageBack = 'Избранные ссылки'; break;
       case "event" : pageBack = 'Мероприятия (разр.)'; break;
-      case "statistic" : pageBack = 'Архив (разр.)'; break;
-      case "activity" : pageBack = 'Активность'; break;
+      case "statistic" : pageBack = 'Архив'; break;
+      case "activity" : pageBack = 'Активность ответственных'; break;
       case "panel" : pageBack = 'Админка (разр.)'; break;
     }
     if (!pageBack) return null
@@ -144,8 +145,9 @@ $(document).ready (function (){
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                }*/
-              '<td style="width: 250px;"><b>' + he(m.name) + '</b><br><span class="stts-count" style="width: 250px;"></span></td>' +
+              '<td style="width: 250px;"><b>' + he(m.name) + '</b></td>' +
               '<td><strong class="stts-pages"></strong></td>' +
+              '<td style="width:80px"><strong class="stts-count"></strong></td>' +
               '<td style="width:100px"><b>Последнее<br>' + he(m.time) + '</b></td>' +
               '<td><b>' + he(m.locality_name) + '</b></td></tr>'
           );
@@ -154,31 +156,32 @@ $(document).ready (function (){
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                }*/
-              '<td>' + he(m.name) + ' <span class="stts-count" style="padding-left:3px;"></span><br><i>' + he(m.locality_name) + '</i></td>' +
-              '<td><span class="stts-pages"></span></td>' +
-              '<td style="width:70px">' + he(m.time) + '</td></tr>'
+              '<td>' + he(m.name) + '<br><i>' + he(m.locality_name) + '</i></td>' +
+              '<td>Визитов - <strong class="stts-count"></strong><br><span class="stts-pages"></span></td>' +
+              '<td>' + he(m.time) + '</td></tr>'
           );
         }
         if (!isSort  || (isSort && m.header === false)) {
           var pageRus = pageNameTranslator(m.page);
           !isSort ? m.visible = 'display: none' : '';
-          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="" style="'+ he(m.visible) +'">'+
+          tableRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" data-stts_counter="" class="" style="'+ he(m.visible) +'">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                }*/
               '<td>' + he(m.name) + '</td>' +
               '<td>' + pageRus + '</td>' +
+              '<td></td>' +
               '<td style="width:100px">' + he(m.time) + '</td>' +
               '<td>' + he(m.locality_name) + '</td></tr>'
           );
 
-          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" class="" style="'+ he(m.visible) +'">'+
+          phoneRows.push('<tr data-id="'+m.id+'" data-name="'+m.name+'" data-locality="'+m.locality_name+'" data-locality_key="'+m.locality_key+'" data-time="'+m.time+'" data-id_string="'+m.id_string+'" data-id_page="'+m.page+'" data-stts_counter="" class="" style="'+ he(m.visible) +'">'+
               /*if (!globalSingleCity) {
                   '<td style="width:160px">' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                }*/
               '<td>' + he(m.name) + '<br><i>' + he(m.locality_name) + '</i></td>' +
               '<td>' + pageRus + '</td>' +
-              '<td style="width:100px">' + he(m.time) + '</td></tr>'
+              '<td>' + he(m.time) + '</td></tr>'
           );
         }
       }
@@ -200,21 +203,21 @@ $(document).ready (function (){
           }
           refreshNewList(memberId);
       });
+      var selPage = $('#selMemberCategory').val();
       if (checkList) {
         var sessionsCount = [], sessionsCounter, pagersCounter = [], pagersCounterRus = [];
         for (var i = 0; i < checkList.length; i++) {
-          isSort ? sessionsCounter = -1:sessionsCounter = 0;
+          isSort ? sessionsCounter = 0:sessionsCounter = 0;
           pagersCounter =[], pagersCounterRus =[];
           sessionsCount.push(checkList[i]);
           for (var ii = 0; ii < list.length; ii++) {
-            if (checkList[i] == list[ii].id) {
+            if (checkList[i] == list[ii].id && !list[ii].header && (list[ii].page == selPage || selPage == '_all_')) {
               sessionsCounter++;
             }
           }
           sessionsCount.push(sessionsCounter);
           for (var iii = 0; iii < list.length; iii++) {
             if (checkList[i] == list[iii].id) {
-
               if (pagersCounter.indexOf(list[iii].page) === -1) {
                 var rusPageName = pageNameTranslator(list[iii].page);
                 rusPageName ? pagersCounter.push(list[iii].page) : '';
@@ -228,13 +231,26 @@ $(document).ready (function (){
             for (var i = 0; i < sessionsCount.length; i=i+3) {
               if ($(this).attr('data-id') == sessionsCount[i]) {
                   var ab = sessionsCount[i+1];
-                  ab = 'визитов ' + ab ;
                   ac = sessionsCount[i+2];
-                  console.log('First ',ac);
                   ac = ac.join(', ');
-                  console.log('Second ', ac);
                 $(this).find('.stts-count').text(ab);
                 $(this).find('.stts-pages').text(ac);
+              }
+            }
+          });
+          $('#members tr').each(function() {
+            for (var i = 0; i < sessionsCount.length; i=i+3) {
+              if ($(this).attr('data-id') == sessionsCount[i] && !$(this).hasClass('ruler-string')) {
+                  var ab = sessionsCount[i+1];
+                $(this).attr('data-stts_count', ab);
+              }
+            }
+          });
+          $('#membersPhone tr').each(function() {
+            for (var i = 0; i < sessionsCount.length; i=i+3) {
+              if ($(this).attr('data-id') == sessionsCount[i] && !$(this).hasClass('ruler-string')) {
+                  var ab = sessionsCount[i+1];
+                $(this).attr('data-stts_count', ab);
               }
             }
           });
@@ -252,12 +268,14 @@ $(document).ready (function (){
 
     if (id === 'sort-name') {
       icon.hasClass("icon-chevron-down") ? sortingActivity(3) :sortingActivity(4);
-    } else if (id === 'sort-page') {
+    }/* else if (id === 'sort-page') {
       icon.hasClass("icon-chevron-down") ? sortingActivity(5) :sortingActivity(6);
-    } else if (id === 'sort-time') {
+    } */else if (id === 'sort-time') {
       icon.hasClass("icon-chevron-down") ? sortingActivity(7) :sortingActivity(8);
     } else if (id === 'sort-locality') {
       icon.hasClass("icon-chevron-down") ? sortingActivity(9) :sortingActivity(10);
+    } else if (id === 'sort-visits') {
+      icon.hasClass("icon-chevron-down") ? sortingActivity(11) :sortingActivity(12);
     } else {
       loadDashboard (true);
     }
@@ -275,14 +293,16 @@ function sortingActivity(sortType) {
             locality = $(this).attr('data-locality_key'),
             localityName = $(this).attr('data-locality'),
             visibleStts = $(this).is(':visible') ? '':'display: none',
-            headerString = false;
+            headerString = false,
+            countDataVisits = $(this).attr('data-stts_count'),
+            countVisits = $(this).find('.stts-count').text() || countDataVisits,
+            countVisits = Number(countVisits);
             if ($(this).hasClass('ruler-string')) {
               headerString = true;
             }
           if (id) {
-        list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName, visible: visibleStts, header: headerString});
+        list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName, visible: visibleStts, header: headerString, count_visits: countVisits});
       }
-
   });
   } else {
     $('#membersPhone').find('tr').each(function(){
@@ -294,12 +314,15 @@ function sortingActivity(sortType) {
               locality = $(this).attr('data-locality_key'),
               localityName = $(this).attr('data-locality');
               visibleStts = $(this).is(':visible') ? '':'display: none';
-              headerString = false;
+              headerString = false,
+              countDataVisits = $(this).attr('data-stts_count'),
+              countVisits = $(this).find('.stts-count').text() || countDataVisits,
+              countVisits = Number(countVisits);
               if ($(this).hasClass('ruler-string')) {
                 headerString = true;
               }
               if (id) {
-                list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName, visible: visibleStts, header: headerString});
+                list.push({id_string: id_string, id: id, locality_key: locality, name: memberName, page: page, time: timeActivity, locality_name: localityName, visible: visibleStts, header: headerString, count_visits: countVisits});
               }
           });
         }
@@ -395,15 +418,6 @@ if (sortType == 7) {
     }
     return 0;
   });
-  /*list.sort(function (a, b) {
-    if (a.name > b.name) {
-      return 1;
-    }
-    if (a.name < b.name) {
-      return -1;
-    }
-    return 0;
-  });*/
 }
 if (sortType == 8) {
   list.sort(function (a, b) {
@@ -414,16 +428,7 @@ if (sortType == 8) {
       return -1;
     }
     return 0;
-  });/*
-  list.sort(function (a, b) {
-    if (a.name > b.name) {
-      return 1;
-    }
-    if (a.name < b.name) {
-      return -1;
-    }
-    return 0;
-  });*/
+  });
 }
 if (sortType == 9) {
   list.sort(function (a, b) {
@@ -434,16 +439,7 @@ if (sortType == 9) {
       return -1;
     }
     return 0;
-  });/*
-  list.sort(function (a, b) {
-    if (a.name < b.name) {
-      return 1;
-    }
-    if (a.name > b.name) {
-      return -1;
-    }
-    return 0;
-  });*/
+  });
 }
 if (sortType == 10) {
   list.sort(function (a, b) {
@@ -454,7 +450,18 @@ if (sortType == 10) {
       return -1;
     }
     return 0;
-  });/*
+  });
+}
+if (sortType == 11) {
+  list.sort(function (a, b) {
+    if (a.time < b.time) {
+      return 1;
+    }
+    if (a.time > b.time) {
+      return -1;
+    }
+    return 0;
+  });
   list.sort(function (a, b) {
     if (a.name > b.name) {
       return 1;
@@ -463,11 +470,47 @@ if (sortType == 10) {
       return -1;
     }
     return 0;
-  });*/
+  });
+  list.sort(function (a, b) {
+    if (a.count_visits > b.count_visits) {
+      return 1;
+    }
+    if (a.count_visits < b.count_visits) {
+      return -1;
+    }
+    return 0;
+  });
 }
-
+if (sortType == 12) {
+  list.sort(function (a, b) {
+    if (a.time < b.time) {
+      return 1;
+    }
+    if (a.time > b.time) {
+      return -1;
+    }
+    return 0;
+  });
+  list.sort(function (a, b) {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (a.name < b.name) {
+      return -1;
+    }
+    return 0;
+  });
+  list.sort(function (a, b) {
+    if (a.count_visits < b.count_visits) {
+      return 1;
+    }
+    if (a.count_visits > b.count_visits) {
+      return -1;
+    }
+    return 0;
+  });
+}
   refreshActivity(list, true);
-
   }
 // SortedFields end
 // filters start
@@ -475,6 +518,7 @@ if (sortType == 10) {
       var isTabletMode = $(document).width()<786,
           localityFilter = $("#selMemberLocality").val(),
           pageFilter = $("#selMemberCategory").val(),
+          pageFilterRus = $("#selMemberCategory option:selected").text(),
           //attendMeetingFilter = $("#selMemberAttendMeeting").val(),
           listAdminsFilter = $("#listAdmins").val(),
           text = $('.search-text').val().trim().toLowerCase(),
@@ -491,13 +535,15 @@ if (sortType == 10) {
               memberCategory = $(this).attr('data-category'),
               memberPage = $(this).attr('data-id_page'),
               memberName = $(this).attr('data-name').toLowerCase(),
-              memberKey = $(this).attr('data-id');
+              memberKey = $(this).attr('data-id'),
+              rulerPageArr = $(this).find('.stts-pages').text();
+              rulerPageArr ? rulerPageArr = rulerPageArr.split(', ') : '';
 
           if(((localityFilter === '_all_' || localityFilter === undefined) && pageFilter === '_all_' && text === '' && listAdminsFilter === '_all_' && $(this).hasClass('ruler-string')) ||
 
               (
                   ((in_array(memberLocality, localityList) && ($(this).hasClass('ruler-string') || $(this).is(':visible'))) || localityFilter === '_all_' || (localityFilter === undefined && localityList.length === 0))  &&
-                  ((memberPage === pageFilter && $(this).is(':visible')) || pageFilter === '_all_' || $(this).hasClass('ruler-string')) && ((memberKey === listAdminsFilter && ($(this).hasClass('ruler-string') || $(this).is(':visible'))) || listAdminsFilter === '_all_')) && (memberName.search(text) !== -1) && (!(localityFilter === '_all_' && pageFilter === '_all_' && listAdminsFilter === '_all_') || $(this).is(':visible')))
+                  ((memberPage === pageFilter && $(this).is(':visible')) || pageFilter === '_all_' || ( $(this).hasClass('ruler-string') && in_array(pageFilterRus, rulerPageArr))) && ((memberKey === listAdminsFilter && ($(this).hasClass('ruler-string') || $(this).is(':visible'))) || listAdminsFilter === '_all_')) && (memberName.search(text) !== -1) && (!(localityFilter === '_all_' && pageFilter === '_all_' && listAdminsFilter === '_all_') || $(this).is(':visible')))
               {
                 $(this).hasClass('ruler-string') ? counterAdmins.push(memberKey):'';
                 if (!$(this).hasClass('ruler-string') && (pageFilter === memberPage || pageFilter ==='_all_')) {
@@ -532,7 +578,6 @@ if (sortType == 10) {
             for (var i = 0; i < sessionsCount.length; i=i+2) {
               if ($(this).attr('data-id') == sessionsCount[i]) {
                   var ab = sessionsCount[i+1];
-                  ab = 'визитов ' + ab ;
                 $(this).find('.stts-count').text(ab);
               }
             }
