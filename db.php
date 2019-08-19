@@ -229,7 +229,7 @@ function db_getStatuses ()
 
 function db_getServices ()
 {
-    $res=db_query ("SELECT `key` as id, name FROM service ORDER BY name");
+    $res=db_query ("SELECT `key` as id, `name` FROM service ORDER BY `name`");
     $array = array ();
     while ($row = $res->fetch_assoc()) $array[$row['id']]=$row['name'];
     return $array;
@@ -2942,9 +2942,9 @@ function db_handleEvent ($name, $locality, $author, $start_date, $end_date, $reg
     }
     else{
         $event_id = db_getNextKeyForEvents();
-        db_query("INSERT INTO event (`key`, name, locality_key, author, start_date, end_date, regend_date, info, need_passport,
-            need_transport, need_prepayment, private, need_tp, need_flight, team_key, event_type, need_parking, need_accom,
-            need_service, close_registration, participants_count, sync, web ) VALUES ('$event_id', '$name', '$locality', '$author',
+        db_query("INSERT INTO event (`key`, `name`, `locality_key`, `author`, `start_date`, `end_date`, `regend_date`, `info`, `need_passport`,
+            `need_transport`, `need_prepayment`, `private`, `need_tp`, `need_flight`, `team_key`, `event_type`, `need_parking`, `need_accom`,
+            `need_service`, `close_registration`, `participants_count`, `sync`, `web` ) VALUES ('$event_id', '$name', '$locality', '$author',
               '$start_date', '$end_date', '$reg_end_date', '$info', '$passport', '$transport',
               '$prepayment', '$private', '$tp', '$flight', '$team_key', '$event_type', '$parking', '$accom', '$service',
               '$close_registration', '$participants_count', 0, 1) ");
@@ -2967,9 +2967,9 @@ function db_handleEvent ($name, $locality, $author, $start_date, $end_date, $reg
 
 function addZonesForEvent($event_id, $zones, $table){
     global $db;
-    $_table = $table.'_zones';
+    $_table = $table.'_zone';
 
-    $res = db_query("SELECT * FROM $_table WHERE event_key='$event_id'");
+    $res = db_query("SELECT * FROM $_table WHERE event_archive_id='$event_id'");
 
     $existZones = [];
     while ($row = $res->fetch_assoc()) {
@@ -2993,13 +2993,13 @@ function addZonesForEvent($event_id, $zones, $table){
             $zonesArr[] = $z[1];
 
             if(count($existZones) == 0 || !in_array($z[1], $existZones)){
-                $stmt = $db->prepare("INSERT INTO $_table (event_key, country_key, region_key, locality_key) VALUES ('$event_id', ?, ?, ?)");
+                $stmt = $db->prepare("INSERT INTO $_table (event_archive_id, country_key, region_key, locality_key) VALUES (?, ?, ?, ?)");
 
                 $field1 = $z[0] == 'c' ? $z[1] : null;
                 $field2 = $z[0] == 'r' ? $z[1] : null;
                 $field3 = $z[0] == 'l' ? $z[1] : null;
 
-                $stmt->bind_param('sss', $field1, $field2, $field3);
+                $stmt->bind_param('ssss', $event_id, $field1, $field2, $field3);
                 $stmt->execute();
             }
         }
@@ -3101,13 +3101,13 @@ function handleAdminsInEventAccessTable($event_id, $admins, $table){
     // handle a event_access table to add or remove admins responseble for registration
     $_table = $table.'_access';
 
-    $res = db_query("SELECT member_key FROM $_table WHERE `key`='$event_id'");
+    $res = db_query("SELECT `member_key` FROM $_table WHERE `event_archive_id`='$event_id'");
     $adminsFromDB = array();
     while($row = $res->fetch_assoc()) $adminsFromDB[]=$row['member_key'];
     if($admins[0] != ''){
         foreach ($admins as $a){
             if(count($adminsFromDB)==0 || !in_array($a, $adminsFromDB)){
-                db_query("INSERT INTO $_table (`key`, member_key) VALUES ('$event_id', '$a')");
+                db_query("INSERT INTO $_table (`event_archive_id`, `member_key`) VALUES ('$event_id', '$a')");
             }
         }
     }
@@ -3276,18 +3276,20 @@ function db_setEventArchive($eventId, $adminId){
 
     $res = db_query("SELECT COUNT(*) as count FROM reg WHERE member_key LIKE '990%' and event_key='$eventId' ");
     $row = $res->fetch_assoc();
-
-    if($row['count'] > 0){
+    $mes = db_query("SELECT COUNT(*) as count FROM event_archive WHERE event_id='$eventId' ");
+    $mow = $mes->fetch_assoc();
+    if($row['count'] > 0 || $mow['count'] > 0){
         return false;
     }
     else{
         db_query('SET Session group_concat_max_len=100000');
 
-        $res = db_query("SELECT e.event_type, e.name, e.start_date, e.end_date, e.locality_key, e.author, e.contrib, e.currency,
+        $res = db_query("SELECT e.event_type, e.name, e.start_date, e.end_date, e.locality_key, e.author, e.contrib, e.currency, e.key,
                 GROUP_CONCAT(r.member_key) as members,
                 (SELECT GROUP_CONCAT(re.member_key) FROM reg re WHERE re.event_key=e.key AND re.coord<>0 AND re.attended=1) as coordinators,
                 (SELECT GROUP_CONCAT(CONCAT_WS(':',re.service_key, re.member_key)) FROM reg re WHERE re.event_key=e.key AND re.service_key IS NOT NULL AND re.service_key<>'' AND re.attended=1) as service_key,
-                (SELECT GROUP_CONCAT(re.member_key) FROM reg re WHERE re.event_key=e.key AND re.service_key IS NOT NULL AND re.service_key<>'' AND re.attended=1) as service_ones
+                (SELECT GROUP_CONCAT(re.member_key) FROM reg re WHERE re.event_key=e.key AND re.service_key IS NOT NULL AND re.service_key<>'' AND re.attended=1) as service_ones,
+                (SELECT GROUP_CONCAT(eac.member_key) FROM event_access eac WHERE eac.key=e.key) as responsibles
                 FROM event e
                 INNER JOIN reg r ON r.event_key=e.key
                 WHERE e.key='$eventId' AND e.author='$adminId' AND r.attended=1 GROUP BY e.key");
@@ -3298,8 +3300,8 @@ function db_setEventArchive($eventId, $adminId){
         // set different info into event_archive.props field
         if($archive !== NULL){
             db_query("INSERT INTO event_archive
-                (event_type, name, created, locality_key, start_date, end_date, author, members, coordinators, service_key, service_ones, members_count, contrib, currency)
-                VALUES ('".$archive['event_type']."', '".(explode('(', $archive['name'])[0])."', NOW(), '".$archive['locality_key']."', '".$archive['start_date']."', '".$archive['end_date']."', '".$archive['author']."','".$archive['members']."', '".$archive['coordinators']."', '".$archive['service_key']."', '".$archive['service_ones']."', '".(count(explode(',',$archive['members'])))."', '".$archive['contrib']."', '".$archive['currency']."')");
+                (event_type, name, created, locality_key, start_date, end_date, author, members, coordinators, service_key, service_ones, members_count, contrib, currency, event_id)
+                VALUES ('".$archive['event_type']."', '".(explode('(', $archive['name'])[0])."', NOW(), '".$archive['locality_key']."', '".$archive['start_date']."', '".$archive['end_date']."', '".$archive['author']."','".$archive['members']."', '".$archive['coordinators']."', '".$archive['service_key']."', '".$archive['responsibles']."', '".(count(explode(',',$archive['members'])))."', '".$archive['contrib']."', '".$archive['currency']."', '".$archive['key']."')");
 
             db_query("UPDATE event SET archived=1 WHERE `key`='$eventId'");
             db_query("DELETE FROM message WHERE `event_key`='$eventId'");
@@ -3514,7 +3516,7 @@ function db_getArchiveEvents($sort_type, $sort_field, $startDate, $endDate){
     $sort_field = $sort_field != 'locality_key' ? $db->real_escape_string($sort_field)."" : " locality_name ";
 
     $res = db_query("SELECT ea.id, ea.name, l.key as locality_key, l.name as locality_name,
-                ea.event_type as event_type, ea.members_count, ea.start_date, ea.created as date_created
+                ea.event_type as event_type, ea.members_count, ea.start_date, ea.created as date_created, ea.service_ones, ea.service_key as services, ea.coordinators, ea.event_id
                 FROM event_archive ea
                 INNER JOIN locality l ON l.key = ea.locality_key
                 ORDER BY $sort_field $sort_type");
@@ -4106,7 +4108,7 @@ function db_addEventArchive($adminId, $data){
     $eventEndDate = $db->real_escape_string($data['eventEndDate']);
     $eventInfo = $db->real_escape_string($data['eventInfo']);
     $participants = $data['participants'];
-    $eventAdmins = $db->real_escape_string($data['eventAdmins']);
+    $eventAdmins = $data['eventAdmins'];
     $eventAdminsEmail = $db->real_escape_string($data['eventAdminsEmail']);
     $zones = $db->real_escape_string($data['zones']);
     $regEndDate = $db->real_escape_string($data['regEndDate']);
@@ -4122,7 +4124,8 @@ function db_addEventArchive($adminId, $data){
     $registration = $db->real_escape_string($data['registration']);
     $attendance = $db->real_escape_string($data['attendance']);
     $countMeetings = $db->real_escape_string($data['countMeetings']);
-
+    $reg_members = $db->real_escape_string($data['regMembers']);
+    $team_key = $db->real_escape_string($data['teamKey']);
     if($name == '' || $eventType == '_none_' || $eventLocality == '_none_' || $eventStartDate == '' || $eventEndDate == ''){
         throw new Exception("Необходимо заполнить все поля выделенные розовым цветом.", 1);
     }
@@ -4132,8 +4135,7 @@ function db_addEventArchive($adminId, $data){
 
             db_handleEvent ($name, $eventLocality, $adminId, $eventStartDate, $eventEndDate, $regEndDate, $passport,
             $prepayment, $private, $transport, $tp, $flight, $eventInfo, $reg_members, $eventAdminsEmail,
-            $team_key,
-            null, $eventType, $zones, $parking, $service, $accom, 'event_');
+            $team_key, null, $eventType, $zones, $parking, $service, $accom, 'event_', '1');
         }
         else{
 
@@ -4190,8 +4192,8 @@ function db_addEventArchive($adminId, $data){
 
         $eventArchiveId = $db->insert_id;
 
-        handleAdminsInEventAccessTable($eventArchiveId, $eventAdmins, 'event_archive_');
-        addZonesForEvent($eventArchiveId, $zones, 'event_archive_');
+        handleAdminsInEventAccessTable($eventArchiveId, $eventAdmins, 'event_archive');
+        addZonesForEvent($eventArchiveId, $zones, 'event_archive');
     }
 }
 

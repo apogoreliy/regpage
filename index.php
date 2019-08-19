@@ -13,9 +13,12 @@
     if (isset ($_POST["pwd"]) || isset($memberId)) $_SESSION["logged-in"]=(isset ($_POST["pwd"]) && ($_POST["pwd"]==$pwd || $_POST["pwd"]=="beInHim") || isset($memberId));
 
     $isEventAdmin = isset($memberId) ? db_hasRightToHandleEvents($memberId) : false;
-
+    $isAuthorEvents = db_isAuthorEvents($memberId);
+    $isAuthorArchiveEvents = db_isAuthorArciveEvents($memberId);
+    $isAdminArchiveEvents = db_isAdminArciveEvents($memberId);
     $countries1 = db_getCountries(true);
     $countries2 = db_getCountries(false);
+
     include_once "nav.php";
     include_once 'modals.php';
 ?>
@@ -144,8 +147,9 @@ else if (isset ($_SESSION["logged-in"])){
                     echo '<div style="margin-top:10px;" class="tab-content references-blocks">'. $refs .'</div>';
                 }
             }
-
         ?>
+        <div style="margin-top:10px; margin-left:10px; "><a id="frameArchive">Показать архив мероприятий</a></div>
+        <iframe id="frameArchivePage" style="width:1168px; height: 1000px; border: none;"src="/statistic.php"></iframe>
     </div>
 
 <!-- Edit Member Modal -->
@@ -239,7 +243,7 @@ else if (isset ($_SESSION["logged-in"])){
     <div class="modal-footer">
         <button class="btn btn-primary doSaveEventInfo">Сохранить</button>
         <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отменть</button>
-    </div>
+    </div>$isAuthorEvents
 </div>
 
 <!-- Show Event Info Modal -->
@@ -482,11 +486,35 @@ $(document).ready(function(){
     window.regAdmins = [];
     window.eventZones = [];
     loadEvents();
-
+    var isEventAdminArc = '<?php echo $isEventAdmin; ?>';
+    var hasEventAdmin = '<?php echo $adminEvents; ?>';
+    var isAuthorSomeEvents = '<?php echo $isAuthorEvents; ?>';
+    var isAuthorArchiveSomeEvents = '<?php echo $isAuthorArchiveEvents; ?>';
+    var isAdminArchiveSomeEvents = '<?php echo $isAdminArchiveEvents; ?>';
+    isEventAdminArc || hasEventAdmin.length > 0 || isAuthorSomeEvents || isAuthorArchiveSomeEvents || isAdminArchiveSomeEvents ? $('#frameArchive').show() : $('#frameArchive').hide();
+    $('#frameArchivePage').hide();
+    $('#frameArchive').click(function() {
+      $('#frameArchivePage').is(':visible') ? $('#frameArchivePage').hide() : $('#frameArchivePage').show();
+      resizeIframe();
+    });
+    $(window).resize(function(){
+      resizeIframe();
+    });
+    function resizeIframe() {
+      if ($(window).width() >= 1199 && $('#frameArchivePage').is(':visible')) {
+        $('#frameArchivePage').css('width', '1168px');
+      } else if (($(window).width() < 1199 && $(window).width() >= 980) && $('#frameArchivePage').is(':visible')) {
+        $('#frameArchivePage').css('width', '940px');
+      } else if (($(window).width() < 980 && $(window).width() >= 768) && $('#frameArchivePage').is(':visible')) {
+        $('#frameArchivePage').css('width', '724px');
+      } else if ($(window).width() < 768 && $('#frameArchivePage').is(':visible')) {
+        var x = $(window).width()-40;
+        $('#frameArchivePage').css('width', x+'px');
+      }
+    }
     $('.handle-hidden-events').click(function(){
         $(this).hasClass('active') ? $(this).removeClass('active') : $(this).addClass('active');
         localStorage.setItem('hide-hiden-events', $(this).hasClass('active'));
-
         buildEventsList(getEvents());
     });
 
@@ -582,7 +610,7 @@ $(document).ready(function(){
         $.post('/ajax/event.php?set_archive', {eventId: eventId})
         .done(function(data){
             if(!data.res){
-                showError("Архивирование данных отклонено. Записи в БД еще не синхронизированы с 1С или вы не ответственный за это мероприятие.");
+                showError("Архивирование данных отклонено. Записи в БД ещё не синхронизированы с 1С или вы не ответственный за это мероприятие, возможно это дублирующий архив.");
             }
             buildEventsList(data.events);
             $("#modalGetEventArchiveConfirm").modal('hide');
@@ -615,6 +643,7 @@ $(document).ready(function(){
     }
 
     function buildEventsList(events){
+      // if member is the admin of event then RIGHT = true ELSE false
         if(events && events.length > 0){
             var eventRows = [], eventRowsTablet = [], hiddenEventsDesctop = [], hiddenEventsTablet = [],
                 memberId = "<?php echo $memberId; ?>",
@@ -622,21 +651,24 @@ $(document).ready(function(){
                 isEventsAdmin = '<?php echo $isEventAdmin; ?>',
                 isUserWithRights = '<?php echo $isUserWithRights; ?>',
                 hidenEvents = (localStorage.getItem('hiden_events') && localStorage.getItem('hiden_events').split(',')) || [],
-                hideHidenEvents = localStorage.getItem('hide-hiden-events') === 'true', icons = '', eventAttrs ='', desctopEvent = '', tabletEvent = '';
+                hideHidenEvents = localStorage.getItem('hide-hiden-events') === 'true', icons = '', eventAttrs = '', desctopEvent = '', tabletEvent = '';
 
             for(var i in events){
-                var event = events[i],
+                var event = events[i], archiveAccess = -1,
                     isEventActive = parseInt(event.is_active);
+                    var evArr = '<?php echo $adminEvents; ?>';
+                    if (evArr) {
+                        evArr = evArr.split(',');
+                        archiveAccess = evArr.indexOf(event.id);
+                    }
+
                 icons =
-                    ( in_array(event.id, hidenEvents) ? '<span style="display: inline;" class="fa fa-arrow-up btnEventHiding" title="Показать мероприятие"></span>' : '<span style="display: inline;" class="fa fa-arrow-down btnEventHiding" title="Скрыть мероприятие"></span>') +
-                    ( (isEventsAdmin && memberId === event.author) ?
-                       ( isEventActive ? '<span  style="display: inline;"class="fa fa-check-circle  btnEventActivity" title="Сделать неактивным"></span>' : '<span style="display: inline;" class="fa fa-times btnEventActivity" title="Сделать активным"></span>') +
-                        '<span style="display: inline;" class="fa fa-pencil btnEditEvent" title="Редактировать мероприятие"></span>'+
-                        '<span style="display: inline;" class="fa fa-trash-o btnRemoveEvent" title="Удалить мероприятие" aria-hidden="true"></span>'+
-                        (event.archived === '0' ? '<span style="display: inline;" class="fa fa-database btnGetArchive" title="Архивировать данные" aria-hidden="true"></span>' : '')
-                       :
-                       ''
-                    );
+                    ( in_array(event.id, hidenEvents) ? '<span style="display: inline;" class="fa fa-arrow-up btnEventHiding" title="Показать мероприятие"></span>' : '<span style="display: inline; margin-right: 5px; margin-left: 5px;" class="fa fa-arrow-down btnEventHiding" title="Скрыть мероприятие"></span>') +
+                    ( (false) ?
+                       ( isEventActive ? '<span  style="display: inline; margin-right: 5px; margin-left: 5px;"class="fa fa-check-circle  btnEventActivity" title="Сделать неактивным"></span>' : '<span style="display: inline; margin-right: 5px; margin-left: 5px;" class="fa fa-times btnEventActivity" title="Сделать активным"></span>') +
+                        '<span style="display: inline; margin-right: 5px; margin-left: 5px;" class="fa fa-pencil btnEditEvent" title="Редактировать мероприятие"></span>'+
+                        '<span style="display: inline; margin-right: 5px;" class="fa fa-trash-o btnRemoveEvent" title="Удалить мероприятие" aria-hidden="true"></span>' : '')+
+                        ((event.archived === '0' && (isEventsAdmin || archiveAccess != -1 || memberId === event.author)) ? '<span style="display: inline; margin-left: 5px;" class="fa fa-database btnGetArchive" title="Архивировать данные" aria-hidden="true"></span>' : '');
 
                 eventAttrs = ' class="event-row" data-name="'+event.name+'" data-locality_name="'+event.locality_name+'" '+
                         'data-start_date="'+event.start_date+'" data-end_date="'+event.end_date+'" data-private="'+event.private+'" '+
@@ -657,7 +689,7 @@ $(document).ready(function(){
                             '<span class="span5 event-name">'+ event.name + '</span>'+
                             '<span class="span3">'+ event.locality_name + '</span>'+
                             '<span class="span2 event-date">'+ formatDDMM(event.start_date) + ' - ' + formatDDMM(event.end_date)+'</span>'+
-                            '<span class="span2 event-icons"  style="width: 190px";>'+ icons + (regstateClass == "" ?  "" : '<span style="margin-top:5px; margin-left: 15px; display: inline;" class="label label-'+regstateClass+'">'+ regstateText + '</span>') +((regstateText) ? ((regstateText === 'регистрация подтверждена' || regstateText === 'ожидание подтверждения') ? '<br><span style="padding-left:5px;"><a style="padding-left: 27px; font-size: 12px" class="handleRegistrationFast editEventMember" title="Редактировать данные"> Изменить</a></span><span><a class="rejectRegistrationFast" title="Отменить регистрацию" style="font-size: 12px"> Отменить</a></span>':''):'<span style="margin-top:5px; margin-left: 5px; padding-left:8px;"><a class="handleRegistrationFast addEventMember" >Зарегистрироваться</a></span>')+'</span>'+
+                            '<span class="span2 event-icons"  style="width: 190px";>'+ (regstateClass == "" ?  "" : '<span style="margin-top:5px; margin-left: 0px; margin-right: 19px; display: inline;" class="label label-'+regstateClass+'">'+ regstateText + '</span>') +((regstateText) ? ((regstateText === 'регистрация подтверждена' || regstateText === 'ожидание подтверждения') ? '<br><span style="padding-left: 0px;"><a style="padding-left: 0px; font-size: 12px" class="handleRegistrationFast editEventMember" title="Редактировать данные"> Изменить</a></span><span><a class="rejectRegistrationFast" title="Отменить регистрацию" style=" margin-right: 12px; font-size: 12px"> Отменить</a></span>':''):'<span style="margin-top:5px; margin-left: 0px; margin-right: 1px; padding-left:0px;"><a class="handleRegistrationFast addEventMember" >Зарегистрироваться</a></span>')+ icons +'</span>'+
                             '</div>';
 
                 tabletEvent = '<div '+eventAttrs+'>'+
@@ -665,8 +697,6 @@ $(document).ready(function(){
                             ( event.name.split('(')[1] ? '<div class="event-name">'+ event.name.split('(')[1].split(')')[0] + '<span>, '+ event.locality_name + '.</span></div>' : '')+
                             '<div><span style="margin-top:5px; margin-right:5px;" class="label label-'+regstateClass+'">'+ regstateText + '</span>' + icons+ '</div>'+
                         '</div>';
-
-                var evArr = '<?php echo $adminEvents; ?>';
 
                 if((!parseInt(isUserWithRights) && parseInt(event.private)>0 && !in_array(event.id, evArr.split(',')) && event.regstate_key === null) || ((memberId !== event.author || memberId === '000005716') && !isEventActive)){
                     continue;
@@ -1277,10 +1307,13 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
                 <?php if(!isset($memberId)){?>
                     showSuccessMessage (<?php echo $isLink ? "data.messages.save_message, null" : "data.messages.reg_message, data.permalink"; ?>);
                 <?php }else{ ?>
+                  setTimeout(function () {
                     window.location = '/index';
+                  }, 200);
                 <?php } ?>
             }
         });
+
     });
 
 

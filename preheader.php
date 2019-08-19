@@ -10,7 +10,7 @@ if (!isset($isGuest))
     $memberId = db_getMemberIdBySessionId (session_id());
     $memberId ? db_lastVisitTimeUpdate(session_id()) : '';
     $thispage = explode('.', substr($_SERVER['PHP_SELF'], 1))[0];
-    $memberId ? db_activityLogInsert($memberId, $thispage) : '';
+    $memberId && $thispage != 'statistic' ? db_activityLogInsert($memberId, $thispage) : '';
     if ((!$memberId && isset ($_GET["link"])) || (!$memberId && isset ($_GET["invited"]))){
 
     }
