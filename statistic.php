@@ -75,11 +75,35 @@ $eventTemplates = db_getEventTemplates($memberId);
 $sort_field = isset ($_SESSION['sort_field-archive']) ? $_SESSION['sort_field-archive'] : 'start_date';
 $sort_type = isset ($_SESSION['sort_type-archive']) ? $_SESSION['sort_type-archive'] : 'desc';
 $services = db_getServices();
-
 ?>
 <div class="container" style="width:auto">
     <div id="eventTabs" class="events-list">
         <div class="tab-content">
+          <div class="btn-group" style="float: right; margin-right: 10px;">
+            <a class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: 1px; height: 19px;"><i class="fa fa-question fa-lg"></i><span class="hide-name" style="padding-left: 5px">Помощь</span></a>
+              <ul class="dropdown-menu pull-right">
+                <?php
+
+                  $sortField = isset ($_COOKIE['sort_field_reference']) ? $_COOKIE ['sort_field_reference'] : 'name';
+                  $sortType = isset ($_COOKIE['sort_type_reference']) ? $_COOKIE ['sort_type_reference'] : 'asc';
+                  $references = db_getReferences($sortField, $sortType);
+
+                  $page = 'statistic';
+                  $countReference = 0;
+
+                  foreach ($references as $key => $reference) {
+                      if($page == $reference['page'] && $reference['published'] == '1'){
+                          $countReference ++;
+                          echo '<li class="modal-reference"><a href="'.$reference['link_article'].'" target="_blank">'.$reference['name'].'</a></li>';
+                      }
+                  }
+
+                  if($countReference == 0){
+                      echo "<li class='modal-reference'>Справочной информации по этому разделу пока нет</li>";
+                  }
+                  ?>
+              </ul>
+          </div>
             <div class="btn-toolbar">
                 <a class="btn btn-success btn-add-event" type="button"><i class="icon-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
                 <a class="btn btn-event-members-statistic" href="#">
