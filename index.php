@@ -606,8 +606,16 @@ $(document).ready(function(){
         e.stopPropagation();
         var eventId = $(this).attr('data-id'),
             //request = getRequestFromFilters(setFiltersForRequest());
-            request;
-        $.post('/ajax/event.php?set_archive', {eventId: eventId})
+            request, eventMemberAccess;
+            var isSysAdmin= '<?php echo $isEventAdmin; ?>';
+            var isMemberAdminOfEvent = '<?php echo $adminEvents; ?>';
+            if (isMemberAdminOfEvent) {
+                isMemberAdminOfEvent = isMemberAdminOfEvent.split(',');
+                eventMemberAccess = isMemberAdminOfEvent.indexOf(eventId);
+            }
+            eventMemberAccess != -1 ? eventMemberAccess = 1 : eventMemberAccess = 0;
+            isSysAdmin != false ? isSysAdmin = 1 : isSysAdmin = 0;            
+        $.post('/ajax/event.php?set_archive', {eventId: eventId, isAdmin: eventMemberAccess, isSysAdmin: isSysAdmin})
         .done(function(data){
             if(!data.res){
                 showError("Архивирование данных отклонено. Записи в БД ещё не синхронизированы с 1С или вы не ответственный за это мероприятие, возможно это дублирующий архив.");

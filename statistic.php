@@ -67,7 +67,9 @@ include_once "./modals.php";
 $s = $_SERVER["SCRIPT_NAME"];
 $isEventAdminNav = isset($memberId) ? db_hasRightToHandleEvents($memberId) : false;
 $h = ($_SERVER['PHP_SELF']);
-$localities = db_getArchivedEventLocalities (); $eventTypes = db_getEventTypes(); $isSingleCity = db_isSingleCityArchiveEvent();
+$localities = db_getArchivedEventLocalities (); $eventTypes = db_getEventTypes();
+//$isSingleCity = db_isSingleCityArchiveEvent();
+$isSingleCity = false;
 $eventTemplates = db_getEventTemplates($memberId);
 
 $sort_field = isset ($_SESSION['sort_field-archive']) ? $_SESSION['sort_field-archive'] : 'start_date';
@@ -429,6 +431,17 @@ $services = db_getServices();
                                 <div class="reg-members-available"></div>
                             </div>
                         </div>
+                        <div class="control-group row-fluid">
+                            <label>Валюта</label>
+                            <select class="" name="" id="currencySelect">
+                              <option value="_none_" selected></option>
+                              <option value="USD">USD</option>
+                              <option value="EUR">EUR</option>
+                              <option value="RUR">RUR</option>
+                            </select>
+                            <label>Взнос</label>
+                            <input type="number" class="span4" id="contribSelect" placeholder="Введите сумму взноса">
+                        </div>
                     </div>
                 </div>
                 <div class="tab-pane" id="event-templates">
@@ -492,6 +505,13 @@ $(document).ready(function(){
 
     $(".btn-do-create").click(function(){
         if($(this).hasClass('btn-do-create-event')){
+
+          if ($('#modalCreateEvent').find('.event-end-date').val() < $('#modalCreateEvent').find('.event-start-date').val()) {
+            showError('Дата окончания не может быть раньше даты начала мероприятия');
+            $('#modalCreateEvent').find('.event-end-date').css('border-color', 'red');
+            $('#modalCreateEvent').find('.event-start-date').css('border-color', 'red');
+            return
+          }
             handleEventCreation();
             $('#modalAddEvent').modal('hide');
         }
@@ -528,6 +548,8 @@ $(document).ready(function(){
             eventStartDate = modalWindow.find(".event-start-date").keyup().val().trim(),
             eventEndDate = modalWindow.find(".event-end-date").keyup().val().trim(),
             eventInfo = modalWindow.find(".event-info").val().trim(),
+            currencySelect = $("#currencySelect").val().trim(),
+            contribSelect = $("#contribSelect").val().trim(),
             eventAdmins = [], participants = [], zones = '', mode = 1, eventAdminsEmail = 1, regEndDate = 1, passport = 1, prepayment = 1, privateVar = 1, transport = 1, tp = 1, flight = 1, parking = 1, service = 1, accom = 1, registration = 0, attendance = 1, countMeetings = 1, regMembers = 1, teamKey = 1;
             modalWindow.find(".participants-added > div").each(function(){
                 var field = $(this).attr('data-field'), id = $(this).attr('data-id');
@@ -543,7 +565,7 @@ $(document).ready(function(){
             modalWindow.find(".reg-members-added > div").each(function(){
                 eventAdmins.push($(this).attr('data-id'));
             });
-            eventAdmins[0] === '' ? '' : eventAdmins[0] = window.adminId;
+            eventAdmins[0] ? '' : eventAdmins[0] = window.adminId;
             return({
                 teamKey: teamKey,
                 regMembers: regMembers,
@@ -572,7 +594,9 @@ $(document).ready(function(){
                 eventInfo : eventInfo,
                 participants : JSON.stringify(participants),
                 zones : zones,
-                eventAdmins : eventAdmins
+                eventAdmins : eventAdmins,
+                currency: currencySelect,
+                contrib: contribSelect
             });
     }
 
