@@ -3269,10 +3269,12 @@ function getEventTypes(){
     return $types;
 }
 
-function db_setEventArchive($eventId, $adminId){
+function db_setEventArchive($eventId, $adminId, $isAdmin, $isSysAdmin){
     global $db;
     $eventId = $db->real_escape_string($eventId);
     $adminId = $db->real_escape_string($adminId);
+    $isAdmin = $db->real_escape_string($isAdmin);
+    $isSysAdmin = $db->real_escape_string($isSysAdmin);
 
     $res = db_query("SELECT COUNT(*) as count FROM reg WHERE member_key LIKE '990%' and event_key='$eventId' ");
     $row = $res->fetch_assoc();
@@ -3292,7 +3294,7 @@ function db_setEventArchive($eventId, $adminId){
                 (SELECT GROUP_CONCAT(eac.member_key) FROM event_access eac WHERE eac.key=e.key) as responsibles
                 FROM event e
                 INNER JOIN reg r ON r.event_key=e.key
-                WHERE e.key='$eventId' AND e.author='$adminId' AND r.attended=1 GROUP BY e.key");
+                WHERE e.key='$eventId' AND (e.author='$adminId' OR '$isAdmin' = '1' OR '$isSysAdmin' = '1') AND r.attended=1 GROUP BY e.key");
 
         $archive = NULL;
         while($row = $res->fetch_assoc()) $archive = $row;
@@ -3625,7 +3627,7 @@ function getEventArchiveMembersStatistic($adminId, $eventType, $startDate, $endD
     while ($row = $res->fetch_object()) $list[]=$row;
     return $list;
 }
-
+/*
 function db_isSingleCityArchiveEvent(){
     $res = db_query("SELECT DISTINCT e.locality_key FROM event_archive e");
 
@@ -3634,7 +3636,7 @@ function db_isSingleCityArchiveEvent(){
 
     return count($list) < 2;
 }
-
+*/
 function db_saveMessageInfo($subject, $eventId, $receiver, $sender, $body){
     global $db;
     $_subject = $db->real_escape_string($subject);
@@ -4126,6 +4128,8 @@ function db_addEventArchive($adminId, $data){
     $countMeetings = $db->real_escape_string($data['countMeetings']);
     $reg_members = $db->real_escape_string($data['regMembers']);
     $team_key = $db->real_escape_string($data['teamKey']);
+    $eventContrib = $db->real_escape_string($data['contrib']);
+    $eventCurrency = $db->real_escape_string($data['currency']);
     if($name == '' || $eventType == '_none_' || $eventLocality == '_none_' || $eventStartDate == '' || $eventEndDate == ''){
         throw new Exception("Необходимо заполнить все поля выделенные розовым цветом.", 1);
     }
@@ -4188,7 +4192,7 @@ function db_addEventArchive($adminId, $data){
             }
         }
 
-        db_query("INSERT INTO event_archive (name, event_type, created, locality_key, author, members, start_date, end_date, members_count) VALUES ('$name', '$eventType', now(), '$eventLocality', '$adminId', '". implode(',', $participantsArr) ."', '$eventStartDate', '$eventEndDate', '".count($participantsArr)."')");
+        db_query("INSERT INTO event_archive (name, event_type, created, locality_key, author, members, start_date, end_date, members_count, service_ones, contrib, currency) VALUES ('$name', '$eventType', now(), '$eventLocality', '$adminId', '". implode(',', $participantsArr) ."', '$eventStartDate', '$eventEndDate', '".count($participantsArr)."', '". implode(',', $eventAdmins) ."', '$eventContrib', '$eventCurrency')");
 
         $eventArchiveId = $db->insert_id;
 

@@ -86,7 +86,7 @@ elseif(isset ($_GET['set_activity'])){
 }
 elseif(isset($_GET['set_archive'])){
     if(isset($_POST['eventId'])){
-        echo json_encode(['res'=> db_setEventArchive($_POST['eventId'], $adminId),
+        echo json_encode(['res'=> db_setEventArchive($_POST['eventId'], $adminId, $_POST['isAdmin'], $_POST['isSysAdmin']),
         "events"=> db_getEventsForEventsPage($adminId, $sort_type, $sort_field),
         "localities"=>db_getEventsLocalities(),
         "authors"=>db_getEventsAuthors()]);
