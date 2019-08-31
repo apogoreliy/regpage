@@ -50,7 +50,7 @@ if(isset ($_GET['handle_event'])){
         $_POST['tp'], $_POST['flight'], $_POST['info'], $_POST['reg_members'], $_POST['reg_members_email'],
         isset($_GET['teamKey']) ? $_GET['teamKey'] : null,
         isset($_GET['eventId']) ? $_GET['eventId'] : null, $_POST['event_type'], $_POST['zones'],
-        $_POST['parking'],$_POST['service'],$_POST['accom'], $_POST['close_registration'], $_POST['participants_count']);
+        $_POST['parking'],$_POST['service'],$_POST['accom'], $_POST['close_registration'],        $_POST['participants_count'],$_POST['currency'],$_POST['contrib'],$_POST['team_email'],        $_POST['organizer'],$_POST['min_age'],$_POST['max_age'],$_POST['status']);
     echo json_encode(["result"=> "ok"]);
     exit;
 }

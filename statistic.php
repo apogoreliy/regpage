@@ -314,17 +314,17 @@ $services = db_getServices();
 </div>
 
 <!-- MODAL CHOOSE STATISTIC EVENT OR TEMPLATE -->
-<div id="modalAddEvent" data-width="400" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="modalAddEvent" data-width="400" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true" style="top: 10% !important">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         <h3>Добавить мероприятие</h3>
     </div>
     <div class="modal-body">
-        <button class="btn btn-default btn-event btn-add-event">Мероприятие</button>
+        <button class="btn btn-default btn-event btn-add-event btn-success">Мероприятие</button>
         <button style="float: right;" class="btn btn-default btn-event btn-add-event-template" disabled>Шаблон мероприятия</button>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary btn-do-add-event" disabled>Добавить</button>
+        <button class="btn btn-primary btn-do-add-event">Добавить</button>
         <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
@@ -557,6 +557,9 @@ $(document).ready(function(){
             refreshArchiveEvents(data.events);
         });
     }
+    $("#modalCreateEvent").on('hide', function () {
+      $("#selectedEventType").focus();      
+    });
 // TEMPLATE CREATION
     function handleTemplateCreation(){
 

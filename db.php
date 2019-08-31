@@ -2261,10 +2261,7 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
     $res = db_query("SELECT DISTINCT * FROM (
             SELECT me.name, me.id, l.name as locality_name, me.date,  me.list_count, me.saints_count,
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
-            me.locality_key, me.note, me.fulltimers_count,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
-            me.participants,
-            me.trainees_count,
+            me.locality_key, me.note, me.fulltimers_count, me.members as members, me.participants, me.trainees_count,
             IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
             0 as summary
             FROM access a
@@ -2277,10 +2274,7 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
             UNION
             SELECT me.name, me.id, l.name as locality_name, me.date, me.list_count, me.saints_count,
             mt.name as meeting_name, mt.short_name, mt.key as meeting_type, me.guests_count, me.children_count,
-            me.locality_key, me.note, me.fulltimers_count,
-            (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members,
-            me.participants,
-            me.trainees_count,
+            me.locality_key, me.note, me.fulltimers_count, me.members as members, me.participants, me.trainees_count,
             IF(($requestCheckMeetingAdditions), 1, 0) as show_additions,
              0 as summary
             FROM meetings me
@@ -2294,6 +2288,57 @@ function db_getMeetings($adminId, $sort_type, $sort_field, $localityFilter, $mee
     return $meetings;
 }
 
+function db_getDetailsOfMembers($meetingId){
+  global $db;
+  $meetingId = $db->real_escape_string($meetingId);
+  $members = array ();
+  db_query('SET Session group_concat_max_len=100000');
+
+  $res = db_query("SELECT DISTINCT * FROM (
+          SELECT me.id as meeting_id, me.date, l.name as locality_name, me.locality_key,
+          (SELECT GROUP_CONCAT( CONCAT_WS(':', mb.key, mb.name, lo.name, mb.attend_meeting, mb.category_key, mb.locality_key, mb.birth_date) ORDER BY mb.name ASC SEPARATOR ',') FROM member mb INNER JOIN locality lo ON lo.key=mb.locality_key WHERE FIND_IN_SET(mb.key, me.members)<>0) as members
+          FROM meetings me
+          INNER JOIN locality l ON l.key = me.locality_key
+          WHERE me.id=$meetingId
+          ) q ORDER BY q.locality_name ASC");
+
+    while ($row = $res->fetch_object()) $members[]=$row;
+    return $members;
+}
+// get details of members
+/*
+function db_getDetailsOfAllMembersAdmin ($adminId)
+{
+    global $db;
+    $adminId = $db->real_escape_string($adminId);
+    $active = 'name DESC, ';
+
+    $res=db_query ("SELECT DISTINCT * FROM (SELECT m.key as id, m.name as name, IF (COALESCE(l.name,'')='', m.new_locality, l.name) as locality, m.email as email, m.locality_key, m.birth_date,
+                    m.category_key, m.attend_meeting,
+                    (SELECT rg.name FROM region rg WHERE rg.key=l.region_key) as region,
+                    (SELECT co.name FROM country co INNER JOIN region re ON co.key=re.country_key WHERE l.region_key=re.key) as country
+                    FROM access as a
+                    LEFT JOIN country c ON c.key = a.country_key
+                    LEFT JOIN region r ON r.key = a.region_key OR c.key=r.country_key
+                    INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
+                    INNER JOIN member m ON m.locality_key = l.key
+                    LEFT JOIN category ca ON ca.key = m.category_key
+                    WHERE a.member_key='$adminId'
+                    UNION
+                    SELECT m.key as id, m.name as name, IF (COALESCE(m.locality_key,'')='', m.new_locality, m.name) as locality, m.email as email, m.locality_key, m.birth_date,
+                    m.category_key, m.attend_meeting,
+                    '' as region,
+                    '' as country
+                    FROM member m
+                    LEFT JOIN category ca ON ca.key = m.category_key
+                    WHERE m.admin_key='$adminId' and m.locality_key is NULL
+                    ) q ORDER BY '$active'");
+
+    $members = array ();
+    while ($row = $res->fetch_object()) $members[]=$row;
+    return $members;
+}
+*/
 function db_getLocalityMembers($localityId){
     global $db;
     $_localityId = $db->real_escape_string($localityId);
@@ -2895,7 +2940,7 @@ function db_getEvent ($eventId){
 
 function db_handleEvent ($name, $locality, $author, $start_date, $end_date, $reg_end_date, $passport,
     $prepayment, $private, $transport, $tp, $flight, $info, $reg_members, $reg_members_email, $team_key, $event_id,
-    $event_type, $zones, $parking, $service, $accom, $close_registration, $participants_count){
+    $event_type, $zones, $parking, $service, $accom, $close_registration, $participants_count, $currency, $contrib, $team_email, $organizer, $min_age, $max_age, $status){
 
     global $db;
 
@@ -2928,6 +2973,14 @@ function db_handleEvent ($name, $locality, $author, $start_date, $end_date, $reg
     $service = $db->real_escape_string($service);
     $accom = $db->real_escape_string($accom);
 
+    $currency = $db->real_escape_string($currency);
+    $contrib = $db->real_escape_string($contrib);
+    $team_email = $db->real_escape_string($team_email);
+    $organizer = $db->real_escape_string($organizer);
+    $min_age = $db->real_escape_string($min_age);
+    $max_age = $db->real_escape_string($max_age);
+    $status = $db->real_escape_string($status);
+
     $adminsFromForm = explode (',', $reg_members);
     $adminsEmailFromForm = explode (',', $reg_members_email);
 
@@ -2938,16 +2991,16 @@ function db_handleEvent ($name, $locality, $author, $start_date, $end_date, $reg
             info='$info', need_passport='$passport', need_transport='$transport', need_prepayment='$prepayment', private='$private',
             need_tp='$tp', need_flight='$flight', need_parking = '$parking', need_accom = '$accom', need_service = '$service',
             team_key='$team_key', event_type='$event_type', close_registration='$close_registration',
-            participants_count='$participants_count', sync=0 WHERE `key`='$event_id'");
+            participants_count='$participants_count', sync=0, currency='$currency', contrib='$contrib', team_email='$team_email', organizer='$organizer', min_age='$min_age', max_age='$max_age', need_status='$status' WHERE `key`='$event_id'");
     }
     else{
         $event_id = db_getNextKeyForEvents();
         db_query("INSERT INTO event (`key`, `name`, `locality_key`, `author`, `start_date`, `end_date`, `regend_date`, `info`, `need_passport`,
             `need_transport`, `need_prepayment`, `private`, `need_tp`, `need_flight`, `team_key`, `event_type`, `need_parking`, `need_accom`,
-            `need_service`, `close_registration`, `participants_count`, `sync`, `web` ) VALUES ('$event_id', '$name', '$locality', '$author',
+            `need_service`, `close_registration`, `participants_count`, `sync`, `web`, `currency`,`contrib`,`team_email`,`organizer`,`min_age`,`max_age`,`need_status`) VALUES ('$event_id', '$name', '$locality', '$author',
               '$start_date', '$end_date', '$reg_end_date', '$info', '$passport', '$transport',
               '$prepayment', '$private', '$tp', '$flight', '$team_key', '$event_type', '$parking', '$accom', '$service',
-              '$close_registration', '$participants_count', 0, 1) ");
+              '$close_registration', '$participants_count', 0, 1, '$currency', '$contrib', '$team_email', '$organizer', '$min_age', '$max_age', '$status') ");
 
         // author_name name key
         $arr = [];
@@ -2967,9 +3020,9 @@ function db_handleEvent ($name, $locality, $author, $start_date, $end_date, $reg
 
 function addZonesForEvent($event_id, $zones, $table){
     global $db;
-    $_table = $table.'_zone';
+    $_table = $table.'_zones';
 
-    $res = db_query("SELECT * FROM $_table WHERE event_archive_id='$event_id'");
+    $res = db_query("SELECT * FROM $_table WHERE `event_key`='$event_id'");
 
     $existZones = [];
     while ($row = $res->fetch_assoc()) {
@@ -2993,7 +3046,7 @@ function addZonesForEvent($event_id, $zones, $table){
             $zonesArr[] = $z[1];
 
             if(count($existZones) == 0 || !in_array($z[1], $existZones)){
-                $stmt = $db->prepare("INSERT INTO $_table (event_archive_id, country_key, region_key, locality_key) VALUES (?, ?, ?, ?)");
+                $stmt = $db->prepare("INSERT INTO $_table (event_key, country_key, region_key, locality_key) VALUES (?, ?, ?, ?)");
 
                 $field1 = $z[0] == 'c' ? $z[1] : null;
                 $field2 = $z[0] == 'r' ? $z[1] : null;
@@ -3101,13 +3154,13 @@ function handleAdminsInEventAccessTable($event_id, $admins, $table){
     // handle a event_access table to add or remove admins responseble for registration
     $_table = $table.'_access';
 
-    $res = db_query("SELECT `member_key` FROM $_table WHERE `event_archive_id`='$event_id'");
+    $res = db_query("SELECT `member_key` FROM $_table WHERE `key`='$event_id'");
     $adminsFromDB = array();
     while($row = $res->fetch_assoc()) $adminsFromDB[]=$row['member_key'];
     if($admins[0] != ''){
         foreach ($admins as $a){
             if(count($adminsFromDB)==0 || !in_array($a, $adminsFromDB)){
-                db_query("INSERT INTO $_table (`event_archive_id`, `member_key`) VALUES ('$event_id', '$a')");
+                db_query("INSERT INTO $_table (`key`, `member_key`) VALUES ('$event_id', '$a')");
             }
         }
     }
@@ -4003,6 +4056,17 @@ function db_getPages(){
     $pages = array();
     while($row = $res->fetch_assoc()){
         $pages [$row['key']] = $row['name'];
+    }
+
+    return $pages;
+}
+
+function db_getCustomPages(){
+    $res = db_query("SELECT * FROM custom_page");
+
+    $pages = array();
+    while($row = $res->fetch_assoc()){
+        $pages [$row['name']] = $row['value'];
     }
 
     return $pages;
