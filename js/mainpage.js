@@ -30,3 +30,59 @@ function showSuccessMessage (text, link){
     $("#modalEditMember").addClass('hide').modal('hide');
     $("#modalRegSuccess").modal('show');
 }
+// START add event modal fields set
+
+$('.notRequired').click(function () {
+  $(this).parent().find('div').is(':visible') ? $(this).parent().find('div').hide() : $(this).parent().find('div').show();
+  var a = $(this).text(), b;
+  if (a[0] == '-') {
+    a = a.substring(1);
+    b = '+' + a;
+    $(this).text(b)
+  } else if (a[0] == '+') {
+    a = a.substring(1);
+    b = '-' + a;
+    $(this).text(b)
+  }
+});
+
+function checkCurrencyAndContribFields() {
+  if ($('.event-currency-modal').val() === '_none_') {
+    $('.event-contrib-modal').attr('disabled', true);
+    $('.event-contrib-modal').val('');
+  } else {
+    $('.event-contrib-modal').attr('disabled', false);
+  }
+}
+checkCurrencyAndContribFields();
+$('.event-currency-modal').change(function () {
+  checkCurrencyAndContribFields();
+});
+
+$('#modalAddEditEvent').on('show', function () {
+  setTimeout(function () {
+  $('.notRequired').each(function () {
+    var x = $(this).parent().find('input').val() ? $(this).parent().find('input').val() : 0;
+    var y = $(this).parent().find('select').val() ? $(this).parent().find('select').val() : 0;
+    var xLength, a = $(this).text(), b;
+    x.length ? xLength = x.length : xLength = 0;
+    if ((y == 0 || y == '_none_') && (x == 0 || xLength ==0)) {
+      $(this).parent().find('div').hide();
+      if (a[0] == '-') {
+        a = a.substring(1);
+        b = '+' + a;
+        $(this).text(b)
+      }
+    } else {
+      $(this).parent().find('div').show();
+      if (a[0] == '+') {
+       a = a.substring(1);
+       b = '-' + a;
+       $(this).text(b)
+     }
+    }
+  })
+  }, 500);
+})
+
+// STOP add event modal fields set

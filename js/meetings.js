@@ -1426,9 +1426,11 @@ var isFillTemplate = 0;
             $(".desctopVisible tbody").html (tableRows.join(''));
             $(".show-phone tbody").html (phoneRows.join(''));
 
+
             $(".meeting-row").unbind('click');
             $(".meeting-row").click (function () {
                 var element = $(this);
+                var meetingId = element.attr('data-id');
                 var note = element.attr('data-note');
                 var date = element.attr('data-date');
                 var count = element.attr('data-count');
@@ -1438,11 +1440,11 @@ var isFillTemplate = 0;
                 var locality = element.attr('data-locality');
                 var meetingType = element.attr('data-type');
                 var meetingName = element.find('.meeting-name').text();
-                var meetingId = element.attr('data-id');
                 var saintsCount = element.attr('data-saints_count');
                 var countFulltimers = element.attr('data-fulltimers');
                 var countTrainees = element.attr('data-trainees');
-                var members = element.attr('data-members');
+                var members;
+
                 var textMode = 'Карточка собрания';
                 var participants = element.attr('data-participants').split(',');
 
@@ -1451,7 +1453,11 @@ var isFillTemplate = 0;
                 locality == '001009' || locality == '001164' || locality == '001163' || locality == '001164' || locality == '001168' || locality == '001165' || locality == '001166' || locality == '001167' ? $(".traineesClass").show() : $(".traineesClass").hide();
                 $("#addEditMeetingModal").find('.btnDoHandleMeeting').attr('data-id', meetingId).attr('data-locality', locality).attr('data-date', date).attr('data-meeting_type',meetingType);
                 $("#addEditMeetingModal").attr('data-id', meetingId);
-                fillMeetingModalForm(textMode, formatDate(date), locality, meetingType, note, countList, count, countGuests, countChildren, countFulltimers, countTrainees, isMeetingSummary, saintsCount, meetingName, members, participants);
+                $.get('/ajax/meeting.php?get_member_details_meeting', {meeting_id: meetingId})
+                .done(function(data){
+                  members = data.members[0].members;
+                  fillMeetingModalForm(textMode, formatDate(date), locality, meetingType, note, countList, count, countGuests, countChildren, countFulltimers, countTrainees, isMeetingSummary, saintsCount, meetingName, members, participants);
+                });
             });
             //
             /*
@@ -2251,3 +2257,17 @@ renewComboLists('.meeting-lists-combo');
             $('#addEditMeetingModal').modal('hide');
           }
         };
+
+/*
+//START array Details of Members
+//var listOfMembersArr;
+function listOfMembersDetails (){
+    $.get('/ajax/meeting.php?get_member_details')
+        .done (function(data) {
+//          console.log(data.members);
+            listOfMembersArr = data.members;
+          });
+}
+//listOfMembersDetails ();
+//STOP Details of Members
+*/

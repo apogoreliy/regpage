@@ -76,14 +76,14 @@ else if (isset ($_SESSION["logged-in"])){
         <div class="tab-content">
             <div class="event-list-block">
                 <?php
-                    if($isEventAdmin){
+                    if($memberId == '000005716'){
                     echo '
-                        <!--<div class="btn-group">
+                        <div class="btn-group">
                             <a class="btn btn-success btnAddEvent" title="Добавить мероприятие" href="#">
                                 <i class="fa fa-plus"></i>
                                 <span class="hide-name">Добавить</span>
                             </a>
-                        </div>-->
+                        </div>
                         ';
                     }
                 ?>
@@ -243,7 +243,7 @@ else if (isset ($_SESSION["logged-in"])){
     <div class="modal-footer">
         <button class="btn btn-primary doSaveEventInfo">Сохранить</button>
         <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Отменть</button>
-    </div>$isAuthorEvents
+    </div>
 </div>
 
 <!-- Show Event Info Modal -->
@@ -293,7 +293,7 @@ else if (isset ($_SESSION["logged-in"])){
             <div class="control-group row-fluid">
                 <label class="span12">Вид мероприятия<sup>*</sup></label>
                 <div class="control-group row-fluid">
-                    <select class="span12 event-type" valid="required">
+                    <select class="span12 event-type" valid="required" style="margin-bottom:0;">
                         <option value='_none_'></option>
                         <?php
                             foreach (getEventTypes() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>";
@@ -304,7 +304,7 @@ else if (isset ($_SESSION["logged-in"])){
             <div class="control-group row-fluid">
                 <label class="span12">Место проведения мероприятия<sup>*</sup></label>
                 <div class="control-group row-fluid">
-                    <select class="span12 event-locality" valid="required">
+                    <select class="span12 event-locality" valid="required" style="margin-bottom:0;">
                         <option value='_none_'></option>
                         <?php
                             foreach (db_getLocalities() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>";
@@ -341,7 +341,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Закрытое мероприятие?</label>
+                <label class="span12 notRequired">+  Закрытое мероприятие?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-private">
                         <option value='0' selected>НЕТ</option>
@@ -350,13 +350,13 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Максимальное количество участников</label>
+                <label class="span12 notRequired">+  Максимальное количество участников</label>
                 <div class="control-group row-fluid">
                     <input class="span12 event-participants_count" type="text" placeholder="Количество">
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Закрыть регистрацию?</label>
+                <label class="span12 notRequired">+  Закрыть регистрацию?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 close_registration">
                         <option value='0' selected>НЕТ</option>
@@ -365,7 +365,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Нужны паспортные данные?</label>
+                <label class="span12 notRequired">+  Нужны паспортные данные?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-passport">
                         <option value='0' selected>НЕТ</option>
@@ -374,7 +374,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Нужна предварительная оплата?</label>
+                <label class="span12 notRequired">+  Нужна предварительная оплата?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-prepayment">
                         <option value='0' selected>НЕТ</option>
@@ -383,7 +383,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Нужна инфромация о транспорте?</label>
+                <label class="span12 notRequired">+  Нужна инфромация о транспорте?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-transport">
                         <option value='0' selected>НЕТ</option>
@@ -392,7 +392,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Нужны данные загранпаспорта?</label>
+                <label class="span12 notRequired">+  Нужны данные загранпаспорта?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-tp">
                         <option value='0' selected>НЕТ</option>
@@ -401,7 +401,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Нужна инфромация об авиарейсе?</label>
+                <label class="span12 notRequired">+  Нужна инфромация об авиарейсе?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-flight">
                         <option value='0' selected>НЕТ</option>
@@ -410,7 +410,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Нужна инфромация о размещении?</label>
+                <label class="span12 notRequired">+  Нужна инфромация о размещении?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-accom">
                         <option value='0' selected>НЕТ</option>
@@ -419,7 +419,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Нужна инфромация о парковке?</label>
+                <label class="span12 notRequired">+  Нужна инфромация о парковке?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-parking">
                         <option value='0' selected>НЕТ</option>
@@ -428,11 +428,55 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Нужна инфромация о служении?</label>
+                <label class="span12 notRequired">+  Нужна инфромация о служении?</label>
                 <div class="control-group row-fluid">
                     <select class="span12 event-service">
                         <option value='0' selected>НЕТ</option>
                         <option value='1'>ДА</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group row-fluid">
+                <label class="span12 notRequired">+  Валюта и сумма взноса</label>
+                <div class="control-group row-fluid">
+                    <select class="span12 event-currency-modal">
+                        <option value='_none_' selected>НЕТ</option>
+                        <option value='RUR'>Рубли</option>
+                        <option value='USD'>USD</option>
+                        <option value='EUR'>EUR</option>
+                    </select>
+                <div class="control-group row-fluid">
+                    <label class="span12">Сумма взноса</label>
+                    <div class="control-group row-fluid">
+                        <input class="span12 event-contrib-modal" type="number" placeholder="Сумма">
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="control-group row-fluid">
+                <label class="span12 notRequired">+  Емайл команды регистрации</label>
+                <div class="control-group row-fluid">
+                    <input class="span12 event-email-modal" type="email" placeholder="Емайл">
+                </div>
+            </div>
+            <div class="control-group row-fluid">
+                <label class="span12 notRequired">+  Организатор мероприятия</label>
+                <div class="control-group row-fluid">
+                    <input class="span12 event-organizer-modal" type="text" placeholder="Организатор">
+                </div>
+            </div>
+            <div class="control-group row-fluid">
+                <label class="span12 notRequired">+  Возрастные ограничения</label>
+                <div class="control-group row-fluid">
+                    <input class="span12 event-min-age-modal" type="number" placeholder="Минимум"> <input class="span12 event-max-age-modal" type="number" placeholder="Максимум">
+                </div>
+            </div>
+            <div class="control-group row-fluid">
+                <label class="span12 notRequired">+  Статус</label>
+                <div class="control-group row-fluid">
+                    <select class="span12 event-status-modal">
+                        <option value='0' selected>Нет</option>
+                        <option value='1'>Да</option>
                     </select>
                 </div>
             </div>
@@ -443,7 +487,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Зона доступа</label>
+                <label class="span12" style="min-height:20px">Зона доступа</label>
                 <div class="control-group row-fluid zones-checkbox-block">
                     <div class="btn-group">
                         <label class="">Страны</label>
@@ -465,7 +509,7 @@ else if (isset ($_SESSION["logged-in"])){
                 </div>
             </div>
             <div class="control-group row-fluid">
-                <label class="span12">Ответственные за регистрацию</label>
+                <label class="span12" style="min-height:20px">Ответственные за регистрацию</label>
                 <div class="control-group row-fluid">
                     <div class="reg-members-added"></div>
                     <input type="text" class="span12 search-reg-member" placeholder="Введите текст">
@@ -496,6 +540,8 @@ $(document).ready(function(){
     $('#frameArchive').click(function() {
       $('#frameArchivePage').is(':visible') ? $('#frameArchivePage').hide() : $('#frameArchivePage').show();
       resizeIframe();
+      $('#frameArchivePage').is(':visible') ? $('#frameArchive').focus() : $('#frameArchivePage').focus();
+
     });
     $(window).resize(function(){
       resizeIframe();
@@ -614,7 +660,7 @@ $(document).ready(function(){
                 eventMemberAccess = isMemberAdminOfEvent.indexOf(eventId);
             }
             eventMemberAccess != -1 ? eventMemberAccess = 1 : eventMemberAccess = 0;
-            isSysAdmin != false ? isSysAdmin = 1 : isSysAdmin = 0;            
+            isSysAdmin != false ? isSysAdmin = 1 : isSysAdmin = 0;
         $.post('/ajax/event.php?set_archive', {eventId: eventId, isAdmin: eventMemberAccess, isSysAdmin: isSysAdmin})
         .done(function(data){
             if(!data.res){
@@ -672,7 +718,7 @@ $(document).ready(function(){
 
                 icons =
                     ( in_array(event.id, hidenEvents) ? '<span style="display: inline;" class="fa fa-arrow-up btnEventHiding" title="Показать мероприятие"></span>' : '<span style="display: inline; margin-right: 5px; margin-left: 5px;" class="fa fa-arrow-down btnEventHiding" title="Скрыть мероприятие"></span>') +
-                    ( (false) ?
+                    ( (memberId == '000005716') ?
                        ( isEventActive ? '<span  style="display: inline; margin-right: 5px; margin-left: 5px;"class="fa fa-check-circle  btnEventActivity" title="Сделать неактивным"></span>' : '<span style="display: inline; margin-right: 5px; margin-left: 5px;" class="fa fa-times btnEventActivity" title="Сделать активным"></span>') +
                         '<span style="display: inline; margin-right: 5px; margin-left: 5px;" class="fa fa-pencil btnEditEvent" title="Редактировать мероприятие"></span>'+
                         '<span style="display: inline; margin-right: 5px;" class="fa fa-trash-o btnRemoveEvent" title="Удалить мероприятие" aria-hidden="true"></span>' : '')+
@@ -1083,7 +1129,6 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
 
     function fillEventForm(event){
         var form = $('#modalAddEditEvent');
-
         if(event){
             if(event.admins !== ''){
                 var admins = event.admins.split(';'), arrAdmins = [];
@@ -1111,30 +1156,45 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
                     });
                 }
             }
-        }
-        form.modal('show');
-        // author
-        form.find('.event-name').val(event ? event.event_name : '').keyup();
-        form.find('.event-type').val(event ? event.event_type : '_none_').change();
-        form.find('.event-locality').val(event ? event.locality_key : '_none_').change();
-        form.find('.event-start-date').val(event ? formatDate(event.start_date) : '').keyup();
-        form.find('.event-end-date').val(event ? formatDate(event.end_date) : '').keyup();
-        form.find('.event-reg-end-date').val(event ? formatDate(event.regend_date) : '').keyup();
-        form.find('.event-passport').val(event ? event.need_passport : 0);
-        form.find('.event-prepayment').val(event ? event.need_prepayment : 0);
-        form.find('.event-private').val(event ? event.private : 0);
-        form.find('.event-transport').val(event ? event.need_transport : 0);
-        form.find('.event-tp').val(event ? event.need_tp : 0);
-        form.find('.event-flight').val(event ? event.need_flight : 0);
-        form.find('.event-info').val(event ? event.info : '');
-        form.find('.reg-members-added').html(event ? handleAdminsList(arrAdmins, true) : '');
-        form.find('.search-reg-member').val('');
-        form.find('.zones-added').html(event ? handleEventZones(arrZones, true) : '');
-        form.find('.search-zones').val('');
-        form.find('.reg-members-available').html('');
-        form.find('.close_registration').val(event.close_registration );
-        form.find('.event-participants_count').val(event.participants_count );
 
+          form.modal('show');
+        // author
+          form.find('.event-name').val(event ? event.event_name : '').keyup();
+          form.find('.event-type').val(event ? event.event_type : '_none_').change();
+          form.find('.event-locality').val(event ? event.locality_key : '_none_').change();
+          form.find('.event-start-date').val(event ? formatDate(event.start_date) : '').keyup();
+          form.find('.event-end-date').val(event ? formatDate(event.end_date) : '').keyup();
+          form.find('.event-reg-end-date').val(event ? formatDate(event.regend_date) : '').keyup();
+          form.find('.event-passport').val(event ? event.need_passport : 0);
+          form.find('.event-prepayment').val(event ? event.need_prepayment : 0);
+          form.find('.event-private').val(event ? event.private : 0);
+          form.find('.event-transport').val(event ? event.need_transport : 0);
+          form.find('.event-tp').val(event ? event.need_tp : 0);
+          form.find('.event-flight').val(event ? event.need_flight : 0);
+          form.find('.event-info').val(event ? event.info : '');
+          form.find('.event-currency-modal').val(event ? (event.currency != null ? event.currency : '_none_') : '');
+          form.find('.event-contrib-modal').val(event ? event.contrib : '');
+          form.find('.event-email-modal').val(event ? event.team_email : '');
+          form.find('.event-organizer-modal').val(event ? event.organizer : '');
+          form.find('.event-min-age-modal').val(event ? event.max_age : '');
+          form.find('.event-max-age-modal').val(event ? event.min_age : '');
+          form.find('.event-status-modal').val(event ? event.need_status : '');
+          form.find('.reg-members-added').html(event ? handleAdminsList(arrAdmins, true) : '');
+          form.find('.search-reg-member').val('');
+          form.find('.zones-added').html(event ? handleEventZones(arrZones, true) : '');
+          form.find('.search-zones').val('');
+          form.find('.reg-members-available').html('');
+          form.find('.close_registration').val(event.close_registration );
+          form.find('.event-participants_count').val(event.participants_count );
+        } else {
+          form.modal('show');
+          form.find('.event-name').val(event ? event.event_name : '').keyup();
+          form.find('.event-type').val(event ? event.event_type : '_none_').change();
+          form.find('.event-locality').val(event ? event.locality_key : '_none_').change();
+          form.find('.event-start-date').val(event ? formatDate(event.start_date) : '').keyup();
+          form.find('.event-end-date').val(event ? formatDate(event.end_date) : '').keyup();
+          form.find('.event-reg-end-date').val(event ? formatDate(event.regend_date) : '').keyup();
+        }
 
         form.find('.btnHandleEventForm').addClass(event ? 'doSetEvent' : 'doAddEvent').removeClass(event ? 'doAddEvent' : 'doSetEvent');
         form.find('.modal-header').html('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h3 id="regEndedTitle">'+ (event ? "Редактировать мероприятие" : "Добавление мероприятия") + '</h3>');
@@ -1175,7 +1235,7 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
         var endDate = form.find('.event-end-date').val();
         var regendDate = form.find('.event-reg-end-date').val();
 
-        if(arrAdmins.length===0 || arrAdminsEmail.length === 0){
+        if(admins.length===0){
             showError('Необходимо добавить ответственных за регистрацию');
             return;
         }
@@ -1206,7 +1266,14 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
             service: form.find('.event-service').val() === '_none_' ? 0 : form.find('.event-service').val(),
             accom: form.find('.event-accom').val() === '_none_' ? 0 : form.find('.event-accom').val(),
             close_registration: form.find('.close_registration').val(),
-            participants_count : form.find('.event-participants_count').val()
+            participants_count : form.find('.event-participants_count').val(),
+            currency:form.find('.event-currency-modal').val(),
+            contrib:form.find('.event-contrib-modal').val(),
+            team_email:form.find('.event-email-modal').val(),
+            organizer:form.find('.event-organizer-modal').val(),
+            min_age:form.find('.event-min-age-modal').val(),
+            max_age:form.find('.event-max-age-modal').val(),
+            status:form.find('.event-status-modal').val()
         }).done(function(){
             loadEvents();
             $('#modalAddEditEvent').modal('hide');
@@ -1423,7 +1490,7 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
 });
 
 </script>
-<script src="/js/mainpage.js?v13"></script>
+<script src="/js/mainpage.js?v17"></script>
 
 <?php
 }

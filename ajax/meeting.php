@@ -34,6 +34,16 @@ if(isset($_GET['get_meetings_for_statistics'])){
     echo json_encode(["meetings"=>db_getMeetingsForStatistics($_GET['adminId'], $_GET['localityFilter'], $_GET['meetingFilter'], $_GET['startDate'],$_GET['endDate'])]);
     exit();
 }
+/*
+else if(isset($_GET['get_member_details'])){
+    echo json_encode(array("members"=>db_getDetailsOfAllMembersAdmin($adminId)));
+    exit();
+}
+*/
+else if(isset($_GET['get_member_details_meeting'])){
+    echo json_encode(array("members"=>db_getDetailsOfMembers($_GET['meeting_id'])));
+    exit();
+}
 else if(isset($_GET['get_list']) && isset($_POST['meeting_id'])){
     echo json_encode(["list"=>db_getMeetingMembersList($adminId, $_POST['meeting_id'], $_POST['locality'], $_POST['date'], $_POST['is_summary_meeting'], $_POST['meeting_type'])]);
     exit();
