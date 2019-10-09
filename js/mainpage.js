@@ -10,6 +10,7 @@ $('#modalEditMember').on('show',  function() {
         $('.emDepDate').parent().addClass('error');
     };
 }, 1000);
+  handleFieldsByAdminRole(adminRole, $('.event-row.theActiveEvent').attr('data-private'), $('.event-row.theActiveEvent').attr('data-regstate_key'));
 });
 function showEmptyForm (eventId){
     window.currentEventId = eventId;
@@ -86,3 +87,20 @@ $('#modalAddEditEvent').on('show', function () {
 })
 
 // STOP add event modal fields set
+
+// START DENY FOR REGISTRATION ON PRIVATE
+function handleFieldsByAdminRole(adminRole, isEventPrivate, regstate){
+    $("#forAdminRegNotice").text('');
+    if((adminRole == 1 || adminRole == 0) && isEventPrivate == 1){
+        if (regstate == 'null') {          
+          $("#forAdminRegNotice").text('Отправьте данные после чего, ответственный за регистрацию в вашем регионе подтвердит вашу заявку на данное мероприятие.');
+        }
+    }
+    else{
+        if (!regstate || regstate=='05'){
+        }
+        else{
+        }
+    }
+}
+// STOP DENY FOR REGISTRATION ON PRIVATE

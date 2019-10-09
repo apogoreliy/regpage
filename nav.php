@@ -127,19 +127,23 @@ switch ($h) {
                 if (strpos ($s,"/list")!==FALSE){echo " class='active'";}
                 echo"><a href='/list'>Ответственные</a></li>";
             }*/
-
+/*
             if(isset($memberId) && $isEventAdminNav && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
-                if (strpos ($s,"/statistic")!==FALSE) {echo " class='active'";}
+                if (strpos ($s,"/archive")!==FALSE) {echo " class='active'";}
                 echo"><a href='/statistic'>Архив</a></li>";
             }
-
+*/
             if(isset($memberId) && $memberId == '000005716' && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/event")!==FALSE) {echo " class='active'";}
                 echo"><a href='/event'>Мероприятия</a></li>";
             }
-
+            if(isset($memberId) && $memberId == '000005716' && !isset($isGuest) && db_isAdmin($memberId)) {
+                echo '<li';
+                if (strpos ($s,"/statistic")!==FALSE) {echo " class='active'";}
+                echo"><a href='/statistic'>Статистика</a></li>";
+            }
 
             if(isset($memberId)){
                 echo '<li';

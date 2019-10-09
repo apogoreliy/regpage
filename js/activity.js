@@ -75,7 +75,7 @@ $(document).ready (function (){
       } else {
         $(this).hide();
       }
-    });    
+    });
   }
 
   function pageNameTranslator(page) {
@@ -106,7 +106,7 @@ $(document).ready (function (){
       case "mc" : pageBack = 'Мини-конференции'; break;
       case "ul" : pageBack = 'Избранные ссылки'; break;
       case "event" : pageBack = 'Мероприятия (разр.)'; break;
-      case "statistic" : pageBack = 'Архив'; break;
+      case "statistic" : pageBack = 'Статистика'; break;
       case "activity" : pageBack = 'Активность ответственных'; break;
       case "panel" : pageBack = 'Админка (разр.)'; break;
     }

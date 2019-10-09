@@ -138,7 +138,7 @@ function showError(html, autohide) {
 function showHint(html, autohide) {
 	$("#globalHint > span").html (html);
 	$("#globalHint").fadeIn();
-	if (autohide || typeof autohide === "undefined") window.setTimeout(function() { $("#globalHint").fadeOut (); }, 3000);
+	if (autohide || typeof autohide === "undefined") window.setTimeout(function() { $("#globalHint").fadeOut (); }, 4000);
 }
 
 function displayAidFields (windowWidth, formEl, aidVal){
@@ -471,6 +471,8 @@ function handleAditionalMenu(){
             window.selLocName = suggestion.value;
             $(this).attr ("disabled", "disabled");
             $(this).next (".unblock-input").show ();
+            $("#inputEmLocalityId").focus();
+            $('#modalEditMember').find(".emAddress").focus();
         }
     });
 
@@ -999,11 +1001,13 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
         school_comment : form.find(".emSchoolComment").val(),
         member: window.currentEditMemberId,
         baptized : parseDate (form.find(".emBaptized").val()),
-        page : page !== '/members' && page !== '/reg' && page !== '/admin' ? '/login' : page,
+        page : page !== '/members' && page !== '/reg' && page !== '/admin' ? '/index' : page,
 
         termsUse : form.find('#terms-use-checkbox').prop('checked'),
         isInvitation : isInvitation ? 1 : 0,
-        regListName: form.find('.custom-list').val()
+        regListName: form.find('.custom-list').val(),
+        private: $('.event-row.theActiveEvent').attr('data-private') == 1 && page === '/index' ? 1 : ''
+
     }
 }
 
