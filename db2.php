@@ -281,4 +281,14 @@ function getMembersStatistic($locality) {
 }
 
 // STOP statistic page
+function db_getMsgParamPrivate() {
+  global $db;
+  $msg = 'msg_private_event';
+
+  $res=db_query ("SELECT `value` FROM param WHERE `name` = '$msg'");
+  $msgEcho = '';
+  while ($row = $res->fetch_assoc()) $msgEcho=$row['value'];
+  return $msgEcho;
+}
+
 ?>

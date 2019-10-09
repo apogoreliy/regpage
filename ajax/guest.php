@@ -6,7 +6,7 @@ if (isset ($_GET ['invited'])){
     $error = false;
     $memberId = $_GET ['member'];
     $eventId = $_GET ['event'];
-    
+
     if(db_getEventMember($memberId, $eventId) == null){
         $event=db_getEvent ($eventId);
         if ($event){
@@ -25,11 +25,11 @@ if (isset ($_GET ['invited'])){
     else{
         $error = "Данный участник уже регистрировался";
     }
-    
+
     if($error){
         header("HTTP/1.0 400 Bad Request");
         echo $error;
-    }    
+    }
     exit;
 }
 
@@ -46,9 +46,9 @@ if (isset ($_GET ['restore']))
     exit;
 }
 if (isset ($_POST ['event'])){
-    $adminId = db_getMemberIdBySessionId (session_id());    
-    $memberId=db_setEventMember ($adminId ? $adminId : '', $_GET, $_POST); 
-    $link = db_getPermalink ($memberId, $_POST ['event']);                   
+    $adminId = db_getMemberIdBySessionId (session_id());
+    $memberId=db_setEventMember ($adminId ? $adminId : '', $_GET, $_POST);
+    $link = db_getPermalink ($memberId, $_POST ['event']);
     $messages = db_getEventMessages ($_POST ['event']);
     echo json_encode(array ("permalink"=>$link, "messages"=>$messages));
     exit;
@@ -61,8 +61,12 @@ if (isset ($_GET ['eventId']))
         echo json_encode(array ("info"=>$info));
         exit;
     }
-    else 
+    else
         $error = "Неизвестное мероприятие";
+}
+if (isset ($_GET ['msg_privat'])) {
+  echo json_encode(db_getMsgParamPrivate());
+  exit;
 }
 if (isset ($_GET ['link']))
 {
@@ -81,5 +85,5 @@ else
 header("Content-Type: text/plain; charset=utf-8");
 header("HTTP/1.0 400 Bad Request");
 echo $error;
- 
+
 ?>
