@@ -746,7 +746,7 @@ function db_registerMembers ($adminId, $eventId, $memberIds)
                                 OR NULLIF (m.document_auth,'') IS NULL )
                        )
                        OR (r.arr_date IS NULL OR r.dep_date IS NULL)
-                       OR (e.need_transport>0 AND (r.transport IS NULL OR r.transport = 0))
+                       OR (e.need_transport>0 AND (r.transport IS NULL))
                        OR (e.need_tp>0  AND (NULLIF (m.tp_num,'') IS NULL OR NULLIF (m.tp_auth,'') IS NULL
                             OR m.tp_date IS NULL OR YEAR(m.tp_date)<1900 OR NULLIF (m.tp_name,'') IS NULL)
                             )
@@ -1167,7 +1167,7 @@ function db_getEventsByAdmin($adminId){
         SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name, e.need_status,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
-        e.close_registration, e.need_transport, e.need_prepayment, e.private, e.need_tp,
+        e.close_registration, e.need_transport, e.need_prepayment, e.private, e.need_tp, e.currency,
         (SELECT ea.member_key FROM event_access ea WHERE ea.member_key='$admin' AND ea.key=e.key) as admin_access
         FROM event e
         LEFT JOIN event_zones z ON z.event_key=e.key
@@ -1181,7 +1181,7 @@ function db_getEventsByAdmin($adminId){
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name, e.need_status,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
-        e.need_transport, e.need_prepayment, e.private, e.need_tp,
+        e.need_transport, e.need_prepayment, e.private, e.need_tp, e.currency,
         (SELECT ea.member_key FROM event_access ea WHERE ea.member_key='$admin' AND ea.key=e.key) as admin_access
         FROM event e
         INNER JOIN access a ON a.member_key='$adminId'
@@ -1195,7 +1195,7 @@ function db_getEventsByAdmin($adminId){
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name, e.need_status,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
-        e.need_transport, e.need_prepayment, e.private, e.need_tp,
+        e.need_transport, e.need_prepayment, e.private, e.need_tp, e.currency,
         (SELECT ea.member_key FROM event_access ea WHERE ea.member_key='$admin' AND ea.key=e.key) as admin_access
         FROM event e
         WHERE ((SELECT COUNT(*) FROM event_zones ez WHERE ez.event_key=e.key) = 0 OR e.author='$adminId') AND e.is_active=1 $request
@@ -1206,7 +1206,7 @@ function db_getEventsByAdmin($adminId){
     else{
         $res = db_query("SELECT e.key as id, e.name, e.start_date, e.end_date, e.regend_date, e.min_age, e.max_age,
         e.info, e.need_passport, e.event_type, e.web, e.need_flight, e.list_name,
-        e.need_transport, e.need_prepayment, e.private, e.need_tp, e.need_status,
+        e.need_transport, e.need_prepayment, e.private, e.need_tp, e.need_status, e.currency,
         IF((SELECT COUNT(*) FROM reg rg WHERE rg.event_key=e.key AND (rg.regstate_key = '01' OR rg.regstate_key = '02' OR rg.regstate_key = '04' OR rg.regstate_key is NULL )) >= e.participants_count AND e.participants_count > 0, 1, 0) as stop_registration,
         e.close_registration,
         $admin as admin_access
@@ -1283,10 +1283,10 @@ function db_setEventMember ($adminId, $get, $post){
     $_page = $db->real_escape_string($post['page']);
 
     $isUserAuth = $db->real_escape_string($adminId) !== '';
-    $_adminId = $_page != '/login' ? $db->real_escape_string($adminId) : (isset($post['member']) && strlen($post ['member']) ? $db->real_escape_string($post['member']) : null);
-    $_memberId = $_page == '/login' || $_page == '/index' ? (isset($post['member']) && strlen($post ['member']) ? $db->real_escape_string($post['member']) : null) : ($_page == '/members' ? isset($get ['create']) ? "dont_register" : $db->real_escape_string($get ['update_member'] ) : $db->real_escape_string($get['member']));
-    $_eventId = $_page == '/login' || $_page == '/index' ? $db->real_escape_string($post['event']) : ($_page == '/members' ? null : $db->real_escape_string($get['event']));
-    $doRegister = $_page == '/login' || $_page == '/index' ? true : ( $_page == '/reg' || $_page == '/admin' ? isset ($get ['register']) : false );
+    $_adminId = $_page != '/index' ? $db->real_escape_string($adminId) : (isset($post['member']) && strlen($post ['member']) ? $db->real_escape_string($post['member']) : null);
+    $_memberId = $_page == '/index' || $_page == '/invites' ? (isset($post['member']) && strlen($post ['member']) ? $db->real_escape_string($post['member']) : null) : ($_page == '/members' ? isset($get ['create']) ? "dont_register" : $db->real_escape_string($get ['update_member'] ) : $db->real_escape_string($get['member']));
+    $_eventId = $_page == '/index' || $_page == '/invites' ? $db->real_escape_string($post['event']) : ($_page == '/members' ? null : $db->real_escape_string($get['event']));
+    $doRegister = $_page == '/index' || $_page == '/invites' ? true : ( $_page == '/reg' || $_page == '/admin' ? isset ($get ['register']) : false );
     $_name = preg_replace("/#/", " ", $db->real_escape_string($post['name']));
     $_address = isset($post['address']) && strlen($post ['address']) ? $db->real_escape_string($post['address']) : '';
     $_arr_date = $_page == '/members' ? (DONT_CHANGE) : (isset($post['arr_date']) ? $db->real_escape_string($post['arr_date']) : null);
@@ -1302,7 +1302,7 @@ function db_setEventMember ($adminId, $get, $post){
     $_document_num = isset($post['document_num']) && strlen($post ['document_num']) ? $db->real_escape_string($post['document_num']) : null;
     $_document_date = isset($post['document_date']) && strlen($post ['document_date']) ? $db->real_escape_string($post['document_date']) : null;
     $_document_auth = isset($post['document_auth']) && strlen($post ['document_auth']) ? $db->real_escape_string($post['document_auth']) : null;
-    $_category_key = $_page =='/login' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['category_key']) && strlen($post ['category_key']) ? $db->real_escape_string($post['category_key']) : null);
+    $_category_key = $_page =='/index' || $_page == '/invites' ? (DONT_CHANGE) : (isset($post['category_key']) && strlen($post ['category_key']) ? $db->real_escape_string($post['category_key']) : null);
     $_document_key = isset($post['document_key']) && strlen($post ['document_key']) ? $db->real_escape_string($post['document_key']) : null;
     $_tp_num = isset($post['tp_num']) && strlen($post ['tp_num']) ? $db->real_escape_string($post['tp_num']) : null;
     $_tp_date = isset($post['tp_date']) && strlen($post ['tp_date']) ? $db->real_escape_string($post['tp_date']) : null;
@@ -1312,25 +1312,25 @@ function db_setEventMember ($adminId, $get, $post){
     $_flight_num_arr = $_page =='/members' ? (DONT_CHANGE) : (isset($post['flight_num_arr']) ? $db->real_escape_string($post['flight_num_arr']) : null);
     $_flight_num_dep = $_page =='/members' ? (DONT_CHANGE) : (isset($post['flight_num_dep']) ? $db->real_escape_string($post['flight_num_dep']) : null);
     $_note = $_page =='/members' ? (DONT_CHANGE) : (isset($post['note']) ? $db->real_escape_string($post['note']) : null);
-    $_status_key = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['status_key']) ? $db->real_escape_string($post['status_key']) : null);
+    $_status_key = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['status_key']) ? $db->real_escape_string($post['status_key']) : null);
     $_male = $post["gender"]=="male" ? 1 : ($post["gender"]=="female" ? 0 : null);
-    $_mate_key = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['mate_key']) ? $db->real_escape_string($post['mate_key']) : '');
+    $_mate_key = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['mate_key']) ? $db->real_escape_string($post['mate_key']) : '');
     $_accom = $_page =='/members' ? (DONT_CHANGE) : (isset($post['accom']) && $post['accom']!='' ? $db->real_escape_string($post['accom']) : null);
-    $_coord = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : $db->real_escape_string($post['coord']);
+    $_coord = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : $db->real_escape_string($post['coord']);
     $_temp_phone = DONT_CHANGE;
     $_transport = $_page =='/members' ? (DONT_CHANGE) : (isset($post['transport']) && $post['transport']!='' ? $db->real_escape_string($post['transport']) : null);
     $_citizenship_key = $db->real_escape_string($post['citizenship_key']);
     $_parking = $_page =='/members' ? (DONT_CHANGE) : (isset($post['parking']) && $post['parking']!='' ? $db->real_escape_string($post['parking']) : null);
     $_avtomobile = $_page =='/members' ? (DONT_CHANGE) : (isset($post['avtomobile']) && $post['avtomobile']!='' ? $db->real_escape_string($post['avtomobile']) : '');
     $_avtomobile_number = $_page =='/members' ? (DONT_CHANGE) : (isset($post['avtomobile_number']) && $post['avtomobile_number']!='' ? $db->real_escape_string($post['avtomobile_number']) : '');
-    $_prepaid = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (int)$post['prepaid'];
-    $_currency = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['currency']) ? $db->real_escape_string($post['currency']) : null);
-    $_service_key = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['service_key']) ? $db->real_escape_string($post['service_key']) : null);
-    $is_guest = $_page == '/login';
-    $_aid = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['aid']) ? (int)$post['aid'] : 0);
-    $_contr_amount = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['contr_amount']) ? (int)$post['contr_amount'] : 0);
-    $_trans_amount = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['trans_amount']) ? (int)$post['trans_amount'] : 0);
-    $_fellowship = $_page == '/members' || $_page == '/login' ? (DONT_CHANGE) : (isset($post['fellowship']) ? (int)$post['fellowship'] : 0);
+    $_prepaid = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (int)$post['prepaid'];
+    $_currency = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['currency']) ? $db->real_escape_string($post['currency']) : null);
+    $_service_key = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['service_key']) ? $db->real_escape_string($post['service_key']) : null);
+    $is_guest = $_page == '/index';
+    $_aid = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['aid']) ? (int)$post['aid'] : 0);
+    $_contr_amount = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['contr_amount']) ? (int)$post['contr_amount'] : 0);
+    $_trans_amount = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['trans_amount']) ? (int)$post['trans_amount'] : 0);
+    $_fellowship = $_page == '/members' || $_page == '/index' ? (DONT_CHANGE) : (isset($post['fellowship']) ? (int)$post['fellowship'] : 0);
     $_schoolStart = $_page !== '/members' ? (DONT_CHANGE) : (isset($post['schoolStart']) ? (int)$post['schoolStart'] : 0);
     $_schoolEnd = $_page != '/members' ? (DONT_CHANGE) : (isset($post['schoolEnd']) ? (int)$post['schoolEnd'] : 0);
     $_collegeStart = $_page != '/members' ? (DONT_CHANGE) : (isset($post['collegeStart']) ? (int)$post['collegeStart'] : 0);
@@ -1341,9 +1341,11 @@ function db_setEventMember ($adminId, $get, $post){
     $_schoolComment = $_page !='/members' ? (DONT_CHANGE) : (isset($post['school_comment']) ? $db->real_escape_string($post['school_comment']) : '');
     $_visa = $_page =='/members' ? (DONT_CHANGE ): $db->real_escape_string($post['visa']);
     $_baptized = $_page !='/members' ? (DONT_CHANGE) : (isset($post['baptized']) ? $post['baptized'] : null);
-    $_termsUse = $_page === '/login' ? $post['termsUse'] : DONT_CHANGE;
+    $_termsUse = $_page === '/index' ? $post['termsUse'] : DONT_CHANGE;
     $isInvitation = isset($post['isInvitation']) && $post['isInvitation'] == true ? !!$post['isInvitation'] : false;
     $regListName = $_page == '/members' ? (DONT_CHANGE) : (isset($post['regListName']) ? $db->real_escape_string($post['regListName']) : null);
+    $private_event = $_page === '/index' ? $db->real_escape_string($post['private']) : DONT_CHANGE;
+    $adminRole = $adminId ? db_getAdminRole($adminId) : '';
 
     db_checkSync ();
 
@@ -1521,7 +1523,7 @@ function db_setEventMember ($adminId, $get, $post){
                                               aid, contr_amount, trans_amount, list_name, fellowship, visa, avtomobile, avtomobile_number,
                                               changed, regstate_key, member_key, event_key, permalink, created, web, contrib)
                                               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,"
-                                                . ($doRegister ? "'01'," : "NULL,")
+                                                . ($doRegister && (!$private_event || $adminRole == 2) ? "'01'," : "NULL,")
                                                 . ( !$_memberId ? "'$newMemberId'" : "'$_memberId'") .", '$_eventId', UUID(), NOW(), $_web, $_contrib)")
                                : $db->prepare ("UPDATE reg SET arr_date=?, arr_time=?, dep_date=?, dep_time=?, accom=?,
                                               transport=?, mate_key=?, admin_key=?, status_key=?,
@@ -1530,7 +1532,7 @@ function db_setEventMember ($adminId, $get, $post){
                                               aid = ?, contr_amount = ?, trans_amount = ?, list_name=?, fellowship=?, visa=?, avtomobile =?, avtomobile_number=? "
                                               .( $_aid < 1 ? ", aid_paid=NULL " : "" )
                                               . ($regstate=='01' || $regstate=='02' || $regstate=='04' ? ", changed=1" : "")
-                                              . ((!$regstate || $regstate=='05') && $doRegister ? ", regstate_key='01'" : "")
+                                              . ((!$regstate || $regstate=='05') && $doRegister && (!$private_event || $adminRole == 2) ? ", regstate_key='01'" : "")
                                               . " where member_key='$_memberId' and event_key='$_eventId'");
 
         if (!$stmt) throw new Exception ($db->error);
@@ -1543,7 +1545,7 @@ function db_setEventMember ($adminId, $get, $post){
         $stmt->close ();
     }
 
-    if($_page == '/login'){
+    if($_page == '/index'){
         db_sendMessagesToMembersAdmins($_eventId, $_name, $_locality_key);
     }
 
@@ -1551,7 +1553,7 @@ function db_setEventMember ($adminId, $get, $post){
 }
 
 function db_setEventMembers ($adminId, $eventId, $memberIds, $arr_date, $arr_time, $dep_date, $dep_time,
-                             $accom, $transport, $status, $coord, $service, $mate)
+                             $accom, $transport, $status, $coord, $service, $mate, $parking)
 {
     global $db;
     db_checkSync ();
@@ -1573,6 +1575,7 @@ function db_setEventMembers ($adminId, $eventId, $memberIds, $arr_date, $arr_tim
     if (is_numeric($coord)) db_query ("UPDATE reg SET coord='".$db->real_escape_string($coord).$ending);
     if (is_numeric($service)) db_query ("UPDATE reg SET service_key='".$db->real_escape_string($service).$ending);
     if (is_numeric($mate)) db_query ("UPDATE reg SET mate_key='".$db->real_escape_string($mate).$ending);
+    if (is_numeric($parking)) db_query ("UPDATE reg SET parking='".$db->real_escape_string($parking).$ending);
 }
 
 function db_setEventMembersService ($adminId, $eventId, $memberIds, $paid, $place, $attended)
@@ -3211,7 +3214,7 @@ function db_getEventsForEventsPage($adminId, $sort_type, $sort_field){
                     SELECT e.key as id, e.name as name, e.need_passport, e.need_transport, e.close_registration,
                     e.participants_count,
                     e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
-                    e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key
+                    e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key, re.member_key
                     FROM event e
                     LEFT JOIN reg re ON re.event_key=e.key AND re.member_key='$adminId'
                     LEFT JOIN locality l ON l.key=e.locality_key
@@ -3227,7 +3230,7 @@ function db_getEventsForEventsPage($adminId, $sort_type, $sort_field){
                     SELECT e.key as id, e.name as name, e.need_passport, e.need_transport, e.close_registration,
                     e.participants_count,
                     e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
-                    e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key
+                    e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key, re.member_key
                     FROM event e
                     LEFT JOIN reg re ON re.event_key=e.key AND re.member_key='$adminId'
                     LEFT JOIN locality l ON l.key=e.locality_key
@@ -3243,7 +3246,7 @@ function db_getEventsForEventsPage($adminId, $sort_type, $sort_field){
                     SELECT DISTINCT e.key as id, e.name as name, e.need_passport, e.need_transport, e.close_registration,
                     e.participants_count,
                     e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
-                    e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key
+                    e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key, re.member_key
                     FROM event e
                     LEFT JOIN reg re ON re.event_key=e.key AND re.member_key='$adminId'
                     LEFT JOIN locality l ON l.key=e.locality_key
@@ -3259,7 +3262,7 @@ function db_getEventsForEventsPage($adminId, $sort_type, $sort_field){
                     SELECT e.key as id, e.name as name, e.need_passport, e.need_transport, e.close_registration,
                     e.participants_count,
                     e.need_prepayment, e.start_date, e.end_date, e.min_age, e.max_age, e.need_flight, e.need_tp, e.regend_date, e.info, e.private,
-                    e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key
+                    e.locality_key, e.author, l.name as locality_name, e.is_active, e.archived, re.regstate_key, re.member_key
                     FROM event e
                     LEFT JOIN reg re ON re.event_key=e.key AND re.member_key='$adminId'
                     LEFT JOIN locality l ON l.key=e.locality_key

@@ -61,7 +61,7 @@
                 <div class="control-group row-fluid">
                     <label class="span12">Статус<sup>*</sup></label>
                     <select class="span12 beStatus" valid="required">
-                        <option value='_none_' selected>&nbsp;</option>
+                        <option value="_none_" selected>&nbsp;</option>
                         <?php foreach (db_getStatuses() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
                     </select>
                 </div>
@@ -70,7 +70,7 @@
                 <label class="span12 beLblTransport"><span class="transportText"></span><a href="#" class="transportHint" rel="tooltip" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
                 <div class="control-group row-fluid beGrpTransport">
                     <select class="span12 beTransport">
-                        <option value='_none_' selected>&nbsp;</option>
+                        <option value="_none_" selected>&nbsp;</option>
                         <option value="1">ТРЕБУЕТСЯ</option>
                         <option value="0">НЕ ТРЕБУЕТСЯ</option>
                     </select>

@@ -14,8 +14,8 @@ $listAdminLocality = db_getAdminsListByLocalitiesCombobox($adminLocality);
 $selMeetingLocality = isset ($_COOKIE['selMeetingLocality']) ? $_COOKIE['selMeetingLocality'] : '_all_';
 $selMeetingCategory = isset ($_COOKIE['selMeetingCategory']) ? $_COOKIE['selMeetingCategory'] : '_all_';
 
-$sort_field = isset ($_SESSION['sort_field-visits']) ? $_SESSION['sort_field-meetings'] : 'date_visit';
-$sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetings'] : 'asc';
+$sort_field = isset ($_SESSION['sort_field-visits']) ? $_SESSION['sort_field-visits'] : 'date_visit';
+$sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-visits'] : 'asc';
 ?>
 
 <style>body {padding-top: 60px;}</style>
@@ -50,10 +50,10 @@ $sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetin
                                 echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
                             ?>
                         </li>
-                        <li><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='meeting_type' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                        <li><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='act' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                         <li><a id="sort-responsible" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
                         </li>
-                        <li><a id="sort-status" href="#" title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
+                        <li><a id="sort-performed" href="#" title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='performed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i>
                         </li>
                     </ul>
                 </div>
@@ -98,7 +98,7 @@ $sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-meetin
                         ?>
                         <th style="text-align: left; min-width:100px"><a id="sort-act" href="#" title="сортировать">Событие</a>&nbsp;<i class="<?php echo $sort_field=='act' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                         <th style="text-align: left; min-width:170px"><a id="sort-responsible" href="#" title="сортировать">Ответственный</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                        <th style="text-align: left; width:130px;"><a id="sort-status" href="#" title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='responsible' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                        <th style="text-align: left; width:130px;"><a id="sort-performed" href="#" title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='performed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                     </tr>
                     </thead>
                     <tbody><tr><td colspan="8"><h3 style="text-align: center">Загрузка...</h3></td></tr></tbody>

@@ -90,7 +90,7 @@
         data-custom_list_item ="<?php echo $event->list_name; ?>"
         data-regend="<?php echo $event->regend_date; ?>" data-event_type="<?php echo $event->event_type; ?>" data-private="<?php echo $event->private; ?>" data-access="<?php echo $memberId == $event->admin_access ? 1: 0 ; ?>"
         data-show-locality-field="<?php echo $showLocalityField ? 1 : 0; ?>"
-        data-need_flight="<?php echo $event->need_flight; ?>" data-need_tp="<?php echo $event->need_tp; ?>" data-min_age="<?php echo $event->min_age; ?>" data-max_age="<?php echo $event->max_age; ?>" data-need_status="<?php echo $event->need_status; ?>"
+        data-need_flight="<?php echo $event->need_flight; ?>" data-need_tp="<?php echo $event->need_tp; ?>" data-min_age="<?php echo $event->min_age; ?>" data-max_age="<?php echo $event->max_age; ?>" data-need_status="<?php echo $event->need_status; ?>" data-currency="<?php echo $event->currency; ?>"
         >
         <div>
         <div class="btn-toolbar">
@@ -129,6 +129,15 @@
                     <li><a class="downloadExl" data-download="coord" tabindex="-1" href="#">Координаторы</a></li>
                     <li><a class="downloadExl" data-download="parking" tabindex="-1" href="#">Данные о парковке</a></li>
                 </ul>
+            </div>
+            <div class="btn-group" style="<?php if ($memberId != '000005716' && $memberId != '000001679') { ?>display:none<?php }; ?>">
+              <a class="btn upload-toggle uploadGeneral" data-toggle="dropdown" href="#">
+                  <i class="fa fa-upload"></i> <span class="hide-name">Загрузить</span>
+                  <span class=""></span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li><a class="uploadExl" data-download="" tabindex="-1" href='#'>Загрузить из файла</a></li>
+              </ul>
             </div>
             <select style="margin-bottom: 0" class="span2 <?php echo " filterLocality-".$event->id; ?> "></select>
             <select style="margin-bottom: 0" class="span2 filter-regstate">
@@ -549,7 +558,75 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-success downloadItems" data-dismiss="modal" aria-hidden="true">Скачать</button>
-        <button class="btn btn-default cancelDownloadItems" data-dismiss="modal" aria-hidden="true">Отменть</button>
+        <button class="btn btn-default cancelDownloadItems" data-dismiss="modal" aria-hidden="true">Отменить</button>
+    </div>
+</div>
+
+<!-- Change Document Items To Upload Modal -->
+<div id="modalUploadItems" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="regEndedTitle" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close cancelDownloadItems" data-dismiss="modal" aria-hidden="true">x</button>
+        <h4>Выберите файл для загрузки</h4>
+    </div>
+    <div class="modal-body">
+      <div class="" id="uploadMsgError" style="color: red; font-size: 18px;"></div>
+      <form id="formUpload" class="" action="ajax/excelUpload2.php" method="post" enctype="multipart/form-data">
+          <input type="file" id="upload_file" name="upload_file" accept=".xls, .xlsx">
+          <button type="submit" id="uploadBtn" style="display:none;">Заг-Заг</button>
+      </form>
+      <hr>
+      <div class="">
+        <label for="uploadCountry">Страна, гражданство*</label>
+        <select class="" id="uploadCountry">
+            <option checked value="RU">Россия</option>
+            <option value="UA">Украина</option>
+        </select>
+        <label for="uploadLocality">Местность*</label>
+        <select class="" id="uploadLocality">
+          <option checked value="_none_"></option>
+            <?php
+                foreach (db_getLocalities() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>";
+            ?>
+        </select>
+        <label for="uploadCategory">Категория*</label>
+        <select class="" id="uploadCategory">
+          <option checked value="_none_"></option>
+            <?php foreach (db_getCategories() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+        </select>
+        <label for="uploadAccom">Размещение*</label>
+        <select class="" id="uploadAccom">
+            <option value='_none_' selected>&nbsp;</option>
+            <option value="1">ТРЕБУЕТСЯ</option>
+            <option value="0">НЕ ТРЕБУЕТСЯ</option>
+        </select>
+      </div>
+      <hr>
+      <div class="" id="uploadPrepare">
+        <div class="" id="uploadPrepareClo">
+
+        </div>
+        <div class="" id="uploadPrepareStr">
+
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success saveUploadItems" aria-hidden="true">Загрузить</button>
+        <button class="btn btn-default cancelUploadItems" data-dismiss="modal" aria-hidden="true">Отменить</button>
+    </div>
+</div>
+
+<!-- Modal message upload xlsx -->
+<div id="uplpadStringCounterModal" data-width="400" class="modal hide fade modal-edit-member" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    </div>
+    <div class="modal-body">
+      <h4>Будет добавлено <span id="uplpadStringCounter"></span> строк</h4>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" id="uplpadStringCounterBtn" data-dismiss="modal" aria-hidden="true">Да</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Нет</button>
     </div>
 </div>
 
@@ -648,7 +725,6 @@
         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Ok</button>
     </div>
 </div>
-
 <script>
 var globalSingleCity = "<?php echo $singleCity; ?>";
     $(document).ready (function (){
@@ -1732,19 +1808,21 @@ function checkStopEventRegistration(eventId){
             });
 
             var request = getRequestFromFilters(setFiltersForRequest(eventId));
-
+            var needTransportTemp = $(".tab-pane.active").attr("data-transport") == "1" ? "0" : "";
+            console.log($(".beTransport").val());
             $.post("/ajax/set.php?members="+ids.join(',')+"&event="+eventId+request,
             {
-                arr_date: parseDate ($(" .beArrDate").val()),
-                arr_time: parseTime ($(" .beArrTime").val()),
-                dep_date: parseDate ($(" .beDepDate").val()),
-                dep_time: parseTime ($(" .beDepTime").val()),
-                accom: $(" .beAccom").val() == "_none_" ? "" : $(" .beAccom").val(),
-                transport: $(" .beTransport").val() == "_none_" ? "" : $(" .beTransport").val(),
-                status: $(" .beStatus").val() == "_none_" ? "" : $(" .beStatus").val(),
-                service: $(" .beService").val() == "_none_" ? "" : $(" .beService").val(),
-                coord: $(" .beCoord").val(),
-                mate: $(" .beMate").val() == "_none_" ? "" : $(" .beMate").val(),
+                arr_date: parseDate ($(".beArrDate").val()),
+                arr_time: parseTime ($(".beArrTime").val()),
+                dep_date: parseDate ($(".beDepDate").val()),
+                dep_time: parseTime ($(".beDepTime").val()),
+                accom: $(".beAccom").val() == "_none_" ? "" : $(".beAccom").val(),
+                transport: $(".beTransport").val() == "_none_" || $(".beTransport").val() == null ? needTransportTemp : $(".beTransport").val(),
+                status: $(".beStatus").val() == "_none_" ? "" : $(" .beStatus").val(),
+                service: $(".beService").val() == "_none_" ? "" : $(" .beService").val(),
+                coord: $(".beCoord").val(),
+                mate: $(".beMate").val() == "_none_" ? "" : $(" .beMate").val(),
+                parking: "0",
             }).done (function(data) {
                 refreshEventMembers (eventId, data.members, data.localities);
                 $('#modalBulkEditor').modal('hide');

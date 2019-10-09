@@ -204,3 +204,258 @@ $('#download-arr-dep-time').click(function () {
 $('#download-tp').click(function () {
   arrDepSecondCheckbox(this, '#download-tp-name');
 });
+// START UPLOADING FILES
+var xlsxDataGlobal, xlsxDataGlobalReg = [];
+
+$(".uploadExl").unbind('click');
+$(".uploadExl").click(function(event){
+    event.stopPropagation();
+    $('#modalUploadItems').modal().show();
+});
+
+function getUpdaterEditor(array) {
+  var female, ii = 0, emptyString = 0;
+  for (var i = 0; i < array.length; i++) {
+    var item = array[i];
+    if (i!=0) {
+      ii = 0;
+      emptyString = 0;
+      for (var key in item) {
+        //var ii = 0; ii < array[i].length; ii++
+        if ((ii > 2) && (ii < 14)) {
+          if (ii === 3) {
+            var y = item[key];
+            var x = item[key-1];
+            var u;
+            if (item[key]) {
+              u = y.slice(-1);
+            }
+            if ((u == 'а') || (u == 'я') || (u == 'э') || (u == 'е')) {
+              female = 1;
+            } else {
+              female = 0;
+            }
+            var z = x + ' ' + y;
+            item[key-1] = z;
+          } else if (ii === 6) {
+            var d = item[key-2];
+            var f = item[key];
+            var g = f + ' ' + d;
+            item[key-2] = g;
+            item[key] = '';
+            female == 1 ? item[key-1] = 0 : item[key-1] = 1;
+          } else if (ii === 8) {
+            var m = item[key-2];
+            var n = item[key];
+            var v = n + ' ' + m;
+            item[key-2] = v;
+            item[key] = '';
+          } else if (ii === 10) {
+            var p = item[key-4];
+            var j = item[key];
+            var r = item[key- 10];
+            var o = j + ' ' + r + ' ' + p;
+            item[key- 10] = o;
+            item[key] = '';
+            item[key-4] = item[key-2];
+            item[key-2] = '';
+          } else if (ii === 11) {
+            item[key-4] = $('#uploadCountry').val();
+          } else if (ii === 12) {
+            item[key-4] = $('#uploadCategory').val();
+          } else {
+            var a = item[key];
+            item[key-1] = a;
+            item[key] = '';
+          }
+        }
+        ii++;
+      }
+    }
+  }
+  uploadTableBuilder (array);
+}
+
+function getUpdaterEditorForRegTbl(array) {
+  var female, ii = 0;
+  for (var i = 0; i < array.length; i++) {
+    var item = array[i];
+    if (i!=0) {
+      ii = 0;
+    for (var key in item) {
+        //var ii = 0; ii < array[i].length; ii++
+        if ((ii > 0) && (ii < 14)) {
+          if (ii === 1) {
+            var a = $('.tab-pane.active').attr('id');
+            a ? a = a.slice(9,17) : '';
+            item[key] = a;
+          } else if (ii === 2) {
+            item[key] = $('.tab-pane.active').attr('data-start');
+          } else if (ii === 3) {
+            item[key] = $('.tab-pane.active').attr('data-end');
+          } else if (ii === 4) {
+            item[key] = '01';
+          } else if (ii === 5) {
+            item[key] = window.adminId;
+          } else if (ii === 6) {
+            item[key] = $('.tab-pane.active').attr('data-currency');
+          } else if (ii === 8) {
+            var m = item[key-1];
+            var n = item[key];
+            var v = m + ' ' + n;
+            item[key-1] = v;
+            item[key] = $('#uploadAccom').val();
+          } else if ((ii === 9) || (ii === 10)) {
+            item[key] = null;
+          }
+        }
+        ii++;
+      }
+    }
+  }
+}
+
+function uploadTableBuilder (array) {
+var htmlValueCol = '<h4>Колонки</h4>', htmlValueStr = '<h4>Строки</h4>';
+  for (var i = 0; i < array.length; i++) {
+    var halas;
+      for (var ii = 0; ii < array[i].length; ii++) {
+        if (i == 0) {
+          if (array[i][ii]) {
+            //console.log(array[i][ii]);
+            array[i][ii] ? htmlValueCol += '<label><input type="checkbox" data-col="'+array[i][ii]+'" checked> '+array[i][ii]+'</label>' : '';
+          } else if (!halas) {
+            htmlValueCol += '<hr>';
+            //$('#modalUploadItems').find('#uploadPrepare').html(htmlValueCol);
+            halas = 1;
+          }
+        }
+       }
+      }
+      //ДОДЕЛАТЬ ВЫДАЧУ СТРОК
+/*
+      for (var iii = 0; iii <= array.length; iii++) {
+
+        if ((iii != 0)) {
+          if (array[iii] && (iii !=array.length)) {
+              htmlValueStr += '<label><input type="checkbox" data-col="'+array[iii][3]+'" checked>'+array[iii][3]+'</label>';
+            } else{
+              console.log(htmlValueStr);
+              $('#modalUploadItems').find('#uploadPrepareStr').html(htmlValueStr);
+              break;
+            }
+          }
+        }*/
+}
+$('.saveUploadItems').click(function () {
+  var countStr = xlsxDataGlobal.length -1;
+  for (var i = 0; i < xlsxDataGlobal.length; i++) {
+    var counterLCC = 0;
+    for (var ii in xlsxDataGlobal[i]) {
+      if (counterLCC == 7) {
+        xlsxDataGlobal[i][ii] = $('#uploadCountry').val();
+      } else if (counterLCC == 8) {
+        xlsxDataGlobal[i][ii] = $('#uploadLocality').val();
+      } else if (counterLCC == 9) {
+        xlsxDataGlobal[i][ii] = $('#uploadCategory').val();
+      } else if (counterLCC == 10) {
+        xlsxDataGlobal[i][ii] = $('#uploadAccom').val();
+      }
+      counterLCC++; // Что то не то считает - калонки а вроде должен строки
+    }
+  }
+  $('#uplpadStringCounterModal').modal('show');
+  $('#uplpadStringCounterModal').find('#uplpadStringCounter').text(countStr);
+});
+
+$('#uplpadStringCounterBtn').click(function () {
+  if ($('#upload_file').val() && ($('#uploadCategory').val() != '_none_') && ($('#uploadCountry').val() != '_none_') && ($('#uploadAccom').val() != '_none_')) {
+    var countStr = xlsxDataGlobal.length -1;
+    for (var i = 0; i < xlsxDataGlobal.length; i++) {
+      var counterLCC = 0;
+      for (var ii in xlsxDataGlobal[i]) {
+        if (counterLCC == 7) {
+          xlsxDataGlobal[i][ii] = $('#uploadCountry').val();
+        } else if (counterLCC == 8) {
+          xlsxDataGlobal[i][ii] = $('#uploadLocality').val();
+        } else if (counterLCC == 9) {
+          xlsxDataGlobal[i][ii] = $('#uploadCategory').val();
+        } else if (counterLCC == 10) {
+          xlsxDataGlobal[i][ii] = $('#uploadAccom').val();
+        }
+        counterLCC++;
+      }
+    }
+    var y = JSON.stringify(xlsxDataGlobalReg);
+    var x = JSON.stringify(xlsxDataGlobal);
+    $.post('/ajax/excelUpload.php', {xlsx_array: x, xlsx_array_reg: y})
+    .done(function(data){
+      //console.log(data);
+    });
+    $('#modalUploadItems').modal('hide');
+    setTimeout(function () {
+        loadDashboard();
+        showHint('Обработо '+countStr+' строк');
+    }, 300);
+  } else {
+    $('#uploadMsgError').text('Местность, категория или файл не выбраны.');
+  }
+});
+
+$('#upload_file').change(function() {
+  $('#uploadMsgError').text('');
+  $('#uploadBtn').click();
+  if ($('#upload_file').val()) {
+    setTimeout(function () {
+      $('.saveUploadItems').attr('disabled', false);
+    }, 2500);
+  }
+});
+
+$('form').on('submit', function (e) {
+    e.preventDefault();
+    // logic
+    $.ajax({
+        url: this.action,
+        type: this.method,
+        data: new FormData(this), // important
+        processData: false, // important
+        contentType: false, // important
+        success: function (res) {
+          xlsxDataGlobal = res;
+          console.log(xlsxDataGlobal);
+        }
+    });
+
+    $.ajax({
+        url: this.action,
+        type: this.method,
+        data: new FormData(this), // important
+        processData: false, // important
+        contentType: false, // important
+        success: function (res) {
+          xlsxDataGlobalReg = res;
+          //console.log(xlsxDataGlobalReg);
+        }
+    });
+
+    setTimeout(function () {
+      if (xlsxDataGlobal[0].length < 13) {
+        $('#uploadMsgError').text('Не достаточно полей в файле.');
+        return
+      }
+      getUpdaterEditor(xlsxDataGlobal);
+      //console.log(xlsxDataGlobal);
+      getUpdaterEditorForRegTbl(xlsxDataGlobalReg);
+      //console.log(xlsxDataGlobalReg);
+    }, 2500);
+});
+
+$('#modalUploadItems').on('show', function () {
+  $('.saveUploadItems').attr('disabled', 'disabled');
+  $('#upload_file').val('');
+  $('#uploadCategory').val('_none_');
+  $('#uploadLocality').val('_none_');
+  $('#uploadAccom').val('_none_');
+  $('#uploadPrepare').html('');
+});

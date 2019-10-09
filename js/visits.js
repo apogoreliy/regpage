@@ -623,7 +623,7 @@ $("a[id|='sort']").click (function (){
 
 function sortingVisits(sortType) {
   var list = [], tableRows = [], phoneRows = [], isLocationAlone = $('#selMeetingLocality option').length == 2 ?  true : false;
-  $('#meetings').find('tr').each(function(){
+  $('#meetings tbody').find('tr').each(function(){
       var membersList = $(this).attr('data-members'),
           responsible = $(this).attr('data-responsible'),
           performed = $(this).attr('data-performed'),

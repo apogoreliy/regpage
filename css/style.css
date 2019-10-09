@@ -646,10 +646,9 @@ input.error, .control-group.error select, textarea.error {
 #meetingLocalityModal{
     width: 100%;
 }
-#addEditMeetingModal .modal-footer{
+#addEditMeetingModal .modal-footer, #addEditStatisticModal .modal-footer{
     display: flow-root;
 }
-
 .meeting-note{
     width: 100%;
     padding: 0;
@@ -674,6 +673,7 @@ input.error, .control-group.error select, textarea.error {
     line-height: 30px;
     display: inline;
 }
+
 .meeting-list-counts{
     font-size: 14px;
 }
@@ -1183,6 +1183,7 @@ input.error, .control-group.error select, textarea.error {
     border: 1px solid white;
     border-bottom: 1px solid #ddd;
 }
+
 
 .textblock{
     min-height: 10px;
@@ -1858,3 +1859,4 @@ input.error, .control-group.error select, textarea.error {
 .active_ruler {
   background-color: lightblue;
 }
+/*multiselect with checkboxes on the statistic page*/

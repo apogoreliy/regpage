@@ -149,7 +149,7 @@ else if (isset ($_SESSION["logged-in"])){
             }
         ?>
         <div style="margin-top:10px; margin-left:10px; "><a id="frameArchive">Показать архив мероприятий</a></div>
-        <iframe id="frameArchivePage" style="width:1168px; height: 1000px; border: none;"src="/statistic.php"></iframe>
+        <iframe id="frameArchivePage" style="width:1168px; height: 1000px; border: none;"src="/archive.php"></iframe>
     </div>
 
 <!-- Edit Member Modal -->
@@ -175,6 +175,8 @@ else if (isset ($_SESSION["logged-in"])){
         <?php require_once 'formTab.php'; ?>
     </div>
     <div class="modal-footer">
+      <div id="forAdminRegNotice" style="color: red; font-style: bold; font-size: 16px; padding-top: 15px; text-align: center;">
+      </div>
         <button class="btn btn-primary disable-on-invalid" id="btnDoRegisterGuest">Отправить данные</button>
         <button class="btn" id="btnCancelChanges">Отмена</button>
     </div>
@@ -217,7 +219,7 @@ else if (isset ($_SESSION["logged-in"])){
         <h3 style="text-align: center;">Ваши данные успешно сохранены!</h3>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Ok</button>
+        <button id="changeBlankConfirmation" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Ok</button>
     </div>
 </div>
 
@@ -563,7 +565,14 @@ $(document).ready(function(){
         localStorage.setItem('hide-hiden-events', $(this).hasClass('active'));
         buildEventsList(getEvents());
     });
-
+    // START confirme modal
+    $('#changeBlankConfirmation').click(function() {
+      if ($('#modalShowEventInfo').is(':visible')) {
+          $('#modalShowEventInfo').modal('hide');
+      }
+      loadEvents();
+    });
+    // STOP confirme modal
     function getEvents(){
         var isTabletMode = $(document).width() < 768;
         var events = [];
@@ -730,8 +739,9 @@ $(document).ready(function(){
                         'data-archived="'+event.archived+'" data-regstate_key="'+event.regstate_key+'" data-max_age="'+event.max_age+'" data-min_age="'+event.min_age+'" ';
 
                 var regstateText='', regstateClass = '';
-                if(event.regstate_key && event.regstate_key !== 'null'){
+                if(event.member_key !== null){
                     switch (event.regstate_key){
+                        case null: regstateText='ожидание регистрации'; regstateClass='info';break;
                         case '03': regstateText='ожидание отмены'; regstateClass='warning';break;
                         case '04': regstateText='регистрация подтверждена'; regstateClass='success';break;
                         case '05': regstateText='регистрация отменена'; regstateClass='important';break;
@@ -1376,7 +1386,13 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
             if($(self).hasClass('edit')){
                 $('#btnDoRegisterGuest').removeClass('edit').removeClass('guest');
                 $('#successSavedDataModal').modal('show');
-                window.setTimeout(function() { $('#successSavedDataModal').modal('hide'); }, 1300);
+                window.setTimeout(function() {
+                  $('#successSavedDataModal').modal('hide');
+                  if ($('#modalShowEventInfo').is(':visible')) {
+                      $('#modalShowEventInfo').modal('hide');
+                  }
+                  loadEvents();
+                }, 1300);
             }
             else{
                 <?php if(!isset($memberId)){?>
@@ -1488,6 +1504,7 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
     }
     /* END Romans Code  */
 });
+var adminRole = '<?php echo db_getAdminRole($memberId); ?>';
 
 </script>
 <script src="/js/mainpage.js?v17"></script>

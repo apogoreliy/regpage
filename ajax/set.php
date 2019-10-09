@@ -162,7 +162,7 @@ else if (isset ($_GET ['members']) && isset ($_GET ['event']) && !isset($_GET['c
     db_setEventMembers ($adminId, $_GET ['event'], preg_split("/,/", $_GET ['members'], -1, PREG_SPLIT_NO_EMPTY),
                         $_POST["arr_date"], $_POST["arr_time"], $_POST["dep_date"], $_POST["dep_time"],
                         $_POST["accom"], $_POST["transport"], isset($_POST["status"])? $_POST["status"] : NULL, $_POST["coord"], isset($_POST["service"])? $_POST["service"] : NULL,
-                        isset($_POST["mate"])? $_POST["mate"] : NULL);
+                        isset($_POST["mate"])? $_POST["mate"] : NULL, $_POST["parking"]);
 }
 else if (isset ($_GET ['remove_members']) && isset ($_GET ['event'])){
     db_unregisterMembers ($adminId, $_GET ['event'], preg_split("/,/", $_GET ['remove_members'], -1, PREG_SPLIT_NO_EMPTY));

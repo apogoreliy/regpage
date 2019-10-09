@@ -4,13 +4,17 @@ include_once "db.php";
 global $appRootPath;
 ini_set('session.cookie_lifetime', 60 * 60 * 24 * 365);  // 365 day cookie lifetime
 session_start ();
-
+// START COOKIES
+isset ($_SESSION['sort_type-statistic']) ? '' : setCookie("sort_type_statistic", 'asc');
+isset ($_SESSION['sort_field-statistic']) ? '' : setCookie("sort_field_statistic", 'city');
+isset ($_COOKIE['selStatisticLocality']) ? '' : setCookie("selStatisticLocality", '_all_');
+// STOP COOKIES
 if (!isset($isGuest))
 {
     $memberId = db_getMemberIdBySessionId (session_id());
     $memberId ? db_lastVisitTimeUpdate(session_id()) : '';
     $thispage = explode('.', substr($_SERVER['PHP_SELF'], 1))[0];
-    $memberId && $thispage != 'statistic' ? db_activityLogInsert($memberId, $thispage) : '';
+    $memberId && $thispage != 'archive' ? db_activityLogInsert($memberId, $thispage) : '';
     if ((!$memberId && isset ($_GET["link"])) || (!$memberId && isset ($_GET["invited"]))){
 
     }

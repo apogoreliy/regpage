@@ -69,7 +69,7 @@
             </select>
         </div>
     </div>
-    <div style="margin-bottom: 10px; color: cadetblue;">
+    <div style="margin-bottom: 10px; color: cadetblue; float:left;">
         <span class="handle-new-locality">Вашего населённого пункта нет в списке?</span>
     </div>
     <div class="control-group row-fluid block-new-locality">

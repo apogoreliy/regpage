@@ -33,7 +33,7 @@ include_once "preheader.php";
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
     <link href="css/bootstrap-modal.css" rel="stylesheet" />
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet" />
-    <link href="css/style.css?v68" rel="stylesheet" />
+    <link href="css/style.css?v69" rel="stylesheet" />
 
     <script src="js/jquery.min.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js" type="text/javascript"></script>
@@ -42,7 +42,7 @@ include_once "preheader.php";
     <script src="js/jquery.mockjax.js" type="text/javascript"></script>
     <script src="js/jquery.autocomplete.js" type="text/javascript"></script> <!-- https://github.com/devbridge/jQuery-Autocomplete -->
     <script src="js/jquery.maskedinput.min.js" type="text/javascript"></script>
-    <script src="js/script.js?v165" type="text/javascript"></script>
+    <script src="js/script.js?v171" type="text/javascript"></script>
     <script src="js/jquery-textrange.js" type="text/javascript"></script>
     <script src="js/bootstrap-datepicker.min.js" type="text/javascript"></script>
     <script src="js/bootstrap-datepicker.ru.js" type="text/javascript"></script>
