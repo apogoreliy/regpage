@@ -175,7 +175,7 @@ else if (isset ($_SESSION["logged-in"])){
         <?php require_once 'formTab.php'; ?>
     </div>
     <div class="modal-footer">
-      <div id="forAdminRegNotice" style="color: red; font-style: bold; font-size: 16px; padding-top: 15px; text-align: center;">
+      <div id="forAdminRegNotice" style="color: red; font-style: bold; font-size: 16px; padding-bottom: 15px; text-align: center;">
       </div>
         <button class="btn btn-primary disable-on-invalid" id="btnDoRegisterGuest">Отправить данные</button>
         <button class="btn" id="btnCancelChanges">Отмена</button>

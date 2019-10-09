@@ -84,7 +84,7 @@ $('#modalAddEditEvent').on('show', function () {
     }
   })
   }, 500);
-})
+});
 
 // STOP add event modal fields set
 
@@ -92,8 +92,11 @@ $('#modalAddEditEvent').on('show', function () {
 function handleFieldsByAdminRole(adminRole, isEventPrivate, regstate){
     $("#forAdminRegNotice").text('');
     if((adminRole == 1 || adminRole == 0) && isEventPrivate == 1){
-        if (regstate == 'null') {          
-          $("#forAdminRegNotice").text('Отправьте данные после чего, ответственный за регистрацию в вашем регионе подтвердит вашу заявку на данное мероприятие.');
+        if (regstate == 'null') {
+          $.getJSON('/ajax/guest.php?msg_privat')
+          .done (function(data){
+              $("#forAdminRegNotice").text(data);
+          });
         }
     }
     else{
