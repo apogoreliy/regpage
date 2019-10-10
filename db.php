@@ -751,11 +751,11 @@ function db_registerMembers ($adminId, $eventId, $memberIds)
                             OR m.tp_date IS NULL OR YEAR(m.tp_date)<1900 OR NULLIF (m.tp_name,'') IS NULL)
                             )
 
-                       OR (e.need_flight>0 AND (NULLIF (r.visa,'') IS NULL OR NULLIF (m.english,'') IS NULL))
+                       OR (e.need_flight>0 AND (NULLIF (r.visa,'') IS NULL))
 
                        )
                        ");
-
+                       // for e.need_flight>0 --->    OR NULLIF (m.english,'') IS NULL
             if ($rs->num_rows) {
                 $rc = $rs->fetch_array();
                 $invalid[]=$rc[0];
