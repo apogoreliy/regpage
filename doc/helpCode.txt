@@ -1,0 +1,36 @@
+SCHEMA
+Схемы на гугл диске, возможно стоит их выложить в HTML формате
+Date and time
+1. parseDate(item)
+Приводит дату в формате 01.01.2019 из строки в объект Data (при передаче в Айакс обычно используется)
+2. formatDate(item)
+Приводит дату в формате 01-01-2019 из строки в строку формата 01.01.2019
+3. DateSplitAndParce(item)
+Приводит дату в формате 01.01.2019 из строки в объект Data
+
+/**ADMINS**\
+1. db_getAdminsList() - Возвращает список всех админов (ответственных за регистрацию?).
+2. db_getAdminsListByLocalitiesCombobox($adminLocality) Возвращает список админов из местности админа (ответственных за регистрацию?).
+3. db_getActivityListLog(startPeriod, stopPeriod, locality, page), db_getActivityList(startPeriod, stopPeriod, locality, page, listOfAdmins) - возвращает список активности админов. В первом случае всех, во втором согласно переданному списку админов
+4. db_getAdminsNameByMembersKeys($admisList) - Возвращает список имён админов, принимает Id админов
+5. db_getAdminsByCountry(Country), db_getAdminsByRegion(Region), db_getAdminsByLocalitiesNew(Locations) - Возвращает список админов данного региона, местности, страны. Принимает ID местности, региона, страны
+6. db_getAdminRegionOnly($memberId), db_getAdminCountryOnly($memberId), db_getAdminLocalitiesOnly($memberId) - возвращает список регионов, стран и местностей переданного админа.
+7. db_getAdminsByLRC($memberId) - возвращает список всех админов для регионов и стран и местностей переданного админа
+
+/**ARCHIVES**\
+db_setEventArchive() - Администратором мероприятия добавляется краткая статистическая запись о мероприятии (таблица event_archive). Страницы: События и Архив.
+db_getArchiveEvents() - получить записи заархивированных мероприятий.
+db_getArchiveGeneralEvents() - аналогична предыдущей, но больше параметров.
+db_getArchivedEventLocalities() - получить местность заархивированного мероприятия.
+db_getArchiveEventList() - получить список участников заархивированого мероприятия.
+getEventArchiveMembersStatistic() - получит статистику по участникам заархивированого мероприятия.
+// Отключена db_isSingleCityArchiveEvent() - возвращает результат если в списке у всех заархивированных мероприятий одна местность
+db_setEventArchive() - архивирует событие (добавляет в таблицу event_archive то есть сводные данные об активном, прошедшем, синхронизированом мероприятии).
+db_addEventArchive() - добавляет новое архивное Мероприятие в разделе Архив на странице События по кнопке Добавить. При выборе опции $registration = 1 запись добавляется ив Архив и в Список активных мероприятий (видимо как заархивированное)
+
+/**Reference**\
+db_getPages() - получить все страницы из таблицы PAGE
+
+/**MEMBERS NAMES**\
+treeShortNames(); get John John John return John J.J.
+twoNames(); get John John John return John John
