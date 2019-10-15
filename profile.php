@@ -20,7 +20,7 @@
     <div style="margin: 10px 0 15px 0;" >
         <div class="btn btn-change-login" style="padding: 5px; display: inline">Изменить логин</div>
         <div class="btn btn-change-password" style="padding: 5px; display: inline">Изменить пароль</div>
-        <div id="logoutTotal" class="btn" style="padding: 5px; display: inline" title="Кликните, что бы выйте из аккаунта на всех устройствах">Выйти ото всюду</div>
+        <div id="logoutTotal" class="btn" style="padding: 5px; display: inline" title="Кликните, что бы выйти из аккаунта на всех устройствах">Выйти ото всюду</div>
     </div>
     <div class="control-group row-fluid" style="margin-bottom: 5px;">
         <label class="span12">ФИО<span class="example">Пример: Орлов Пётр Иванович</span></label>

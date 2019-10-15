@@ -139,7 +139,7 @@
                   <li><a class="uploadExl" data-download="" tabindex="-1" href='#'>Загрузить из файла</a></li>
               </ul>
             </div>
-            <select style="margin-bottom: 0" class="span2 <?php echo " filterLocality-".$event->id; ?> "></select>
+            <select id="localitiesCombobox" style="margin-bottom: 0" class="span2 <?php echo " filterLocality-".$event->id; ?> "></select>
             <select style="margin-bottom: 0" class="span2 filter-regstate">
                 <option value='_all_' selected>Все состояния</option>
                 <option value='01'>Не зарегистрированные</option>
@@ -276,7 +276,7 @@
 </div>
 
 <!-- Edit Member Modal -->
-<div id="modalEditMember" data-width="560" data-keyboard="false" data-backdrop="static" class="modal hide fade modal-edit-member" tabindex="-1" role="dialog" aria-labelledby="editMemberEventTitle" aria-hidden="true">
+<div id="modalEditMember" data-width="560" data-keyboard="false" data-backdrop="static" class="modal hide fade modal-edit-member" tabindex="-1" role="dialog" aria-labelledby="editMemberEventTitle" aria-hidden="true" data-locality_key="">
     <div class="modal-header">
         <button type="button" class="close close-form" data-dismiss="modal" aria-hidden="true">x</button>
         <h4 class="editMemberEventTitle"></h4>
@@ -1183,7 +1183,7 @@ var globalSingleCity = "<?php echo $singleCity; ?>";
             document.cookie = "sort=" + s;
         });
     }
-
+    var localityGlo = [];
     function refreshEventMembers (eventId, members, localities){
         var tableRows = [];
         var phoneRows = [];
@@ -1196,6 +1196,7 @@ var globalSingleCity = "<?php echo $singleCity; ?>";
                   a = localityTemp.id;
                   b = localityTemp.name;
                   localities[a] = b;
+                  localityGlo[a] = b;
                 });
             });
         }
@@ -1306,12 +1307,22 @@ setTimeout(function () {
         elemList.click (function (){
             var memberId = $(this).attr ('class').replace(/^regmem-/,'');
                 eventId = $("#events-list").val();
+            var localityKeyMem = $(this).attr('data-locality_key');
+            var localityValid = 0;
+            for (var j in localityGlo) {
+              if (localityKeyMem == j) {
+                localityValid = 1;
+              }
+              /*if (localityGlo.hasOwnProperty(j)) {
+              }*/
+            }
 
-            $.getJSON('/ajax/get.php', { member: memberId, event: eventId})
+            $.getJSON('/ajax/get.php', { member: memberId, event: eventId, fullList: localityValid})
             .done (function(data){
                 fillEditMember (memberId, data.eventmember, data.localities);
                 setAdminRole(memberId);
                 $('#modalEditMember').attr('data-member_id', memberId);
+                $('#modalEditMember').attr('data-locality_key', localityKeyMem);
                 $('#modalEditMember').modal('show');
                 $('.emName').removeClass('create-member');
             });

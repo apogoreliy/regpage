@@ -92,7 +92,7 @@ elseif (isset ($_GET ['member']) && isset ($_GET ['event']))
     {
         echo json_encode(array (
             "eventmember"=>$member,
-            "localities"=>db_isAdminRespForReg($adminId, $_GET['event']) ? db_getLocalities() : db_getAdminLocalitiesNotRegTbl ($adminId) ));
+            "localities"=>db_isAdminRespForReg($adminId, $_GET['event']) || $_GET['fullList'] != 1 ? db_getLocalities() : db_getAdminLocalitiesNotRegTbl ($adminId) ));
         exit;
     }
     else{
