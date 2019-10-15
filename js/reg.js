@@ -27,9 +27,31 @@
           $(this).val() === '_none_' ? '' : $('.emLocality').val($(this).val());
       });
     }
+// ADMIN'S LOCALITIES
+    var localityValid = 0;
+    for (var j in localityGlo) {
+      if ($('#modalEditMember').attr('data-locality_key') == j) {
+        localityValid = 1;
+      }
+      /*if (localityGlo.hasOwnProperty(j)) {
+      }*/
+    }
+    if (localityValid == 0) {
+      $('.modalListInput .listItemLocality').each(function () {
+        var ccounter = 0;
+        for (var j in localityGlo) {
+          if ($(this).attr('data-value') == j || $('#modalEditMember').attr('data-locality_key') == $(this).attr('data-value')) {
+            ccounter++ ;
+          }
+        }
+        ccounter > 0 ? '' : $(this).hide();
+      });
+    }
+// ADMIN'S LOCALITIES
+
     $('.modalListInput').hide();
 
-    if ($("#eventTabs").find(".tab-pane.active").attr('data-access') != 1) {
+    if ($("#eventTabs").find(".tab-pane.active").attr('data-access') != 1 && localityValid != 0) {
       $("#inputEmLocalityId").autocomplete('disable');
       $("#inputEmLocalityId").autocomplete({
         serviceUrl: '/ajax/localities2.php',
@@ -400,6 +422,7 @@ $('#uplpadStringCounterBtn').click(function () {
   } else {
     $('#uploadMsgError').text('Местность, категория или файл не выбраны.');
   }
+  $('.saveUploadItems').attr("disabled", true);
 });
 
 $('#upload_file').change(function() {
