@@ -2121,8 +2121,7 @@ $(document).ready(function(){
             inputSelectParallels();
             checkLocalityFieldsBlankAndKartochka();
           });
-          $(".listItemLocality").hover(function () {
-            console.log(' be beb e ');
+          $(".listItemLocality").hover(function () {            
           });
 
           $("#inputEmLocalityId").focusout(function(){
