@@ -1344,7 +1344,7 @@ function db_setEventMember ($adminId, $get, $post){
     $_termsUse = $_page === '/index' ? $post['termsUse'] : DONT_CHANGE;
     $isInvitation = isset($post['isInvitation']) && $post['isInvitation'] == true ? !!$post['isInvitation'] : false;
     $regListName = $_page == '/members' ? (DONT_CHANGE) : (isset($post['regListName']) ? $db->real_escape_string($post['regListName']) : null);
-    $private_event = $_page === '/index' ? $db->real_escape_string($post['private']) : DONT_CHANGE;
+    $private_event = $_page === '/index' || $_page === '/reg' ? $db->real_escape_string($post['private']) : DONT_CHANGE;
     $adminRole = $adminId ? db_getAdminRole($adminId) : '';
 
     db_checkSync ();
