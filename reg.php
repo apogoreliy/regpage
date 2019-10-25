@@ -245,13 +245,12 @@
     </div>
     <div class="modal-body">
         <form class="form-inline">
-            <label>Местность:</label>
             <select id="selAddMemberLocality" class="span2"></select>
-            <label>Категория:</label>
             <select id="selAddMemberCategory" class="span2">
-                <option value='_all_' selected>&lt;все&gt;</option>
+                <option value='_all_' selected>&lt;все категории&gt;</option>
                 <?php foreach ($categories as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
             </select>
+            <input class="span2" type="text" id="searchBlockFilter" placeholder="Введите фамилию" style="margin-top: 5px;">
         </form>
         <div id="addMemberTableHeader">
             <a onclick="$('.member-row > td > input[type=checkbox]').filter(':visible').prop('checked', true);">Выбрать всех</a>
@@ -573,6 +572,8 @@
       <form id="formUpload" class="" action="ajax/excelUpload2.php" method="post" enctype="multipart/form-data">
           <input type="file" id="upload_file" name="upload_file" accept=".xls, .xlsx">
           <button type="submit" id="uploadBtn" style="display:none;">Заг-Заг</button>
+          <div class="loader_weel"></div>
+          <span id="psevdoSpiner">Loading...</span>
       </form>
       <hr>
       <div class="">
@@ -603,10 +604,15 @@
       <hr>
       <div class="" id="uploadPrepare">
         <div class="" id="uploadPrepareClo">
-
         </div>
         <div class="" id="uploadPrepareStr">
-
+        </div>
+      </div>
+      <div id="newuploadBoard" class="">
+      </div>
+      <div id="" class="">
+        <label for="uploadStringsChkbx"><input type="checkbox" name="" value="" id="uploadStringsChkbx" style="margin-bottom: 3px"> Настроить строки</label>
+        <div id="uploadStringsShow" class="" style="max-height: 300px; overflow-y: auto;">
         </div>
       </div>
     </div>
@@ -848,7 +854,7 @@ var globalSingleCity = "<?php echo $singleCity; ?>";
         text = text && text.length >= 3 ? text : null;
 
         var arr = [];
-        arr.push("<option value='_all_' selected>&lt;все&gt;</option>");
+        arr.push("<option value='_all_' selected>&lt;все местности&gt;</option>");
 
         getLocalities(event, function(data){
             $("#selAddMemberLocality").html(rebuildLocationsList(data.localities, locId, arr).join(""));
@@ -1720,7 +1726,7 @@ setTimeout(function () {
     });
 
     $("table.reg-list th input[type='checkbox']").click (function (){
-        $(this).parents("table").find("tr[class|='regmem'] input[type='checkbox']").prop('checked', $(this).is(':checked'));
+          $(this).parents("table").find("tr[class|='regmem'] input[type='checkbox']:visible").prop('checked', $(this).is(':checked'));
         updateTabPaneButtons ($(this).parents('div.tab-pane'));
     });
 
@@ -1729,13 +1735,36 @@ setTimeout(function () {
         $(".searchMemberToAdd").val('');
     });
 
+    function hideExistingMemberRegistration() {
+      var existRegistration = [];
+      $('.reg-list tr:visible').each(function() {
+        var classId = $(this).attr('class');
+        classId = classId ? $(this).attr('class').replace(/^regmem-/,'mr-') : '';
+        classId ? existRegistration.push(classId) : '';
+      });
+      $('.membersTable tr').each(function() {
+        var current = $(this).attr('id');
+        if ((existRegistration.indexOf(current) != -1) && existRegistration) {
+          $(this).hide();
+        }
+      });
+    }
+
     $('#modalAddMembers').on('show', function (e){
         e.stopPropagation();
+        $('#searchBlockFilter').val('');
         loadMembersList ();
+        setTimeout(function () {
+            hideExistingMemberRegistration();
+        }, 1500);
     });
 
     $("#selAddMemberLocality, #selAddMemberCategory").change (function (){
+        $('#searchBlockFilter').val('');
         loadMembersList ();
+        setTimeout(function () {
+          hideExistingMemberRegistration();
+        }, 1000);
     });
 
     $("#btnDoSaveMember").click (function (){
@@ -2484,7 +2513,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v59"></script>
+<script src="/js/reg.js?v60"></script>
 <?php
     include_once "footer.php";
 ?>

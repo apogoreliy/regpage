@@ -26,7 +26,7 @@ function fileUploader($upfile){
         unset($uploadString[$key]);
      }
        for ($col = 0; $col < $highestColumnIndex; ++ $col) {
-         if ($col == 4) {
+         if ($col == 4 && $row != 1) {
            $cell = $worksheet->getCellByColumnAndRow($col, $row);
            $val = $cell->getValue();
            $val = date('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($val));

@@ -226,8 +226,8 @@ $('#download-arr-dep-time').click(function () {
 $('#download-tp').click(function () {
   arrDepSecondCheckbox(this, '#download-tp-name');
 });
-// START UPLOADING FILES
-var xlsxDataGlobal, xlsxDataGlobalReg = [];
+// START UPLOADING FILES \|/|\|/|\|/|
+var xlsxDataGlobal = [], xlsxDataGlobalReg = [];
 
 $(".uploadExl").unbind('click');
 $(".uploadExl").click(function(event){
@@ -293,8 +293,20 @@ function getUpdaterEditor(array) {
         }
         ii++;
       }
+    } else {
+      for (var key in item) {
+        if (ii === 3) {
+          var y = item[key];
+          var x = item[key-1];
+          var z = x + ' ' + y;
+          item[key-1] = z;
+          item[key] = null;
+        }
+        ii++;
+      }
     }
   }
+  console.log(array);
   uploadTableBuilder (array);
 }
 
@@ -408,6 +420,7 @@ $('#uplpadStringCounterBtn').click(function () {
         counterLCC++;
       }
     }
+    console.log(xlsxDataGlobal);
     var y = JSON.stringify(xlsxDataGlobalReg);
     var x = JSON.stringify(xlsxDataGlobal);
     $.post('/ajax/excelUpload.php', {xlsx_array: x, xlsx_array_reg: y})
@@ -429,11 +442,57 @@ $('#upload_file').change(function() {
   $('#uploadMsgError').text('');
   $('#uploadBtn').click();
   if ($('#upload_file').val()) {
+    $('#uploadStringsShow').html('');
+    $('#uploadStringsChkbx').attr('disabled', true);
+    $('.saveUploadItems').attr('disabled', true);
     setTimeout(function () {
       $('.saveUploadItems').attr('disabled', false);
+      $('#uploadStringsChkbx').attr('disabled', false);
     }, 2500);
   }
 });
+
+function buildModalSelect() {
+  var option = {otime: 'Отметка времени???', name: 'ФИО', email: 'Емайл', birth: 'Дата рождения', vuz: 'ВУЗ', course: 'КУРС', attended: 'Полное участие?', event: 'Мероприятие', phone: 'Телефон', telegramm: 'Телеграмм', locality: 'Местность'};
+  var elements = [];
+  for (var i = 0; i < Object.keys(option).length; i++) {
+    var options = [], conterForSelected = 0;
+    conterForSelected = conterForSelected + i + 1;
+    conterOptionTemp = 0;
+      for (var variable in option) {
+        if (option.hasOwnProperty(variable)) {
+          conterOptionTemp++;
+          if (conterOptionTemp == conterForSelected) {
+            options.push('<option value="'+variable+'" selected>'+option[variable]+'</option>');
+          } else {
+            options.push('<option value="'+variable+'">'+option[variable]+'</option>');
+          }
+        }
+      }
+      elements.push('<select class="float-left" name=""><option value="_none_"></option>');
+      var optionsString = options.join('');
+      elements.push(optionsString);
+      elements.push('</select><select class="float-right upload_fields" name=""></select>');
+    }
+  var elementsString =  elements.join('');
+  $('#newuploadBoard').html(elementsString);
+}
+buildModalSelect();
+
+function newFileUploader(xlsxData) {
+  var uploadedFieldOptions = [];
+  for (var i = 0; i < 1; i++) {
+    for (var j = 0; j < xlsxData[i].length; j++) {
+      j == 0 ? uploadedFieldOptions.push('<option value="_none_" selected></option>') :'';
+      xlsxData[i][j] != null ? uploadedFieldOptions.push('<option value="'+j+'">'+xlsxData[i][j]+'</option>'):'';
+    }
+  }
+  var uploadedFieldOptionsString = uploadedFieldOptions.join('');
+  $('#newuploadBoard').find('.upload_fields').each(function () {
+    $(this).html(uploadedFieldOptionsString);
+  })
+  console.log(xlsxData);
+}
 
 $('form').on('submit', function (e) {
     e.preventDefault();
@@ -461,7 +520,8 @@ $('form').on('submit', function (e) {
           //console.log(xlsxDataGlobalReg);
         }
     });
-
+    $('#psevdoSpiner').show();
+    $('.loader_weel').show();
     setTimeout(function () {
       if (xlsxDataGlobal[0].length < 13) {
         $('#uploadMsgError').text('Не достаточно полей в файле.');
@@ -471,10 +531,18 @@ $('form').on('submit', function (e) {
       //console.log(xlsxDataGlobal);
       getUpdaterEditorForRegTbl(xlsxDataGlobalReg);
       //console.log(xlsxDataGlobalReg);
+      newFileUploader(xlsxDataGlobal); // REBUILD IT
+      stringPrepareForShow(xlsxDataGlobal)
+      $('#psevdoSpiner').hide();
+      $('.loader_weel').hide();
+      collectString();
     }, 2500);
 });
 
 $('#modalUploadItems').on('show', function () {
+  $('#uploadStringsShow').html('');
+  $('#psevdoSpiner').hide();
+  $('.loader_weel').hide();
   $('.saveUploadItems').attr('disabled', 'disabled');
   $('#upload_file').val('');
   $('#uploadCategory').val('_none_');
@@ -482,3 +550,80 @@ $('#modalUploadItems').on('show', function () {
   $('#uploadAccom').val('_none_');
   $('#uploadPrepare').html('');
 });
+
+// START strings builder
+$('#uploadStringsShow').hide();
+$('#uploadStringsChkbx').change(function () {
+  $(this).prop('checked') ? $('#uploadStringsShow').show() : $('#uploadStringsShow').hide();
+})
+
+
+function stringPrepareForShow(xlsxData) {
+
+    var uploadedStrings = [];
+    for (var i = 0; i < xlsxData.length; i++) {
+      if (i != 0) {
+        var itemStr = xlsxData[i];
+        var uuu = [];
+        var counter = 0;
+        for (var varvar in itemStr) {
+          if (counter === 2 || counter === 3 || counter === 11) {
+            uuu.push(itemStr[varvar]);
+          }
+          counter++;
+        }
+        uploadedStrings.push('<span class="stringShow"><span class="string_name_upload">'+uuu[0]+', '+uuu[1]+', '+uuu[2]+' </span><span class="denyThisString"> X</span></span><br>');
+      }
+    }
+    var uploadedFieldOptionsString = uploadedStrings.join('');
+      $('#uploadStringsShow').html(uploadedFieldOptionsString);
+
+      $('.denyThisString').click(function () {
+        if (!$(this).parent().find('.string_name_upload').hasClass('deny_string')) {
+          $(this).parent().find('.string_name_upload').addClass('deny_string');
+          $(this).html('V');
+        } else {
+          $(this).parent().find('.string_name_upload').removeClass('deny_string');
+          $(this).html('X');
+        }
+      })
+}
+// START NEW FUN CHEK DELETED STRING and compare them with GENERAL array
+function collectString() {
+  var arrStr = [];
+  $('.string_name_upload').each(function () {
+    if (!$(this).hasClass('deny_string')) {
+      var a = $(this).text();
+      a = a.split(', ');
+      arrStr.push(a);
+    }
+  });
+  console.log(arrStr);
+}
+
+// STOP strings builder
+
+// START Checking forms for valid
+
+// STOP Checking forms for valid
+
+// START Search for members
+$('#searchBlockFilter').on('input', function (e) {
+  //
+  var existRegistration = [];
+  $('.reg-list tr').each(function() {
+    var classId = $(this).attr('class');
+    classId = classId ? $(this).attr('class').replace(/^regmem-/,'mr-') : '';    
+    classId ? existRegistration.push(classId) : '';
+  });
+  var desired = $(this).val();
+  $('.membersTable tr').each(function() {
+    var str = $(this).find('td:nth-child(2)').text();
+    var current = $(this).attr('id');
+    str.toLowerCase().indexOf(String(desired.toLowerCase())) === -1 ? $(this).hide() : $(this).show();
+    if ((existRegistration.indexOf(current) != -1) && existRegistration) {
+      $(this).hide();
+    }
+  });
+});
+// STOP Search for members
