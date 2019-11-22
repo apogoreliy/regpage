@@ -182,8 +182,10 @@ $(document).ready(function(){
                 $('#loginError').show();
             }
             else{*/
-                showHint('Ваша учетная запись успешно создана!');
-                window.location = '/profile';
+              showHint('Данные сохранены!');
+              setTimeout(function () {
+                window.location = '/index';
+              }, 1500);
             //}
         })
         .fail(function() { $(".ajaxError").show (); });

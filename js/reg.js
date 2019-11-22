@@ -1,3 +1,8 @@
+//представление и пользовательское взаимодействие;
+//управление данными;
+//общее состояние приложения;
+//настройка и код-прослойка, чтобы все части работали вместе;
+
   $('#emBirthdateLabelSup').html('Дата рождения<sup>*</sup>');
   $('.emBirthdate').attr('valid', 'required');
 // check date fields
@@ -613,7 +618,7 @@ $('#searchBlockFilter').on('input', function (e) {
   var existRegistration = [];
   $('.reg-list tr').each(function() {
     var classId = $(this).attr('class');
-    classId = classId ? $(this).attr('class').replace(/^regmem-/,'mr-') : '';    
+    classId = classId ? $(this).attr('class').replace(/^regmem-/,'mr-') : '';
     classId ? existRegistration.push(classId) : '';
   });
   var desired = $(this).val();
@@ -627,3 +632,40 @@ $('#searchBlockFilter').on('input', function (e) {
   });
 });
 // STOP Search for members
+
+// 1 раздел выдача результатов запроса
+// 2 Фильтры и сортировки без запросов в базу данных
+// 3 правка и удаление записей
+// 4 пакетная правка записей
+// 5 раздел выдача результатов вспомогательных или связанных запросов (массивы)
+// вормирования Гридов и прочих представлений данных для основного списка
+// вормирования Гридов и прочих представлений данных для вспомогательных списков
+/*
+function Mag(name) {
+  this.name = name;
+  this.hit = 10;
+  this.armor = 5;
+  this.health = 50;
+  this.looky = 0;
+  this.target = function (a) {
+    var rndb = Math.floor(Math.random() * 10)
+    if ((this.armor + rndb - a) >= 0) {
+      return this.health;
+    } else {
+      return this.health = this.health + (this.armor + rndb - a);
+    }
+  };
+}
+var mag_1 = new Mag('Yoksel');
+var mag_2 = new Mag('Moxell');
+var co = 0;
+while (co < 100) {
+  console.log(mag_2.name ,' health is ', mag_2.target(mag_1.hit));
+  console.log(mag_1.name ,' health is ', mag_1.target(mag_2.hit));
+  co++;
+  if ((mag_1.health < 0) || (mag_2.health < 0)) {
+    mag_1.health < 0 ? console.log(mag_2.name, ' won!') : console.log(mag_1.name, ' won!');
+    break;
+  }
+}
+*/
