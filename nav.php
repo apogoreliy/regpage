@@ -139,7 +139,7 @@ switch ($h) {
                 if (strpos ($s,"/event")!==FALSE) {echo " class='active'";}
                 echo"><a href='/event'>Мероприятия</a></li>";
             }
-            if(isset($memberId) && $memberId == '000005716' && !isset($isGuest) && db_isAdmin($memberId)) {
+            if(isset($memberId) && ($memberId == '000005716' || $memberId == '000001679') && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/statistic")!==FALSE) {echo " class='active'";}
                 echo"><a href='/statistic'>Статистика</a></li>";

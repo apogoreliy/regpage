@@ -177,7 +177,7 @@ function getEventFieldZoneArea (field){
 }
 
 $(document).ready(function(){
-    /* http://digitalbush.com/projects/masked-input-plugin/ */
+      /* http://digitalbush.com/projects/masked-input-plugin/ */
     $.mask.definitions['1']='[01]';
     $.mask.definitions['2']='[012]';
     $.mask.definitions['3']='[0123]';
@@ -2116,21 +2116,38 @@ $(document).ready(function(){
             listInputLocality();
             checkLocalityFieldsBlankAndKartochka();
           });
+          $("#inputEmLocalityId").keydown(function () {
+            setTimeout(function () {
+              if ($('.autocomplete-suggestions').is(':visible')) {
+                  var position = $('#inputEmLocalityId').offset();
+                  $('.autocomplete-suggestions').css('top', position.top+30);
+              }
+            }, 200);
+          });
 
           $("#inputEmLocalityId").on('focus', function () {
             inputSelectParallels();
             checkLocalityFieldsBlankAndKartochka();
           });
-          $(".listItemLocality").hover(function () {            
+          $(".listItemLocality").hover(function () {
           });
-
+// БАГ Периодически пользователь попадает в брешь и окно закрывается, также закрывается если просто кликнуть по полхунку ибо позиция скрола не меняется
+var arrabb = 0;
+var bbrva = 0;
           $("#inputEmLocalityId").focusout(function(){
             if ($(".modalListInput").is(':visible')) {
+              arrabb = 0;
               setTimeout(function () {
-                if ($(".modalListInput").is(':visible')) {
-                    $('.modalListInput').hide();
+                if (arrabb === 0) {
+                  $('.modalListInput').hide();
                 }
-              }, 150);
+              }, 300);
+            }
+          });
+          $(".modalListInput").scroll(function() {
+            if (arrabb === 0){
+              $("#inputEmLocalityId").focus();
+              arrabb = 1;
             }
           });
           $(".emNewLocality").click (function (){
@@ -2140,6 +2157,7 @@ $(document).ready(function(){
                 $(this).attr('disabled')!='disabled' &&
                 (!$(this).val() || $("#modalEditMember").find(".emLocality").val()=="_none_"));
           });
+
           // END Locality and new locality fields behavior
 
   $(".sort_college_locality").click(function(){

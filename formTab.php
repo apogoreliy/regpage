@@ -9,7 +9,7 @@
 <!--  Portrait tablet to landscape and desktop -->
 <!--<div class="tablets-visible"> -->
 <div class="edit-member-form">
-<div class="controls">
+<div class="controls" style="height: 180px;">
     <div class="control-group row-fluid">
         <label class="span12">ФИО<sup>*</sup>
         <span class="example">Пример: Орлов Пётр Иванович</span></label>

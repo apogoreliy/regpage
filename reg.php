@@ -1265,7 +1265,7 @@ setTimeout(function () {
             tableRows.push('<tr class="regmem-'+m.id+'" '+ dataItems +' >'+
                 '<td class="style-checkbox"><input type="checkbox"></td>'+
                 '<td class="style-name mname '+(m.male==1?'male':'female')+'"><span class="mname1">'+ he(m.name) +
-                (in_array(1, window.user_settings) ? '</span><br/>'+ '<span class="mnameCategory user_setting_span">'+m.category_name+'</span>' : '') +
+                (in_array(1, window.user_settings) ? '</span><br/>'+ '<span class="mnameCategory user_setting_span">'+m.category_name+'</span>' : '</span>'+ '<span class="mnameCategory user_setting_span" style="display: none;">'+m.category_name+'</span>') +
                 '</td>' +
                 (showLocalityField ? '<td class=style-city>' + he(m.locality ? (m.locality.length>20 ? m.locality.substring(0,18)+'...' : m.locality) : '') +
                 (in_array(2, window.user_settings) ? '<br/>'+ '<span class="user_setting_span">'+(m.region || m.country)+'</span>' : '') +
@@ -2513,7 +2513,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v60"></script>
+<script src="/js/reg.js?v62"></script>
 <?php
     include_once "footer.php";
 ?>

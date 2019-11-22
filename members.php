@@ -144,6 +144,25 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
     </div>
 
 </div>
+<!-- Match Members Modal -->
+<div id="modalMatchMem" class="modal hide fade" tabindex="-1" role="dialog"  aria-labelledby="regEndedTitle" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close regMemb close-form" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3 id="regEndedTitle">Добавление участников</h3>
+    </div>
+    <div class="modal-body">
+        <p>Найдены участники с указанными ФИО</p>
+        <table class="table table-hover table-condensed chkMember">
+            <thead><tr><th>&nbsp;</th><th>Фамилия Имя Отчество</th><th>Дата рождения</th><th>Местность</th></tr></thead>
+            <tbody>
+            </tbody>
+    	</table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning regMemb close-form" data-dismiss="modal" aria-hidden="true">Отмена</button>
+        <button class="btn btn-success chooseMemb" data-dismiss="modal" aria-hidden="true">Выбрать данного участника</button>
+    </div>
+</div>
 
 <!-- Edit Member Modal -->
 <div id="modalEditMember" data-width="560" class="modal hide fade modal-edit-member" tabindex="-1" role="dialog" aria-labelledby="editMemberTitle" aria-hidden="true">
@@ -1075,6 +1094,61 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
         $ (".emName").removeAttr ("disabled");
         setTimeout(function() {$(".emName").focus();}, 1000);
     });
+
+// START check dublicate
+    $('.emName').on('blur', function(){
+        var name = $(this).val();
+        if (name && $('#btnDoSaveMember').hasClass('create')) {
+            var name = $(this).val();
+
+            // check this
+//$('#btnDoSaveMember').addClass('create');
+            $.post('/ajax/get.php', {name:name })
+            .done (function(data) {
+                if(data.members){
+                    getMembersInfo(data.members);
+                }
+            });
+        }
+    });
+    function getMembersInfo(members){
+        //$('#modalEditMember').modal('hide');
+        $('#modalMatchMem').modal('show');
+
+        var tableRows = [];
+
+        for (var i in members) {
+            var m = members[i];
+            tableRows.push('<tr data-id="'+m.member_key+'"><td><input type="checkbox"></td><td class="chkName">'+he(m.name)+'</td>'+
+                    '<td class="chkBirDate">'+he(m.birth_date)+'</td><td class="chkLocal">'+he(m.locality_name)+'</td></tr>');
+        }
+
+        $("table.chkMember tbody").html (tableRows.join(''));
+    }
+    $('.chooseMemb').on('click', function(event){
+        event.stopPropagation();
+        $('#modalMatchMem').modal('hide');
+        var memberId = $("table.chkMember input[type='checkbox']:checked").parents ("tr").attr('data-id');
+        if(memberId && memberId !== undefined){
+          $('#modalEditMember').modal('hide');
+          setTimeout(function () {
+            $.getJSON('/ajax/get.php', { member: memberId})
+            .done (function(data) {                
+                fillEditMember (memberId,  data.member, data.localities);
+                $('#btnDoSaveMember').removeClass('create');
+                //$('#modalEditMember').attr('data-member_id', memberId);
+                $('#modalEditMember').modal('show');
+            });
+          }, 700);
+        }
+    });
+
+    $("#modalEditMember").show(function () {
+      $(this).find("#inputEmLocalityId").focus();
+      $(this).find(".emName").focus();
+    });
+
+// STOP check dublicate
 </script>
 <script src="/js/members.js?v7"></script>
 <?php
