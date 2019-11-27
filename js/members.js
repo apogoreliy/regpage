@@ -29,3 +29,6 @@ history.pushState(null, null, location.href);
         $('#modalEditMember').modal('hide');
       }
     };
+// START bug cover main menu
+$('#modalEditMember').hide();
+// STOP bug cover main menu

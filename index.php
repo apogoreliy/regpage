@@ -742,10 +742,12 @@ $(document).ready(function(){
                 if(event.member_key !== null){
                     switch (event.regstate_key){
                         case null: regstateText='ожидание регистрации'; regstateClass='info';break;
+                        case '01': regstateText='ожидание подтверждения'; regstateClass='warning';break;
+                        case '02': regstateText='ожидание подтверждения'; regstateClass='warning';break;
                         case '03': regstateText='ожидание отмены'; regstateClass='warning';break;
                         case '04': regstateText='регистрация подтверждена'; regstateClass='success';break;
                         case '05': regstateText='регистрация отменена'; regstateClass='important';break;
-                        default : regstateText='ожидание подтверждения'; regstateClass='warning';break;
+                        default : regstateText=''; regstateClass='';break;
                     }
                 }
 

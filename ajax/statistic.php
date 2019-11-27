@@ -26,7 +26,7 @@ else{
 }
 
 if (isset($_GET['get_statistic'])){
-    echo json_encode(["statistic"=>db_getStatisticStrings ($adminId)]);
+    echo json_encode(["statistic"=>db_getStatisticStrings ($adminId, $_GET['localities'])]);
     exit();
 }
 elseif (isset($_GET['set_statistic'])){
