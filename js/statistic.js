@@ -1,13 +1,16 @@
 $(document).ready(function(){
+  var adminLocalitiesGlb = [];
+  $('#selStatisticLocality option').each(function() {
+    $(this).val() !== '_all_' ? adminLocalitiesGlb.push($(this).val()) : '';
+  });
 
   loadDashboard();
 
 // START DASHBOARD
     function loadDashboard() {
-      $.get('/ajax/statistic.php?get_statistic')
+      $.get('/ajax/statistic.php?get_statistic', {localities: adminLocalitiesGlb})
       .done(function(data){
         if(data.statistic){
-          console.log(data.statistic);
           buildList(data.statistic);
           filtersList();
         }
@@ -109,7 +112,7 @@ $(document).ready(function(){
       })
     }
     function filtersList() {
-      var periods;
+      var periods;adminLocalitiesGlb
       $('#arhivePeriods').val() ? periods = $('#arhivePeriods').val() : periods = [];
       //periods.indexOf($('#blanksArchive').attr('data-id')) === -1 ? $('.add-statistic').hide() : $('.add-statistic').show();
       $('.meetings-list tbody tr').each(function () {
@@ -168,6 +171,7 @@ $(document).ready(function(){
         attended17 = $(this).attr('data-attended17'),
         attended1725 = $(this).attr('data-attended1725'),
         attended25 = $(this).attr('data-attended25'),
+        attended60 = $(this).attr('data-attended60'),
         completed = $(this).attr('data-completed'),
         periods = $(this).attr('data-periods').split(' - '),
         idStatistic = $(this).attr('data-id_statistic'),
@@ -175,7 +179,7 @@ $(document).ready(function(){
         localityName = $(this).find('td:eq(1)').text();
 
         if (id) {
-          list.push({archive: archive, attended_younger_17: attended17, attended_17_25: attended1725, attended_older_25: attended25, attended_count: attendedCount, author: author, bptz_younger_17: bptz17, bptz_17_25: bptz1725, bptz_older_25: bptz25, bptz_count: bptzHalfYear, card_comment: '', comment: comment, id_statistic: idStatistic, locality_key: locality_key, locality_name: localityName, locality_status_id: locality_status, lt_meeting_average: ltMeetingAverage, period_start: periods[0], period_end: periods[1], statistic_card_id: id, status_completed: completed, status_name: statusName});
+          list.push({archive: archive, attended_younger_17: attended17, attended_17_25: attended1725, attended_older_25: attended25, attended_older_60: attended60, attended_count: attendedCount, author: author, bptz_younger_17: bptz17, bptz_17_25: bptz1725, bptz_older_25: bptz25, bptz_count: bptzHalfYear, card_comment: '', comment: comment, id_statistic: idStatistic, locality_key: locality_key, locality_name: localityName, locality_status_id: locality_status, lt_meeting_average: ltMeetingAverage, period_start: periods[0], period_end: periods[1], statistic_card_id: id, status_completed: completed, status_name: statusName});
         }
       });
 
@@ -215,9 +219,9 @@ $(document).ready(function(){
       } else if (sortType == 4) {
         sortingFun(2, 'a.status_name', 'b.status_name');
       } else if (sortType == 5) {
-        sortingFun(1, 'a.statistic_card_id', 'b.statistic_card_id');
+        sortingFun(1, 'a.period_end', 'b.period_end');
       } else if (sortType == 6) {
-        sortingFun(2, 'a.statistic_card_id', 'b.statistic_card_id');
+        sortingFun(2, 'a.period_end', 'b.period_end');
       } else if (sortType == 7) {
         sortingFun(1, 'Number(a.bptz_count)', 'Number(b.bptz_count)');
       } else if (sortType == 8) {
@@ -275,6 +279,12 @@ $(document).ready(function(){
 // START MODAL
 
   $('.btnDoHandleStatistic').click(function (){
+    if ($('#localityStatus').val() == '04') {
+      $('#addEditStatisticModal').find('input[type=number]').val(0);
+    } else if ($('#localityStatus').val() != '01') {
+      $('#addEditStatisticModal').find('#ltMeetingAverage').val(0);
+    }
+
     if ($('#statisticCompleteChkbox').prop('checked') && checkFieldsStatModalInvalid()) {
       // check fields
       checkFieldsStatModalInvalid() ? showError('Заполните следующие поля: ' + checkFieldsStatModalInvalid().join(', ')) : logFileWhriter(this, checkFieldsStatModalInvalid(), showError('Непредвиденная ошибка'));
@@ -294,15 +304,11 @@ $(document).ready(function(){
     var answer = [];
     if ($('#mblModalStatisticsBlank').is(':visible')) {
       $('#addEditStatisticModal .field_mobile_mdl').each(function () {
-
-          console.log('Im here');
           $(this).val() ? '' : answer.push($(this).attr('data-name'));
 
       });
     } else {
       $('#addEditStatisticModal .field_desktop_mdl').each(function () {
-
-          console.log('Im there');
           $(this).val() ? '' : answer.push($(this).attr('data-name'));
 
       });
@@ -317,9 +323,9 @@ $(document).ready(function(){
   }
 
   // Start Log file
-    function logFileWhriter(where, what, msg) {
+/*    function logFileWhriter(where, what, msg) {
       console.log(where, what);
-    }
+    }*/
   // End Log file
 
   function setStatistic(doUpdate) {
@@ -383,18 +389,24 @@ $(document).ready(function(){
   })
 
   function statisticСalculation(sttsData, periodStart, periodEnd) {
-    var counterAttend17 = 0, counterAttend1725 = 0, counterAttend25 = 0, counterAttend60 = 0, counterAttendAll = 0, bugAttend = 0, counterBptz17 = 0, counterBptz1725 = 0, counterBptz25 = 0, counterBptzAll=0, result =[];
+    var counterAttend17 = 0, counterAttend1725 = 0, counterAttend25 = 0, counterAttend60 = 0, counterAttendAll = 0, bugAttend = 0, counterBptz17 = 0, counterBptz1725 = 0, counterBptz25 = 0, counterBptzAll=0, noAgeList = [], noBaptizeDateSchoolList=[],result =[];
     for (var i = 0; i < sttsData.length; i++) {
+      if ((sttsData[i].age === null) && (sttsData[i].attend === "1")) {
+        noAgeList.push(sttsData[i].name);
+      }
       var age = Math.round(sttsData[i].age);
+      if ((age <= 17) && (sttsData[i].attend == 1) && ((sttsData[i].baptized == null) || sttsData[i].baptized == "0000-00-00")) {
+        noBaptizeDateSchoolList.push(sttsData[i].name);
+      }
       if (sttsData[i].attend === "1") {
         counterAttendAll++
-        if ( age < 17) {
+        if ((age > 11) && (age <= 17)) {
           counterAttend17++
         } else if (age > 60) {
           counterAttend60++
         } else if ((age > 25) && (age <= 60)) {
           counterAttend25++
-        } else if ((age >= 17) && (age <= 25)) {
+        } else if ((age > 17) && (age <= 25)) {
           counterAttend1725++
         } else {
           bugAttend++
@@ -402,21 +414,45 @@ $(document).ready(function(){
       }
       if ((periodEnd >= sttsData[i].baptized) && (sttsData[i].baptized >= periodStart)) {
         counterBptzAll++
-        if (age < 17) {
+        if (age <= 17) {
           counterBptz17++
-        } else if ((17 <= age) && (age <= 25)) {
+        } else if ((age > 17) && (age <= 25)) {
           counterBptz1725++
         } else if (age > 25) {
           counterBptz25++
         }
       }
     }
-    result.push({counterAttend17: counterAttend17, counterAttend1725: counterAttend1725, counterAttend25: counterAttend25, counterAttend60: counterAttend60, counterAttendAll: counterAttendAll, bugAttend: bugAttend, counterBptz17: counterBptz17, counterBptz1725: counterBptz1725, counterBptz25: counterBptz25, counterBptzAll: counterBptzAll});
+    result.push({counterAttend17: counterAttend17, counterAttend1725: counterAttend1725, counterAttend25: counterAttend25, counterAttend60: counterAttend60, counterAttendAll: counterAttendAll, bugAttend: bugAttend, counterBptz17: counterBptz17, counterBptz1725: counterBptz1725, counterBptz25: counterBptz25, counterBptzAll: counterBptzAll, noAgeList: noAgeList, noBaptizeDateSchoolList: noBaptizeDateSchoolList});
     return result
   }
 
   function fulfillSttsModal(sttsResult) {
     var data = sttsResult[0];
+    var b = data.noAgeList;
+  // Start check
+    if (b.length > 0) {
+      b.length > 0 ? b = b.join(', ') : '';
+      $('#msgNoDateBirth').html('У следующих участников не указана дата рождения:');
+      $('#noBirthNamesList').html(b);
+    } else {
+      $('#noBirthNamesList').html('');
+      $('#noBirthNamesList').html('');
+    }
+    var c = data.noBaptizeDateSchoolList;
+    if (c.length > 0) {
+      c.length > 0 ? c = c.join(', ') : '';
+      $('#msgNoBaptizeSchoolboy').html('У следующих школьников не указана дата крещения:');
+      $('#noBaptizeNamesList').html(c);
+    } else {
+      $('#msgNoBaptizeSchoolboy').html('');
+      $('#noBaptizeNamesList').html('');
+    }
+    if ((b.length > 0) || (c.length > 0)) {
+      $('#modalBirthNamesList').modal('show');
+      return
+    }
+// Stop check
     var bptz17=Number(data.counterBptz17) || 0,
     bptz17_25=Number(data.counterBptz1725) || 0,
     bptz25=Number(data.counterBptz25) || 0,
@@ -446,6 +482,7 @@ $(document).ready(function(){
     $('#addEditStatisticModal').find('#attended25mbl').val(attended25);
     $('#addEditStatisticModal').find('#attended60mbl').val(attend60);
     $('#addEditStatisticModal').find('#attendedAllmbl').val(attendedAll);
+
   }
 
   $('.btnDoHandleFulfillStatistic').click(function (){
@@ -471,6 +508,31 @@ $(document).ready(function(){
         $('#addEditStatisticModal').modal('hide');
         loadDashboard();
       });
+    });
+
+    function setFieldsStatisticsAvailable() {
+      if ($('#localityStatus').val() == '04') {
+        $('#addEditStatisticModal').find('input[type=number]').attr('disabled','disabled');
+      } else {
+        $('#addEditStatisticModal').find('input[type=number]').removeAttr('disabled');
+        $('#attendedAll').attr('disabled','disabled');
+        $('#attendedAllmbl').attr('disabled','disabled');
+      }
+      if ($('#localityStatus').val() == '01') {
+        $('#ltMeetingAverage').removeAttr('disabled');
+      } else {
+        $('#ltMeetingAverage').attr('disabled', 'disabled');
+      }
+    };
+
+    $('#localityStatus').change(function() {
+      setFieldsStatisticsAvailable();
+    });
+
+    $('#addEditStatisticModal').on('show', function() {
+      setTimeout(function () {
+        setFieldsStatisticsAvailable();
+      }, 300);
     });
 // STOP MODAL
 // START global hint close
@@ -515,4 +577,27 @@ $(document).ready(function(){
     }
   }
   resizeScreenMdlStatistics();
+/*  setTimeout(function () {
+    sortingStatistic (1);
+  }, 300);*/
+// START calculation in the blank
+  $("#attended17, #attended17_25, #attended25, #attended60").keyup( function() {
+    var x = Number($("#attended17").val()) + Number($("#attended17_25").val()) + Number($("#attended25").val()) + Number($("#attended60").val());
+    $("#attendedAll").val(x);
+  });
+
+  $("#attended17, #attended17_25, #attended25, #attended60").change( function() {
+    var x = Number($("#attended17").val()) + Number($("#attended17_25").val()) + Number($("#attended25").val()) + Number($("#attended60").val());
+    $("#attendedAll").val(x);
+  });
+  $("#attended17mbl, #attended17_25mbl, #attended25mbl, #attended60mbl").keyup( function() {
+    var x = Number($("#attended17mbl").val()) + Number($("#attended17_25mbl").val()) + Number($("#attended25mbl").val()) + Number($("#attended60mbl").val());
+    $("#attendedAllmbl").val(x);
+  });
+
+  $("#attended17mbl, #attended17_25mbl, #attended25mbl, #attended60mbl").change( function() {
+    var x = Number($("#attended17mbl").val()) + Number($("#attended17_25mbl").val()) + Number($("#attended25mbl").val()) + Number($("#attended60mbl").val());
+    $("#attendedAllmbl").val(x);
+  });
+// STOP calculation in the blank
 });

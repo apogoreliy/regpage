@@ -1133,7 +1133,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
           $('#modalEditMember').modal('hide');
           setTimeout(function () {
             $.getJSON('/ajax/get.php', { member: memberId})
-            .done (function(data) {                
+            .done (function(data) {
                 fillEditMember (memberId,  data.member, data.localities);
                 $('#btnDoSaveMember').removeClass('create');
                 //$('#modalEditMember').attr('data-member_id', memberId);

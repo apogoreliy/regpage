@@ -13,10 +13,12 @@
     $periodActual = db_getPeriodActual();
     $allPeriods = db_getAllPeriods();
     $periodInterval = db_getPeriodInterval();
-// КУККИ УСТАНОВЛЕНЫ В ПРИХЕДЕРЕ!
-    $selStatisticLocality = isset ($_COOKIE['selStatisticLocality']) ? $_COOKIE['selStatisticLocality'] : '_all_';
-    $sort_field = isset ($_SESSION['sort_field-statistic']) ? $_SESSION['sort_field-statistic'] : 'city';
-    $sort_type = isset ($_SESSION['sort_type-statistic']) ? $_SESSION['sort_type-statistic'] : 'asc';
+// COOKIES
+//    $selStatisticLocality = isset ($_COOKIE['selStatisticLocality']) ? $_COOKIE['selStatisticLocality'] : '_all_';
+    //$sort_field = isset ($_COOKIE['sort_field_statistic']) ? $_COOKIE['sort_field_statistic'] : 'id';
+    //$sort_type = isset ($_COOKIE['sort_type_statistic']) ? $_COOKIE['sort_type_statistic'] : 'desc';
+    $sort_field = 'id';
+    $sort_type = 'desc';
 ?>
 <div class="container">
   <div id="eventTabs" class="meetings-list">
@@ -33,14 +35,14 @@
                 <li><a id="sort-id" href="#" title="сортировать">Код</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                   <li><a id="sort-city" href="#" title="сортировать">Город</a>&nbsp;<i class="<?php echo $sort_field=='city' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                   <li><a id="sort-status" href="#" title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='status' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
-                  <li>
-                      <?php
-                      if (!$isSingleCity)
-                          echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';
-                      ?>
-                  </li>
-                  <li><a id="sort-half_year" href="#" title="сортировать">Крещены за полгода</a>&nbsp;<i class="<?php echo $sort_field=='half_year' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
-                  <li><a id="sort-attended" href="#" title="сортировать">Посещают собрания</a>&nbsp;<i class="<?php echo $sort_field=='attended' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                  <!--<li>
+                      //<?php
+                      /*if (!$isSingleCity)
+                          echo '<th><a id="sort-locality_key" href="#" title="сортировать">Местность (район)</a>&nbsp;<i class="'.($sort_field=='locality_key' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none').'"></i></th>';*/
+                      //?>
+                  </li>-->
+                  <li><a id="sort-half_year" href="#" title="сортировать">Крещ. за полгода</a>&nbsp;<i class="<?php echo $sort_field=='half_year' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
+                  <li><a id="sort-attended" href="#" title="сортировать">Посещают собран.</a>&nbsp;<i class="<?php echo $sort_field=='attended' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                   <li><a id="sort-count_ltmeeting" href="#" title="сортировать">На трапезе</a>&nbsp;<i class="<?php echo $sort_field=='count_ltmeeting' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
                   <li><a id="sort-completed" href="#" title="сортировать">Заполнено</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></li>
               </ul>
@@ -165,11 +167,11 @@
                   <td style="text-align: center; vertical-align: middle"><input type="number"  id="attended17_25" class="span10 check_valid_field field_desktop_mdl" min="0" data-name="Посещают собрания 18-25 лет"></td>
                   <td style="text-align: center; vertical-align: middle"><input type="number"  id="attended25" class="span10 check_valid_field field_desktop_mdl" min="0" data-name="Посещают собрания 26-60 лет"></td>
                   <td style="text-align: center; vertical-align: middle"><input type="number"  id="attended60" class="span10 check_valid_field field_desktop_mdl" min="0" data-name="Посещают собрания старше 60 лет"></td>
-                  <td style="text-align: center; vertical-align: middle"><input type="number"  id="attendedAll" class="span10 check_valid_field field_desktop_mdl" min="0" data-name="Посещают собрания всего"></td>
+                  <td style="text-align: center; vertical-align: middle"><input type="number"  id="attendedAll" class="span10 check_valid_field field_desktop_mdl" min="0" data-name="Посещают собрания всего" disabled></td>
                 </tr>
                 <tr>
                   <td colspan="4" style="text-align: right; vertical-align: middle">В среднем на трапезе</td>
-                  <td style="text-align: center; vertical-align: middle"><input data-toggle="tooltip" title="Заполняется вручную!" type="number"  id="ltMeetingAverage" class="span10 check_valid_field field_desktop_mdl" min="0"></td>
+                  <td style="text-align: center; vertical-align: middle"><input data-toggle="tooltip" title="Заполняется вручную!" type="number"  id="ltMeetingAverage" class="span10 check_valid_field field_desktop_mdl" min="0" data-name="В среднем на трапезе"></td>
                 </tr>
               </tbody>
             </table>
@@ -195,11 +197,11 @@
                   <div style="text-align: center; vertical-align: middle">Посещают собрания старше 60 лет</div>
                   <div style="text-align: center; vertical-align: middle"><input type="number"  id="attended60mbl" class="span10 check_valid_field field_mobile_mdl" min="0" data-name="Посещают собрания старше 60 лет"></div>
                   <div style="text-align: center; vertical-align: middle">Посещают собрания всего</div>
-                  <div style="text-align: center; vertical-align: middle"><input type="number"  id="attendedAllmbl" class="span10 check_valid_field field_mobile_mdl" min="0" data-name="Посещают собрания всего"></div>
+                  <div style="text-align: center; vertical-align: middle"><input type="number"  id="attendedAllmbl" class="span10 check_valid_field field_mobile_mdl" min="0" data-name="Посещают собрания всего" disabled></div>
                 </div>
                 <div>
                   <div colspan="4" style="text-align: right; vertical-align: middle">В среднем на трапезе</div>
-                  <div style="text-align: center; vertical-align: middle"><input data-toggle="tooltip" title="Заполняется вручную!" type="number"  id="ltMeetingAveragembl" class="span10 check_valid_field field_mobile_mdl" min="0"></div>
+                  <div style="text-align: center; vertical-align: middle"><input data-toggle="tooltip" title="Заполняется вручную!" type="number"  id="ltMeetingAveragembl" class="span10 check_valid_field field_mobile_mdl" min="0" data-name="В среднем на трапезе"></div>
                 </div>
               </div>
             </div>
@@ -243,9 +245,9 @@
         <button class="btn" id="cancelModalWindow" data-dismiss="modal" aria-hidden="true">Нет</button>
     </div>
 </div>
-<!-- END HTML BODY -->
+<!-- END -->
 
-<!-- YES | NO AUTOFULFILL Modal -->
+<!-- YES | NO DELETE BLANK -->
 <div id="deleteStatisticBlankConfirm" class="modal hide fade" data-width="400" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true" data-status_val="" data-author="" data-archive="" data-periods="" data-id_statistic="">
     <div class="modal-header" style="height: 20px">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -266,10 +268,39 @@
         <button class="btn" id="cancelModalWindow" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
-<!-- END HTML BODY -->
+<!-- END  -->
+
+<!-- Message "no date birthday"  -->
+<div id="modalBirthNamesList" class="modal hide fade" data-width="400" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true" data-status_val="" data-author="" data-archive="" data-periods="" data-id_statistic="">
+    <div class="modal-header" style="height: 20px">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    </div>
+    <div class="modal-body"style="height: 150px !important">
+        <div class="desctop-visible tablets-visible">
+          <div class="control-group row-fluid">
+            <div style="margin-bottom: 5px">
+              <p class="text-center">
+                <strong id="msgNoDateBirth"></strong>
+              </p>
+              <div id="noBirthNamesList" >
+              </div>
+              <p class="text-center">
+                <strong id="msgNoBaptizeSchoolboy"></strong>
+              </p>
+              <div id="noBaptizeNamesList" >
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" id="" data-dismiss="modal" aria-hidden="true">Ок</button>
+    </div>
+</div>
+<!-- END -->
 
     <script>
-var adminLocalityGlb = '<?php echo $adminLocality; ?>';
+      var adminLocalityGlb = '<?php echo $adminLocality; ?>';
     </script>
     <script src="/js/statistic.js?v1"></script>
 <?php
