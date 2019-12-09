@@ -80,6 +80,14 @@ $('#modalEditMember').on('hide', function() {
   $('#modalEditMember').find('.emLocality').attr('data-text','');
   $('#modalEditMember').find('#inputEmLocalityId').attr('data-value_input','');
   $('#modalEditMember').find('#inputEmLocalityId').attr('data-text_input','');
+  // ОЧИСТИТЬ поля парковки. Код повторяется на странице Индекс
+  setTimeout(function () {
+    if (!($('#modalEditMember').is(':visible'))) {
+      $('#modalEditMember').find('.emAvtomobileNumber').val() ? $('#modalEditMember').find('.emAvtomobileNumber').val(''):'';
+      $('#modalEditMember').find('.emAvtomobile').val() ? $('#modalEditMember').find('.emAvtomobile').val(''):'';
+      $('#modalEditMember').find('.emParking').val() != '_none_' ? $('#modalEditMember').find('.emParking').val(0) : '';
+    }
+  }, 500);
 });
 
   // start back button bahevior
@@ -152,18 +160,7 @@ $('#modalEditMember').on('show', function() {
   if ($(document).width() < 980) {
     window.scrollTo(0, 0);
   }
-  // ОЧИСТИТЬ
-
-  setTimeout(function () {
-    if (!($('#modalEditMember').find('.parking').is(':visible'))) {
-      $('#modalEditMember').find('.emAvtomobileNumber').val() ? $('#modalEditMember').find('.emAvtomobileNumber').val(''):'';
-      $('#modalEditMember').find('.emAvtomobile').val() ? $('#modalEditMember').find('.emAvtomobile').val(''):'';
-      $('#modalEditMember').find('.emParking').val() != '_none_' ? $('#modalEditMember').find('.emParking').val(0) : '';
-    }
-    //$('#modalEditMember').find('input:hidden').val('');
-  }, 300);
-
-})
+});
 // STOP stop automatic scrolling on modal window
 // START prepare XLX for international meetings
 function xlxCheckboxesInternational(element, show) {
