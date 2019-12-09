@@ -53,6 +53,6 @@ elseif (isset($_GET['get_members_statistic'])){
   exit();
 }
 elseif (isset($_GET['delete_members_statistic'])){
-  echo json_encode (deleteMembersStatistic($_GET['id_statistic']));
+  echo json_encode (db_deleteMembersStatistic($_GET['id_statistic']));
   exit();
 }

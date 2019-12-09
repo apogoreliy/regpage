@@ -15,6 +15,18 @@ $('#modalEditMember').on('show', function() {
     });
   }
   $('.modalListInput').hide();
+  setTimeout(function () {
+    if (!$('#modalEditMember .college-fields').is(':visible')) {
+      $('#modalEditMember .college-fields').find('input').each(function () {
+        $(this).val() ? $(this).val('') : '';
+      });
+    }
+    if (!$('#modalEditMember .school-fields').is(':visible')) {
+      $('#modalEditMember .school-fields').find('input').each(function () {
+        $(this).val() ? $(this).val('') : '';
+      });
+    }
+  }, 3000);
 });
 $('#modalEditMember').on('hide', function() {
   $('#modalEditMember').find('.emLocality').attr('data-value','');

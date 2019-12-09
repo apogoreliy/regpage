@@ -35,7 +35,7 @@ $(document).ready(function(){
         phoneRows.push('<tr class="row-statistic" '+(item.status_completed == '1' ? 'style="background-color: lightgreen"' : '')+' '+dataString+'>'+
           '<td>'+item.statistic_card_id+'</td>' +
           '<td>'+item.locality_name+'</td>'+
-          '<td>'+item.lt_meeting_average+'</td></tr>'
+          '<td><span>Крещены за полгода: '+item.bptz_count+'</span><br><span>Посещают собрания: '+item.attended_count+'</span><br><span>Кол. на трапезе: '+item.lt_meeting_average+'</span></td></tr>'
         );
       }
       $("#statisticList tbody").html (tableRows.join(''));
@@ -293,10 +293,11 @@ $(document).ready(function(){
     }
     if ($('#addEditStatisticModal').hasClass('edit')) {
       setStatistic(true);
+      $('#addEditStatisticModal').modal('hide');
     } else {
       setStatistic();
     }
-    $('#addEditStatisticModal').modal('hide');
+
   })
 
   function checkFieldsStatModalInvalid() {
@@ -346,7 +347,7 @@ $(document).ready(function(){
     var attendedAll = isDesktopSttsShow ? $('#attendedAll').val() : $('#attendedAllmbl').val();
     var ltMeetingAverage = isDesktopSttsShow ? $('#ltMeetingAverage').val() : $('#ltMeetingAveragembl').val();
     var comment = $('#comment').val();
-    var statisticCompleteChkboxбarchive, archive=0;
+    var statisticCompleteChkbox, archive=0;
     $('#statisticCompleteChkbox').prop('checked') ? statisticCompleteChkbox = 1 : statisticCompleteChkbox = 0;
 
     if (doUpdate) {
@@ -363,6 +364,7 @@ $(document).ready(function(){
         if(data != 'error_001'){
           loadDashboard();
           showHint('Данные сохранены');
+          $('#addEditStatisticModal').modal('hide');
         } else {
           showError('Бланк статистики за данный переиод для этой местности уже существует.');
         }
@@ -513,7 +515,13 @@ $(document).ready(function(){
     function setFieldsStatisticsAvailable() {
       if ($('#localityStatus').val() == '04') {
         $('#addEditStatisticModal').find('input[type=number]').attr('disabled','disabled');
+        $('#addEditStatisticModal').find('#statisticCompleteChkbox').prop('checked',true);
+        $('#addEditStatisticModal').find('#statisticCompleteChkbox').attr('disabled','disabled');
       } else {
+        if ($('#addEditStatisticModal').find('#statisticCompleteChkbox').attr('disabled')) {
+          $('#addEditStatisticModal').find('#statisticCompleteChkbox').prop('checked',false)
+          $('#addEditStatisticModal').find('#statisticCompleteChkbox').attr('disabled',false);
+        }
         $('#addEditStatisticModal').find('input[type=number]').removeAttr('disabled');
         $('#attendedAll').attr('disabled','disabled');
         $('#attendedAllmbl').attr('disabled','disabled');
@@ -538,6 +546,9 @@ $(document).ready(function(){
 // START global hint close
   $('#globalHint').find('.close-alert').click(function () {
     $("#globalHint").fadeOut();
+  });
+  $('#globalError').find('.close-alert').click(function () {
+    $("#globalError").fadeOut();
   });
 // STOP global hint close
   $(window).resize(function() {
@@ -598,6 +609,17 @@ $(document).ready(function(){
   $("#attended17mbl, #attended17_25mbl, #attended25mbl, #attended60mbl").change( function() {
     var x = Number($("#attended17mbl").val()) + Number($("#attended17_25mbl").val()) + Number($("#attended25mbl").val()) + Number($("#attended60mbl").val());
     $("#attendedAllmbl").val(x);
+  });
+  $("#statisticCompleteChkbox").click(function () {
+    var a = $("#attendedAll").val();
+    var b = $("#attendedAllmbl").val();
+    if ($("#desctopModalStatisticsBlank").is(':visible') && (a.length === 0) && ($("#localityStatus").val() !== '04')) {
+      $(this).prop('checked', false);
+      showError('Заполните поле "Посещают собрания всего"');
+    } else if ($("#mblModalStatisticsBlank").is(':visible') && (b.length === 0) && ($("#localityStatus").val() !== '04')) {
+      $(this).prop('checked', false);
+      showError('Заполните поле "Посещают собрания всего"');
+    }
   });
 // STOP calculation in the blank
 });

@@ -152,6 +152,17 @@ $('#modalEditMember').on('show', function() {
   if ($(document).width() < 980) {
     window.scrollTo(0, 0);
   }
+  // ОЧИСТИТЬ
+
+  setTimeout(function () {
+    if (!($('#modalEditMember').find('.parking').is(':visible'))) {
+      $('#modalEditMember').find('.emAvtomobileNumber').val() ? $('#modalEditMember').find('.emAvtomobileNumber').val(''):'';
+      $('#modalEditMember').find('.emAvtomobile').val() ? $('#modalEditMember').find('.emAvtomobile').val(''):'';
+      $('#modalEditMember').find('.emParking').val() != '_none_' ? $('#modalEditMember').find('.emParking').val(0) : '';
+    }
+    //$('#modalEditMember').find('input:hidden').val('');
+  }, 300);
+
 })
 // STOP stop automatic scrolling on modal window
 // START prepare XLX for international meetings
@@ -231,6 +242,8 @@ $('#download-arr-dep-time').click(function () {
 $('#download-tp').click(function () {
   arrDepSecondCheckbox(this, '#download-tp-name');
 });
+
+
 // START UPLOADING FILES \|/|\|/|\|/|
 var xlsxDataGlobal = [], xlsxDataGlobalReg = [];
 
@@ -530,6 +543,8 @@ $('form').on('submit', function (e) {
     setTimeout(function () {
       if (xlsxDataGlobal[0].length < 13) {
         $('#uploadMsgError').text('Не достаточно полей в файле.');
+        $('#psevdoSpiner').hide();
+        $('.loader_weel').hide();
         return
       }
       getUpdaterEditor(xlsxDataGlobal);
@@ -537,7 +552,7 @@ $('form').on('submit', function (e) {
       getUpdaterEditorForRegTbl(xlsxDataGlobalReg);
       //console.log(xlsxDataGlobalReg);
       newFileUploader(xlsxDataGlobal); // REBUILD IT
-      stringPrepareForShow(xlsxDataGlobal)
+      stringPrepareForShow(xlsxDataGlobal);
       $('#psevdoSpiner').hide();
       $('.loader_weel').hide();
       collectString();
@@ -607,10 +622,10 @@ function collectString() {
 }
 
 // STOP strings builder
-
 // START Checking forms for valid
-
 // STOP Checking forms for valid
+
+// START NEW FUN CHEK DELETED STRING and compare them with GENERAL array
 
 // START Search for members
 $('#searchBlockFilter').on('input', function (e) {
