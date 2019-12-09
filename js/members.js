@@ -15,24 +15,22 @@ $('#modalEditMember').on('show', function() {
     });
   }
   $('.modalListInput').hide();
-  setTimeout(function () {
-    if (!$('#modalEditMember .college-fields').is(':visible')) {
-      $('#modalEditMember .college-fields').find('input').each(function () {
-        $(this).val() ? $(this).val('') : '';
-      });
-    }
-    if (!$('#modalEditMember .school-fields').is(':visible')) {
-      $('#modalEditMember .school-fields').find('input').each(function () {
-        $(this).val() ? $(this).val('') : '';
-      });
-    }
-  }, 3000);
 });
 $('#modalEditMember').on('hide', function() {
   $('#modalEditMember').find('.emLocality').attr('data-value','');
   $('#modalEditMember').find('.emLocality').attr('data-text','');
   $('#modalEditMember').find('#inputEmLocalityId').attr('data-value_input','');
   $('#modalEditMember').find('#inputEmLocalityId').attr('data-text_input','');
+  setTimeout(function () {
+    if (!$('#modalEditMember').is(':visible')) {
+      $('#modalEditMember .college-fields').find('input').each(function () {
+        $(this).val() ? $(this).val('') : '';
+      });
+      $('#modalEditMember .school-fields').find('input').each(function () {
+        $(this).val() ? $(this).val('') : '';
+      });
+    }
+  }, 500);
 });
 history.pushState(null, null, location.href);
     window.onpopstate = function () {
