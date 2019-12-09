@@ -275,7 +275,7 @@ function db_getAllPeriods() {
 }
 
 function db_getPeriodInterval() {
-  $res=db_query ("SELECT sc.period_start as start, sc.period_end as stop FROM statistic_card sc");
+  $res=db_query ("SELECT sc.period_start as start, sc.period_end as stop FROM statistic_card sc WHERE sc.period_end = (SELECT MAX(`period_end`) FROM statistic_card)");
 
   $period;
   while ($row = $res->fetch_assoc()) $period=$row['start'].' - '.$row['stop'];
@@ -304,7 +304,7 @@ function getCheckDublicateStatistic($statisticId, $locality) {
   return $statisticBlank;
 }
 
-function deleteMembersStatistic($statisticId)
+function db_deleteMembersStatistic($statisticId)
 {
   global $db;
   $statisticId = $db->real_escape_string($statisticId);

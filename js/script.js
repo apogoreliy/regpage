@@ -311,7 +311,8 @@ function handleAditionalMenu(){
             tooltipDate = $(this).parents("#modalEditMember").find( isDepDate ? ".tooltipDepDate" : ".tooltipArrDate").data ('date'),
             //tooltipDate = $(this).parents("#modalEditMember").find( isTabletWidth ? ".tablets-visible" : ".desctop-visible").find( isDepDate ? ".tooltipDepDate" : ".tooltipArrDate").data ('date'),
             eventDate = new Date(tooltipDate),
-            eventDateMilliseconds = eventDate.setDate(eventDate.getDate() + ( isDepDate ? 10 : -11)),
+            eventDateTmp = new Date(),
+            eventDateMilliseconds = eventDateTmp.setDate(eventDate.getDate() + ( isDepDate ? 10 : -11)),
             borderDate = new Date(eventDateMilliseconds),
             year = borderDate.getFullYear(),
 
@@ -319,16 +320,20 @@ function handleAditionalMenu(){
             // year for a current date will be choose 2016 but actually meant 2017
             // how to solve this situation?
             // add algorithm: add 1 year if current date is January and event occurs in January or in December
-
+// ПЕРЕСМОТРЕТЬ КОД БОРДЕР ОТ И БОРДЕР ДО. вместо 10 дней до мероприятия дайт аж 21
             currentDate = new Date((( currentDates[1] - 1 === 0 && borderDate.getFullYear() < eventDate.getFullYear()  && !isDepDate ) ||
-            ( !isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 ) ? year + 1 : year) , currentDates[1] - 1, currentDates[0]);
+            (!isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 ) ? year + 1 : year) , currentDates[1] - 1, currentDates[0]);
+            // Три условия один для января второй для декабря и третий для других периодов
+            var currentDateDepart = new Date((/*(currentDates[1] - 1 === 0 && borderDate.getFullYear() > eventDate.getFullYear()  && isDepDate ) ||*/ (Number(currentDates[1]) === 12 && borderDate.getFullYear() > eventDate.getFullYear()  && isDepDate ) /*||
+            (isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 )*/ ? year-1 : year), currentDates[1] - 1, currentDates[0]);
 
-            if (isDepDate ? currentDate >= borderDate : currentDate <= borderDate) {
+            if (isDepDate ? currentDateDepart >= borderDate : currentDate <= borderDate) {
                 $(this).focus().parents('.control-group').addClass('error');
                 setFieldError($(this), true);
                 showError('Некорректно введена дата '+ (isDepDate ? 'отъезда' : 'приезда'), true);
             }
         }
+        console.log(currentDateDepart);
     });
 
     $(".emFellowship").change(function () {
@@ -677,8 +682,9 @@ function handleBirthDateAndCategoryFields(){
             collegeName = collegeFullName.substring(indexFirstWhiteSpace),
 
             collegeComment = $(".emCollegeComment").val();
+            schoolComment = $(".emSchoolComment").val();
 
-        handleSchoolAndCollegeFields(getAge(date), categoryKey, schoolStart, schoolEnd, collegeStart, collegeEnd, college, collegeComment, collegeName, collegeShortName);
+        handleSchoolAndCollegeFields(getAge(date), categoryKey, schoolStart, schoolEnd, collegeStart, collegeEnd, college, collegeComment, collegeName, collegeShortName, schoolComment);
     }
 }
 // about age start
@@ -1011,7 +1017,7 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
     }
 }
 
-function handleSchoolAndCollegeFields(age, categoryKey, schoolStart, schoolEnd, collegeStart, collegeEnd, college, collegeComment, collegeName, collegeShortName){
+function handleSchoolAndCollegeFields(age, categoryKey, schoolStart, schoolEnd, collegeStart, collegeEnd, college, collegeComment, collegeName, collegeShortName, schoolComment){
     var isSchool = categoryKey === "SC" || categoryKey === "PS" || ( !isNaN(age) && age < 18 && age > 6 );
     var isCollege = categoryKey === "ST" || ( categoryKey === "SC" && !isNaN(age) && age > 15 ) || (!isNaN(age) && age > 18 && age < 25);
 
@@ -1022,6 +1028,7 @@ function handleSchoolAndCollegeFields(age, categoryKey, schoolStart, schoolEnd, 
     if(isSchool){
         $('.emSchoolStart').val(schoolStart>0 ? schoolStart : '');
         $('.emSchoolEnd').val(schoolEnd>0 ? schoolEnd : '');
+        $('.emSchoolComment').val(schoolComment || '');
         var classLevel = schoolStart && schoolStart.length === 4 ? currentYear - schoolStart + 1 : '';
         $('.emClassLevel').html(classLevel > 0 && classLevel < 12 ? '('+classLevel+' класс)' : '');
         if(classLevel >= 9){
@@ -1360,7 +1367,7 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
     }
 
     handleSchoolAndCollegeFields(age, info['category_key'], info['school_start'], info['school_end'],
-            info['college_start'], info['college_end'], info['college_key'], info['college_comment'], info['college_name'], info['college_short_name']);
+            info['college_start'], info['college_end'], info['college_key'], info['college_comment'], info['college_name'], info['college_short_name'], info['school_comment']);
 
     $("#tooltipNameHelp").hide();
 

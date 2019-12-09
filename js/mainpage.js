@@ -11,6 +11,14 @@ $('#modalEditMember').on('show',  function() {
     };
 }, 1000);
   handleFieldsByAdminRole(adminRole, $('.event-row.theActiveEvent').attr('data-private'), $('.event-row.theActiveEvent').attr('data-regstate_key'));
+  setTimeout(function () {
+    if (!($('#modalEditMember').find('.parking').is(':visible'))) {
+      $('#modalEditMember').find('.emAvtomobileNumber').val() ? $('#modalEditMember').find('.emAvtomobileNumber').val(''):'';
+      $('#modalEditMember').find('.emAvtomobile').val() ? $('#modalEditMember').find('.emAvtomobile').val(''):'';
+      $('#modalEditMember').find('.emParking').val() != '_none_' ? $('#modalEditMember').find('.emParking').val(0) : '';
+    }
+    //$('#modalEditMember').find('input:hidden').val('');
+  }, 300);
 });
 function showEmptyForm (eventId){
     window.currentEventId = eventId;
