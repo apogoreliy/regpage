@@ -42,7 +42,7 @@ include_once "preheader.php";
     <script src="js/jquery.mockjax.js" type="text/javascript"></script>
     <script src="js/jquery.autocomplete.js" type="text/javascript"></script> <!-- https://github.com/devbridge/jQuery-Autocomplete -->
     <script src="js/jquery.maskedinput.min.js" type="text/javascript"></script>
-    <script src="js/script.js?v178" type="text/javascript"></script>
+    <script src="js/script.js?v181" type="text/javascript"></script>
     <script src="js/jquery-textrange.js" type="text/javascript"></script>
     <script src="js/bootstrap-datepicker.min.js" type="text/javascript"></script>
     <script src="js/bootstrap-datepicker.ru.js" type="text/javascript"></script>

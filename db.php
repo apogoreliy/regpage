@@ -735,7 +735,9 @@ function db_registerMembers ($adminId, $eventId, $memberIds)
                        OR NULLIF (m.citizenship_key,'') IS NULL
                        OR (NULLIF (m.locality_key,'') IS NULL AND NULLIF (m.new_locality,'') IS NULL)
                        OR NULLIF (m.category_key,'') IS NULL
-
+                       OR NULLIF (m.birth_date,'') IS NULL OR m.birth_date LIKE '0000-00-00'
+                       OR (e.min_age > 0) AND (e.min_age >= CONVERT((YEAR(e.start_date) - YEAR(m.birth_date)), CHAR))
+                       OR (e.max_age > 0) AND (e.max_age <= CONVERT((YEAR(e.start_date) - YEAR(m.birth_date)), CHAR))
                        OR ( e.need_parking > 0 AND (r.parking IS NULL))
 
                        OR (e.need_passport>0
@@ -745,8 +747,9 @@ function db_registerMembers ($adminId, $eventId, $memberIds)
                                 OR m.document_date IS NULL OR YEAR(m.document_date)<1900
                                 OR NULLIF (m.document_auth,'') IS NULL )
                        )
-                       OR (r.arr_date IS NULL OR r.dep_date IS NULL)
+                       OR (r.arr_date IS NULL OR r.dep_date IS NULL OR r.arr_date LIKE '0000-00-00' OR r.dep_date LIKE '0000-00-00')
                        OR (e.need_transport>0 AND (r.transport IS NULL))
+                       OR (e.need_accom>0 AND (r.accom IS NULL))
                        OR (e.need_tp>0  AND (NULLIF (m.tp_num,'') IS NULL OR NULLIF (m.tp_auth,'') IS NULL
                             OR m.tp_date IS NULL OR YEAR(m.tp_date)<1900 OR NULLIF (m.tp_name,'') IS NULL)
                             )
@@ -985,7 +988,7 @@ function db_getDashboardMembers ($adminId, $eventId, $sortField='name', $sortTyp
     INNER JOIN event e ON e.key = reg.event_key
     LEFT JOIN document d ON d.key = m.document_key
     LEFT JOIN category ca ON m.category_key = ca.key
-    WHERE (reg.admin_key = '$adminId' OR m.admin_key='$adminId') AND reg.event_key='$eventId' $searchText $_regstate $_locality
+    WHERE (reg.admin_key = '$adminId') AND reg.event_key='$eventId' $searchText $_regstate $_locality
     ) q ORDER BY q."."{$sortField} {$sortType} {$sortAdd}");
 
     $members = array ();

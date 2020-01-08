@@ -6,7 +6,7 @@ include_once '../FirePHP.class.php';
 header("Content-Type: application/json; charset=utf-8");
 
 function fileUploader($upfile){
-  /*/home/regpager/tmp/ ИЛИ /TMP/*/
+  /*/home/regpager/tmp/ ИЛИ /tmp/*/
   $target_dir = "/home/regpager/tmp/";
   $target_file = $target_dir.basename($_FILES["upload_file"]["tmp_name"]);
   $uploadOk = 1;
@@ -26,12 +26,26 @@ function fileUploader($upfile){
         unset($uploadString[$key]);
      }
        for ($col = 0; $col < $highestColumnIndex; ++ $col) {
-         if ($col == 4 && $row != 1) {
-           $cell = $worksheet->getCellByColumnAndRow($col, $row);
-           $val = $cell->getValue();
-           $val = date('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($val));
-           $dataType = PHPExcel_Cell_DataType::dataTypeForValue($val);
-         } elseif ($col == 0 && $row != 1) {
+// нужно исключать не подходящие столбцы, если столбец не возвращает даты регулярно можно его не проверять
+// Возможно понадобиться опция, опустить проверку дат надо тестировать выкатить версию какая получится
+// Использовать Регулярки!!!
+         $checkDateComplete = false;
+         $cellTmp = $worksheet->getCellByColumnAndRow($col, $row);
+         $valTmp = $cellTmp->getValue();
+         //$valTmp = date('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($valTmp));
+         $dataType = PHPExcel_Cell_DataType::dataTypeForValue($valTmp);
+         if ($dataType == 'n') {
+          $valTmpY = date('Y', PHPExcel_Shared_Date::ExcelToPHP($valTmp));
+          $valTmpM = date('m', PHPExcel_Shared_Date::ExcelToPHP($valTmp));
+          $valTmpD = date('d', PHPExcel_Shared_Date::ExcelToPHP($valTmp));
+          $aaa = $valTmpY > 1920;
+          $bbb = $valTmpY < 2039;
+          if ($aaa && $bbb) {
+            checkdate($valTmpM, $valTmpD, $valTmpY);
+            $checkDateComplete = true;
+          }
+         }
+         if ($checkDateComplete) {
            $cell = $worksheet->getCellByColumnAndRow($col, $row);
            $val = $cell->getValue();
            $val = date('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($val));

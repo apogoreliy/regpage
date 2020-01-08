@@ -42,3 +42,32 @@ history.pushState(null, null, location.href);
 // START bug cover main menu
 $('#modalEditMember').hide();
 // STOP bug cover main menu
+/*
+// START hide empty city
+function hideEmptyCity() {
+  var city = [], members = [];
+  $('#selMemberLocality option').each(function () {
+    city.push($(this).val());
+  });
+  $('#members tbody tr').each(function () {
+    members.push($(this).attr('data-locality'));
+  });
+
+  for (var i = 0; i < city.length; i++) {
+    if (!(city[i].indexOf(',') !== -1 || city[i] === '_all_')) {
+      var a = members.indexOf(city[i]);
+      if (a === -1) {
+        $('#selMemberLocality option').each(function () {
+          if ($(this).val() == city[i]) {
+            $(this).css('display', 'none');
+          }
+        });
+      }
+    }
+  }
+}
+setTimeout(function () {
+  hideEmptyCity();
+}, 2000);
+// STOP hide empty city
+*/

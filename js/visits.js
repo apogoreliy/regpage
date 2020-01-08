@@ -1758,13 +1758,12 @@ $('#performedChkbx').change(function() {
             if ($('.addEditMode').length > 0) $('#addEditMeetingModal').removeClass('addEditMode');
           });
 
-
-
         $("#selAddMemberLocalityTemplate, #selAddMemberCategoryTemplate").change (function (){
               loadMembersListFilter ();
+              setTimeout(function () {
+                hideExistingMemberRegistration();
+              }, 700);
           });
-
-
 
         $("#meetingCategory").change(function(){
           if ($("#titleMeetingModal").text() == 'Новое собрание' && $(this).parents("#addEditMeetingModal").is(':visible')){
@@ -2215,9 +2214,12 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
     $('#modalAddMembersTemplate').on('show', function (e){
         e.stopPropagation();
         $("#selAddMemberLocalityTemplate, #selAddMemberCategoryTemplate").val('_all_');
-        //$(".searchMemberToAdd").val('');
         loadMembersList ();
         loadMembersListFilter ();
+        $('#searchBlockFilter').val('');
+        setTimeout(function () {
+          hideExistingMemberRegistration();
+        }, 1000);
       });
     });
 // button back (browser, mobile)
@@ -2230,3 +2232,34 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
         };
 })();
 renewComboLists('.meeting-lists-combo');
+// START SEARCH MEMBER FIELD
+$('#searchBlockFilter').on('input', function (e) {
+  hideExistingMemberRegistration(true);
+});
+
+function hideExistingMemberRegistration(search) {
+  var existRegistration = [];
+  $('#addEditMeetingModal tbody tr').each(function() {
+    var classId = $(this).attr('data-id');
+    classId ? existRegistration.push(classId) : '';
+  });
+  if (search) {
+    var desired = $('#searchBlockFilter').val();
+    $('#modalAddMembersTemplate tbody tr').each(function() {
+      var str = $(this).find('td:nth-child(2) label').text();
+      var current = $(this).attr('data-member_key');
+      str.toLowerCase().indexOf(String(desired.toLowerCase())) === -1 ? $(this).hide() : $(this).show();
+      if ((existRegistration.indexOf(current) != -1) && existRegistration) {
+        $(this).hide();
+      }
+    });
+  } else {
+    $('#modalAddMembersTemplate tbody tr').each(function() {
+      var current = $(this).attr('data-member_key');
+      if ((existRegistration.indexOf(current) != -1) && existRegistration) {
+        $(this).hide();
+      }
+    });
+  }
+}
+// STOP SEARCH MEMBER FIELD

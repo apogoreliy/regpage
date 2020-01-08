@@ -576,11 +576,14 @@
           <span id="psevdoSpiner">Loading...</span>
       </form>
       <hr>
-      <div class="">
+      <div class="" id="globalValueForFields">
+        <h4>Применить ко всем строкам</h4>
         <label for="uploadCountry">Страна, гражданство*</label>
         <select class="" id="uploadCountry">
-            <option checked value="RU">Россия</option>
+            <option checked value="_none_"></option>
+            <option value="RU">Россия</option>
             <option value="UA">Украина</option>
+            <option value="AM">Армения</option>
         </select>
         <label for="uploadLocality">Местность*</label>
         <select class="" id="uploadLocality">
@@ -602,13 +605,54 @@
         </select>
       </div>
       <hr>
+      <h4>Настроить поля</h4>
       <div class="" id="uploadPrepare">
         <div class="" id="uploadPrepareClo">
         </div>
         <div class="" id="uploadPrepareStr">
         </div>
       </div>
+      <div class="" id="uploadPrepareCloImportant">
+
+      </div>
       <div id="newuploadBoard" class="">
+        <select class="float-left" id="nameGlobalUpload">
+            <option value="name">ФИО или Фамилия</option>
+        </select>
+        <select class="float-right upload_fields" id="">
+            <option value=""></option>
+        </select>
+        <select class="float-left" id="name1GlobalUpload">
+            <option value="name1">Имя (опционально)</option>
+        </select>
+        <select class="float-right upload_fields" id="">
+            <option value=""></option>
+        </select>
+        <select class="float-left" id="name2GlobalUpload">
+            <option value="name2">Отчество (опционально)</option>
+        </select>
+        <select class="float-right upload_fields" id="">
+            <option value=""></option>
+        </select>
+        <select class="float-left" id="citizenshipGlobalUpload">
+            <option value="citizenship">Гражданство</option>
+        </select>
+        <select class="float-right upload_fields" id="">
+            <option value=""></option>
+        </select>
+        <select class="float-left" id="localityGlobalUpload">
+            <option value="locality">Местность</option>
+        </select>
+        <select class="float-right upload_fields" id="">
+            <option value=""></option>
+        </select>
+        <select class="float-left" id="categoryGlobalUpload">
+            <option value="category">Категория</option>
+        </select>
+        <select class="float-right upload_fields" id="">
+            <option value=""></option>
+        </select>
+        <hr>
       </div>
       <div id="" class="">
         <label for="uploadStringsChkbx"><input type="checkbox" name="" value="" id="uploadStringsChkbx" style="margin-bottom: 3px"> Настроить строки</label>
@@ -617,6 +661,7 @@
       </div>
     </div>
     <div class="modal-footer">
+        <button class="btn btn-info saveUploadItemsNew" aria-hidden="true">ЗагрузитьNew</button>
         <button class="btn btn-success saveUploadItems" aria-hidden="true">Загрузить</button>
         <button class="btn btn-default cancelUploadItems" data-dismiss="modal" aria-hidden="true">Отменить</button>
     </div>
@@ -1633,10 +1678,11 @@ setTimeout(function () {
         var eventId = $("#events-list").val();
         var memberId = $("table.chkMember input[type='checkbox']:checked").parents ("tr").attr('data-id');
         if(memberId && memberId !== undefined){
-            $.getJSON('/ajax/get.php', { memberCheck: memberId, event : eventId})
+            $.getJSON('/ajax/get.php', { memberCheck: memberId, event : eventId, create: true})
             .done (function(data) {
                 fillEditMember (memberId, data.eventmember, data.localities);
                 $('#btnDoSaveMember').addClass('create');
+                $('#btnDoSaveMember').addClass('locality_all');
                 $('#modalEditMember').attr('data-member_id', memberId);
                 $('#modalEditMember').modal('show');
             });
@@ -1974,7 +2020,7 @@ function checkStopEventRegistration(eventId){
         .done (function(data) {
             refreshEventMembers (eventId, data.members, data.localities);
             if (data.invalid && data.invalid.length>0)
-                alert("Следующие участники не были зарегистрированы:\n\n"+data.invalid.toString().replace(/,/g,'\n')+"\n\nПроверьте правильность заполнения всех полей!", false);
+                alert("Следующие участники не были зарегистрированы:\n\n"+data.invalid.toString().replace(/,/g,'\n')+"\n\nПроверьте правильность заполнения всех полей и возрастные ограничения мероприятия!", false);
         });
     }
 
@@ -2513,7 +2559,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v62"></script>
+<script src="/js/reg.js?v63"></script>
 <?php
     include_once "footer.php";
 ?>
