@@ -56,7 +56,7 @@
 
     $('.modalListInput').hide();
 
-    if ($("#eventTabs").find(".tab-pane.active").attr('data-access') != 1 && localityValid != 0) {
+    if ($("#eventTabs").find(".tab-pane.active").attr('data-access') != 1 && localityValid != 0 && !$('#btnDoSaveMember').hasClass('locality_all')) {
       $("#inputEmLocalityId").autocomplete('disable');
       $("#inputEmLocalityId").autocomplete({
         serviceUrl: '/ajax/localities2.php',
@@ -76,6 +76,7 @@
   });
 
 $('#modalEditMember').on('hide', function() {
+  $('#btnDoSaveMember').hasClass('locality_all') ? $('#btnDoSaveMember').removeClass('locality_all') : '';
   $('#modalEditMember').find('.emLocality').attr('data-value','');
   $('#modalEditMember').find('.emLocality').attr('data-text','');
   $('#modalEditMember').find('#inputEmLocalityId').attr('data-value_input','');
@@ -410,7 +411,7 @@ $('.saveUploadItems').click(function () {
       } else if (counterLCC == 10) {
         xlsxDataGlobal[i][ii] = $('#uploadAccom').val();
       }
-      counterLCC++; // Что то не то считает - калонки а вроде должен строки
+      counterLCC++; // Что то не то считает - колонки, а вроде должен строки
     }
   }
   $('#uplpadStringCounterModal').modal('show');
@@ -453,6 +454,77 @@ $('#uplpadStringCounterBtn').click(function () {
   $('.saveUploadItems').attr("disabled", true);
 });
 
+//START NEW UPLOAD BUTTON
+function prepareArrayUpload(array) {
+// количество элементов массива должны соответствовать количеству элементов в массиве с данными
+  xlsxDataGlobal.unshift(fields);
+};
+
+$('.saveUploadItemsNew').click(function () {
+  if (($('#uploadCountry').val() === '_none_') && ($('#citizenshipGlobalUpload').next().val() === '' || $('#citizenshipGlobalUpload').next().val() === '_none_') || ($('#uploadLocality').val() === '_none_') && ($('#localityGlobalUpload').next().val() === '' || $('#localityGlobalUpload').next().val() === '_none_') || ($('#uploadCategory').val() === '_none_') && ($('#categoryGlobalUpload').next().val() === '' || $('#categoryGlobalUpload').next().val() === '_none_') || ($('#nameGlobalUpload').next().val() === '') || ($('#nameGlobalUpload').next().val() === '_none_')) {
+    showError('Заполните обязательные поля отмеченные звёздочкой* и поле ФИО.');
+    return false
+  }
+
+  var fields = [], first = [], left = [], right = [], a;
+// можно создать ассоциативный массив это будет проще
+// 1, 4, 5 и 6 обязательные для заполнения либо из соответствовующих комбобоксов глобальными значениями
+// то есть если глобальные селекты пусты то обязательно к заполению соответствующее поле, и обводить всё красным и после исправления красное убирать
+// Данные проверять именно при выборе поля в комбобоксе дата, число (номер), буквы, соответствие списку
+  $('#modalUploadItems').find('select').each(function () {
+    if ($(this).hasClass('float-left')) {
+      fields[$(this).val()] = 0;
+      a = $(this).val();
+    } else if ($(this).hasClass('float-right')) {
+      fields[a] = $(this).val();
+    } else {
+      first.push($(this).val());
+    }
+    /*if ($(this).val() !== '_none_') {
+
+    }*/
+  });
+  console.log(fields,first);
+//  prepareArrayUpload(fields);
+
+  /*
+  if ($('#upload_file').val() && ($('#uploadCategory').val() != '_none_') && ($('#uploadCountry').val() != '_none_') && ($('#uploadAccom').val() != '_none_')) {
+    var countStr = xlsxDataGlobal.length -1;
+    for (var i = 0; i < xlsxDataGlobal.length; i++) {
+      var counterLCC = 0;
+      for (var ii in xlsxDataGlobal[i]) {
+        if (counterLCC == 7) {
+          xlsxDataGlobal[i][ii] = $('#uploadCountry').val();
+        } else if (counterLCC == 8) {
+          xlsxDataGlobal[i][ii] = $('#uploadLocality').val();
+        } else if (counterLCC == 9) {
+          xlsxDataGlobal[i][ii] = $('#uploadCategory').val();
+        } else if (counterLCC == 10) {
+          xlsxDataGlobal[i][ii] = $('#uploadAccom').val();
+        }
+        counterLCC++;
+      }
+    }
+    console.log(xlsxDataGlobal);
+    var y = JSON.stringify(xlsxDataGlobalReg);
+    var x = JSON.stringify(xlsxDataGlobal);
+    $.post('/ajax/excelUpload.php', {xlsx_array: x, xlsx_array_reg: y})
+    .done(function(data){
+      //console.log(data);
+    });
+    $('#modalUploadItems').modal('hide');
+    setTimeout(function () {
+        loadDashboard();
+        showHint('Обработо '+countStr+' строк');
+    }, 300);
+  } else {
+    $('#uploadMsgError').text('Местность, категория или файл не выбраны.');
+  }
+  $('.saveUploadItems').attr("disabled", true);
+  */
+});
+//STOP NEW UPLOAD BUTTON
+
 $('#upload_file').change(function() {
   $('#uploadMsgError').text('');
   $('#uploadBtn').click();
@@ -468,7 +540,7 @@ $('#upload_file').change(function() {
 });
 
 function buildModalSelect() {
-  var option = {otime: 'Отметка времени???', name: 'ФИО', email: 'Емайл', birth: 'Дата рождения', vuz: 'ВУЗ', course: 'КУРС', attended: 'Полное участие?', event: 'Мероприятие', phone: 'Телефон', telegramm: 'Телеграмм', locality: 'Местность'};
+  var option = {genger: 'Пол', birth: 'Дата рождения', accom: 'Размещение', arrive: 'Прибытие', depart: 'Убытие', email: 'Емайл', parking: 'Парковка', russpeaking: 'Рускоговорящий?', attended: 'Полное участие?', vuz: 'ВУЗ', course: 'КУРС', phone: 'Телефон', telegramm: 'Телеграмм', otime: 'Отметка времени', other: 'Иное'};
   var elements = [];
   for (var i = 0; i < Object.keys(option).length; i++) {
     var options = [], conterForSelected = 0;
@@ -490,7 +562,7 @@ function buildModalSelect() {
       elements.push('</select><select class="float-right upload_fields" name=""></select>');
     }
   var elementsString =  elements.join('');
-  $('#newuploadBoard').html(elementsString);
+  $('#newuploadBoard').append(elementsString);
 }
 buildModalSelect();
 
@@ -505,10 +577,142 @@ function newFileUploader(xlsxData) {
   var uploadedFieldOptionsString = uploadedFieldOptions.join('');
   $('#newuploadBoard').find('.upload_fields').each(function () {
     $(this).html(uploadedFieldOptionsString);
-  })
+  });
   console.log(xlsxData);
 }
+// START UPLOAD BAR. CHECK SELECT FIELDS FUNCTION
+function checkSelect(value, el, txt) {
+  var a = [];
+  $('#newuploadBoard select').each(function () {
+    if (!$(this).hasClass('upload_fields')) {
+      a.push($(this).val());
+    }
+  });
+  var counter = 0;
+  a.forEach(function (item, index) {
+    if (item === value) {
+      counter++;
+      if ((counter > 1) && (el.val() !== '_none_') && (el.val() !== 'other')) {
+        el.val('_none_');
+        showError('Поле '+txt+' уже выбрано.')
+      }
+    }
+  });
+}
 
+function checkSelectGlobalValue() {
+  if ($('#uploadCountry').val() !== '_none_') {
+    $('#citizenshipGlobalUpload').attr('disabled', true);
+    $('#citizenshipGlobalUpload').next().attr('disabled', true);
+    $('#citizenshipGlobalUpload').next().val('_none_');
+  } else {
+    $('#citizenshipGlobalUpload').attr('disabled', false);
+    $('#citizenshipGlobalUpload').next().attr('disabled', false);
+  }
+  if ($('#uploadLocality').val() !== '_none_') {
+    $('#localityGlobalUpload').attr('disabled', true);
+    $('#localityGlobalUpload').next().attr('disabled', true);
+    $('#localityGlobalUpload').next().val('_none_');
+  } else {
+    $('#localityGlobalUpload').attr('disabled', false);
+    $('#localityGlobalUpload').next().attr('disabled', false);
+  }
+  if ($('#uploadCategory').val() !== '_none_') {
+    $('#categoryGlobalUpload').attr('disabled', true);
+    $('#categoryGlobalUpload').next().attr('disabled', true);
+    $('#categoryGlobalUpload').next().val('_none_');
+  } else {
+    $('#categoryGlobalUpload').attr('disabled', false);
+    $('#categoryGlobalUpload').next().attr('disabled', false);
+  }
+}
+$('#newuploadBoard select').change(function () {
+  if (!$(this).hasClass('upload_fields')) {
+    checkSelect($(this).val(),$(this), $(this).find('option:selected').text());
+  } else if ($(this).hasClass('upload_fields')) {
+    if ($(this).prev().attr('id') === 'nameGlobalUpload') {
+      // Сделать универсальную функцию для проверки
+      var g = 0, err = 0;
+      var f = Number($(this).val());
+      xlsxDataGlobal.forEach(function (arr) {
+        if (g !== 0) {
+          if (/\d/.test(arr[f+g])) {
+            showError('Поле имя не должно содержать цифры.');
+            err = 1;
+          }
+        }
+        if (err === 1) {
+          return
+        }
+        g=g+30;
+      });
+      if (err === 1) {
+        $(this).val('_none_');
+      }
+    } else if ($(this).prev().attr('id') === 'localityGlobalUpload') {
+      // Сделать универсальную функцию для проверки
+      var g = 0, err = 0, loc =[];
+      var f = Number($(this).val());
+      $('#uploadLocality option').each(function () {
+        loc.push($(this).text());
+      });
+      // нужно добавлять новые местности в новые местности, а undefined проверять на пустую запись, которых может быть по 500 штук
+      xlsxDataGlobal.forEach(function (arr) {
+        if (g !== 0) {
+            if (loc.indexOf(arr[f+g]) === -1 && arr[f+g] !== undefined) {
+              showError('Местности <b>'+arr[f+g]+'</b> нет в списке.');
+              err = 1;
+            }
+        }
+        if (err === 1) {
+          return
+        }
+        g=g+30;
+      });
+      if (err === 1) {
+        $(this).val('_none_');
+      }
+    } else if ($(this).prev().find('option:selected').val() === 'email') {
+      var g = 0, err = 0;
+      var f = Number($(this).val());
+      xlsxDataGlobal.forEach(function (arr) {
+        if (g !== 0) {
+          if (!(/@/.test(arr[f+g])) || arr[f+g] === '') {
+            showError('Некорректные адреса Email.');
+            err = 1;
+          }
+        }
+        if (err === 1) {
+          return
+        }
+        g=g+30;
+      });
+    } else if ($(this).prev().find('option:selected').val() === 'phone') {
+      var g = 0, err = 0;
+      var f = Number($(this).val()-3);
+      xlsxDataGlobal.forEach(function (arr) {
+        if (g !== 0) {
+          if (!(/^\s*\+?\d+[^a-z]/.test(arr[f+g])) || arr[f+g] === '') {
+//Доделать
+            showError('Некорректные номера телефонов.');
+            err = 1;
+          }
+        }
+        if (err === 1) {
+          return
+        }
+        g=g+30;
+      });
+    }
+    if (err === 1) {
+      $(this).val('_none_');
+    }
+  }
+});
+$('#globalValueForFields select').change(function () {
+    checkSelectGlobalValue();
+});
+// STOP UPLOAD BAR. SELECT CHECK FUNCTION
 $('form').on('submit', function (e) {
     e.preventDefault();
     // logic
@@ -681,3 +885,7 @@ while (co < 100) {
   }
 }
 */
+// Hide Global Error
+$('#globalError').find('.close-alert').click(function () {
+  $('#globalError').hide();
+});

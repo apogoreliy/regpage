@@ -26,7 +26,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
               <option selected value="meetings">Собрания</option>
               <option value="visits">Посещения и звонки</option>
           </select>
-            <div class="btn-toolbar" style="margin-top:10px !important">              
+            <div class="btn-toolbar" style="margin-top:10px !important">
                 <a class="btn btn-success add-meeting" type="button"><i class="fa fa-plus icon-white"></i> <span class="hide-name">Добавить</span></a>
                 <a class="btn btn-primary show-templates" type="button"><i class="fa fa-list"></i> <span class="hide-name">Шаблоны</span></a>
                 <a class="btn btn-meeting-members-statistic" href="#">
@@ -618,6 +618,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                 <option value='_all_' selected>&lt;все&gt;</option>
                 <?php foreach ($categories as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
             </select>
+            <input class="span2" type="text" id="searchBlockFilter" placeholder="Введите фамилию" style="margin-top: 5px;">
         </form>
         <div id="addMemberTableHeader">
             <!--<a id="selectAllMembersList" onclick="">Выбрать всех</a>

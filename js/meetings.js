@@ -1557,6 +1557,9 @@ var isFillTemplate = 0;
 
         $("#selAddMemberLocalityTemplate, #selAddMemberCategoryTemplate").change (function (){
               loadMembersListFilter ();
+              setTimeout(function () {
+                  hideExistingMemberRegistration();
+              }, 700);
           });
 
         $("#selMeetingCategory, #selMeetingLocality").change(function(){
@@ -1927,10 +1930,13 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
     $('#modalAddMembersTemplate').on('show', function (e){
         e.stopPropagation();
         $("#selAddMemberLocalityTemplate, #selAddMemberCategoryTemplate").val('_all_');
-        //$(".searchMemberToAdd").val('');
+        $('#searchBlockFilter').val('');
         $('#modalAddMembersTemplate').find('#selectAllMembersList').prop('checked', false);
         loadMembersList ();
         loadMembersListFilter ();
+        setTimeout(function () {
+            hideExistingMemberRegistration();
+        }, 1500);
       });
 
     $('#sort-by_name').click(function(){
@@ -2258,6 +2264,37 @@ renewComboLists('.meeting-lists-combo');
           }
         };
 
+//START A FIELD OF THE SEARCH MEMBERS
+$('#searchBlockFilter').on('input', function (e) {
+  hideExistingMemberRegistration(true);
+});
+
+function hideExistingMemberRegistration(search) {
+  var existRegistration = [];
+  $('#addEditMeetingModal tbody tr').each(function() {
+    var classId = $(this).attr('data-id');
+    classId ? existRegistration.push(classId) : '';
+  });
+  if (search) {
+    var desired = $('#searchBlockFilter').val();
+    $('#modalAddMembersTemplate tbody tr').each(function() {
+      var str = $(this).find('td:nth-child(2) label').text();
+      var current = $(this).attr('data-member_key');
+      str.toLowerCase().indexOf(String(desired.toLowerCase())) === -1 ? $(this).hide() : $(this).show();
+      if ((existRegistration.indexOf(current) != -1) && existRegistration) {
+        $(this).hide();
+      }
+    });
+  } else {
+    $('#modalAddMembersTemplate tbody tr').each(function() {
+      var current = $(this).attr('data-member_key');
+      if ((existRegistration.indexOf(current) != -1) && existRegistration) {
+        $(this).hide();
+      }
+    });
+  }
+}
+//STOP A FIELD OF THE SEARCH MEMBERS
 /*
 //START array Details of Members
 //var listOfMembersArr;

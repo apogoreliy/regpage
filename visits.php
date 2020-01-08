@@ -593,6 +593,7 @@ $sort_type = isset ($_SESSION['sort_type-visits']) ? $_SESSION['sort_type-visits
                 <option value='_all_' selected>&lt;все&gt;</option>
                 <?php foreach ($categories as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
             </select>
+            <input class="span2" type="text" id="searchBlockFilter" placeholder="Введите фамилию" style="margin-top: 5px;">
         </form>
         <div class="membersTable">
             <table class="table table-hover table-condensed">

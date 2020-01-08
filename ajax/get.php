@@ -123,10 +123,17 @@ elseif (isset ($_GET ['memberCheck']) && isset ($_GET ['event']))
 
     if ($member)
     {
-        echo json_encode(array (
-            "eventmember"=>$member,
-            "localities"=>db_isAdminRespForReg($adminId, $_GET['event']) ? db_getLocalities() : db_getAdminLocalities ($adminId)));
-        exit;
+        if (isset($_GET ['create'])) {
+          echo json_encode(array (
+              "eventmember"=>$member,
+              "localities"=> db_getLocalities()));
+          exit;
+        } else {
+          echo json_encode(array (
+              "eventmember"=>$member,
+              "localities"=>db_isAdminRespForReg($adminId, $_GET['event']) ? db_getLocalities() : db_getAdminLocalities ($adminId)));
+          exit;
+        }
     }
     else{
         $error = "Бланк участника не найден";

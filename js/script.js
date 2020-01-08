@@ -311,8 +311,8 @@ function handleAditionalMenu(){
             tooltipDate = $(this).parents("#modalEditMember").find( isDepDate ? ".tooltipDepDate" : ".tooltipArrDate").data ('date'),
             //tooltipDate = $(this).parents("#modalEditMember").find( isTabletWidth ? ".tablets-visible" : ".desctop-visible").find( isDepDate ? ".tooltipDepDate" : ".tooltipArrDate").data ('date'),
             eventDate = new Date(tooltipDate),
-            eventDateTmp = new Date(),
-            eventDateMilliseconds = eventDateTmp.setDate(eventDate.getDate() + ( isDepDate ? 10 : -11)),
+            //eventDateTmp = new Date(),
+            eventDateMilliseconds = eventDate.setDate(eventDate.getDate() + ( isDepDate ? 10 : -11)),
             borderDate = new Date(eventDateMilliseconds),
             year = borderDate.getFullYear(),
 
@@ -320,12 +320,12 @@ function handleAditionalMenu(){
             // year for a current date will be choose 2016 but actually meant 2017
             // how to solve this situation?
             // add algorithm: add 1 year if current date is January and event occurs in January or in December
-// ПЕРЕСМОТРЕТЬ КОД БОРДЕР ОТ И БОРДЕР ДО. вместо 10 дней до мероприятия дайт аж 21
+
             currentDate = new Date((( currentDates[1] - 1 === 0 && borderDate.getFullYear() < eventDate.getFullYear()  && !isDepDate ) ||
-            (!isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 ) ? year + 1 : year) , currentDates[1] - 1, currentDates[0]);
+            (!isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 ) ? year++ : year) , currentDates[1] - 1, currentDates[0]);
             // Три условия один для января второй для декабря и третий для других периодов
             var currentDateDepart = new Date((/*(currentDates[1] - 1 === 0 && borderDate.getFullYear() > eventDate.getFullYear()  && isDepDate ) ||*/ (Number(currentDates[1]) === 12 && borderDate.getFullYear() > eventDate.getFullYear()  && isDepDate ) /*||
-            (isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 )*/ ? year-1 : year), currentDates[1] - 1, currentDates[0]);
+            (isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 )*/ ? year-- : year), currentDates[1] - 1, currentDates[0]);
 
             if (isDepDate ? currentDateDepart >= borderDate : currentDate <= borderDate) {
                 $(this).focus().parents('.control-group').addClass('error');
@@ -333,7 +333,7 @@ function handleAditionalMenu(){
                 showError('Некорректно введена дата '+ (isDepDate ? 'отъезда' : 'приезда'), true);
             }
         }
-        console.log(currentDateDepart);
+
     });
 
     $(".emFellowship").change(function () {
