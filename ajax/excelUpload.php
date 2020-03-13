@@ -24,13 +24,14 @@ function fileUploaderAdd($arr, $arrReg){
     $counter = 0;
     if ($i!=0) {
       foreach($arrTemp as $value) {
-        if ($counter < 10) {
+        if ($counter < 13) {
 // value
           if (empty($value)) {
             $value = ' ';
           }
         $val = "'$value'";
 // memberId counter & "(", ")" & prepare array
+// it is dublicate ID 99000000 sometimes if string 9900000 was in reg table
         if (($counter == 0) && ($counterArr == 0)) {
           $memcounter = db_getNewMemberKey(); // решить и переходить к формированию и добавлению записей в рег и мемберс
           $newMemberId = "'$memcounter'";
@@ -44,13 +45,13 @@ function fileUploaderAdd($arr, $arrReg){
           array_unshift($arrReg[$counterArr+1], $newMemberId);
           $newMemberId = "'$newMemberId'";
           $val = "(".$newMemberId.",".$val;
-        } elseif ($counter == 9) {
+        } elseif ($counter == 12) {
           $val = $val.")";
         }
 // add element to the temp array
         $sqltemp[$counter-1] = $val;
       }
-      if ($counter == 9) {
+      if ($counter == 12) {
           $counter = 0;
           $counterArr++;
           $sql[] = implode(',',$sqltemp);
@@ -64,6 +65,8 @@ function fileUploaderAdd($arr, $arrReg){
           unset($sqltemp[7]);
           unset($sqltemp[8]);
           unset($sqltemp[9]);
+          unset($sqltemp[10]);
+          unset($sqltemp[11]);
           break;
       }
         $counter++;
@@ -73,7 +76,7 @@ function fileUploaderAdd($arr, $arrReg){
   $sqlMem = implode(',',$sql);
   //print_r($sqlMem);
 
-  db_query("INSERT INTO member (`key`, `comment`, `email`, `name`, `birth_date`, `college_comment`, `male`, `cell_phone`,`citizenship_key`,`locality_key`,`category_key`) VALUES ".$sqlMem."");
+  db_query("INSERT INTO member (`key`, `comment`, `email`, `name`, `birth_date`, `college_comment`, `male`, `cell_phone`,`citizenship_key`,`locality_key`,`category_key`,`admin_key`, `russian_lg`, `new_locality`) VALUES ".$sqlMem."");
 
 // INSERT TO REG TABLE
 $sqlForRegTemp = [];
