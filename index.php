@@ -731,7 +731,7 @@ $(document).ready(function(){
                        ( isEventActive ? '<span  style="display: inline; margin-right: 5px; margin-left: 5px;"class="fa fa-check-circle  btnEventActivity" title="Сделать неактивным"></span>' : '<span style="display: inline; margin-right: 5px; margin-left: 5px;" class="fa fa-times btnEventActivity" title="Сделать активным"></span>') +
                         '<span style="display: inline; margin-right: 5px; margin-left: 5px;" class="fa fa-pencil btnEditEvent" title="Редактировать мероприятие"></span>'+
                         '<span style="display: inline; margin-right: 5px;" class="fa fa-trash-o btnRemoveEvent" title="Удалить мероприятие" aria-hidden="true"></span>' : '')+
-                        ((event.archived === '0' && (isEventsAdmin || archiveAccess != -1 || memberId === event.author)) ? '<span style="display: inline; margin-left: 5px;" class="fa fa-database btnGetArchive" title="Архивировать данные" aria-hidden="true"></span>' : '');
+                        ((event.archived === '0' && memberId === '000001679'/*(isEventsAdmin || archiveAccess != -1 || memberId === event.author)*/) ? '<span style="display: inline; margin-left: 5px;" class="fa fa-database btnGetArchive" title="Архивировать данные" aria-hidden="true"></span>' : '');
 
                 eventAttrs = ' class="event-row" data-name="'+event.name+'" data-locality_name="'+event.locality_name+'" '+
                         'data-start_date="'+event.start_date+'" data-end_date="'+event.end_date+'" data-private="'+event.private+'" '+
@@ -1509,7 +1509,7 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
 var adminRole = '<?php echo db_getAdminRole($memberId); ?>';
 
 </script>
-<script src="/js/mainpage.js?v17"></script>
+<script src="/js/mainpage.js?v18"></script>
 
 <?php
 }

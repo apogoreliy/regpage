@@ -311,21 +311,29 @@ function handleAditionalMenu(){
             tooltipDate = $(this).parents("#modalEditMember").find( isDepDate ? ".tooltipDepDate" : ".tooltipArrDate").data ('date'),
             //tooltipDate = $(this).parents("#modalEditMember").find( isTabletWidth ? ".tablets-visible" : ".desctop-visible").find( isDepDate ? ".tooltipDepDate" : ".tooltipArrDate").data ('date'),
             eventDate = new Date(tooltipDate),
-            //eventDateTmp = new Date(),
+            eventDateDbl = new Date(tooltipDate),
             eventDateMilliseconds = eventDate.setDate(eventDate.getDate() + ( isDepDate ? 10 : -11)),
             borderDate = new Date(eventDateMilliseconds),
-            year = borderDate.getFullYear(),
+            year = borderDate.getFullYear();
 
             // if an event occurs in January 2017 borderdate will be in December 2016;
             // year for a current date will be choose 2016 but actually meant 2017
             // how to solve this situation?
             // add algorithm: add 1 year if current date is January and event occurs in January or in December
 
-            currentDate = new Date((( currentDates[1] - 1 === 0 && borderDate.getFullYear() < eventDate.getFullYear()  && !isDepDate ) ||
-            (!isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 ) ? year++ : year) , currentDates[1] - 1, currentDates[0]);
-            // Три условия один для января второй для декабря и третий для других периодов
-            var currentDateDepart = new Date((/*(currentDates[1] - 1 === 0 && borderDate.getFullYear() > eventDate.getFullYear()  && isDepDate ) ||*/ (Number(currentDates[1]) === 12 && borderDate.getFullYear() > eventDate.getFullYear()  && isDepDate ) /*||
-            (isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 )*/ ? year-- : year), currentDates[1] - 1, currentDates[0]);
+            if (!isDepDate && borderDate.getMonth() == 0 && Number(currentDates[1]) === 12) {
+              currentDate = new Date(year-1 , currentDates[1] - 1, currentDates[0]);
+            } else {
+              currentDate = new Date((/*(currentDates[1] - 1 === 0 && borderDate.getFullYear() < eventDateDbl.getFullYear()  && !isDepDate) ||*/ (!isDepDate && borderDate.getMonth() == 11 && currentDates[1] - 1 === 0 ) ? year+1 : year) , currentDates[1] - 1, currentDates[0]);
+            }
+
+            // условия один для января второй для декабря и третий для других периодов
+            if ((currentDates[1] - 1 === 0 && borderDate.getMonth() == 11 && isDepDate )) {
+              currentDateDepart = new Date(year+1 , currentDates[1] - 1, currentDates[0]);
+            } else {
+              currentDateDepart = new Date(((Number(currentDates[1]) === 12 && borderDate.getMonth() === 0 && isDepDate ) /*||
+            (isDepDate && eventDate.getMonth() == 11 && currentDates[1] - 1 === 0 )*/ ? year-1 : year), currentDates[1] - 1, currentDates[0]);
+            }
 
             if (isDepDate ? currentDateDepart >= borderDate : currentDate <= borderDate) {
                 $(this).focus().parents('.control-group').addClass('error');

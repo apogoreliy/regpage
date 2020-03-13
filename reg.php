@@ -606,50 +606,47 @@
       </div>
       <hr>
       <h4>Настроить поля</h4>
-      <div class="" id="uploadPrepare">
-        <div class="" id="uploadPrepareClo">
-        </div>
-        <div class="" id="uploadPrepareStr">
-        </div>
-      </div>
-      <div class="" id="uploadPrepareCloImportant">
-
-      </div>
       <div id="newuploadBoard" class="">
-        <select class="float-left" id="nameGlobalUpload">
+        <select class="float-left" id="nameGlobalUpload" title="Это обязательное поле и оно должно содержать ФИО полностью или фамилию">
             <option value="name">ФИО или Фамилия</option>
         </select>
-        <select class="float-right upload_fields" id="">
+        <select class="float-right upload_fields" id="nameGlobalUploadVal" title="Это обязательное поле и оно должно содержать ФИО полностью или фамилию">
             <option value=""></option>
         </select>
-        <select class="float-left" id="name1GlobalUpload">
+        <select class="float-left" id="name1GlobalUpload" title="Это дополнительное поле, оно должно содержать имя, если в поле выше содержится только фамилия">
             <option value="name1">Имя (опционально)</option>
         </select>
-        <select class="float-right upload_fields" id="">
+        <select class="float-right upload_fields" id="" title="Это дополнительное поле, оно должно содержать имя, если в поле выше содержится только фамилия">
             <option value=""></option>
         </select>
-        <select class="float-left" id="name2GlobalUpload">
+        <select class="float-left" id="name2GlobalUpload" title="Это дополнительное поле, оно должно содержать отчество.">
             <option value="name2">Отчество (опционально)</option>
         </select>
-        <select class="float-right upload_fields" id="">
+        <select class="float-right upload_fields" id="" title="Это дополнительное поле, оно должно содержать отчество.">
             <option value=""></option>
         </select>
-        <select class="float-left" id="citizenshipGlobalUpload">
+        <select class="float-left" id="citizenshipGlobalUpload" title="Поле должно содержать название страны">
             <option value="citizenship">Гражданство</option>
         </select>
-        <select class="float-right upload_fields" id="">
+        <select class="float-right upload_fields" id="citizenshipGlobalUploadVal" title="Поле должно содержать название страны">
             <option value=""></option>
         </select>
-        <select class="float-left" id="localityGlobalUpload">
+        <select class="float-left" id="localityGlobalUpload" title="Поле должно содержать название местности">
             <option value="locality">Местность</option>
         </select>
-        <select class="float-right upload_fields" id="">
+        <select class="float-right upload_fields" id="localityGlobalUploadVal" title="Поле должно содержать название местности">
             <option value=""></option>
         </select>
-        <select class="float-left" id="categoryGlobalUpload">
+        <select class="float-left" id="categoryGlobalUpload" title="Поле должно содержать название категории например: студент или студенты, школьник и тп.">
             <option value="category">Категория</option>
         </select>
-        <select class="float-right upload_fields" id="">
+        <select class="float-right upload_fields" id="categoryGlobalUploadVal" title="Поле должно содержать название категории например: студент или студенты, школьник и тп.">
+            <option value=""></option>
+        </select>
+        <select class="float-left" id="accomGlobalUpload" title="Поле может содержать слова да/нет или требуется не требуется">
+            <option value="accom">Размещение</option>
+        </select>
+        <select class="float-right upload_fields" id="accomGlobalUploadVal" title="Поле может содержать слова да/нет или требуется/не требуется">
             <option value=""></option>
         </select>
         <hr>
@@ -661,8 +658,7 @@
       </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-info saveUploadItemsNew" aria-hidden="true">ЗагрузитьNew</button>
-        <button class="btn btn-success saveUploadItems" aria-hidden="true">Загрузить</button>
+        <button class="btn btn-success saveUploadItemsNew" aria-hidden="true">Загрузить</button>
         <button class="btn btn-default cancelUploadItems" data-dismiss="modal" aria-hidden="true">Отменить</button>
     </div>
 </div>
@@ -2124,8 +2120,8 @@ function checkStopEventRegistration(eventId){
             $(".tab-pane.active " + (document.documentElement.clientWidth < 751 ? '.show-phone' : '.desctopVisible' ) + " table.reg-list tr[class|='regmem']").each (function (){
                 var id = $(this).attr ('class').replace(/^regmem-/,'');
                 if (id.length>2 && id.substr (0,2)!="99" && id!=memberId){
-                    var name = $(this).find('.mname').text();
-                    emMateHtml+="<option value='"+he(id)+"' selected>"+he(name)+"</option>";
+                    var name = $(this).find('.mname .mname1').text() + ', ' + $(this).find('.mname .mnameCategory').text();
+                    emMateHtml+="<option value='"+he(id)+"'>"+he(name)+"</option>";
                 }
             });
 
@@ -2504,7 +2500,7 @@ function checkStopEventRegistration(eventId){
     $(document).keyup(function(e) {
         if (e.keyCode === 27) {
             var modal = $("#modalEditMember");
-            if (modal.data('modal') && modal.data('modal').isShown){
+            if (modal.data('modal') && modal.data('modal').isShown && !$("#confirmToSaveChangesModal").is(':visible')){
                 //var memberEventData = parseEventMemberDataToCheckChanges(getValuesRegformFields(form));
                 var memberId = $("#modalEditMember").attr('data-member_id'),
                     eventId = $("#events-list").val(),
@@ -2559,7 +2555,8 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v63"></script>
+<script src="/js/reg.js?v65"></script>
+<script src="/js/regupload.js?v2"></script>
 <?php
     include_once "footer.php";
 ?>
