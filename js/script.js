@@ -45,7 +45,13 @@ function formatDDMM (date) {
     }
     return "";
 }
-
+// RECOGNIZE SAFARI BROWSER
+function isMac() {
+  if (navigator.userAgent.search(/Macintosh/) > 0 || navigator.userAgent.search(/Mac /) > 0) {
+      return true;
+    };
+}
+// PARSING DATES
 function parseDate (date) {
 	var d = /(\d{2})\.(\d{2})\.(\d{4})/.exec(date);
     if (d){

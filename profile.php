@@ -17,10 +17,11 @@
         <label style="display:inline">Логин</label>
         <span> <?php echo $currentLogin; ?></span>
     </div>
-    <div style="margin: 10px 0 15px 0;" >
+    <div style="margin: 10px 0 15px 0; text-align: center;">
         <div class="btn btn-change-login" style="padding: 5px; display: inline">Изменить логин</div>
         <div class="btn btn-change-password" style="padding: 5px; display: inline">Изменить пароль</div>
-        <div id="logoutTotal" class="btn" style="padding: 5px; display: inline" title="Кликните, что бы выйти из аккаунта на всех устройствах">Выйти ото всюду</div>
+        <br>
+        <div id="logoutTotal" class="btn" style="padding: 3px 5px; display: inline-block; margin-top: 10px;" title="Кликните, что бы выйти из аккаунта на всех устройствах">Выйти на всех устройствах</div>
     </div>
     <div class="control-group row-fluid" style="margin-bottom: 5px;">
         <label class="span12">ФИО<span class="example">Пример: Орлов Пётр Иванович</span></label>
