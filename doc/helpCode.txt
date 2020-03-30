@@ -9,15 +9,18 @@ Date and time
 Приводит дату в формате 01.01.2019 из строки в объект Data
 
 /**ADMINS**\
+  |**  PHP  **|
 1. db_getAdminsList() - Возвращает список всех админов (ответственных за регистрацию?).
-2. db_getAdminsListByLocalitiesCombobox($adminLocality) Возвращает список админов из местности админа (ответственных за регистрацию?).
-3. db_getActivityListLog(startPeriod, stopPeriod, locality, page), db_getActivityList(startPeriod, stopPeriod, locality, page, listOfAdmins) - возвращает список активности админов. В первом случае всех, во втором согласно переданному списку админов
-4. db_getAdminsNameByMembersKeys($admisList) - Возвращает список имён админов, принимает Id админов
-5. db_getAdminsByCountry(Country), db_getAdminsByRegion(Region), db_getAdminsByLocalitiesNew(Locations) - Возвращает список админов данного региона, местности, страны. Принимает ID местности, региона, страны
+2. db_getAdminsListByLocalitiesCombobox($adminLocality) - Возвращает список админов из местности админа (ответственных за регистрацию?).
+3. db_getActivityListLog(startPeriod, stopPeriod, locality, page), db_getActivityList(startPeriod, stopPeriod, locality, page, listOfAdmins) - возвращает список активности админов. В первом случае всех, во втором согласно переданному списку админов.
+4. db_getAdminsNameByMembersKeys($admisList) - Возвращает список имён админов, принимает Id админов.
+5. db_getAdminsByCountry(Country), db_getAdminsByRegion(Region), db_getAdminsByLocalitiesNew(Locations) - Возвращает список админов данного региона, местности, страны. Принимает ID местности, региона, страны.
 6. db_getAdminRegionOnly($memberId), db_getAdminCountryOnly($memberId), db_getAdminLocalitiesOnly($memberId) - возвращает список регионов, стран и местностей переданного админа.
-7. db_getAdminsByLRC($memberId) - возвращает список всех админов для регионов и стран и местностей переданного админа
+7. db_getAdminsByLRC($memberId) - возвращает список всех админов для регионов и стран и местностей переданного админа.
+\**ADMINS**/
 
 /**ARCHIVES**\
+  |**  PHP  **|
 db_setEventArchive() - Администратором мероприятия добавляется краткая статистическая запись о мероприятии (таблица event_archive). Страницы: События и Архив.
 db_getArchiveEvents() - получить записи заархивированных мероприятий.
 db_getArchiveGeneralEvents() - аналогична предыдущей, но больше параметров.
@@ -26,11 +29,77 @@ db_getArchiveEventList() - получить список участников з
 getEventArchiveMembersStatistic() - получит статистику по участникам заархивированого мероприятия.
 // Отключена db_isSingleCityArchiveEvent() - возвращает результат если в списке у всех заархивированных мероприятий одна местность
 db_setEventArchive() - архивирует событие (добавляет в таблицу event_archive то есть сводные данные об активном, прошедшем, синхронизированом мероприятии).
-db_addEventArchive() - добавляет новое архивное Мероприятие в разделе Архив на странице События по кнопке Добавить. При выборе опции $registration = 1 запись добавляется ив Архив и в Список активных мероприятий (видимо как заархивированное)
+db_addEventArchive() - добавляет новое архивное Мероприятие в разделе Архив на странице События по кнопке Добавить. При выборе опции $registration = 1 запись добавляется ив Архив и в Список активных мероприятий (видимо как заархивированное).
+\**ARCHIVES**/
 
 /**Reference**\
+  |**  PHP  **|
 db_getPages() - получить все страницы из таблицы PAGE
+\**Reference**/
 
 /**MEMBERS NAMES**\
+  |**  PHP  **|
 treeShortNames(); get John John John return John J.J.
 twoNames(); get John John John return John John
+\**MEMBERS NAMES**/
+
+/**STATISTICS**\
+  |**  PHP  **|
+db_getLocalitiesStatus() - Возвращает список статусов местностей. Возвращает массив с данными.
+db_getAllPeriods() - Возвращает список периодов статистики. Возвращает массив с данными.
+db_getPeriodActual()- Возвращает ID последнего периода статистики из базы данных. Возвращает строку данными.
+db_getPeriodInterval() - Возвращает диапазон дат последнего периода статистики (по наибольшей дате). Возвращает строку с данными.
+getMembersStatistic($locality) - Возвращает список участников крещённых в отчётный период и участников посещающих собрания. Возвращает массив с данными.
+getCheckDublicateStatistic($statisticId, $locality) - возвращает ID, card id, Locality записи статистики выбранной согласно переданным аргументам. Возвращает массив с данными.
+db_getStatisticStrings($memberId, $localities) - Возвращает строки статистик для переданных в функцию местностей (местностей доступных админу). Возвращает массив с данными.
+db_setNewStatistic($memberId, $locality, $localityStatusId, $statisticCardId, $bptzYounger17, $bptz_count, $attendedYounger17, $attended17_25, $attendedOlder25, $attended60, $attendedCount, $ltMeetingAverage, $archive, $comment, $statusCompleted) - Добавление нового бланка статистики в базу данных. (Рефакторить: сделать один или два параметра и упаковать данные в объект или массив).
+db_updateStatistic ($memberId, $locality, $localityStatusId, $statisticCardId, $bptzYounger17, $bptz_count, $attendedYounger17, $attended17_25, $attendedOlder25, $attended60, $attendedCount, $ltMeetingAverage, $archive, $comment, $statusCompleted, $idStatistic) - Обновляет данные строки статистики в базе данных.
+db_deleteMembersStatistic($statisticId) - удаляет строку статистики из базы данных.
+  |**  JS  **|
+loadDashboard() - Запросить список статистик.
+filtersList() - фильтры
+buildList() - Построить лист статистики.
+fulfillSttsModal(sttsResult) - заполнить бланк статистики при открытии.
+statisticBlankFill() - заполнить статистику автоматически.
+treeShortNames(fullName) - краткое имя участника.
+sortingStatistic() - сортировка списка.
+sortingFun() - сортировка списка.
+clearBlankFields() - очистить поля бланка.
+setPeriodDefault() - запросить текущий период статистики.
+checkFieldsStatModalInvalid() - проверка на незаполненные поля в бланке.
+showError ---------------- Универсальная функция показывает ошибки.
+showHint------------------ Универсальная функция показывает уведомления.
+setStatistic(true) - добавить / изменить статистику в базе данных.
+statisticСalculation() - автоматически суммировать количество участников в бланке.
+setFieldsStatisticsAvailable() - другие поверкипроверки в бланке. Доступность, настройки связанные со статусом и тп.
+resizeScreenMdlStatistics() - переключение версий при изменении экрана.
+  |**JS EVENT**|
+Клик по строке статистики открывает статистику для редактирования в модальном окне.
+При показе бланка, при необходимости, очищаются поля.
+При смене периода отображается список соответствующий выбранным периодам.
+при смене списков выбора работают фильтры.
+Копирование сожержания полей в бланке при переходе между десктопом и мобильной версиями.
+Чекбокс Статистика заполнена подключены проверки на валидность некоторых полей.
+\**STATISTICS**/
+
+/**REG UPLOAD**\
+  |**  PHP  **|
+fileUploader($upfile) - обрабатывает загруженный файл и передаёт полученный массив в JS скрипт.
+fileUploaderAdd($arr, $arrReg) - добавляет данные из XLSX файла в базу данных.
+  |**  JS  **|
+  getUpdaterEditor(array) - разбор массива, проверка некоторых значений.
+  getUpdaterEditorForRegTbl(xlsxDataGlobalReg) - разбор массива в новый массив, проверка некоторых значений.
+  uploadTableBuilder(array) -
+  buildModalSelect() - построение блока со списками выбора, содержащие название импортированных полей.
+  newFileUploader(xlsxData) -
+  stringPrepareForShow(xlsxData) - отображает импортируемые строки в модальном окне.
+  collectString() - сбор строк (разрешенных)
+
+  |**JS EVENT**|
+\**REG UPLOAD**/
+
+/**LOCALITY REG PAGE**\
+db_getAllAdminsLocalitiesAutocomplete($query) - заполнение списка местностей с учётом запроса, отображаются не только местности админа, но и некоторые другие местности. Возвращает ключ местности=>наименование местности.
+db_getAdminLocalitiesAdmin($query, $memberId) - заполнение списка местностей с учётом прав доступа к местностям администратора. Возвращает ключ местности=>наименование местности.
+db_getLocalities() - получить все местности. Возвращает ключ местности=>наименование местности.
+\**LOCALITY REG PAGE**/

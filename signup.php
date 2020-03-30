@@ -216,7 +216,7 @@ $(document).ready(function(){
             <span>Создавайте учётную запись только для себя. По всем вопросам обращайтесь в службу поддержки через чат (в правом нижнем углу экрана)</a>
             </span>
         </div>
-        <label class="control-label" for="login">Логин</label>
+        <label class="control-label" for="login">Логин (Электронная почта)</label>
         <input type="text" class="login" name="login" placeholder="Email" valid="required">
 
         <label class="control-label" for="password">Пароль</label>

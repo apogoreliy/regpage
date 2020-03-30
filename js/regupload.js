@@ -187,13 +187,13 @@ console.log(columnsNo);
         }
 // Доделать
       if (fieldsSelected['genger'] === '_none_') {
-        y ? y.trim() : '';
+        y ? toTrimAndToLower(y) : '';
          //var x = xlsxDataGlobal[i][bb];
          var u;
          if (y) {
            u = y.slice(-1);
          }
-         if ((u == 'а') || (u == 'я') || (u == 'э') || (u == 'е' || u == 'А') || (u == 'Я') || (u == 'Э') || (u == 'Е')) {
+         if ((u == 'а') || (u == 'я') || (u == 'э') || (u == 'е')) {
            female = 0;
          } else {
            female = 1;

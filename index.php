@@ -149,7 +149,6 @@ else if (isset ($_SESSION["logged-in"])){
             }
         ?>
         <div style="margin-top:10px; margin-left:10px; "><a id="frameArchive">Показать архив мероприятий</a></div>
-        <iframe id="frameArchivePage" style="width:1168px; height: 1000px; border: none;"src="/archive.php"></iframe>
     </div>
 
 <!-- Edit Member Modal -->
@@ -538,12 +537,19 @@ $(document).ready(function(){
     var isAuthorArchiveSomeEvents = '<?php echo $isAuthorArchiveEvents; ?>';
     var isAdminArchiveSomeEvents = '<?php echo $isAdminArchiveEvents; ?>';
     isEventAdminArc || hasEventAdmin.length > 0 || isAuthorSomeEvents || isAuthorArchiveSomeEvents || isAdminArchiveSomeEvents ? $('#frameArchive').show() : $('#frameArchive').hide();
-    $('#frameArchivePage').hide();
+
     $('#frameArchive').click(function() {
-      $('#frameArchivePage').is(':visible') ? $('#frameArchivePage').hide() : $('#frameArchivePage').show();
+      if ($('#frameArchivePage').length !== 0) {
+        if ($('#frameArchivePage').is(':visible')) {
+          $('#frameArchivePage').hide()
+        } else {
+          $('#frameArchivePage').show();
+        }
+      } else {
+        $('#frameArchive').after('<iframe id="frameArchivePage" style="width:1168px; height: 1000px; border: none;"src="/archive.php"></iframe>');
+      }
       resizeIframe();
       $('#frameArchivePage').is(':visible') ? $('#frameArchive').focus() : $('#frameArchivePage').focus();
-
     });
     $(window).resize(function(){
       resizeIframe();
@@ -1509,7 +1515,7 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
 var adminRole = '<?php echo db_getAdminRole($memberId); ?>';
 
 </script>
-<script src="/js/mainpage.js?v18"></script>
+<script src="/js/mainpage.js?v19"></script>
 
 <?php
 }
