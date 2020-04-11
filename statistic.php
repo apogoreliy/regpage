@@ -218,7 +218,7 @@
         <button class="btn" id="cancelModalWindow" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
-
+<!-- END ADD | EDIT STATISTIC Modal -->
 <!-- YES | NO AUTOFULFILL Modal -->
 <div id="autoFulfillModal" class="modal hide fade" data-width="400" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true" data-status_val="" data-author="" data-archive="" data-periods="" data-id_statistic="">
     <div class="modal-header" style="height: 20px">

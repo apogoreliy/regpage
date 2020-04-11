@@ -2,8 +2,10 @@
 include_once 'header.php';
 include_once 'nav.php';
 include_once 'panelsource/panelDB.php';
+include_once 'panelsource/adminpaneldb.php';
 $pages = db_getPages();
 $customPages = db_getCustomPagesPanel();
+//$aaa = db_newDailyPracticesPac(9); Dont touch!!!
 ?>
 
 <div id="" class="container">
@@ -80,7 +82,6 @@ $customPages = db_getCustomPagesPanel();
         <br>
         <br>
         SOme info
-
       </div>
   </div>
 

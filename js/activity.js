@@ -109,6 +109,7 @@ $(document).ready (function (){
       case "statistic" : pageBack = 'Статистика'; break;
       case "activity" : pageBack = 'Активность ответственных'; break;
       case "panel" : pageBack = 'Админка (разр.)'; break;
+      case "practices" : pageBack = 'Практики'; break;
     }
     if (!pageBack) return null
 

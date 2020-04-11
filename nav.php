@@ -43,6 +43,9 @@ switch ($h) {
     case '/links.php':
         $res = 'Ссылки';
         break;
+    case '/practices.php':
+       $res = 'Практики';
+       break;
     default:
         $res = '';
         break;
@@ -134,11 +137,18 @@ switch ($h) {
                 echo"><a href='/statistic'>Архив</a></li>";
             }
 */
-            if(isset($memberId) && $memberId == '000005716' && !isset($isGuest) && db_isAdmin($memberId)) {
+    /*        if(isset($memberId) && $memberId == '000005716' && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/event")!==FALSE) {echo " class='active'";}
                 echo"><a href='/event'>Мероприятия</a></li>";
             }
+*/
+            if((!isset($isGuest) && (in_array('9', db_getUserSettings($memberId)))) || (db_hasAdminFullAccess($memberId) && (in_array('9', db_getUserSettings($memberId)))) || (!isset($isGuest) && (in_array('12', db_getUserSettings($memberId)))) || (db_hasAdminFullAccess($memberId) && (in_array('10', db_getUserSettings($memberId))))) {
+                echo '<li';
+                if (strpos ($s,"/practices")!==FALSE) {echo " class='active'";}
+                echo"><a href='/practices'>Практики</a></li>";
+            }
+
             if(isset($memberId) && ($memberId == '000005716' || $memberId == '000001679') && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/statistic")!==FALSE) {echo " class='active'";}
@@ -149,6 +159,13 @@ switch ($h) {
                 echo '<li';
                 if (strpos ($s,"/links")!==FALSE) {echo " class='active'";}
                 echo"><a href='/links'>Ссылки</a></li>";
+            }
+
+            if(!isset($isGuest) && $memberId){
+
+                echo '<li';
+                if (strpos ($s,"/settings")!==FALSE) {echo " class='active'";}
+                echo"><a href='/settings'>Настройки</a></li>";
             }
 
             if(isset($memberId) && ($memberId == '000008601' || $memberId == '000001679' || $memberId == '000005716')){
@@ -186,13 +203,13 @@ switch ($h) {
                         if (strpos ($s,'/profile')!==FALSE) echo ' class="active"';
                         echo '><a href="/profile">Профиль</a></li>';
 
-                        $access_areas = db_getAdminAccess ($memberId);
-
-                        if($access_areas && count($access_areas) > 0){
+                        //$access_areas = db_getAdminAccess ($memberId);
+/*
+                        if($memberId*//*$access_areas && count($access_areas) > 0*//*){
                             echo '<li';
                             if (strpos ($s,'/settings')!==FALSE) echo ' class="active"';
                             echo '><a href="/settings">Настройки</a></li>';
-                        }
+                        }*/
                         echo'<li><a href="/" class="logout">Выйти</a></li>
                         </ul>
                     </li>';

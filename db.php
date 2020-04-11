@@ -267,7 +267,7 @@ function db_getMember ($memberId)
                     CASE WHEN m.male=1 THEN 'male' WHEN m.male=0 THEN 'female' ELSE '' END as gender, m.male,
                     m.birth_date, m.locality_key, m.address, m.home_phone, m.cell_phone, m.email,
                     m.category_key, m.document_key, m.document_num, m.document_date, m.document_auth,
-                    m.new_locality, m.citizenship_key, m.admin_key as mem_admin, m.baptized, m.attend_meeting,
+                    m.new_locality, m.citizenship_key, m.admin_key as mem_admin, m.baptized, m.attend_meeting, m.serving,
                     IF (rg.name='--',l.name,CONCAT (l.name,', ',rg.name)) as locality_name,
                     1 as need_passport, m.comment as admin_comment, m.active, m.school_comment,
                     m.english, m.tp_num, m.tp_date, m.tp_auth, m.tp_name, 1 as need_tp, m.russian_lg,
@@ -1349,6 +1349,7 @@ function db_setEventMember ($adminId, $get, $post){
     $regListName = $_page == '/members' ? (DONT_CHANGE) : (isset($post['regListName']) ? $db->real_escape_string($post['regListName']) : null);
     $private_event = $_page === '/index' || $_page === '/reg' ? $db->real_escape_string($post['private']) : DONT_CHANGE;
     $adminRole = $adminId ? db_getAdminRole($adminId) : '';
+    $_serving = $_page === '/members' ? (isset($post['serving']) ? $db->real_escape_string($post['serving']) : '') : DONT_CHANGE;
 
     db_checkSync ();
 
@@ -1378,12 +1379,12 @@ function db_setEventMember ($adminId, $get, $post){
         $newMemberId = db_getNewMemberKey();
         if (!$_adminId) $_adminId=$newMemberId;
 
-        $stmt = $db->prepare ("INSERT INTO member (`key`, `name`, male, birth_date, locality_key, category_key, address,
-                                cell_phone, email, document_key, document_num, document_date, document_auth,
-                                tp_num, tp_date, tp_auth, tp_name, english, school_start, school_end, college_start,
-                                college_end, college_key, college_comment, school_comment, russian_lg, baptized, changed,
-                                new_locality, citizenship_key, admin_key ".(!$_eventId ? ', comment' : '').")
-                                VALUES ('$newMemberId',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? ".(!$_eventId ? ',?' : '').")");
+        $stmt = $db->prepare ("INSERT INTO member (`key`, `name`, `male`, `birth_date`, `locality_key`, `category_key`, address,
+                                `cell_phone`, `email`, `document_key`, `document_num`, `document_date`, `document_auth`,
+                                `tp_num`, `tp_date`, `tp_auth`, `tp_name`, `english`, `school_start`, `school_end`, `college_start`,
+                                `college_end`, `college_key`, `college_comment`, `school_comment`, `russian_lg`, `baptized`, `changed`,
+                                `new_locality`, `citizenship_key`, `admin_key` ".(!$_eventId ? ', `comment`, `serving` ' : '').")
+                                VALUES ('$newMemberId',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? ".(!$_eventId ? ',?,?' : '').")");
 
         if ($_locality_key===DONT_CHANGE) $_locality_key=null;
         if ($_category_key===DONT_CHANGE) $_category_key='BL';
@@ -1472,7 +1473,8 @@ function db_setEventMember ($adminId, $get, $post){
                 ($_collegeComment !== DONT_CHANGE && $_collegeComment != $m['college_comment']) ||
                 ($_schoolComment !== DONT_CHANGE && $_schoolComment != $m['school_comment']) ||
                 ($_russian_lg !== DONT_CHANGE && $_russian_lg != $m['russian_lg']) ||
-                ($_baptized !== DONT_CHANGE && $_baptized != $m['baptized']);
+                ($_baptized !== DONT_CHANGE && $_baptized != $m['baptized']) ||
+                ($_serving !== DONT_CHANGE && $_serving != $m['serving']);
 
         if ($_eventId && $isUserAddedToreg){
             //$reg = db_getEventMember ($_memberId, $_eventId);
@@ -1480,13 +1482,13 @@ function db_setEventMember ($adminId, $get, $post){
             $regstate = $reg["regstate_key"];
         }
 
-        $stmt = $db->prepare ("UPDATE member SET `name` = ?, male = ?, birth_date = ?, locality_key = ?,
-                            category_key = ?, address = ?, cell_phone = ?, email = ?, document_key = ?, document_num = ?,
-                            document_date = ?, document_auth = ?, tp_num = ?, tp_date = ?, tp_auth = ?, tp_name = ?,
-                            english = ?, school_start=?, school_end=?, college_start=?,
-                            college_end=?, college_key=?, college_comment=?, school_comment=?, russian_lg=?,
-                            baptized=?, changed = ?, new_locality = ?, citizenship_key = ?,
-                            admin_key = ? ".(!$_eventId ? ', comment=?' : '')." WHERE `key`='$_memberId'");
+        $stmt = $db->prepare ("UPDATE member SET `name` = ?, `male` = ?, `birth_date` = ?, `locality_key` = ?,
+                            `category_key` = ?, `address` = ?, `cell_phone` = ?, `email` = ?, `document_key` = ?, `document_num` = ?,
+                            `document_date` = ?, `document_auth` = ?, `tp_num` = ?, `tp_date` = ?, `tp_auth` = ?, `tp_name` = ?,
+                            `english` = ?, `school_start`=?, `school_end`=?, `college_start`=?,
+                            `college_end`=?, `college_key`=?, `college_comment`=?, `school_comment`=?, `russian_lg`=?,
+                            `baptized`=?, `changed` = ?, `new_locality` = ?, `citizenship_key` = ?,
+                            `admin_key` = ? ".(!$_eventId ? ', `comment`= ?, `serving`= ? ' : '')." WHERE `key`='$_memberId'");
     }
 
     if ($memChanged){
@@ -1500,11 +1502,11 @@ function db_setEventMember ($adminId, $get, $post){
                 $_schoolStart, $_schoolEnd, $_collegeStart, $_collegeEnd, $_college, $_collegeComment, $_schoolComment,
                 $_russian_lg, $_baptized, $isMemberChanged, $_new_locality, $_citizenship_key, $_adminId);
         else
-            $stmt->bind_param ("sssssssssssssssssssssssssssssss", $_name, $_male, $_birth_date, $_locality_key, $_category_key,
+            $stmt->bind_param ("ssssssssssssssssssssssssssssssss", $_name, $_male, $_birth_date, $_locality_key, $_category_key,
                 $_address, $_cell_phone, $_email, $_document_key, $_document_num, $_document_date,
                 $_document_auth, $_tp_num, $_tp_date, $_tp_auth, $_tp_name, $_english_level,
                 $_schoolStart, $_schoolEnd, $_collegeStart, $_collegeEnd, $_college, $_collegeComment, $_schoolComment,
-                $_russian_lg, $_baptized, $isMemberChanged, $_new_locality, $_citizenship_key, $_adminId, $_comment);
+                $_russian_lg, $_baptized, $isMemberChanged, $_new_locality, $_citizenship_key, $_adminId, $_comment, $_serving);
 
         if (!$stmt->execute ()) throw new Exception ($db->error);
         $stmt->close ();
