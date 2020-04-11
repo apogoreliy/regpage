@@ -1894,3 +1894,7 @@ input.error, .control-group.error select, textarea.error {
   cursor: pointer;
   font-weight: bold;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}

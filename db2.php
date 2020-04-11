@@ -323,5 +323,12 @@ function db_getMsgParamPrivate() {
   while ($row = $res->fetch_assoc()) $msgEcho=$row['value'];
   return $msgEcho;
 }
+// servisone
+function db_getServiceonesPvom(){
+    $res = db_query("SELECT `key`, `name` FROM member WHERE `locality_key` = '001214'");
 
+    $types = array ();
+    while ($row = $res->fetch_assoc()) $types[$row['key']]=$row['name'];
+    return $types;
+}
 ?>

@@ -41,6 +41,15 @@ history.pushState(null, null, location.href);
     };
 // START bug cover main menu
 $('#modalEditMember').hide();
+$('#service_ones_pvom').change(function() {
+  var serviceOne = '1';
+  $(this).val() ? serviceOne = $(this).val() : '';
+  if (serviceOne[0] == '9') {
+    showError('Что бы выбрать этого служащего, дождитесь синхронизации базы с 1С . Это может занять некоторое время.')
+    $(this).val('');
+  }
+})
+
 // STOP bug cover main menu
 /*
 // START hide empty city

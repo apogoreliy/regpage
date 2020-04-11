@@ -1,0 +1,279 @@
+.cd-panel {
+  /*...*/
+  visibility: hidden;
+  transition: visibility 0s 0.6s;
+}
+
+.cd-panel.cd-panel--is-visible {
+  visibility: visible;
+  transition: visibility 0s 0s;
+}
+
+.cd-panel__header {
+  /*...*/
+  position: absolute;
+  top: 60px;
+  width: 350px;
+  height: 50px;
+  transition: transform 0.3s 0s;
+  transform: translateY(-80px);
+  padding: 0px 5px 10px 15px;
+  border-left: 1px solid gray;
+  border-top: 1px solid gray;
+  border-radius: 5px 0 0 0px;
+}
+
+.cd-panel--from-right .cd-panel__header {
+  right: 0;
+}
+
+.cd-panel--from-left .cd-panel__header {
+  left: 0;
+}
+
+.cd-panel--is-visible .cd-panel__header {
+  transition: transform 0.3s 0.0s;
+  transform: translateY(0px);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.cd-panel__container {
+  /*...*/
+  position: absolute;
+  width: 350px;
+  height: 700px;
+  top: 110px;
+  transition: transform 0.3s 0s;
+  border-left: 1px solid gray;
+  padding: 0px 5px 10px 15px;
+  border-radius: 0 0 0 5px;
+  border-bottom: 1px solid gray;
+}
+
+.cd-panel--from-right .cd-panel__container {
+  right: 0;
+  transform: translate3d(100%, 0, 0);
+}
+
+.cd-panel--from-left .cd-panel__container {
+  left: 0;
+  transform: translate3d(-100%, 0, 0);
+}
+
+.cd-panel--is-visible .cd-panel__container {
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0s;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.cd-btn {
+  position: relative;
+  display: inline-block;
+  padding: 1em 2em;
+  background-color: #89ba2c;
+  color: #ffffff;
+  border-radius: 50em;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 5px rgba(0, 0, 0, 0.1);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 5px rgba(0, 0, 0, 0.1);
+  -webkit-transition: -webkit-box-shadow 0.2s;
+  transition: -webkit-box-shadow 0.2s;
+  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, -webkit-box-shadow 0.2s;
+}
+
+.cd-btn:hover {
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+@media only screen and (min-width: 1170px) {
+  .cd-main-content h1 {
+    font-size: 3.2rem;
+  }
+}
+
+/*CLOSE BUTTON*/
+.cd-panel__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 60px;
+  /* image replacement */
+  display: inline-block;
+  overflow: hidden;
+  text-indent: 100%;
+  white-space: nowrap;
+}
+
+.cd-panel__close::before, .cd-panel__close::after {
+  /* close icon created in CSS */
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  height: 3px;
+  width: 20px;
+  background-color: #424f5c;
+  /* this fixes a bug where pseudo elements are slighty off position */
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+
+.cd-panel__close::before {
+  -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+.cd-panel__close::after {
+  -webkit-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+.cd-panel__close:hover::before, .cd-panel__close:hover::after {
+  background-color: #424f5c;
+}
+
+/*MOBILE VERSION STYLE*/
+
+.cd-panelMbl {
+  /*...*/
+  visibility: hidden;
+  /*transition: visibility 0s 0.6s;*/
+}
+
+.cd-panelMbl.cd-panel--is-visibleMbl {
+  visibility: visible;
+  /*transition: visibility 0s 0.6s;*/
+}
+
+.cd-panel__headerMbl {
+  /*...*/
+  position: absolute;
+  top: 60px;
+  width: 90%;
+  height: 50px;
+  /*transition: transform 0.3s 0s;
+  transform: translateY(-80px);*/
+  padding: 0px 5px 10px 15px;
+  border-left: 1px solid gray;
+  border-top: 1px solid gray;
+  border-radius: 5px 0 0 0;
+}
+
+.cd-panel--from-rightMbl .cd-panel__headerMbl {
+  right: 0;
+  transition-delay: 0.1s;
+}
+
+.cd-panel--from-leftMbl .cd-panel__headerMbl {
+  left: 0;
+}
+
+.cd-panel--is-visibleMbl .cd-panel__headerMbl {
+  /*transition: transform 0.3s 0.0s;
+  transform: translateY(0px);*/
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.cd-panel__containerMbl {
+  /*...*/
+  position: absolute;
+  width: 90%;
+  height: 700px;
+  top: 110px;
+  /*transition: transform 0.3s 0s;*/
+  border-left: 1px solid gray;
+  border-bottom: 1px solid gray;
+  border-radius: 0 0 0 5px;
+  padding: 0px 5px 10px 15px;
+}
+
+.cd-panel--from-rightMbl .cd-panel__containerMbl {
+  right: 0;
+  transition-delay: 0.1s;
+  /*transform: translate3d(100%, 0, 0);*/
+}
+
+.cd-panel--from-leftMbl .cd-panel__containerMbl {
+  left: 0;
+  /*transform: translate3d(-100%, 0, 0);*/
+}
+
+.cd-panel--is-visibleMbl .cd-panel__containerMbl {
+/*  transform: translate3d(0, 0, 0);
+  transition-delay: 0s;*/
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.cd-btnMbl {
+  position: relative;
+  display: inline-block;
+  padding: 1em 2em;
+  background-color: #89ba2c;
+  color: #ffffff;
+  border-radius: 50em;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 5px rgba(0, 0, 0, 0.1);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 5px rgba(0, 0, 0, 0.1);
+  -webkit-transition: -webkit-box-shadow 0.2s;
+  transition: -webkit-box-shadow 0.2s;
+  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, -webkit-box-shadow 0.2s;
+}
+
+.cd-btnMbl:hover {
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+@media only screen and (min-width: 1170px) {
+  .cd-main-contentMbl h1 {
+    font-size: 3.2rem;
+  }
+}
+
+/*CLOSE BUTTON*/
+.cd-panel__closeMbl {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 60px;
+  /* image replacement */
+  display: inline-block;
+  overflow: hidden;
+  text-indent: 100%;
+  white-space: nowrap;
+}
+
+.cd-panel__closeMbl::before, .cd-panel__closeMbl::after {
+  /* close icon created in CSS */
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  height: 3px;
+  width: 20px;
+  background-color: #424f5c;
+  /* this fixes a bug where pseudo elements are slighty off position */
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+
+.cd-panel__closeMbl::before {
+  -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+.cd-panel__closeMbl::after {
+  -webkit-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+.cd-panel__closeMbl:hover::before, .cd-panel__closeMbl:hover::after {
+  background-color: #424f5c;
+}

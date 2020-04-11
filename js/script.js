@@ -87,6 +87,30 @@ function toDateString (day, month, year) {
     return null;
 }
 
+function getNameDayOfWeekByDayNumber(date,short) {
+  var day = new Date(date);
+  var dayNumber = day.getDay();
+  var weekday = new Array(7);
+  if (short) {
+    weekday[0] = "Вс";
+    weekday[1] = "Пн";
+    weekday[2] = "Вт";
+    weekday[3] = "Ср";
+    weekday[4] = "Чт";
+    weekday[5] = "Пт";
+    weekday[6] = "Сб";
+  } else {
+    weekday[0] = "Воскресенье";
+    weekday[1] = "Понедельник";
+    weekday[2] = "Вторник";
+    weekday[3] = "Среда";
+    weekday[4] = "Четверг";
+    weekday[5] = "Пятница";
+    weekday[6] = "Суббота";
+  }
+  return weekday[dayNumber];
+}
+
 function formatTime (time) {
 	return time.replace(/:00$/,'');
 }
@@ -1026,8 +1050,8 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
         termsUse : form.find('#terms-use-checkbox').prop('checked'),
         isInvitation : isInvitation ? 1 : 0,
         regListName: form.find('.custom-list').val(),
-        private: $('.event-row.theActiveEvent').attr('data-private') == 1 && page === '/index' ? 1 : ''
-
+        private: $('.event-row.theActiveEvent').attr('data-private') == 1 && page === '/index' ? 1 : '',
+        serving: $('#service_ones_pvom').val()
     }
 }
 
@@ -1290,6 +1314,14 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
         $(".emNewLocality").val (info["new_locality"] ? info["new_locality"] : "").removeAttr ("disabled").next (".unblock-input").hide ();
         if(!info["locality_key"]) $(".emNewLocality").val (info["new_locality"] ? info["new_locality"] : "").keyup();
         $(".emComment").val (info["admin_comment"] ? info["admin_comment"] : "");
+
+        $("#service_ones_pvom").val (info["serving"] ? info["serving"] : "");
+
+        if (info["locality_key"] == '001192' && $('.add-member').attr('data-locality') == '001214') {
+          $("#service_ones_pvom").parent('div').show();
+        } else {
+          $("#service_ones_pvom").parent('div').hide();
+        }
         $(".emUserComment").val (info["comment"] ? info["comment"] : "").attr('disabled','disabled');
 
         /*

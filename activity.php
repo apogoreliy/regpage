@@ -61,8 +61,8 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     <option value="members">Общий список</option>
                     <option value="youth">Молодые люди</option>
                     <option value="list">Ответственные за регистрацию</option>
+                    <option value="practices">Практики</option>
                     <option value="meetings">Собрания</option>
-                    <option value="archive">Архив</option>
                     <option value="statistic">Статистика</option>
                     <option value="visits">Посещения</option>
                     <option value="links">Ссылки</option>
@@ -81,6 +81,7 @@ if ($textBlock) echo "<div class='alert hide-phone'>$textBlock</div>";
                     <option value="ul">Избранные ссылки</option>
                     <option value="reference">Настройка помощи</option>
                     <option value="activity">Журнал активности пользователей</option>
+                    <option value="archive">Архив</option>
                 </select>
             </div>
             <div class="btn-group">

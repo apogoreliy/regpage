@@ -34,6 +34,7 @@ include_once "preheader.php";
     <link href="css/bootstrap-modal.css" rel="stylesheet" />
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet" />
     <link href="css/style.css?v69" rel="stylesheet" />
+    <link href="css/style_slide.css?v2" rel="stylesheet" />
 
     <script src="js/jquery.min.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js" type="text/javascript"></script>
@@ -56,7 +57,7 @@ include_once "preheader.php";
     <script type="text/javascript" src="https://cdn.envybox.io/widget/cbk.js?wcb_code=27de0b86fa9a7c4373ae996711b6f549" charset="UTF-8" async></script>
 </head>
 
-<body>
+<body style="padding-left: 5px; padding-right: 5px;">
     <script>window.adminId=<?php echo isset ($memberId) ? "'$memberId'" : 'null'; ?>;</script>
     <div id="globalError" class="alert alert-error above-modal" style="display: none"><a class="close close-alert" href="#">&times;</a><span>AJAX ERROR</span></div>
     <div id="globalHint" class="alert alert-success above-modal" style="display: none"><a class="close close-alert" href="#">&times;</a><span>GLOBAL HINT</span></div>

@@ -371,6 +371,15 @@ if ($noEvent) { ?>
             <input class="span12 emComment" type="text">
         </div>
     </div>
+    <div class="controls">
+        <div class="control-group row-fluid">
+            <label class="span12">Служащий</label>
+            <select id="service_ones_pvom" class="" name="">
+              <option value='' selected>&nbsp;</option>
+              <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+            </select>
+        </div>
+    </div>
 <?php } else  {
 if(!$isGuest && !$indexPage){
 ?>
