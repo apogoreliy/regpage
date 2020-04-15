@@ -49,17 +49,50 @@
           <li class="" id="pCountTab" style="<?php echo in_array('9', db_getUserSettings($memberId)) ? '':'display:none' ?>"><a data-toggle="tab" href="#pcount">Личный учёт</a></li>
         </ul>
         <div class="tab-content">
-          <div class="tab-pane fade " id="whach">
+          <div id="whach" class="tab-pane fade" >
+            <div class="cd-panel-watch cd-panel--from-right-watch js-cd-panel-main-watch">
+              <header class="cd-panel__header-watch">
+                <h3>Основные практики</h3>
+                <a href="#0" class="cd-panel__close-watch js-cd-close-watch">Закрыть</a>
+              </header>
+              <div class="cd-panel__container-watch">
+                <div class="cd-panel__content-watch">
+         <!-- your side panel content here -->
+            <table id="blankTblWatch">
+              <tr><td style="padding-bottom: 10px;" colspan="2"><strong id="dataPractic-watch"></strong></td></tr>
+              <tr style=""><td>Подъём</td><td><input id="timeWakeup-watch" class="span1" type="time" style="width: 80px; text-align: right; margin-left: 10px;"></td></tr>
+              <tr><td>Утреннее оживление  </td><td><input id="mrPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> мин.</td></tr>
+              <tr><td>Личная молитва  </td><td><input id="ppPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> мин.</td></tr>
+              <tr><td>Молитва с товарищем  </td><td><input id="pcPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> мин.</td></tr>
+              <tr><td>Чтение Библии  </td><td><input id="rbPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> мин.</td></tr>
+              <tr><td>Чтение служения  </td><td><input id="rmPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> мин.</td></tr>
+              <tr style=""><td>Благовестие  </td><td><input id="gsplPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> мин.</td></tr>
+              <tr style=""><td>Листовки  </td><td><input id="flPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> шт.</td></tr>
+              <tr style=""><td>Контакты  </td><td><input id="cntPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> чел.</td></tr>
+              <tr style=""><td>Спасённые  </td><td><input id="svdPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> чел.</td></tr>
+              <tr style=""><td>Встречи</td><td><input id="meetPractic-watch" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"> чел.</td></tr>
+              <tr style=""><td>Отбой</td><td><input id="timeHangup-watch" class="span1" type="time" style="width: 80px; text-align: right; margin-left: 10px;"></td></tr>
+            </table>
+            <textarea id="otherDesk-watch" rows="3" cols="80" style="margin-top: 5px; margin-bottom: 15px; width: 280px;"></textarea>
+            <br>
+            <input id="safePracticesToday-watch" class="btn btn-success" type="button" name="" data-id_member="" data-id="" value="Сохранить" style="margin-right: 30px;">
+            <input class="btn btn-default" id="cd-panel__close-watch" type="button" name="" value="Закрыть">
+            <hr>
+    </div> <!-- cd-panel__content -->
+  </div> <!-- cd-panel__container -->
+</div> <!-- cd-panel -->
             <div class="" style="margin-top: 10px;">
-              <select class="" name="">
-                <option>Последие 7 дней
+              <select id="periodPractices" class="" name="">
+                <option value="7">Последие 7 дней
+                <option value="30">Последие 30 дней
               </select>
-              <select class="" name="">
-                <option>Местность
+              <select id="adminlocalitiesCombo" class="" name="" <?php echo in_array('13', db_getUserSettings($memberId)) ? '':'style="display:none"';?>>
+                <option value="_all_">Все</option>
+                <?php foreach ($localities as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
               </select>
               <select id="servingCombo" class="" name="">
                 <option value="_all_">Все служащие</option>
-                <option value="_none_">Не назначен</option>
+                <option value="">Не назначен</option>
                   <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
               </select>
             </div>
@@ -72,12 +105,12 @@
                 <th style="text-align: left;"><a id="sort-bptz_half_year" href="#" title="сортировать">МТ</a>&nbsp;<i class="<?php echo $sort_field=='half_year' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                 <th style="text-align: left;"><a id="sort-attended" href="#" title="сортировать">ЧБ</a>&nbsp;<i class="<?php echo $sort_field=='attended' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                 <th style="text-align: left;"><a id="sort-count_ltmeeting" href="#" title="сортировать">ЧС</a>&nbsp;<i class="<?php echo $sort_field=='count_ltmeeting' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: center;"><a id="sort-completed" href="#" title="сортировать">БЛ</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: center;"><a id="sort-completed" href="#" title="сортировать">Местность</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: center;"><a id="sort-completed" href="#" title="сортировать">Служащий</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left;"><a id="sort-completed" href="#" title="сортировать">БЛ</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left; <?php echo in_array('13', db_getUserSettings($memberId)) ? '':'display:none';?>"><a id="sort-completed" href="#" title="сортировать">Местность</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left;"><a id="sort-completed" href="#" title="сортировать">Служащий</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                 </tr>
               </thead>
-              <tbody><tr><td colspan="8"><h3 style="text-align: center">Страница в процессе разработки.</h3></td></tr></tbody>
+              <tbody><tr><td colspan="8"><h3 style="text-align: center">Нет данных.</h3></td></tr></tbody>
             </table>
           </div>
           <div id="pcount" class="tab-pane fade">
@@ -150,13 +183,72 @@
         </div>
       </div>
       <div class="show-phone" id="">
-        <div class="tab-content">
+    <div class="tab-content">
         <ul class="nav nav-tabs">
           <li class="" id="whachTabMbl" style="<?php echo in_array('12', db_getUserSettings($memberId)) ? '':'display:none' ?>"><a data-toggle="tab" href="#whachMbl">Наблюдение</a></li>
           <li class="" id="pCountTabMbl" style="<?php echo in_array('9', db_getUserSettings($memberId)) ? '':'display:none' ?>"><a data-toggle="tab" href="#pcountMbl">Личный учёт</a></li>
         </ul>
         <div id="whachMbl" class="tab-pane fade">
-          <table class="table table-hover">
+
+          <div class="cd-panel-watch-mbl cd-panel--from-right-watch-mbl js-cd-panel-main-watch-mbl">
+            <header class="cd-panel__header-watch-mbl">
+              <h3>Основные практики</h3>
+              <a href="#0" class="cd-panel__close-watch-mbl js-cd-close-watch-mbl">Закрыть</a>
+            </header>
+            <div class="cd-panel__container-watch-mbl">
+              <div class="cd-panel__content-watch-mbl">
+       <!-- your side panel content here -->
+          <table id="blankTblWatch-mbl">
+            <tr><td style="padding-bottom: 10px;" colspan="2"><strong id="dataPractic-watch-mbl"></strong></td></tr>
+            <tr style=""><td>Подъём</td><td><input id="timeWakeup-watch-mbl" class="span1" type="time" style="width: 80px; text-align: right; margin-left: 10px;"></td></tr>
+            <tr><td>Утреннее оживление  </td><td><input id="mrPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"><td> мин.</td></tr>
+            <tr><td>Личная молитва  </td><td><input id="ppPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> мин.</td></tr>
+            <tr><td>Молитва с товарищем  </td><td><input id="pcPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> мин.</td></tr>
+            <tr><td>Чтение Библии  </td><td><input id="rbPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> мин.</td></tr>
+            <tr><td>Чтение служения  </td><td><input id="rmPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> мин.</td></tr>
+            <tr style=""><td>Благовестие  </td><td><input id="gsplPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> мин.</td></tr>
+            <tr style=""><td>Листовки  </td><td><input id="flPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> шт.</td></tr>
+            <tr style=""><td>Контакты  </td><td><input id="cntPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> чел.</td></tr>
+            <tr style=""><td>Спасённые  </td><td><input id="svdPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> чел.</td></tr>
+            <tr style=""><td>Встречи</td><td><input id="meetPractic-watch-mbl" class="span1" type="number" style="width: 80px; text-align: right; margin-left: 10px;"></td><td> чел.</td></tr>
+            <tr style=""><td>Отбой</td><td><input id="timeHangup-watch-mbl" class="span1" type="time" style="width: 80px; text-align: right; margin-left: 10px;"></td></tr>
+          </table>
+          <textarea id="otherDesk-watch-mbl" rows="3" cols="80" style="margin-top: 5px; margin-bottom: 15px; width: 280px;"></textarea>
+          <br>
+          <input id="safePracticesToday-watch-mbl" class="btn btn-success" type="button" name="" data-id_member="" data-id="" value="Сохранить" style="margin-right: 30px;">
+          <input class="btn btn-default" id="cd-panel__close-watch-mbl" type="button" name="" value="Закрыть">
+          <hr>
+  </div> <!-- cd-panel__content -->
+</div> <!-- cd-panel__container -->
+</div> <!-- cd-panel -->
+          <div class="" style="margin-top: 10px;">
+            <select id="periodPracticesMbl" class="" name="">
+              <option value="7">Последие 7 дней
+              <option value="30">Последие 30 дней
+            </select>
+            <select id="adminlocalitiesComboMbl" class="" name="" <?php echo in_array('13', db_getUserSettings($memberId)) ? '':'style="display:none"';?>>
+              <option value="_all_">Все</option>
+              <?php foreach ($localities as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+            </select>
+            <select id="servingComboMbl" class="" name="">
+              <option value="_all_">Все служащие</option>
+              <option value="">Не назначен</option>
+                <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+            </select>
+          </div>
+            <table id="listPracticesForObserveMbl" class="table table-hover">
+              <thead>
+                <tr>
+                <th style="text-align: left; width:100px"><a id="sort-id" href="#" title="сортировать">ФИО</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="width: 25px;"><a id="sort-city" href="#" title="сортировать">УО</a></th>
+                <th style="text-align: left; width: 25px;"><a id="sort-status" href="#" title="сортировать">ЛМ</a></th>
+                <th style="text-align: left; width: 25px;"><a id="sort-bptz_half_year" href="#" title="сортировать">МТ</a></th>
+                <th style="text-align: left; width: 25px;"><a id="sort-attended" href="#" title="сортировать">ЧБ</a></th>
+                <th style="text-align: left; width: 25px;"><a id="sort-count_ltmeeting" href="#" title="сортировать">ЧС</a></th>
+                <th style="text-align: left; width: 25px;"><a id="sort-completed" href="#" title="сортировать">БЛ</a></th>
+                <th style=" width: 25px; text-align: left; <?php echo in_array('13', db_getUserSettings($memberId)) ? '':'display:none';?>"><a id="sort-completed" href="#" title="сортировать">Местность</a></th>
+                </tr>
+              </thead>
             <tbody><tr><td colspan="8"><h3 style="text-align: center">Загрузка...</h3></td></tr></tbody>
           </table>
         </div>
@@ -217,14 +309,15 @@
 
     <script>
       var data_page = {};
-      var adminLocalityGlb = '<?php echo $adminLocality; ?>';
+      data_page.admin_locality = '<?php echo $adminLocality; ?>';
       var settingOff = '<?php echo (!in_array('12', db_getUserSettings($memberId)) && !in_array('9', db_getUserSettings($memberId)));?>';
       var settingOn = '<?php echo (in_array('12', db_getUserSettings($memberId)) && in_array('9', db_getUserSettings($memberId)));?>';
       var wakeupOn = '<?php echo in_array('10', db_getUserSettings($memberId));?>';
       var gospelOn = '<?php echo in_array('11', db_getUserSettings($memberId));?>';
-      var localityList = '<?php foreach (db_getLocalities() as $id => $name) echo $id.'_'.$name.'_'; ?>';
-      var localityListTmp = localityList ? localityList.split('_') : [];
-      localityList =[];
+      var globalLocalityOn = '<?php echo in_array('13', db_getUserSettings($memberId));?>';
+      var localityListGlb = '<?php foreach (db_getLocalities() as $id => $name) echo $id.'_'.$name.'_'; ?>';
+      var localityListTmp = localityListGlb ? localityListGlb.split('_') : [];
+      localityListGlb =[];
       data_page.locality = [];
       for (var i = 0; i < localityListTmp.length; i = i + 2) {
         if (localityListTmp[i+1]) {
@@ -243,6 +336,19 @@
         }
       }
       serving_onesTmp=[];
+
+
+      data_page.admin_localities = [];
+      var admin_localities = '<?php foreach ($localities as $id => $name) echo $id.'_'.$name.'_'; ?>';
+      var admin_localitiesTmp = admin_localities ? admin_localities.split('_') : [];
+      admin_localities=[];
+      for (var i = 0; i < admin_localitiesTmp.length; i = i + 2) {
+        if (admin_localitiesTmp[i+1]) {
+          data_page.admin_localities[String(admin_localitiesTmp[i])] = admin_localitiesTmp[i+1];
+        }
+      }
+      admin_localitiesTmp=[];
+
 
     </script>
     <script src="/js/practices.js?v4"></script>

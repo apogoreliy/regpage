@@ -117,13 +117,15 @@ include_once "nav.php";
 						}, 60);
 					}
 				}
-				setTimeout(function () {
-					if (($(this).attr('id') === '9') && is_checked) {
+
+				if (($(this).attr('id') === '9') && is_checked) {
+					setTimeout(function () {
+						console.log('im here');
 						$.get('/ajax/practices.php?new_practices')
-						.done (function(data) {
+							.done (function(data) {
 						});
-					}
-				}, 100);
+					}, 90);
+				}
 
         	if ($(this).attr('id') == '8' || $(this).attr('id') === '9' || $(this).attr('id') == '12') {
 						$('#10').attr('disabled', true);
