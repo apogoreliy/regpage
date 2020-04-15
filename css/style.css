@@ -1898,3 +1898,7 @@ input.error, .control-group.error select, textarea.error {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.active_sub_string, .active_sub_string_mbl {
+  background-color: lightyellow;
+}

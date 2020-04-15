@@ -7,19 +7,34 @@ $(document).ready(function(){
   if (settingOff) {
     window.location = '/settings';
   }
-  !wakeupOn ? wakeupOn = 'style="display: none;"' : '';
-  !gospelOn ? gospelOn = 'style="display: none;"' : '';
+  !wakeupOn ? wakeupOn = 'style="display: none;"' : wakeupOn = '';
+  !gospelOn ? gospelOn = 'style="display: none;"' : gospelOn = '';
+  !globalLocalityOn ? globalLocalityOn = 'style="display: none;"' : globalLocalityOn = '';
   // START choise active tab. Show / hide label of tabs
+  // START DeskTop
   if ($('#whachTab').is(':visible')) {
+    if ($('#pCountTab').hasClass('active')) {
+      $('#pCountTab').removeClass('active');
+      $('#pcount').removeClass('active');
+      $('#pcount').removeClass('in');
+    }
     $('#whachTab').addClass('active');
     $('#whach').addClass('in active');
     $('#whachTab').find('a').css('font-weight','bold');
-
-  } else if ($('#pCountTab').is(':visible')) {
+    $('#pCountTab').find('a').css('font-weight','normal');
+  }
+  if ($('#pCountTab').is(':visible')) {
+    if ($('#whachTab').hasClass('active')) {
+      $('#whachTab').removeClass('active');
+      $('#whach').removeClass('active');
+      $('#whach').removeClass('in');
+    }
     $('#pCountTab').addClass('active');
     $('#pcount').addClass('in active');
     $('#pCountTab').find('a').css('font-weight','bold');
+    $('#whachTab').find('a').css('font-weight','normal');
   }
+// STOP DeskTop
 
   $('#whachTab').click(function() {
     $(this).find('a').css('font-weight','bold');
@@ -31,13 +46,41 @@ $(document).ready(function(){
     $('#whachTab').find('a').css('font-weight','normal');
   });
 
-  if ($('#whachTabMbl').is(':visible')) {
-    $('#whachTabMbl').addClass('active');
-    $('#whachMbl').addClass('in active');
-  } else if ($('#pCountTabMbl').is(':visible')) {
-    $('#pCountTabMbl').addClass('active');
-    $('#pcountMbl').addClass('in active');
-  }
+  // START Mobail tabs ruller
+    if ($('#whachTabMbl').is(':visible')) {
+      if ($('#pCountTabMbl').hasClass('active')) {
+        $('#pCountTabMbl').removeClass('active');
+        $('#pcountMbl').removeClass('active');
+        $('#pcountMbl').removeClass('in');
+      }
+      $('#whachTabMbl').addClass('active');
+      $('#whachMbl').addClass('in active');
+      $('#whachTabMbl').find('a').css('font-weight','bold');
+      $('#pCountTabMbl').find('a').css('font-weight','normal');
+
+    }
+    if ($('#pCountTabMbl').is(':visible')) {
+      if ($('#whachTabMbl').hasClass('active')) {
+        $('#whachTabMbl').removeClass('active');
+        $('#whachMbl').removeClass('active');
+        $('#whachMbl').removeClass('in');
+      }
+      $('#pCountTabMbl').addClass('active');
+      $('#pcountMbl').addClass('in active');
+      $('#pCountTabMbl').find('a').css('font-weight','bold');
+      $('#whachTabMbl').find('a').css('font-weight','normal');
+    }
+
+    $('#whachTabMbl').click(function() {
+      $(this).find('a').css('font-weight','bold');
+      $('#pCountTabMbl').find('a').css('font-weight','normal');
+    });
+
+    $('#pCountTabMbl').click(function() {
+      $(this).find('a').css('font-weight','bold');
+      $('#whachTabMbl').find('a').css('font-weight','normal');
+    });
+  // STOP Mobail tabs ruller
 
   if (!settingOn) {
     $('.tab-content').find('.nav-tabs').hide();
@@ -47,10 +90,11 @@ $(document).ready(function(){
     $('#blankTbl').css('width', '287px');
   }
 
+// ПРОРАБОТАТЬ ГЛЮЧИТ ПЕРИОДИЧЕСКИ ОБОИМ ТАБАМ ЗАДАЕТСЯ АКТИВ !!!
   $(window).resize(function(){
     if ($(window).width()>=769 && !$('#pcount').hasClass('active')) {
       $('#pcount').addClass('in active');
-    } else if ($(window).width()<769 && !$('#pcountMbl').hasClass('active')) {
+    } else if ($(window).width()<769 && !$('#pcountMbl').hasClass('active') && !$('#whachMbl').hasClass('active') ) {
       $('#pcountMbl').addClass('in active');
     } else if ($(window).width()>=769 && $('#pcount').hasClass('active')) {
       if ($(window).width() < 980) {
@@ -64,7 +108,9 @@ $(document).ready(function(){
   function practicesBlankToday(dataForBlank) {
 // DeskTop
   var a,b,c,d,e,f,g,k,l,m;
-
+  if (dataForBlank.length === 0) {
+    return
+  }
   dataForBlank[0].m_revival != 0 ? a = dataForBlank[0].m_revival : a = null;
   dataForBlank[0].p_pray != 0 ? b = dataForBlank[0].p_pray : b = null;
   dataForBlank[0].co_pray != 0 ? c = dataForBlank[0].co_pray : c = null;
@@ -116,7 +162,7 @@ $(document).ready(function(){
     });
 
   function practicesList(x) {
-    var tableData=[],tableDataMbl=[],m_revival,p_pray,co_pray,r_bible,r_ministry,evangel,flyers,contacts,saved,meetings,dayOfWeek, dayOfWeek2, hangupTime, wakeupTime;
+    var tableData=[],tableDataMbl=[],m_revival,p_pray,co_pray,r_bible, r_ministry,evangel,flyers,contacts,saved,meetings,dayOfWeek, dayOfWeek2, hangupTime, wakeupTime;
     for (var i = 0; i < x.length; i++) {
       dayOfWeek = getNameDayOfWeekByDayNumber(x[i].date_practic , false);
       //x[i].date_practic ? dayOfWeek = dayOfWeek.getDay() : '';
@@ -134,13 +180,14 @@ $(document).ready(function(){
       x[i].hangup ? hangupTime = x[i].hangup : hangupTime = '-';
       wakeupTime.length > 5 ? wakeupTime = wakeupTime.substr(0, wakeupTime.length - 3) : '';
       hangupTime.length > 5 ? hangupTime = hangupTime.substr(0, hangupTime.length - 3) : '';
-      tableData.push('<tr class="practices_str cursor-pointer" data-other="'+x[i].other+'" data-weekday="'+dayOfWeek+'" data-date="'+x[i].date_practic+'"><td >'+x[i].date_practic+' <br><span class="example" style="margin-left: 0">'+dayOfWeek+'</span></td><td '+wakeupOn+'>'+wakeupTime+'</td><td>'+m_revival+'</td><td>'+p_pray+'</td><td>'+co_pray+'</td><td>'+r_bible+'</td><td>'+r_ministry+'</td><td '+gospelOn+'>'+evangel+'</td><td '+gospelOn+'>'+flyers+'</td><td '+gospelOn+'>'+contacts+'</td><td '+gospelOn+'>'+saved+'</td><td '+gospelOn+'>'+meetings+'</td><td '+wakeupOn+'>'+hangupTime+'</td></tr>');
+      tableData.push('<tr class="practices_str cursor-pointer" data-other="'+x[i].other+'" data-weekday="'+dayOfWeek+'" data-date="'+x[i].date_practic+'"><td>'+x[i].date_practic+' <br><span class="example" style="margin-left: 0">'+dayOfWeek+'</span></td><td '+wakeupOn+'>'+wakeupTime+'</td><td>'+m_revival+'</td><td>'+p_pray+'</td><td>'+co_pray+'</td><td>'+r_bible+'</td><td>'+r_ministry+'</td><td '+gospelOn+'>'+evangel+'</td><td '+gospelOn+'>'+flyers+'</td><td '+gospelOn+'>'+contacts+'</td><td '+gospelOn+'>'+saved+'</td><td '+gospelOn+'>'+meetings+'</td><td '+wakeupOn+'>'+hangupTime+'</td></tr>');
       tableDataMbl.push('<div class="practices_strMbl" data-other="'+x[i].other+'" data-weekday="'+dayOfWeek+'" data-date="'+x[i].date_practic+'" data-uo="'+x[i].m_revival+'" data-lm="'+x[i].p_pray+'" data-mt="'+x[i].co_pray+'" data-chb="'+x[i].r_bible+'" data-chs="'+x[i].r_ministry+'" data-bl="'+x[i].evangel+'" data-l="'+x[i].flyers+'" data-k="'+x[i].contacts+'" data-s="'+x[i].saved+'" data-v="'+x[i].meetings+'" data-wakeup="'+wakeupTime+'" data-hangup="'+hangupTime+'" ><strong>'+x[i].date_practic+' '+dayOfWeek+'</strong><span '+wakeupOn+'>. Подъём: '+wakeupTime+'</span><span>, УО: '+x[i].m_revival+'</span><span>, ЛМ: '+x[i].p_pray+'</span><span>, МТ: '+x[i].co_pray+'</span><span>, ЧБ: '+x[i].r_bible+'</span><span>, ЧС: '+x[i].r_ministry+'</span><span '+gospelOn+'>, БЛ: '+x[i].evangel+'</span><span '+gospelOn+'>, Л: '+x[i].flyers+'</span><span '+gospelOn+'>, К: '+x[i].contacts+'</span><span '+gospelOn+'>, С: '+x[i].saved+'</span><span '+gospelOn+'>, В: '+x[i].meetings+'</span><span '+wakeupOn+'>, Отбой: '+hangupTime+'.</span></div><hr style="margin: 10px 0;">');
     }
      $('#practicesListPersonal tbody').html(tableData);
      $('#practicesListPersonalMbl').html(tableDataMbl);
 
-     $('.practices_str').click(function() {
+     $('.practices_str').click(function(e) {
+       e.stopPropagation();
 // dates compare
        var datedateTmp = Date.parse ($(this).attr('data-date'));
        var datedate = new Date(datedateTmp);
@@ -156,23 +203,24 @@ $(document).ready(function(){
        }
        var textDate = $(this).find('td:nth-child(1)').text();
        $('#dataPractic').text(textDate);
-       $('#mrPractic').val($(this).find('td:nth-child(3)').text());
-       $('#ppPractic').val($(this).find('td:nth-child(4)').text());
-       $('#pcPractic').val($(this).find('td:nth-child(5)').text());
-       $('#rbPractic').val($(this).find('td:nth-child(6)').text());
-       $('#rmPractic').val($(this).find('td:nth-child(7)').text());
-       $('#gsplPractic').val($(this).find('td:nth-child(8)').text());
-       $('#flPractic').val($(this).find('td:nth-child(9)').text());
-       $('#cntPractic').val($(this).find('td:nth-child(10)').text());
-       $('#svdPractic').val($(this).find('td:nth-child(11)').text());
-       $('#meetPractic').val($(this).find('td:nth-child(12)').text());
-       $('#timeWakeup').val($(this).find('td:nth-child(2)').text());
-       $('#timeHangup').val($(this).find('td:nth-child(13)').text());
+       $('#mrPractic').val($(this).find('td:nth-child(3)').text() !== '-' ? $(this).find('td:nth-child(3)').text() : '');
+       $('#ppPractic').val($(this).find('td:nth-child(4)').text() !== '-' ? $(this).find('td:nth-child(4)').text() : '');
+       $('#pcPractic').val($(this).find('td:nth-child(5)').text() !== '-' ? $(this).find('td:nth-child(5)').text() : '');
+       $('#rbPractic').val($(this).find('td:nth-child(6)').text() !== '-' ? $(this).find('td:nth-child(6)').text() : '');
+       $('#rmPractic').val($(this).find('td:nth-child(7)').text() !== '-' ? $(this).find('td:nth-child(7)').text() : '');
+       $('#gsplPractic').val($(this).find('td:nth-child(8)').text() !== '-' ? $(this).find('td:nth-child(8)').text() : '');
+       $('#flPractic').val($(this).find('td:nth-child(9)').text() !== '-' ? $(this).find('td:nth-child(9)').text() : '');
+       $('#cntPractic').val($(this).find('td:nth-child(10)').text() !== '-' ? $(this).find('td:nth-child(10)').text() : '');
+       $('#svdPractic').val($(this).find('td:nth-child(11)').text() !== '-' ? $(this).find('td:nth-child(11)').text() : '');
+       $('#meetPractic').val($(this).find('td:nth-child(12)').text() !== '-' ? $(this).find('td:nth-child(12)').text() : '');
+       $('#timeWakeup').val($(this).find('td:nth-child(2)').text() !== '-' ? $(this).find('td:nth-child(2)').text() : '');
+       $('#timeHangup').val($(this).find('td:nth-child(13)').text() !== '-' ? $(this).find('td:nth-child(13)').text() : '');
        $('#otherDesk').val($(this).attr('data-other'));
 
      });
      // Mobile fulfil blank
-     $('.practices_strMbl').click(function() {
+     $('.practices_strMbl').click(function(e) {
+       e.stopPropagation(e);
        var datedateTmpMbl = Date.parse ($(this).attr('data-date'));
        var datedateMbl = new Date(datedateTmpMbl);
        var curdateMbl = new Date();
@@ -274,16 +322,17 @@ $(document).ready(function(){
   $('#cd-panel__closeMbl').click(function() {
     $('.cd-panelMbl').removeClass('cd-panel--is-visibleMbl');
   });
-
 // STOP SLIDE SIDE PANEL
+
+
 // Serviceones watch to the practices
   function practicesListServiceones(x) {
 // ВОзможно местности и служащих лучше брать мз объектов JS чем из базы если есть смысл и какая то экономия в этом
 // Создать массив ключ местности название местности, и в качестве ключа подставлять переданные данные и так же со служащими ибо их ограниченное количество. Данные можно обновлять после загрузки страници или после определённых операций.
     console.log(x);
-    var tableDataser=[], tableDataMblser=[], m_revivalser, p_prayser, co_prayser, r_bibleser, r_ministryser, evangelser, flyersser, contactsser, savedser, meetingsser, dayOfWeekser, hangupTimeser, wakeupTimeser, serving_one;
+    var tableDataser=[], tableDataMblser=[], m_revivalser, p_prayser, co_prayser, r_bibleser, r_ministryser, evangelser, flyersser, contactsser, savedser, meetingsser, dayOfWeekser, hangupTimeser, wakeupTimeser, serving_one, statisticLine = [], statisticLineObj ={};
     for (var i = 0; i < x.length; i++) {
-      if (adminLocalityGlb !== '001214') {
+      if (data_page.admin_locality !== '001214') {
         if (window.adminId !== '000005716' && window.adminId !== '000001679') {
           return
         }
@@ -301,7 +350,7 @@ $(document).ready(function(){
       x[i].meetings != 0 ? meetingsser = x[i].meetings : meetingsser = '-';
       x[i].wakeup ? wakeupTimeser = x[i].wakeup : wakeupTimeser = '-';
       x[i].hangup ? hangupTimeser = x[i].hangup : hangupTimeser = '-';
-      x[i].serving ? serving_one = x[i].serving : serving_one = '_none_';
+      x[i].serving ? serving_one = x[i].serving : serving_one = '';
       var serviceOneName = '-';
       var serviceOnesAll = data_page.serviceones;
       for (var ii in serviceOnesAll) {
@@ -309,16 +358,262 @@ $(document).ready(function(){
           serviceOneName = serviceOnesAll[ii];
         }
       }
+
+// START COLLECT THE STRINGS
+//statisticLine[x[i].member_id] !== undefined ? statisticLine[x[i].member_id] = statisticLine[x[i].member_id]+1 : statisticLine[x[i].member_id] = 1;
+//console.log(statisticLine[x[i].member_id][3]== undefined, ', ', x[i].m_revival);
+if (statisticLine[x[i].member_id] === undefined) {
+  statisticLine[x[i].member_id] = [x[i].locality_key, x[i].serving, serviceOneName, Number(x[i].m_revival), Number(x[i].p_pray), Number(x[i].co_pray), Number(x[i].r_bible), Number(x[i].r_ministry), Number(x[i].evangel), Number(x[i].flyers), Number(x[i].contacts), Number(x[i].saved), Number(x[i].meetings), x[i].member_id, shortNameMem, x[i].loc_name];
+} else {
+  statisticLine[x[i].member_id][3] += Number(x[i].m_revival);
+  statisticLine[x[i].member_id][4] += Number(x[i].p_pray);
+  statisticLine[x[i].member_id][5] += Number(x[i].co_pray);
+  statisticLine[x[i].member_id][6] += Number(x[i].r_bible);
+  statisticLine[x[i].member_id][7] += Number(x[i].r_ministry);
+  statisticLine[x[i].member_id][8] += Number(x[i].evangel);
+  statisticLine[x[i].member_id][9] += Number(x[i].flyers);
+  statisticLine[x[i].member_id][10] += Number(x[i].contacts);
+  statisticLine[x[i].member_id][11] += Number(x[i].saved);
+  statisticLine[x[i].member_id][12] += Number(x[i].meetings);
+}
+
+//statisticLine[x[i].member_id][3] == undefined ? statisticLine[x[i].member_id][3] =  Number(statisticLine[x[i].member_id][3]) + Number(x[i].m_revival) : statisticLine[x[i].member_id][3] = Number(x[i].m_revival);
+
+//statisticLineObj[x[i].member_id][x[i].locality_key];
+// STOP COLLECT THE STRINGS
       wakeupTimeser.length > 5 ? wakeupTimeser = wakeupTimeser.substr(0, wakeupTimeser.length - 3) : '';
       hangupTimeser.length > 5 ? hangupTimeser = hangupTimeser.substr(0, hangupTimeser.length - 3) : '';
       dayOfWeekser = getNameDayOfWeekByDayNumber(x[i].date_practic , false);
-      tableDataser.push('<tr class="practices_so_str cursor-pointer" data-id="'+x[i].id+'" data-locality="'+x[i].locality_key+'" data-other="'+x[i].other+'" data-weekday="'+dayOfWeekser+'" data-date="'+x[i].date_practic+'" data-serviceone="'+serving_one+'"><td >'+shortNameMem+'</td><td>'+m_revivalser+'</td><td>'+p_prayser+'</td><td>'+co_prayser+'</td><td>'+r_bibleser+'</td><td>'+r_ministryser+'</td><td>'+evangelser+'</td><td>'+x[i].loc_name+'</td><td>'+serviceOneName+'</td></tr>');
+      tableDataser.push('<tr class="practices_so_str cursor-pointer" data-id="'+x[i].id+'" data-locality="'+x[i].locality_key+'" data-other="'+x[i].other+'" data-weekday="'+dayOfWeekser+'" data-date="'+x[i].date_practic+'" data-serviceone="'+serving_one+'" data-member_id="'+x[i].member_id+'" data-wakeup="'+wakeupTimeser+'" data-hangup="'+hangupTimeser+'" data-flyers="'+flyersser+'" data-contacts="'+contactsser+'" data-saved="'+savedser+'" data-meetings="'+meetingsser+'" style="display: none;"><td >'+shortNameMem+'</td><td>'+m_revivalser+'</td><td>'+p_prayser+'</td><td>'+co_prayser+'</td><td>'+r_bibleser+'</td><td>'+r_ministryser+'</td><td>'+evangelser+'</td><td '+globalLocalityOn+'>'+x[i].loc_name+'</td><td>'+serviceOneName+'</td></tr>');
+
+      tableDataMblser.push('<tr class="practices_so_str_mbl cursor-pointer" data-id="'+x[i].id+'" data-locality="'+x[i].locality_key+'" data-other="'+x[i].other+'" data-weekday="'+dayOfWeekser+'" data-date="'+x[i].date_practic+'" data-serviceone="'+serving_one+'" data-member_id="'+x[i].member_id+'" data-wakeup="'+wakeupTimeser+'" data-hangup="'+hangupTimeser+'" data-flyers="'+flyersser+'" data-contacts="'+contactsser+'" data-saved="'+savedser+'" data-meetings="'+meetingsser+'" style="display: none;"><td>'+shortNameMem+'</td><td>'+m_revivalser+'</td><td>'+p_prayser+'</td><td>'+co_prayser+'</td><td>'+r_bibleser+'</td><td>'+r_ministryser+'</td><td>'+evangelser+'</td><td '+globalLocalityOn+'>'+x[i].loc_name+'</td></tr>');
     }
+
+    var tempArr = [];
+    for (var colectStr in statisticLine) {
+      tempArr = statisticLine[colectStr];
+      var adminSohrtName;
+        tempArr[2] !== '-' ? adminSohrtName = twoNames2(tempArr[2]) : adminSohrtName = tempArr[2];
+        tableDataser.unshift('<tr class="practices_main_str cursor-pointer" data-member_id="'+tempArr[13]+'" data-locality="'+tempArr[0]+'" data-serviceone="'+tempArr[1]+'" style="background-color: #f2f2f2"><td>'+tempArr[14]+'</td><td>'+tempArr[3]+'</td><td>'+tempArr[4]+'</td><td>'+tempArr[5]+'</td><td>'+tempArr[6]+'</td><td>'+tempArr[7]+'</td><td>'+tempArr[8]+'</td><td '+globalLocalityOn+'>'+tempArr[15]+'</td><td>'+tempArr[2]+'</td></tr>');
+        tableDataMblser.unshift('<tr class="practices_main_str_mbl cursor-pointer" data-member_id="'+tempArr[13]+'" data-locality="'+tempArr[0]+'" data-serviceone="'+tempArr[1]+'" style="background-color: #f2f2f2"><td>'+tempArr[14]+'<br> <span class="example">'+adminSohrtName+'</span></td><td>'+tempArr[3]+'</td><td>'+tempArr[4]+'</td><td>'+tempArr[5]+'</td><td>'+tempArr[6]+'</td><td>'+tempArr[7]+'</td><td>'+tempArr[8]+'</td><td '+globalLocalityOn+'>'+tempArr[15]+'</td></tr>');
+    }
+
     $('#listPracticesForObserve tbody').html(tableDataser);
+    $('#listPracticesForObserveMbl tbody').html(tableDataMblser);
+
+    $('tbody .practices_main_str').click(function(e) {
+      e.stopPropagation();
+      $('.active_string').removeClass('active_string');
+      $(this).addClass('active_string');
+      var idMem = $(this).attr('data-member_id');
+      var rrr, moved = 0;
+      $(this).hasClass('str_moved') ? moved = 1 : $(this).addClass('str_moved');
+      $('tbody .practices_so_str').each(function() {
+        if ($(this).attr('data-member_id') === idMem) {
+          if ($(this).is(':visible')) {
+            $(this).hide();
+          } else {
+            $(this).show();
+            if (moved === 0) {
+              rrr = $(this);
+              $(this).remove();
+              $('.active_string').after(rrr);
+            }
+          }
+        }
+      });
+        $('tbody .practices_so_str').click(function(u) {
+          u.stopPropagation();
+          $('.active_sub_string').removeClass('active_sub_string');
+          $(this).addClass('active_sub_string');
+          if (!$('.cd-panel-watch').hasClass('cd-panel--is-visible-watch')) {
+            $('.cd-panel-watch').addClass('cd-panel--is-visible-watch');
+          }
+//--------------
+
+          if (!$('.cd-panel-watch').hasClass('cd-panel--is-visible-watch')) {
+            $('.cd-panel-watch').addClass('cd-panel--is-visible-watch');
+          }
+
+          $('#safePracticesToday-watch').attr('data-id_member', $(this).attr('data-member_id'));
+          $('#safePracticesToday-watch').attr('data-id', $(this).attr('data-id'));
+          $('#dataPractic-watch').text($(this).attr('data-date') + ', ' + $(this).attr('data-weekday') + ', ' +$(this).find('td:nth-child(1)').text());
+          $('#timeWakeup-watch').val($(this).attr('data-wakeup') !== '' ? $(this).attr('data-wakeup') : '');
+          $('#mrPractic-watch').val($(this).find('td:nth-child(2)').text() !== '-' ? $(this).find('td:nth-child(2)').text() : '');
+          $('#ppPractic-watch').val($(this).find('td:nth-child(3)').text() !== '-' ? $(this).find('td:nth-child(3)').text() : '');
+          $('#pcPractic-watch').val($(this).find('td:nth-child(4)').text() !== '-' ? $(this).find('td:nth-child(4)').text() : '');
+          $('#rbPractic-watch').val($(this).find('td:nth-child(5)').text() !== '-' ? $(this).find('td:nth-child(5)').text() : '');
+          $('#rmPractic-watch').val($(this).find('td:nth-child(6)').text() !== '-' ? $(this).find('td:nth-child(6)').text() : '');
+          $('#gsplPractic-watch').val($(this).find('td:nth-child(7)').text() !== '-' ? $(this).find('td:nth-child(7)').text() : '');
+          $('#flPractic-watch').val($(this).attr('data-flyers') !== '' ? $(this).attr('data-flyers') : '');
+          $('#cntPractic-watch').val($(this).attr('data-contacts') !== '' ? $(this).attr('data-contacts') : '');
+          $('#svdPractic-watch').val($(this).attr('data-saved') !== '' ? $(this).attr('data-saved') : '');
+          $('#meetPractic-watch').val($(this).attr('data-meetings') !== '' ? $(this).attr('data-meetings') : '');
+          $('#timeHangup-watch').val($(this).attr('data-hangup') !== '' ? $(this).attr('data-hangup') : '');
+          $('#otherDesk-watch').val($(this).attr('data-other'));
+//--------------
+          //$.get('/ajax/practices.php?get_practices_edit')
+            //.done (function(data) {
+            //  practicesBlankToday(data.practices);
+            //});
+        });
+    });
+// MOBILE WATCH
+    $('tbody .practices_main_str_mbl').click(function(e) {
+      e.stopPropagation();
+      $('.active_string_mbl').removeClass('active_string_mbl');
+      $(this).addClass('active_string_mbl');
+      var idMem = $(this).attr('data-member_id');
+      var rrr, moved = 0;
+      $(this).hasClass('str_moved_mbl') ? moved = 1 : $(this).addClass('str_moved');
+      $('tbody .practices_so_str_mbl').each(function() {
+        if ($(this).attr('data-member_id') === idMem) {
+          if ($(this).is(':visible')) {
+            $(this).hide();
+          } else {
+            $(this).show();
+            if (moved === 0) {
+              rrr = $(this);
+              $(this).remove();
+              $('.active_string_mbl').after(rrr);
+            }
+          }
+        }
+      });
+        $('tbody .practices_so_str_mbl').click(function(u) {
+          u.stopPropagation();
+          $('.active_sub_string_mbl').removeClass('active_sub_string_mbl');
+          $(this).addClass('active_sub_string_mbl');
+          if (!$('.cd-panel-watch-mbl').hasClass('cd-panel--is-visible-watch-mbl')) {
+            $('.cd-panel-watch-mbl').addClass('cd-panel--is-visible-watch-mbl');
+          }
+//--------------
+
+          if (!$('.cd-panel-watch-mbl').hasClass('cd-panel--is-visible-watch-mbl')) {
+            $('.cd-panel-watch-mbl').addClass('cd-panel--is-visible-watch-mbl');
+          }
+
+          $('#safePracticesToday-watch-mbl').attr('data-id_member', $(this).attr('data-member_id'));
+          $('#safePracticesToday-watch-mbl').attr('data-id', $(this).attr('data-id'));
+          $('#dataPractic-watch-mbl').text($(this).attr('data-date') + ', ' + $(this).attr('data-weekday')+', '+$(this).find('td:nth-child(1)').text());
+          $('#timeWakeup-watch-mbl').val($(this).attr('data-wakeup') !== '' ? $(this).attr('data-wakeup') : '');
+          $('#mrPractic-watch-mbl').val($(this).find('td:nth-child(2)').text() !== '-' ? $(this).find('td:nth-child(2)').text() : '');
+          $('#ppPractic-watch-mbl').val($(this).find('td:nth-child(3)').text() !== '-' ? $(this).find('td:nth-child(3)').text() : '');
+          $('#pcPractic-watch-mbl').val($(this).find('td:nth-child(4)').text() !== '-' ? $(this).find('td:nth-child(4)').text() : '');
+          $('#rbPractic-watch-mbl').val($(this).find('td:nth-child(5)').text() !== '-' ? $(this).find('td:nth-child(5)').text() : '');
+          $('#rmPractic-watch-mbl').val($(this).find('td:nth-child(6)').text() !== '-' ? $(this).find('td:nth-child(6)').text() : '');
+          $('#gsplPractic-watch-mbl').val($(this).find('td:nth-child(7)').text() !== '-' ? $(this).find('td:nth-child(7)').text() : '');
+          $('#flPractic-watch-mbl').val($(this).attr('data-flyers') !== '' ? $(this).attr('data-flyers') : '');
+          $('#cntPractic-watch-mbl').val($(this).attr('data-contacts') !== '' ? $(this).attr('data-contacts') : '');
+          $('#svdPractic-watch-mbl').val($(this).attr('data-saved') !== '' ? $(this).attr('data-saved') : '');
+          $('#meetPractic-watch-mbl').val($(this).attr('data-meetings') !== '' ? $(this).attr('data-meetings') : '');
+          $('#timeHangup-watch-mbl').val($(this).attr('data-hangup') !== '' ? $(this).attr('data-hangup') : '');
+          $('#otherDesk-watch-mbl').val($(this).attr('data-other'));
+//--------------
+          //$.get('/ajax/practices.php?get_practices_edit')
+            //.done (function(data) {
+            //  practicesBlankToday(data.practices);
+            //});
+        });
+    });
+
   }
 
-  function practicesListServiceonesUpdate() {
-    $.get('/ajax/practices.php?get_practices_for_admin')
+  $('#safePracticesToday-watch').click(function() {
+    var dataBlank = {};
+    var idString = $(this).attr('data-id');
+    dataBlank.mr = $('#mrPractic-watch').val();
+    dataBlank.pp = $('#ppPractic-watch').val();
+    dataBlank.pc = $('#pcPractic-watch').val();
+    dataBlank.rb = $('#rbPractic-watch').val();
+    dataBlank.rm = $('#rmPractic-watch').val();
+    dataBlank.gspl = $('#gsplPractic-watch').val();
+    dataBlank.fl = $('#flPractic-watch').val();
+    dataBlank.cnt = $('#cntPractic-watch').val();
+    dataBlank.svd = $('#svdPractic-watch').val();
+    dataBlank.meet = $('#meetPractic-watch').val();
+    dataBlank.wake = $('#timeWakeup-watch').val();
+    dataBlank.hang = $('#timeHangup-watch').val();
+    dataBlank.oth = $('#otherDesk-watch').val();
+
+    $.get('/ajax/practices.php?update_practices_edit',{user_data: dataBlank, id: idString})
+      .done (function(data) {
+        if (data === 1) {
+          $('.active_sub_string').find('td:nth-child(2)').text(dataBlank.mr);
+          $('.active_sub_string').find('td:nth-child(3)').text(dataBlank.pp);
+          $('.active_sub_string').find('td:nth-child(4)').text(dataBlank.pc);
+          $('.active_sub_string').find('td:nth-child(5)').text(dataBlank.rb);
+          $('.active_sub_string').find('td:nth-child(6)').text(dataBlank.rm);
+          $('.active_sub_string').find('td:nth-child(7)').text(dataBlank.gspl);
+          $('.active_sub_string').attr('data-flyers', dataBlank.fl);
+          $('.active_sub_string').attr('data-contacts', dataBlank.cnt);
+          $('.active_sub_string').attr('data-saved', dataBlank.svd);
+          $('.active_sub_string').attr('data-meetings', dataBlank.meet);
+          $('.active_sub_string').attr('data-wakeup', dataBlank.wake);
+          $('.active_sub_string').attr('data-hangup', dataBlank.hang );
+          $('.active_sub_string').attr('data-other', dataBlank.oth);
+        }
+      });
+  });
+
+  $('#safePracticesToday-watch-mbl').click(function() {
+    var dataBlank = {};
+    var idString = $(this).attr('data-id');
+    dataBlank.mr = $('#mrPractic-watch-mbl').val();
+    dataBlank.pp = $('#ppPractic-watch-mbl').val();
+    dataBlank.pc = $('#pcPractic-watch-mbl').val();
+    dataBlank.rb = $('#rbPractic-watch-mbl').val();
+    dataBlank.rm = $('#rmPractic-watch-mbl').val();
+    dataBlank.gspl = $('#gsplPractic-watch-mbl').val();
+    dataBlank.fl = $('#flPractic-watch-mbl').val();
+    dataBlank.cnt = $('#cntPractic-watch-mbl').val();
+    dataBlank.svd = $('#svdPractic-watch-mbl').val();
+    dataBlank.meet = $('#meetPractic-watch-mbl').val();
+    dataBlank.wake = $('#timeWakeup-watch-mbl').val();
+    dataBlank.hang = $('#timeHangup-watch-mbl').val();
+    dataBlank.oth = $('#otherDesk-watch-mbl').val();
+
+    $.get('/ajax/practices.php?update_practices_edit',{user_data: dataBlank, id: idString})
+      .done (function(data) {
+        if (data === 1) {
+          $('.active_sub_string_mbl').find('td:nth-child(2)').text(dataBlank.mr);
+          $('.active_sub_string_mbl').find('td:nth-child(3)').text(dataBlank.pp);
+          $('.active_sub_string_mbl').find('td:nth-child(4)').text(dataBlank.pc);
+          $('.active_sub_string_mbl').find('td:nth-child(5)').text(dataBlank.rb);
+          $('.active_sub_string_mbl').find('td:nth-child(6)').text(dataBlank.rm);
+          $('.active_sub_string_mbl').find('td:nth-child(7)').text(dataBlank.gspl);
+          $('.active_sub_string_mbl').attr('data-flyers', dataBlank.fl);
+          $('.active_sub_string_mbl').attr('data-contacts', dataBlank.cnt);
+          $('.active_sub_string_mbl').attr('data-saved', dataBlank.svd);
+          $('.active_sub_string_mbl').attr('data-meetings', dataBlank.meet);
+          $('.active_sub_string_mbl').attr('data-wakeup', dataBlank.wake);
+          $('.active_sub_string_mbl').attr('data-hangup', dataBlank.hang );
+          $('.active_sub_string_mbl').attr('data-other', dataBlank.oth);
+        }
+      });
+  });
+
+    function practicesListServiceonesUpdate(periodValue) {
+      var adminLocalitiiesForSQL = '';
+// LOGJS.JS Нужно создать лог js и подключать к нужным файлам. Проверка объектов и ассоциативных массивов с помощью какогото кода.
+// counter=0; for (var i in arr) {if (arr[i]=="" && counter === 0) console.log('ERROR variable = ', data_page.admin_localities, ' counter should be "0" = ', counter);}
+
+      for (var variable in data_page.admin_localities) {
+        if (adminLocalitiiesForSQL) {
+          adminLocalitiiesForSQL = adminLocalitiiesForSQL + ' OR m.locality_key = ' + String(variable);
+        } else {
+          adminLocalitiiesForSQL = adminLocalitiiesForSQL + 'm.locality_key = ' + String(variable);
+        }
+      }
+      if (!adminLocalitiiesForSQL) {
+        return
+      }
+
+// var localityAdmin = data_page.admin_locality === '001214' ? adminLocalitiiesForSQL + " OR m.locality_key = 001192": adminLocalitiiesForSQL;
+    var dataObj = {};
+    dataObj.localities = adminLocalitiiesForSQL;
+    dataObj.period = periodValue || $('#periodPractices').val();
+    $.get('/ajax/practices.php?get_practices_for_admin', {data: dataObj})
       .done (function(data) {
         practicesListServiceones(data.practices);
       });
@@ -336,21 +631,60 @@ $(document).ready(function(){
     //$('tbody .practices_so_str').
   }
 
-  $('#servingCombo').change(function () {
+  $('#servingCombo, #adminlocalitiesCombo').change(function () {
+      $('tbody .practices_main_str').each(function() {
+        if (($(this).attr('data-serviceone') === $('#servingCombo').val() || $('#servingCombo').val() === '_all_') && ($(this).attr('data-locality') === $('#adminlocalitiesCombo').val() || $('#adminlocalitiesCombo').val() === '_all_')) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+      $('tbody .practices_so_str').each(function() {
+        $(this).hide();
+      });
+  });
+
+  $('#servingComboMbl, #adminlocalitiesComboMbl').change(function () {
+      $('tbody .practices_main_str_mbl').each(function() {
+        if (($(this).attr('data-serviceone') === $('#servingComboMbl').val() || $('#servingComboMbl').val() === '_all_') && ($(this).attr('data-locality') === $('#adminlocalitiesComboMbl').val() || $('#adminlocalitiesComboMbl').val() === '_all_')) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+      $('tbody .practices_so_str_mbl').each(function() {
+        $(this).hide();
+      });
+  });
+
+  $('#periodPractices, #periodPracticesMbl').change(function () {
+      practicesListServiceonesUpdate($(this).val());
+  });
+/*  $('#adminlocalitiesCombo').change(function () {
+
+    //DAILY STRINGS
+
     if ($(this).val() === '_all_' || $(this).val() === '') {
 
       $('tbody .practices_so_str').show();
     } else {
       $('tbody .practices_so_str').each(function() {
-        $(this).attr('data-serviceone') === $('#servingCombo').val() ? $(this).show() : $(this).hide();
+        $(this).attr('data-locality') === $('#adminlocalitiesCombo').val() && ($(this).attr('data-serviceone') === $('#servingCombo').val() || $('#servingCombo').val() === '_all_') ? $(this).show() : $(this).hide();
       });
     }
-  })
+
+  });*/
 
   if (!$('.cd-panel').hasClass('cd-panel--is-visible') && $('#pcount').is(':visible')) {
     $('.cd-panel').addClass('cd-panel--is-visible');
   } else if ($('.cd-panel').hasClass('cd-panel--is-visible') && !$('#pcount').is(':visible')) {
     $('.cd-panel').removeClass('cd-panel--is-visible');
+  }
+
+  if (!$('.cd-panelMbl').hasClass('cd-panel--is-visibleMbl') && $('#pcountMbl').is(':visible')) {
+    $('.cd-panelMbl').addClass('cd-panel--is-visibleMbl');
+  } else if ($('.cd-panelMbl').hasClass('cd-panel--is-visibleMbl') && !$('#pcountMbl').is(':visible')) {
+    $('.cd-panelMbl').removeClass('cd-panel--is-visibleMbl');
   }
 
 /*
@@ -360,4 +694,23 @@ $(document).ready(function(){
     $('.cd-panel').removeClass('cd-panel--is-visibleMbl');
   }
 */
+
+// BLANK FOR WATCH PAGE
+
+  $('.cd-panel__close-watch').click(function() {
+    $('.cd-panel-watch').removeClass('cd-panel--is-visible-watch');
+  });
+
+  $('#cd-panel__close-watch').click(function() {
+    $('.cd-panel-watch').removeClass('cd-panel--is-visible-watch');
+  });
+
+  $('.cd-panel__close-watch-mbl').click(function() {
+    $('.cd-panel-watch-mbl').removeClass('cd-panel--is-visible-watch-mbl');
+  });
+
+  $('#cd-panel__close-watch-mbl').click(function() {
+    $('.cd-panel-watch-mbl').removeClass('cd-panel--is-visible-watch-mbl');
+  });
+
 });
