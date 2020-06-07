@@ -1,0 +1,166 @@
+.scroll-up{
+    z-index: 1;
+    height: 10%;
+    color: #d5dddf;
+    text-align: center;
+    position: fixed;
+    display: none;
+    right: 20px;
+    bottom: 70px;
+}
+
+.scroll-up:hover{
+    cursor: pointer;
+    color: #51666b;
+}
+.navbar-dark{
+    z-index: 3;
+}
+/*SIDE PANEL START*/
+
+.cd-panel-watch {
+  /*...*/
+  visibility: hidden;
+  transition: visibility 0s 0.6s;
+}
+
+.cd-panel-watch.cd-panel--is-visible-watch {
+  visibility: visible;
+  transition: visibility 0s 0s;
+  z-index: 1;
+}
+
+.cd-panel__header-watch {
+  /*...*/
+  position: fixed;
+  top: 58px;
+  width: 400px;
+  height: 30px;
+  transition: transform 0.3s 0s;
+  transform: translateY(-80px);
+  padding: 0px 5px 10px 15px;
+  border-left: 1px solid gray;
+  /*border-top: 1px solid gray;
+  border-radius: 5px 0 0 0px;*/
+  z-index: 2;
+}
+
+.cd-panel--from-right-watch .cd-panel__header-watch {
+  right: 0;
+}
+
+.cd-panel--from-left-watch .cd-panel__header-watch {
+  left: 0;
+}
+
+.cd-panel--is-visible-watch .cd-panel__header-watch {
+  transition: transform 0.3s 0.0s;
+  transform: translateY(0px);
+  background-color: rgba(255, 255, 255);
+}
+
+.cd-panel__container-watch {
+  /*...*/
+  position: fixed;
+  width: 400px;
+  height: 100%;
+  top: 0;
+  transition: transform 0.3s 0s;
+  border-left: 1px solid gray;
+  padding: 0px 5px 10px 15px;
+  border-radius: 0 0 0 5px;
+  border-bottom: 1px solid gray;
+  overflow-y: auto;
+}
+.cd-panel__content-watch {
+  width: 98%;
+}
+.cd-panel--from-right-watch .cd-panel__container-watch {
+  right: 0;
+  transform: translate3d(100%, 0, 0);
+}
+
+.cd-panel--from-left-watch .cd-panel__container-watch {
+  left: 0;
+  transform: translate3d(-100%, 0, 0);
+}
+
+.cd-panel--is-visible-watch .cd-panel__container-watch {
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0s;
+  background-color: rgba(255, 255, 255);
+}
+
+.cd-btn-watch {
+  position: relative;
+  display: inline-block;
+  padding: 1em 2em;
+  background-color: #89ba2c;
+  color: #ffffff;
+  border-radius: 50em;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 5px rgba(0, 0, 0, 0.1);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 5px rgba(0, 0, 0, 0.1);
+  -webkit-transition: -webkit-box-shadow 0.2s;
+  transition: -webkit-box-shadow 0.2s;
+  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, -webkit-box-shadow 0.2s;
+}
+
+.cd-btn-watch:hover {
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+@media only screen and (min-width: 1170px) {
+  .cd-main-content-watch h1 {
+    font-size: 3.2rem;
+  }
+}
+
+/*CLOSE BUTTON*/
+.cd-panel__close-watch {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 60px;
+  /* image replacement */
+  display: inline-block;
+  overflow: hidden;
+  text-indent: 100%;
+  white-space: nowrap;
+}
+
+.cd-panel__close-watch::before, .cd-panel__close-watch::after {
+  /* close icon created in CSS */
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  height: 3px;
+  width: 20px;
+  background-color: #424f5c;
+  /* this fixes a bug where pseudo elements are slighty off position */
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+
+.cd-panel__close-watch::before {
+  -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+.cd-panel__close-watch::after {
+  -webkit-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+.cd-panel__close-watch:hover::before, .cd-panel__close-watch:hover::after {
+  background-color: #424f5c;
+}
+/*SIDE PANEL STOP*/
+.float-right.upload_fields {
+  margin-bottom: 10px;
+}

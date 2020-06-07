@@ -1,6 +1,7 @@
 <?php
 include_once "header.php";
 include_once "nav.php";
+include_once "db/youthdb.php";
 //Roman's code ver 5.0.1
 $user_settings = db_getUserSettings($memberId);
 $userSettings = implode (',', $user_settings);

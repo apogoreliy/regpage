@@ -371,6 +371,9 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
             case 'comment':
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Комментарий');
                 break;
+            case 'region':
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.'1', 'Область');
+                break;
         }
         $ind ++;
     }
@@ -485,6 +488,9 @@ else if (isset($_POST ['members']) && isset ($_POST ['memberslength']) && isset(
                         break;
                     case 'comment':
                         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['comment']);
+                        break;
+                    case 'region':
+                        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['region']);
                         break;
                 }
                 $ind ++;
@@ -607,15 +613,20 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
 
           if ($arr[$i] == 'obl.' || $arr[$i] == 'oblast.' || $arr[$i] == 'oblasty.' || $arr[$i] == 'obl' || $arr[$i] == 'oblast' || $arr[$i] == 'oblasty' || $arr[$i] == 'obl.,' || $arr[$i] == 'oblast.,' || $arr[$i] == 'oblasty.,' || $arr[$i] == 'obl,' || $arr[$i] == 'oblast,' || $arr[$i] == 'oblasty,')
           {
-            $arr[$i] = 'reg.';
+            $arr[$i] = 'reg,';
           } elseif ($arr[$i] == 'kr.' || $arr[$i] == 'kray.' || $arr[$i] == 'kraya.' || $arr[$i] == 'k-y.' || $arr[$i] == 'kr-y.' || $arr[$i] == 'kr-ya.' || $arr[$i] == 'kr' || $arr[$i] == 'kray' || $arr[$i] == 'kraya' || $arr[$i] == 'k-y' || $arr[$i] == 'kr-y' || $arr[$i] == 'kr-ya' || $arr[$i] == 'kr.,' || $arr[$i] == 'kray.,' || $arr[$i] == 'kraya.,' || $arr[$i] == 'k-y.,' || $arr[$i] == 'kr-y.,' || $arr[$i] == 'kr-ya.,' || $arr[$i] == 'kr,' || $arr[$i] == 'kray,' || $arr[$i] == 'kraya,' || $arr[$i] == 'k-y,' || $arr[$i] == 'kr-y,' || $arr[$i] == 'kr-ya,') {
-            $arr[$i] = 'area';
+            $arr[$i] = 'area,';
           };
 
           if ($arr[$i] == 'ul.,' || $arr[$i] == 'ul.' || $arr[$i] == 'pr.,' || $arr[$i] == 'pr-t.,' || $arr[$i] == 'ul' || $arr[$i] == 'pr' || $arr[$i] == 'pr-t' || $arr[$i] == 'per' || $arr[$i] == 'per.' || $arr[$i] == 'per.,')
           {
+            $arrElement = substr($arr[$i+1], -1);
+            if ( $arrElement == ',') {
+              $arr[$i+1] = substr($arr[$i+1],0, -1);
+            };
             $arr[$i] = $arr[$i+1];
             $arr[$i+1] = 'str.';
+
           };
 
           if ($arr[$i] == 'dom' || $arr[$i] == 'd.' || $arr[$i] == 'd') {

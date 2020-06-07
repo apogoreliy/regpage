@@ -1,6 +1,7 @@
 <?php
 include_once "header.php";
 include_once "nav.php";
+include_once "db/activitydb.php";
 
 $hasMemberRightToSeePage = db_isAdmin($memberId);
 if(!$hasMemberRightToSeePage){

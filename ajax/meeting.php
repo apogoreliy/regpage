@@ -1,6 +1,6 @@
 <?php
 include_once "ajax.php";
-
+include_once "../db/meetingsdb.php";
 $adminId = db_getMemberIdBySessionId (session_id());
 if (!$adminId)
 {

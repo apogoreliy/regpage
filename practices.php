@@ -51,12 +51,15 @@
         <div class="tab-content">
           <div id="whach" class="tab-pane fade" >
             <div class="cd-panel-watch cd-panel--from-right-watch js-cd-panel-main-watch">
-              <header class="cd-panel__header-watch">
-                <h3>Основные практики</h3>
-                <a href="#0" class="cd-panel__close-watch js-cd-close-watch">Закрыть</a>
-              </header>
               <div class="cd-panel__container-watch">
+                <header class="cd-panel__header-watch">
+                  <h3>Основные практики </h3>
+                  <a href="#0" class="cd-panel__close-watch js-cd-close-watch"> Закрыть</a>
+                </header>
                 <div class="cd-panel__content-watch">
+                  <div style="height: 100px">
+
+                  </div>
          <!-- your side panel content here -->
             <table id="blankTblWatch">
               <tr><td style="padding-bottom: 10px;" colspan="2"><strong id="dataPractic-watch"></strong></td></tr>
@@ -92,21 +95,21 @@
               </select>
               <select id="servingCombo" class="" name="">
                 <option value="_all_">Все служащие</option>
-                <option value="">Не назначен</option>
-                  <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+                  <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'" .($id === $memberId ? 'selected' : '').">".htmlspecialchars ($name)."</option>"; ?>
               </select>
             </div>
             <table id="listPracticesForObserve" class="table table-hover">
               <thead>
                 <tr>
                 <th style="text-align: left; min-width:70px"><a id="sort-id" href="#" title="сортировать">ФИО</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style=""><a id="sort-city" href="#" title="сортировать">УО</a>&nbsp;<i class="<?php echo $sort_field=='city' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-status" href="#" title="сортировать">ЛМ</a>&nbsp;<i class="<?php echo $sort_field=='status' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-bptz_half_year" href="#" title="сортировать">МТ</a>&nbsp;<i class="<?php echo $sort_field=='half_year' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-attended" href="#" title="сортировать">ЧБ</a>&nbsp;<i class="<?php echo $sort_field=='attended' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-count_ltmeeting" href="#" title="сортировать">ЧС</a>&nbsp;<i class="<?php echo $sort_field=='count_ltmeeting' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-completed" href="#" title="сортировать">БЛ</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left; <?php echo in_array('13', db_getUserSettings($memberId)) ? '':'display:none';?>"><a id="sort-completed" href="#" title="сортировать">Местность</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="">Период</th>
+                <th style="">УО</th>
+                <th style="text-align: left;">ЛМ</th>
+                <th style="text-align: left;">МТ</th>
+                <th style="text-align: left;">ЧБ</th>
+                <th style="text-align: left;">ЧС</th>
+                <th style="text-align: left;">БЛ</th>
+                <th style="text-align: left; <?php echo in_array('13', db_getUserSettings($memberId)) ? '':'display:none';?>">Местность</th>
                 <th style="text-align: left;"><a id="sort-completed" href="#" title="сортировать">Служащий</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                 </tr>
               </thead>
@@ -189,14 +192,16 @@
           <li class="" id="pCountTabMbl" style="<?php echo in_array('9', db_getUserSettings($memberId)) ? '':'display:none' ?>"><a data-toggle="tab" href="#pcountMbl">Личный учёт</a></li>
         </ul>
         <div id="whachMbl" class="tab-pane fade">
-
           <div class="cd-panel-watch-mbl cd-panel--from-right-watch-mbl js-cd-panel-main-watch-mbl">
-            <header class="cd-panel__header-watch-mbl">
-              <h3>Основные практики</h3>
-              <a href="#0" class="cd-panel__close-watch-mbl js-cd-close-watch-mbl">Закрыть</a>
-            </header>
             <div class="cd-panel__container-watch-mbl">
+              <header class="cd-panel__header-watch-mbl">
+                <h3>Основные практики</h3>
+                <a href="#0" class="cd-panel__close-watch-mbl js-cd-close-watch-mbl">Закрыть</a>
+              </header>
               <div class="cd-panel__content-watch-mbl">
+                <div style="height: 100px">
+
+                </div>
        <!-- your side panel content here -->
           <table id="blankTblWatch-mbl">
             <tr><td style="padding-bottom: 10px;" colspan="2"><strong id="dataPractic-watch-mbl"></strong></td></tr>
@@ -232,7 +237,6 @@
             </select>
             <select id="servingComboMbl" class="" name="">
               <option value="_all_">Все служащие</option>
-              <option value="">Не назначен</option>
                 <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
             </select>
           </div>
@@ -240,13 +244,13 @@
               <thead>
                 <tr>
                 <th style="text-align: left; width:100px"><a id="sort-id" href="#" title="сортировать">ФИО</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="width: 25px;"><a id="sort-city" href="#" title="сортировать">УО</a></th>
-                <th style="text-align: left; width: 25px;"><a id="sort-status" href="#" title="сортировать">ЛМ</a></th>
-                <th style="text-align: left; width: 25px;"><a id="sort-bptz_half_year" href="#" title="сортировать">МТ</a></th>
-                <th style="text-align: left; width: 25px;"><a id="sort-attended" href="#" title="сортировать">ЧБ</a></th>
-                <th style="text-align: left; width: 25px;"><a id="sort-count_ltmeeting" href="#" title="сортировать">ЧС</a></th>
-                <th style="text-align: left; width: 25px;"><a id="sort-completed" href="#" title="сортировать">БЛ</a></th>
-                <th style=" width: 25px; text-align: left; <?php echo in_array('13', db_getUserSettings($memberId)) ? '':'display:none';?>"><a id="sort-completed" href="#" title="сортировать">Местность</a></th>
+                <th style="width: 25px;">УО</th>
+                <th style="text-align: left; width: 25px;">ЛМ</th>
+                <th style="text-align: left; width: 25px;">МТ</th>
+                <th style="text-align: left; width: 25px;">ЧБ</th>
+                <th style="text-align: left; width: 25px;">ЧС</th>
+                <th style="text-align: left; width: 25px;">БЛ</th>
+                <th style=" width: 25px; text-align: left; <?php echo in_array('13', db_getUserSettings($memberId)) ? '':'display:none';?>">Местность</th>
                 </tr>
               </thead>
             <tbody><tr><td colspan="8"><h3 style="text-align: center">Загрузка...</h3></td></tr></tbody>
@@ -312,6 +316,8 @@
       data_page.admin_locality = '<?php echo $adminLocality; ?>';
       var settingOff = '<?php echo (!in_array('12', db_getUserSettings($memberId)) && !in_array('9', db_getUserSettings($memberId)));?>';
       var settingOn = '<?php echo (in_array('12', db_getUserSettings($memberId)) && in_array('9', db_getUserSettings($memberId)));?>';
+      data_page.option_practices_count = '<?php echo in_array('9', db_getUserSettings($memberId));?>';
+      data_page.option_practices_watch = '<?php echo in_array('12', db_getUserSettings($memberId));?>';
       var wakeupOn = '<?php echo in_array('10', db_getUserSettings($memberId));?>';
       var gospelOn = '<?php echo in_array('11', db_getUserSettings($memberId));?>';
       var globalLocalityOn = '<?php echo in_array('13', db_getUserSettings($memberId));?>';

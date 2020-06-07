@@ -43,7 +43,7 @@ include_once "nav.php";
           if(setting.category_key && adminRole != 0){
 					   category_list.push(setting.category_name);
 					   settings_list.push('<h4>'+setting.category_name+'</h4>');
-          } else if (setting.category_key == 6 && adminRole == 0){
+          } else if ((setting.category_key == 6 || setting.category_key == 7) && adminRole == 0){
             category_list.push(setting.category_name);
             settings_list.push('<h4>'+setting.category_name+'</h4>');
           }
@@ -60,7 +60,7 @@ include_once "nav.php";
 					'<div style="margin-bottom: 5px;">'+
 					'<input style="margin-top:0" id="'+setting.setting_key+'" class="select_setting" type="checkbox" '+( in_array(setting.setting_key, user_settings) ? "checked" : "")+' />'+
 					'<label for="'+setting.setting_key+'" style="display:inline; margin-left: 10px;">'+sName+'</label></div>');
-				} else if ((setting.setting_key == 9 && adminRole == 0) || (setting.setting_key == 10 && adminRole == 0) || (setting.setting_key == 11 && adminRole == 0)) {
+				} else if ((setting.setting_key == 9 && adminRole == 0) || (setting.setting_key == 10 && adminRole == 0) || (setting.setting_key == 11 && adminRole == 0) || (setting.setting_key == 14 && adminRole == 0)) {
           if (setting.setting_key == 9 && in_array(setting.setting_key, user_settings)) {
             sName = setting.name;
           } else {
@@ -127,7 +127,7 @@ include_once "nav.php";
 					}, 90);
 				}
 
-        	if ($(this).attr('id') == '8' || $(this).attr('id') === '9' || $(this).attr('id') == '12') {
+        	if ($(this).attr('id') == '8' || $(this).attr('id') === '9' || $(this).attr('id') == '12' || $(this).attr('id') == '14') {
 						$('#10').attr('disabled', true);
 						$('#11').attr('disabled', true);
             setTimeout(function() { window.location = '/settings'} ,700);

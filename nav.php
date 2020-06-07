@@ -46,6 +46,9 @@ switch ($h) {
     case '/practices.php':
        $res = 'Практики';
        break;
+    case '/contacts.php':
+       $res = 'Контакты';
+       break;
     default:
         $res = '';
         break;
@@ -149,10 +152,16 @@ switch ($h) {
                 echo"><a href='/practices'>Практики</a></li>";
             }
 
-            if(isset($memberId) && ($memberId == '000005716' || $memberId == '000001679') && !isset($isGuest) && db_isAdmin($memberId)) {
+        /*    if(isset($memberId) && ($memberId == '000005716' || $memberId == '000001679') && !isset($isGuest) && db_isAdmin($memberId)) {
                 echo '<li';
                 if (strpos ($s,"/statistic")!==FALSE) {echo " class='active'";}
                 echo"><a href='/statistic'>Статистика</a></li>";
+            }*/
+
+            if(isset($memberId) && !isset($isGuest) && (in_array('14', db_getUserSettings($memberId)))) {
+                echo '<li  class="nav-item"';
+                if (strpos ($s,"/contacts")!==FALSE) {echo " class='active'";}
+                echo"><a class='nav-link' href='/contacts'>Контакты</a></li>";
             }
 
             if(isset($memberId)){
@@ -169,10 +178,18 @@ switch ($h) {
             }
 
             if(isset($memberId) && ($memberId == '000008601' || $memberId == '000001679' || $memberId == '000005716')){
-
-                echo '<li';
-                if (strpos ($s,"/reference")!==FALSE) {echo " class='active'";}
-                echo"><a href='/reference'>Справка</a></li>";
+              echo '<li class="btn-group">
+                      <a class="user-name-field dropdown-toggle" data-toggle="dropdown"';
+                          echo 'href="#"><span class="user-name">Ещё</span>
+                          <span class="caret"></span>
+                      </a>';
+                      echo '<ul class="dropdown-menu"><li';
+                      if (strpos ($s,'/statistic')!==FALSE) echo ' class="active"';
+                      echo '><a href="/statistic">Статистика</a></li>';
+                      echo  '<li';
+                      if (strpos ($s,'/reference')!==FALSE) echo ' class="active"';
+                      echo '><a href="/reference">Справка</a></li>';
+                      echo'</ul></li>';
             }
 
             if(!isset($isGuest) && isset($memberId)){
@@ -291,4 +308,5 @@ referenceSysAnew();
           $ (element2).hide ();
         }
     }
+    var glbRoleAdmin = parseInt('<?php echo db_getAdminRole($memberId); ?>');
 </script>
