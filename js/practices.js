@@ -12,73 +12,163 @@ $(document).ready(function(){
   !globalLocalityOn ? globalLocalityOn = 'style="display: none;"' : globalLocalityOn = '';
   // START choise active tab. Show / hide label of tabs
   // START DeskTop
-  if ($('#whachTab').is(':visible')) {
-    if ($('#pCountTab').hasClass('active')) {
-      $('#pCountTab').removeClass('active');
-      $('#pcount').removeClass('active');
-      $('#pcount').removeClass('in');
+
+    if ($('#whachTab').hasClass('active') || $('#pCountTab').hasClass('active')) {
+      if ($('#whachTab').hasClass('active')) {
+        $('#whachTab').find('a').css('font-weight','bold');
+        $('#pCountTab').find('a').css('font-weight','normal');
+        if ($('#pCountTab').hasClass('active')) {
+          $('#pCountTab').removeClass('active')
+        }
+        if ($('#pcount').hasClass('active')) {
+          $('#pcount').removeClass('active')
+          $('#pcount').removeClass('in');
+        }
+        if (!$('#whach').hasClass('active')) {
+          $('#whach').addClass('in active');
+        }
+      } else {
+        $('#pCountTab').find('a').css('font-weight','bold');
+        $('#whachTab').find('a').css('font-weight','normal');
+        if ($('#whach').hasClass('active')) {
+          $('#whach').removeClass('active')
+          $('#whach').removeClass('in');
+        }
+        if (!$('#pcount').hasClass('active')) {
+          $('#pcount').addClass('in active')
+        }
+      }
+    } else if (data_page.option_practices_watch) {
+      $('#whachTab').addClass('active')
+      $('#whachTab').find('a').css('font-weight','bold');
+      $('#pCountTab').find('a').css('font-weight','normal');
+      if ($('#pcount').hasClass('active')) {
+        $('#pcount').removeClass('active')
+        $('#pcount').removeClass('in');
+      }
+      if (!$('#whach').hasClass('active')) {
+        $('#whach').addClass('in active');
+      }
+    } else {
+      $('#pCountTab').addClass('active')
+      $('#pCountTab').find('a').css('font-weight','bold');
+      $('#whachTab').find('a').css('font-weight','normal');
+      if ($('#whach').hasClass('active')) {
+        $('#whach').removeClass('active')
+        $('#whach').removeClass('in');
+      }
+      if (!$('#pcount').hasClass('active')) {
+        $('#pcount').addClass('in active');
+      }
     }
-    $('#whachTab').addClass('active');
-    $('#whach').addClass('in active');
-    $('#whachTab').find('a').css('font-weight','bold');
-    $('#pCountTab').find('a').css('font-weight','normal');
-  }
-  if ($('#pCountTab').is(':visible')) {
-    if ($('#whachTab').hasClass('active')) {
-      $('#whachTab').removeClass('active');
-      $('#whach').removeClass('active');
-      $('#whach').removeClass('in');
-    }
-    $('#pCountTab').addClass('active');
-    $('#pcount').addClass('in active');
-    $('#pCountTab').find('a').css('font-weight','bold');
-    $('#whachTab').find('a').css('font-weight','normal');
-  }
+
 // STOP DeskTop
 
   $('#whachTab').click(function() {
     $(this).find('a').css('font-weight','bold');
     $('#pCountTab').find('a').css('font-weight','normal');
+    $('#pCountTabMbl').hasClass('active') ? '' : $('#pCountTabMbl').removeClass('active');
+    $('#whachTabMbl').hasClass('active') ? '' : $('#whachTabMbl').addClass('active');
+    if (!$('#whachMbl').hasClass('active')) {
+      $('#whachMbl').addClass('in active');
+    }
+    if ($('#pcountMbl').hasClass('active')) {
+      $('#pcountMbl').removeClass('active')
+      $('#pcountv').removeClass('in');
+    }
   });
 
   $('#pCountTab').click(function() {
     $(this).find('a').css('font-weight','bold');
     $('#whachTab').find('a').css('font-weight','normal');
+    $('#whachTabMbl').hasClass('active') ? '' : $('#whachTabMbl').removeClass('active');
+    $('#pCountTabMbl').hasClass('active') ? '' : $('#pCountTabMbl').addClass('active');
+    if (!$('#pcountMbl').hasClass('active')) {
+      $('#pcountMbl').addClass('in active');
+    }
+    if ($('#whachMbl').hasClass('active')) {
+      $('#whachMbl').removeClass('active')
+      $('#whachMbl').removeClass('in');
+    }
   });
 
-  // START Mobail tabs ruller
-    if ($('#whachTabMbl').is(':visible')) {
-      if ($('#pCountTabMbl').hasClass('active')) {
-        $('#pCountTabMbl').removeClass('active');
-        $('#pcountMbl').removeClass('active');
-        $('#pcountMbl').removeClass('in');
+  // START Mobile tabs ruller
+    if ($('#whachTabMbl').hasClass('active') || $('#pCountTabMbl').hasClass('active')) {
+      if ($('#whachTabMbl').hasClass('active')) {
+        $('#whachTabMbl').find('a').css('font-weight','bold');
+        $('#pCountTabMbl').find('a').css('font-weight','normal');
+        if ($('#pCountTabMbl').hasClass('active')) {
+          $('#pCountTabMbl').removeClass('active')
+        }
+        if ($('#pcountMbl').hasClass('active')) {
+          $('#pcountMbl').removeClass('active')
+          $('#pcountMbl').removeClass('in');
+        }
+        if (!$('#whachMbl').hasClass('active')) {
+          $('#whachMbl').addClass('in active');
+        }
+      } else {
+        $('#pCountTabMbl').find('a').css('font-weight','bold');
+        $('#whachTabMbl').find('a').css('font-weight','normal');
+        if ($('#whachMbl').hasClass('active')) {
+          $('#whachMbl').removeClass('active')
+          $('#whachMbl').removeClass('in');
+        }
+        if (!$('#pcountMbl').hasClass('active')) {
+          $('#pcountMbl').addClass('in active')
+        }
       }
+    } else if (data_page.option_practices_watch) {
       $('#whachTabMbl').addClass('active');
-      $('#whachMbl').addClass('in active');
       $('#whachTabMbl').find('a').css('font-weight','bold');
       $('#pCountTabMbl').find('a').css('font-weight','normal');
-
-    }
-    if ($('#pCountTabMbl').is(':visible')) {
-      if ($('#whachTabMbl').hasClass('active')) {
-        $('#whachTabMbl').removeClass('active');
-        $('#whachMbl').removeClass('active');
-        $('#whachMbl').removeClass('in');
+      if ($('#pcountMbl').hasClass('active')) {
+        $('#pcountMbl').removeClass('active')
+        $('#pcountMbl').removeClass('in');
       }
-      $('#pCountTabMbl').addClass('active');
-      $('#pcountMbl').addClass('in active');
+      if (!$('#whachMbl').hasClass('active')) {
+        $('#whachMbl').addClass('in active');
+      }
+    } else {
+      $('#pCountTabMbl').addClass('active')
       $('#pCountTabMbl').find('a').css('font-weight','bold');
       $('#whachTabMbl').find('a').css('font-weight','normal');
+      if ($('#whachMbl').hasClass('active')) {
+        $('#whachMbl').removeClass('active')
+        $('#whachMbl').removeClass('in');
+      }
+      if (!$('#pcountMbl').hasClass('active')) {
+        $('#pcountMbl').addClass('in active')
+      }
     }
+
 
     $('#whachTabMbl').click(function() {
       $(this).find('a').css('font-weight','bold');
       $('#pCountTabMbl').find('a').css('font-weight','normal');
+      $('#pCountTab').hasClass('active') ? '' : $('#pCountTab').removeClass('active');
+      $('#whachTab').hasClass('active') ? '' : $('#whachTab').addClass('active');
+      if (!$('#whach').hasClass('active')) {
+        $('#whach').addClass('in active');
+      }
+      if ($('#pcount').hasClass('active')) {
+        $('#pcount').removeClass('active')
+        $('#pcount').removeClass('in');
+      }
     });
 
     $('#pCountTabMbl').click(function() {
       $(this).find('a').css('font-weight','bold');
       $('#whachTabMbl').find('a').css('font-weight','normal');
+      $('#whachTab').hasClass('active') ? '' : $('#whachTab').removeClass('active');
+      $('#pCountTab').hasClass('active') ? '' : $('#pCountTab').addClass('active');
+      if (!$('#pcount').hasClass('active')) {
+        $('#pcount').addClass('in active');
+      }
+      if ($('#whach').hasClass('active')) {
+        $('#whach').removeClass('active')
+        $('#whach').removeClass('in');
+      }
     });
   // STOP Mobail tabs ruller
 
@@ -92,8 +182,10 @@ $(document).ready(function(){
 
 // ПРОРАБОТАТЬ ГЛЮЧИТ ПЕРИОДИЧЕСКИ ОБОИМ ТАБАМ ЗАДАЕТСЯ АКТИВ !!!
   $(window).resize(function(){
-    if ($(window).width()>=769 && !$('#pcount').hasClass('active')) {
-      $('#pcount').addClass('in active');
+    if ($(window).width()>=769 && $('#pcountMbl').hasClass('active') && !$('#whach').hasClass('active')) {
+      $('#pcount').hasClass('active') ? '' : $('#pcount').addClass('in active');
+    } else if ($(window).width()>=769 && $('#whachMbl').hasClass('active') && !$('#pcount').hasClass('active')) {
+      $('#whach').hasClass('active') ? '' : $('#whach').addClass('in active');
     } else if ($(window).width()<769 && !$('#pcountMbl').hasClass('active') && !$('#whachMbl').hasClass('active') ) {
       $('#pcountMbl').addClass('in active');
     } else if ($(window).width()>=769 && $('#pcount').hasClass('active')) {
@@ -363,7 +455,7 @@ $(document).ready(function(){
 //statisticLine[x[i].member_id] !== undefined ? statisticLine[x[i].member_id] = statisticLine[x[i].member_id]+1 : statisticLine[x[i].member_id] = 1;
 //console.log(statisticLine[x[i].member_id][3]== undefined, ', ', x[i].m_revival);
 if (statisticLine[x[i].member_id] === undefined) {
-  statisticLine[x[i].member_id] = [x[i].locality_key, x[i].serving, serviceOneName, Number(x[i].m_revival), Number(x[i].p_pray), Number(x[i].co_pray), Number(x[i].r_bible), Number(x[i].r_ministry), Number(x[i].evangel), Number(x[i].flyers), Number(x[i].contacts), Number(x[i].saved), Number(x[i].meetings), x[i].member_id, shortNameMem, x[i].loc_name];
+  statisticLine[x[i].member_id] = [x[i].locality_key, x[i].serving, serviceOneName, Number(x[i].m_revival), Number(x[i].p_pray), Number(x[i].co_pray), Number(x[i].r_bible), Number(x[i].r_ministry), Number(x[i].evangel), Number(x[i].flyers), Number(x[i].contacts), Number(x[i].saved), Number(x[i].meetings), x[i].member_id, shortNameMem, x[i].loc_name,1];
 } else {
   statisticLine[x[i].member_id][3] += Number(x[i].m_revival);
   statisticLine[x[i].member_id][4] += Number(x[i].p_pray);
@@ -375,6 +467,7 @@ if (statisticLine[x[i].member_id] === undefined) {
   statisticLine[x[i].member_id][10] += Number(x[i].contacts);
   statisticLine[x[i].member_id][11] += Number(x[i].saved);
   statisticLine[x[i].member_id][12] += Number(x[i].meetings);
+  statisticLine[x[i].member_id][16] += 1;
 }
 
 //statisticLine[x[i].member_id][3] == undefined ? statisticLine[x[i].member_id][3] =  Number(statisticLine[x[i].member_id][3]) + Number(x[i].m_revival) : statisticLine[x[i].member_id][3] = Number(x[i].m_revival);
@@ -383,10 +476,11 @@ if (statisticLine[x[i].member_id] === undefined) {
 // STOP COLLECT THE STRINGS
       wakeupTimeser.length > 5 ? wakeupTimeser = wakeupTimeser.substr(0, wakeupTimeser.length - 3) : '';
       hangupTimeser.length > 5 ? hangupTimeser = hangupTimeser.substr(0, hangupTimeser.length - 3) : '';
+      serviceOneName !== '-' ? serviceOneName = twoNames2(serviceOneName) : serviceOneName = serviceOneName;
       dayOfWeekser = getNameDayOfWeekByDayNumber(x[i].date_practic , false);
-      tableDataser.push('<tr class="practices_so_str cursor-pointer" data-id="'+x[i].id+'" data-locality="'+x[i].locality_key+'" data-other="'+x[i].other+'" data-weekday="'+dayOfWeekser+'" data-date="'+x[i].date_practic+'" data-serviceone="'+serving_one+'" data-member_id="'+x[i].member_id+'" data-wakeup="'+wakeupTimeser+'" data-hangup="'+hangupTimeser+'" data-flyers="'+flyersser+'" data-contacts="'+contactsser+'" data-saved="'+savedser+'" data-meetings="'+meetingsser+'" style="display: none;"><td >'+shortNameMem+'</td><td>'+m_revivalser+'</td><td>'+p_prayser+'</td><td>'+co_prayser+'</td><td>'+r_bibleser+'</td><td>'+r_ministryser+'</td><td>'+evangelser+'</td><td '+globalLocalityOn+'>'+x[i].loc_name+'</td><td>'+serviceOneName+'</td></tr>');
+      tableDataser.push('<tr class="practices_so_str cursor-pointer" data-id="'+x[i].id+'" data-locality="'+x[i].locality_key+'" data-other="'+x[i].other+'" data-weekday="'+dayOfWeekser+'" data-date="'+x[i].date_practic+'" data-serviceone="'+serving_one+'" data-member_id="'+x[i].member_id+'" data-wakeup="'+wakeupTimeser+'" data-hangup="'+hangupTimeser+'" data-flyers="'+flyersser+'" data-contacts="'+contactsser+'" data-saved="'+savedser+'" data-meetings="'+meetingsser+'" style="display: none;"><td>'+shortNameMem+'</td><td>'+dayOfWeekser+'<br><span class="example" style="margin-left: 0;">'+x[i].date_practic+'</span></td><td>'+m_revivalser+'</td><td>'+p_prayser+'</td><td>'+co_prayser+'</td><td>'+r_bibleser+'</td><td>'+r_ministryser+'</td><td>'+evangelser+'</td><td '+globalLocalityOn+'>'+x[i].loc_name+'</td><td>'+serviceOneName+'</td></tr>');
 
-      tableDataMblser.push('<tr class="practices_so_str_mbl cursor-pointer" data-id="'+x[i].id+'" data-locality="'+x[i].locality_key+'" data-other="'+x[i].other+'" data-weekday="'+dayOfWeekser+'" data-date="'+x[i].date_practic+'" data-serviceone="'+serving_one+'" data-member_id="'+x[i].member_id+'" data-wakeup="'+wakeupTimeser+'" data-hangup="'+hangupTimeser+'" data-flyers="'+flyersser+'" data-contacts="'+contactsser+'" data-saved="'+savedser+'" data-meetings="'+meetingsser+'" style="display: none;"><td>'+shortNameMem+'</td><td>'+m_revivalser+'</td><td>'+p_prayser+'</td><td>'+co_prayser+'</td><td>'+r_bibleser+'</td><td>'+r_ministryser+'</td><td>'+evangelser+'</td><td '+globalLocalityOn+'>'+x[i].loc_name+'</td></tr>');
+      tableDataMblser.push('<tr class="practices_so_str_mbl cursor-pointer" data-id="'+x[i].id+'" data-locality="'+x[i].locality_key+'" data-other="'+x[i].other+'" data-weekday="'+dayOfWeekser+'" data-date="'+x[i].date_practic+'" data-serviceone="'+serving_one+'" data-member_id="'+x[i].member_id+'" data-wakeup="'+wakeupTimeser+'" data-hangup="'+hangupTimeser+'" data-flyers="'+flyersser+'" data-contacts="'+contactsser+'" data-saved="'+savedser+'" data-meetings="'+meetingsser+'" style="display: none;"><td><span class="name_student_str">'+shortNameMem+'</span><br><span class="example" style="margin-left: 0;">'+x[i].date_practic+'</span><br><span class="example" style="margin-left: 0;">'+dayOfWeekser+'</span></td><td>'+m_revivalser+'</td><td>'+p_prayser+'</td><td>'+co_prayser+'</td><td>'+r_bibleser+'</td><td>'+r_ministryser+'</td><td>'+evangelser+'</td><td '+globalLocalityOn+'>'+x[i].loc_name+'</td></tr>');
     }
 
     var tempArr = [];
@@ -394,8 +488,8 @@ if (statisticLine[x[i].member_id] === undefined) {
       tempArr = statisticLine[colectStr];
       var adminSohrtName;
         tempArr[2] !== '-' ? adminSohrtName = twoNames2(tempArr[2]) : adminSohrtName = tempArr[2];
-        tableDataser.unshift('<tr class="practices_main_str cursor-pointer" data-member_id="'+tempArr[13]+'" data-locality="'+tempArr[0]+'" data-serviceone="'+tempArr[1]+'" style="background-color: #f2f2f2"><td>'+tempArr[14]+'</td><td>'+tempArr[3]+'</td><td>'+tempArr[4]+'</td><td>'+tempArr[5]+'</td><td>'+tempArr[6]+'</td><td>'+tempArr[7]+'</td><td>'+tempArr[8]+'</td><td '+globalLocalityOn+'>'+tempArr[15]+'</td><td>'+tempArr[2]+'</td></tr>');
-        tableDataMblser.unshift('<tr class="practices_main_str_mbl cursor-pointer" data-member_id="'+tempArr[13]+'" data-locality="'+tempArr[0]+'" data-serviceone="'+tempArr[1]+'" style="background-color: #f2f2f2"><td>'+tempArr[14]+'<br> <span class="example">'+adminSohrtName+'</span></td><td>'+tempArr[3]+'</td><td>'+tempArr[4]+'</td><td>'+tempArr[5]+'</td><td>'+tempArr[6]+'</td><td>'+tempArr[7]+'</td><td>'+tempArr[8]+'</td><td '+globalLocalityOn+'>'+tempArr[15]+'</td></tr>');
+        tableDataser.unshift('<tr class="practices_main_str cursor-pointer" data-member_id="'+tempArr[13]+'" data-locality="'+tempArr[0]+'" data-serviceone="'+tempArr[1]+'" style="background-color: #f2f2f2"><td>'+tempArr[14]+'</td><td>'+tempArr[16]+' дней</td><td>'+tempArr[3]+'</td><td>'+tempArr[4]+'</td><td>'+tempArr[5]+'</td><td>'+tempArr[6]+'</td><td>'+tempArr[7]+'</td><td>'+tempArr[8]+'</td><td '+globalLocalityOn+'>'+tempArr[15]+'</td><td>'+adminSohrtName+'</td></tr>');
+        tableDataMblser.unshift('<tr class="practices_main_str_mbl cursor-pointer" data-member_id="'+tempArr[13]+'" data-locality="'+tempArr[0]+'" data-serviceone="'+tempArr[1]+'" style="background-color: #f2f2f2"><td>'+tempArr[14]+'<br> <span class="example" style="margin-left: 0;">'+adminSohrtName+'</span></td><td>'+tempArr[3]+'</td><td>'+tempArr[4]+'</td><td>'+tempArr[5]+'</td><td>'+tempArr[6]+'</td><td>'+tempArr[7]+'</td><td>'+tempArr[8]+'</td><td '+globalLocalityOn+'>'+tempArr[15]+'</td></tr>');
     }
 
     $('#listPracticesForObserve tbody').html(tableDataser);
@@ -404,7 +498,7 @@ if (statisticLine[x[i].member_id] === undefined) {
     $('tbody .practices_main_str').click(function(e) {
       e.stopPropagation();
       $('.active_string').removeClass('active_string');
-      $(this).addClass('active_string');
+      $(this).hasClass('active_string') ? '' : $(this).addClass('active_string');
       var idMem = $(this).attr('data-member_id');
       var rrr, moved = 0;
       $(this).hasClass('str_moved') ? moved = 1 : $(this).addClass('str_moved');
@@ -412,6 +506,7 @@ if (statisticLine[x[i].member_id] === undefined) {
         if ($(this).attr('data-member_id') === idMem) {
           if ($(this).is(':visible')) {
             $(this).hide();
+            $('.active_string').hasClass('active_string') ? $('.active_string').removeClass('active_string') : '';
           } else {
             $(this).show();
             if (moved === 0) {
@@ -420,6 +515,8 @@ if (statisticLine[x[i].member_id] === undefined) {
               $('.active_string').after(rrr);
             }
           }
+        } else {
+          $(this).hide();
         }
       });
         $('tbody .practices_so_str').click(function(u) {
@@ -430,21 +527,26 @@ if (statisticLine[x[i].member_id] === undefined) {
             $('.cd-panel-watch').addClass('cd-panel--is-visible-watch');
           }
 //--------------
+          var datedateTmpMbl = Date.parse ($(this).attr('data-date'));
+          var datedateMbl = new Date(datedateTmpMbl);
+          var curdateMbl = new Date();
 
-          if (!$('.cd-panel-watch').hasClass('cd-panel--is-visible-watch')) {
-            $('.cd-panel-watch').addClass('cd-panel--is-visible-watch');
+          if (!((datedateMbl.getDate() === curdateMbl.getDate()) && (datedateMbl.getFullYear() === curdateMbl.getFullYear()) && (datedateMbl.getMonth() === curdateMbl.getMonth()))) {
+            $('#safePracticesToday-watch').attr('disabled',false);
+          } else {
+            $('#safePracticesToday-watch').attr('disabled',true);
           }
-
+//----------------
           $('#safePracticesToday-watch').attr('data-id_member', $(this).attr('data-member_id'));
           $('#safePracticesToday-watch').attr('data-id', $(this).attr('data-id'));
           $('#dataPractic-watch').text($(this).attr('data-date') + ', ' + $(this).attr('data-weekday') + ', ' +$(this).find('td:nth-child(1)').text());
           $('#timeWakeup-watch').val($(this).attr('data-wakeup') !== '' ? $(this).attr('data-wakeup') : '');
-          $('#mrPractic-watch').val($(this).find('td:nth-child(2)').text() !== '-' ? $(this).find('td:nth-child(2)').text() : '');
-          $('#ppPractic-watch').val($(this).find('td:nth-child(3)').text() !== '-' ? $(this).find('td:nth-child(3)').text() : '');
-          $('#pcPractic-watch').val($(this).find('td:nth-child(4)').text() !== '-' ? $(this).find('td:nth-child(4)').text() : '');
-          $('#rbPractic-watch').val($(this).find('td:nth-child(5)').text() !== '-' ? $(this).find('td:nth-child(5)').text() : '');
-          $('#rmPractic-watch').val($(this).find('td:nth-child(6)').text() !== '-' ? $(this).find('td:nth-child(6)').text() : '');
-          $('#gsplPractic-watch').val($(this).find('td:nth-child(7)').text() !== '-' ? $(this).find('td:nth-child(7)').text() : '');
+          $('#mrPractic-watch').val($(this).find('td:nth-child(3)').text() !== '-' ? $(this).find('td:nth-child(3)').text() : '');
+          $('#ppPractic-watch').val($(this).find('td:nth-child(4)').text() !== '-' ? $(this).find('td:nth-child(4)').text() : '');
+          $('#pcPractic-watch').val($(this).find('td:nth-child(5)').text() !== '-' ? $(this).find('td:nth-child(5)').text() : '');
+          $('#rbPractic-watch').val($(this).find('td:nth-child(6)').text() !== '-' ? $(this).find('td:nth-child(6)').text() : '');
+          $('#rmPractic-watch').val($(this).find('td:nth-child(7)').text() !== '-' ? $(this).find('td:nth-child(7)').text() : '');
+          $('#gsplPractic-watch').val($(this).find('td:nth-child(8)').text() !== '-' ? $(this).find('td:nth-child(8)').text() : '');
           $('#flPractic-watch').val($(this).attr('data-flyers') !== '' ? $(this).attr('data-flyers') : '');
           $('#cntPractic-watch').val($(this).attr('data-contacts') !== '' ? $(this).attr('data-contacts') : '');
           $('#svdPractic-watch').val($(this).attr('data-saved') !== '' ? $(this).attr('data-saved') : '');
@@ -462,7 +564,7 @@ if (statisticLine[x[i].member_id] === undefined) {
     $('tbody .practices_main_str_mbl').click(function(e) {
       e.stopPropagation();
       $('.active_string_mbl').removeClass('active_string_mbl');
-      $(this).addClass('active_string_mbl');
+      $(this).hasClass('active_string_mbl') ? '' : $(this).addClass('active_string_mbl');
       var idMem = $(this).attr('data-member_id');
       var rrr, moved = 0;
       $(this).hasClass('str_moved_mbl') ? moved = 1 : $(this).addClass('str_moved');
@@ -470,6 +572,7 @@ if (statisticLine[x[i].member_id] === undefined) {
         if ($(this).attr('data-member_id') === idMem) {
           if ($(this).is(':visible')) {
             $(this).hide();
+            $('.active_string_mbl').hasClass('active_string_mbl') ? $('.active_string_mbl').removeClass('active_string_mbl') : '';
           } else {
             $(this).show();
             if (moved === 0) {
@@ -478,6 +581,8 @@ if (statisticLine[x[i].member_id] === undefined) {
               $('.active_string_mbl').after(rrr);
             }
           }
+        } else {
+          $(this).hide();
         }
       });
         $('tbody .practices_so_str_mbl').click(function(u) {
@@ -487,15 +592,22 @@ if (statisticLine[x[i].member_id] === undefined) {
           if (!$('.cd-panel-watch-mbl').hasClass('cd-panel--is-visible-watch-mbl')) {
             $('.cd-panel-watch-mbl').addClass('cd-panel--is-visible-watch-mbl');
           }
-//--------------
 
-          if (!$('.cd-panel-watch-mbl').hasClass('cd-panel--is-visible-watch-mbl')) {
-            $('.cd-panel-watch-mbl').addClass('cd-panel--is-visible-watch-mbl');
+//--------------
+          var datedateTmpMbl = Date.parse ($(this).attr('data-date'));
+          var datedateMbl = new Date(datedateTmpMbl);
+          var curdateMbl = new Date();
+
+          if (!((datedateMbl.getDate() === curdateMbl.getDate()) && (datedateMbl.getFullYear() === curdateMbl.getFullYear()) && (datedateMbl.getMonth() === curdateMbl.getMonth()))) {
+              $('#safePracticesToday-watch-mbl').attr('disabled',false);
+            } else {
+              $('#safePracticesToday-watch-mbl').attr('disabled',true);
           }
+//----------------
 
           $('#safePracticesToday-watch-mbl').attr('data-id_member', $(this).attr('data-member_id'));
           $('#safePracticesToday-watch-mbl').attr('data-id', $(this).attr('data-id'));
-          $('#dataPractic-watch-mbl').text($(this).attr('data-date') + ', ' + $(this).attr('data-weekday')+', '+$(this).find('td:nth-child(1)').text());
+          $('#dataPractic-watch-mbl').text($(this).attr('data-date') + ', ' + $(this).attr('data-weekday')+', '+$(this).find('.name_student_str').text());
           $('#timeWakeup-watch-mbl').val($(this).attr('data-wakeup') !== '' ? $(this).attr('data-wakeup') : '');
           $('#mrPractic-watch-mbl').val($(this).find('td:nth-child(2)').text() !== '-' ? $(this).find('td:nth-child(2)').text() : '');
           $('#ppPractic-watch-mbl').val($(this).find('td:nth-child(3)').text() !== '-' ? $(this).find('td:nth-child(3)').text() : '');
@@ -539,12 +651,12 @@ if (statisticLine[x[i].member_id] === undefined) {
     $.get('/ajax/practices.php?update_practices_edit',{user_data: dataBlank, id: idString})
       .done (function(data) {
         if (data === 1) {
-          $('.active_sub_string').find('td:nth-child(2)').text(dataBlank.mr);
-          $('.active_sub_string').find('td:nth-child(3)').text(dataBlank.pp);
-          $('.active_sub_string').find('td:nth-child(4)').text(dataBlank.pc);
-          $('.active_sub_string').find('td:nth-child(5)').text(dataBlank.rb);
-          $('.active_sub_string').find('td:nth-child(6)').text(dataBlank.rm);
-          $('.active_sub_string').find('td:nth-child(7)').text(dataBlank.gspl);
+          $('.active_sub_string').find('td:nth-child(3)').text(dataBlank.mr);
+          $('.active_sub_string').find('td:nth-child(4)').text(dataBlank.pp);
+          $('.active_sub_string').find('td:nth-child(5)').text(dataBlank.pc);
+          $('.active_sub_string').find('td:nth-child(6)').text(dataBlank.rb);
+          $('.active_sub_string').find('td:nth-child(7)').text(dataBlank.rm);
+          $('.active_sub_string').find('td:nth-child(8)').text(dataBlank.gspl);
           $('.active_sub_string').attr('data-flyers', dataBlank.fl);
           $('.active_sub_string').attr('data-contacts', dataBlank.cnt);
           $('.active_sub_string').attr('data-saved', dataBlank.svd);
@@ -605,10 +717,13 @@ if (statisticLine[x[i].member_id] === undefined) {
           adminLocalitiiesForSQL = adminLocalitiiesForSQL + 'm.locality_key = ' + String(variable);
         }
       }
+      console.log(data_page.admin_localities, ', ', data_page.admin_locality);
       if (!adminLocalitiiesForSQL) {
         return
       }
-
+      if (data_page.admin_locality === '001214') {
+        adminLocalitiiesForSQL = adminLocalitiiesForSQL + ' OR m.locality_key = 001192';
+      }
 // var localityAdmin = data_page.admin_locality === '001214' ? adminLocalitiiesForSQL + " OR m.locality_key = 001192": adminLocalitiiesForSQL;
     var dataObj = {};
     dataObj.localities = adminLocalitiiesForSQL;
@@ -631,34 +746,46 @@ if (statisticLine[x[i].member_id] === undefined) {
     //$('tbody .practices_so_str').
   }
 
-  $('#servingCombo, #adminlocalitiesCombo').change(function () {
-      $('tbody .practices_main_str').each(function() {
-        if (($(this).attr('data-serviceone') === $('#servingCombo').val() || $('#servingCombo').val() === '_all_') && ($(this).attr('data-locality') === $('#adminlocalitiesCombo').val() || $('#adminlocalitiesCombo').val() === '_all_')) {
-          $(this).show();
-        } else {
-          $(this).hide();
-        }
-      });
-      $('tbody .practices_so_str').each(function() {
+  function filterAminLocality() {
+    $('tbody .practices_main_str').each(function() {
+      if (($(this).attr('data-serviceone') === $('#servingCombo').val() || $('#servingCombo').val() === '_all_') && ($(this).attr('data-locality') === $('#adminlocalitiesCombo').val() || $('#adminlocalitiesCombo').val() === '_all_')) {
+        $(this).show();
+      } else {
         $(this).hide();
-      });
+      }
+    });
+    $('tbody .practices_so_str').each(function() {
+      $(this).hide();
+    });
+  }
+
+  $('#servingCombo, #adminlocalitiesCombo').change(function () {
+      filterAminLocality();
   });
 
-  $('#servingComboMbl, #adminlocalitiesComboMbl').change(function () {
-      $('tbody .practices_main_str_mbl').each(function() {
-        if (($(this).attr('data-serviceone') === $('#servingComboMbl').val() || $('#servingComboMbl').val() === '_all_') && ($(this).attr('data-locality') === $('#adminlocalitiesComboMbl').val() || $('#adminlocalitiesComboMbl').val() === '_all_')) {
-          $(this).show();
-        } else {
-          $(this).hide();
-        }
-      });
-      $('tbody .practices_so_str_mbl').each(function() {
+  function filterAminLocalityMbl() {
+    $('tbody .practices_main_str_mbl').each(function() {
+      if (($(this).attr('data-serviceone') === $('#servingComboMbl').val() || $('#servingComboMbl').val() === '_all_') && ($(this).attr('data-locality') === $('#adminlocalitiesComboMbl').val() || $('#adminlocalitiesComboMbl').val() === '_all_')) {
+        $(this).show();
+      } else {
         $(this).hide();
-      });
+      }
+    });
+    $('tbody .practices_so_str_mbl').each(function() {
+      $(this).hide();
+    });
+  }
+
+  $('#servingComboMbl, #adminlocalitiesComboMbl').change(function () {
+    filterAminLocalityMbl();
   });
 
   $('#periodPractices, #periodPracticesMbl').change(function () {
       practicesListServiceonesUpdate($(this).val());
+      setTimeout(function () {
+        filterAminLocality();
+        filterAminLocalityMbl();
+      }, 500);      
   });
 /*  $('#adminlocalitiesCombo').change(function () {
 
@@ -712,5 +839,10 @@ if (statisticLine[x[i].member_id] === undefined) {
   $('#cd-panel__close-watch-mbl').click(function() {
     $('.cd-panel-watch-mbl').removeClass('cd-panel--is-visible-watch-mbl');
   });
+
+  setTimeout(function () {
+    filterAminLocality();
+    filterAminLocalityMbl();
+  }, 1250);
 
 });

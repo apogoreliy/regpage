@@ -4,6 +4,8 @@ var xlsxDataGlobal = [], xlsxDataGlobalReg = [], usefulData = {}, uploadWindow =
 uploadWindow = {
 
 }
+
+
 // localityArr это повторение но нужно использовать объект usefulData
 // ПОМЕСТИТЬ ФУНКЦИИ ДЛЯ ФОРМИРОВАНИЯ МАССИВОВ ДАННЫХ В ОБЪЕКТ ПЕРЕДАВАТЬ В ПАРАМЕТРАХ УНИВЕРСАЛЬНЫЕ УСЛОВИЯ И ТЭГИ
 // selectors - string
@@ -35,6 +37,7 @@ function getUpdaterEditor(array) {
   uploadTableBuilder (array);
 }
 // STOP ???
+/*
 function getUpdaterEditorForRegTbl(array) {
   var female, ii = 0;
   for (var i = 0; i < array.length; i++) {
@@ -73,7 +76,7 @@ function getUpdaterEditorForRegTbl(array) {
     }
   }
 }
-
+*/
 function uploadTableBuilder (array) {
 var htmlValueCol = '<h4>Колонки</h4>', htmlValueStr = '<h4>Строки</h4>';
   for (var i = 0; i < array.length; i++) {
@@ -93,16 +96,28 @@ var htmlValueCol = '<h4>Колонки</h4>', htmlValueStr = '<h4>Строки</
       }
       //ДОДЕЛАТЬ ВЫДАЧУ СТРОК
 }
+$('#nameGlobalUploadVal').change(function() {
+  if ($('#nameGlobalUploadVal').css('border-color') === 'red') {
+    $('#nameGlobalUploadVal').css('border-color','lightgrey')
+  }
+});
 
 function prepareArrayUpload(array) {
   xlsxDataGlobal.unshift(fields);
 };
 //START SAFE FUNCTION NEW UPLOAD BUTTON
 $('.saveUploadItemsNew').click(function () {
-  if (($('#uploadCountry').val() === '_none_') && ($('#citizenshipGlobalUpload').next().val() === '' || $('#citizenshipGlobalUpload').next().val() === '_none_') || ($('#uploadLocality').val() === '_none_') && ($('#localityGlobalUpload').next().val() === '' || $('#localityGlobalUpload').next().val() === '_none_') || ($('#uploadCategory').val() === '_none_') && ($('#categoryGlobalUpload').next().val() === '' || $('#categoryGlobalUpload').next().val() === '_none_') || ($('#uploadAccom').val() === '_none_') && ($('#accomGlobalUpload').next().val() === '' || $('#accomGlobalUpload').next().val() === '_none_') || ($('#nameGlobalUpload').next().val() === '') || ($('#nameGlobalUpload').next().val() === '_none_')) {
-    showError('Заполните обязательные поля отмеченные звёздочкой* и поле ФИО.');
-    return false
+  if ($('#nameGlobalUploadVal').val() === '_none_') {
+    showError('Заполните поле ФИО');
+    $('#nameGlobalUploadVal').css('border-color', 'red');
+    return
+  } else if ($('#uploadCountry').val() === '_none_' && $('#citizenshipGlobalUploadVal').val() === '_none_') {
+    showError('Выберите страну из списка или соответствующее поле из файла.');
+    $('#citizenshipGlobalUploadVal').css('border-color', 'red');
+    $('#uploadCountry').css('border-color', 'red');
+    return
   }
+  $('#saveSpinner').show();
 
   var fields = [], first = [], left = [], right = [], a;
 
@@ -115,17 +130,23 @@ $('.saveUploadItemsNew').click(function () {
     } else {
       first.push($(this).val());
     }
-    /*if ($(this).val() !== '_none_') {
-
-    }*/
+    if (!$('#uploadLocality').val() && $('#localityGlobalUploadVal').val() !== '_none_') {
+      first.push($('#uploadLocality').val());
+    }
   });
   console.log(fields,first);
-
   var errorUpload = 0, newArrForServer = [];
+
   function prepareArrayUploadNew(fieldsSelected,fieldsGlobal) {
-    var fieldsCompare = [], newArrForServerReg = [], fieldsExist = ['other', 'email', 'name', 'birth', 'genger', 'phone', 'citizenship', 'locality', 'category', 'accom', 'arrive', 'depart', 'parking', 'russpeaking', 'other2', 'vuz', 'other4', 'other1', 'other3'], columnsNo = [];
+
+    var fieldsCompare = [], newArrForServerReg = [], fieldsExist = ['other', 'email', 'name', 'date_order', 'genger', 'phone', 'citizenship', 'locality', 'category', 'index_post', 'date_sending', 'address', 'area', 'region_work', 'typeAppeal', 'status', 'other2', 'other1', 'other3', 'other4'], columnsNo = [] , dateOrd, dateSnd, dateOrdReady, dateSndReady;
+
+    String.prototype.replaceAt = function(index, replacement) {
+      return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+    }
+
     function toTrimAndToLower(x) {
-      var y = x ? x.trim() : x;
+      var y = x && isNaN(x) ? x.trim() : x;
       y = y && isNaN(y) ? y.toLowerCase() : y;
       return y;
     }
@@ -142,24 +163,25 @@ console.log(columnsNo);
     var bb = fieldsSelected['name'] !== '_none_' ? fieldsSelected['name'] : '';
     var bb1 = fieldsSelected['name1'] !== '_none_' ? fieldsSelected['name1'] : '';
     var bb2 = fieldsSelected['name2'] !== '_none_' ? fieldsSelected['name2'] : '';
-    var c = fieldsSelected['birth'] !== '_none_' ? fieldsSelected['birth'] : '';
-    var d = fieldsSelected['vuz'] !== '_none_' ? fieldsSelected['vuz'] : ''; // ???
+    var c = fieldsSelected['date_order'] !== '_none_' ? fieldsSelected['date_order'] : '';
+    var d = fieldsSelected['status'] !== '_none_' ? fieldsSelected['status'] : ''; // ???
     var e = fieldsSelected['genger'] !== '_none_' ? fieldsSelected['genger'] : '';
     var f = fieldsSelected['phone'] !== '_none_' ? fieldsSelected['phone'] : '';
     var g = fieldsSelected['citizenship'] !== '_none_' ? fieldsSelected['citizenship'] : '';
     var h = fieldsSelected['locality'] !== '_none_' ? fieldsSelected['locality'] : '';
     var j = fieldsSelected['category'] !== '_none_' ? fieldsSelected['category'] : '';
-    var k = fieldsSelected['accom'] !== '_none_' ? fieldsSelected['accom'] : '';
-    var l = fieldsSelected['arrive'] !== '_none_' ? fieldsSelected['arrive'] : '';
-    var m = fieldsSelected['depart'] !== '_none_' ? fieldsSelected['depart'] : '';
-    var n = fieldsSelected['parking'] !== '_none_' ? fieldsSelected['parking'] : '';
-    var o = fieldsSelected['russpeaking'] !== '_none_' ? fieldsSelected['russpeaking'] : '';
-    var p = fieldsSelected['other1'] !== '_none_' ? fieldsSelected['other1'] : '';
-    var q = fieldsSelected['other2'] !== '_none_' ? fieldsSelected['other2'] : ''; // ???
-    var r = fieldsSelected['other3'] !== '_none_' ? fieldsSelected['other3'] : '';
-    var s = fieldsSelected['other4'] !== '_none_' ? fieldsSelected['other4'] : '';
-    //var t = fieldsSelected['other'] !== '_none_' ? fieldsSelected['other'] : ''; // ???
+    var k = fieldsSelected['index_post'] !== '_none_' ? fieldsSelected['index_post'] : '';
+    var l = fieldsSelected['date_sending'] !== '_none_' ? fieldsSelected['date_sending'] : '';
+    var m = fieldsSelected['address'] !== '_none_' ? fieldsSelected['address'] : '';
+    var n = fieldsSelected['area'] !== '_none_' ? fieldsSelected['area'] : '';
+    var o = fieldsSelected['region_work'] !== '_none_' ? fieldsSelected['region_work'] : '';
+    var p = fieldsSelected['region'] !== '_none_' ? fieldsSelected['region'] : '';
+    var q = fieldsSelected['typeAppeal'] !== '_none_' ? fieldsSelected['typeAppeal'] : ''; // ???
+    var r = fieldsSelected['other2'] !== '_none_' ? fieldsSelected['other2'] : '';
+    var s = fieldsSelected['other3'] !== '_none_' ? fieldsSelected['other3'] : '';
+    var t = fieldsSelected['other4'] !== '_none_' ? fieldsSelected['other4'] : ''; // ???
 
+var fildsNamesAre = {aa:aa,b:b,c:c,bb:bb,d:d,e:e,f:f,g:g,h:h,j:j,k:k,l:l,m:m,n:n,o:o,p:p,q:q,r:r,s:s,t:t}
 // START Custom stream
     var arrStr01 = [0];
     if ($('#uploadStringsChkbx').prop('checked')) {
@@ -176,6 +198,9 @@ console.log(columnsNo);
     for (var i = 0; i < xlsxDataGlobal.length; i++) {
       var tmpArr = [], female, tmpArrReg = [];
         var y;
+         if (xlsxDataGlobal[i][bb] === null || xlsxDataGlobal[i][bb] === undefined || xlsxDataGlobal[i][bb] === 'undefined') {
+            break
+         }
         if (fieldsSelected['name1'] !== '_none_') {
           y = xlsxDataGlobal[i][bb1];
           xlsxDataGlobal[i][bb] = xlsxDataGlobal[i][bb] + ' ' + xlsxDataGlobal[i][bb1];
@@ -185,12 +210,12 @@ console.log(columnsNo);
         } else {
           y = xlsxDataGlobal[i][bb];
         }
-// Доделать
+// Доделать auto genger
       if (fieldsSelected['genger'] === '_none_') {
         y ? toTrimAndToLower(y) : '';
          //var x = xlsxDataGlobal[i][bb];
          var u;
-         if (y) {
+         if (y && isNaN(y)) {
            u = y.slice(-1);
          }
          if ((u == 'а') || (u == 'я') || (u == 'э') || (u == 'е')) {
@@ -202,19 +227,39 @@ console.log(columnsNo);
 
 // Здесь порядок соответствует порядку запроса на сервере
 // заменить пеменные объекты
-      var otherCollect = ' ', letterArr = [s,r,q,p,aa];
-      for (var ij = 0; ij < letterArr.length; ij++) {
-        var colNo = letterArr[ij];
-        if (xlsxDataGlobal[i][colNo]) {
-          otherCollect = otherCollect + xlsxDataGlobal[i][colNo] + ' | ';
+      var otherCollect = '';
+// type of appeal
+        if (xlsxDataGlobal[i][q]) {
+          otherCollect = otherCollect + 'Тип обращения: ' + xlsxDataGlobal[i][q] + '\n';
         }
-      }
+//  category
+        if (xlsxDataGlobal[i][j]) {
+          otherCollect = otherCollect + 'Категория: ' + xlsxDataGlobal[i][j] + '\n';
+        }
+// comment
+        if (xlsxDataGlobal[i][aa]) {
+          otherCollect = otherCollect + '' + xlsxDataGlobal[i][aa] + '\n';
+        }
+// comment 2
+        if (xlsxDataGlobal[i][r]) {
+          otherCollect = otherCollect + '' + String(xlsxDataGlobal[0][fildsNamesAre.r])+ ': ' + xlsxDataGlobal[i][r] + '\n';
+        }
+// comment 3
+        if (xlsxDataGlobal[i][s]) {
+          otherCollect = otherCollect + ''+ String(xlsxDataGlobal[0][fildsNamesAre.s]) +': ' + xlsxDataGlobal[i][s] + '\n';
+        }
+// comment 4
+        if (xlsxDataGlobal[i][t]) {
+          otherCollect = otherCollect + ''+ String(xlsxDataGlobal[0][fildsNamesAre.t]) +': ' + xlsxDataGlobal[i][t];
+        }
 
       tmpArr.push(otherCollect); // comment
-      tmpArr.push(xlsxDataGlobal[i][b]); // email
       tmpArr.push(xlsxDataGlobal[i][bb]); // name
-      tmpArr.push(xlsxDataGlobal[i][c]); // birth_date
-      tmpArr.push(xlsxDataGlobal[i][d]); // college_comment
+      if (!bb || bb === ' ') {
+        showError('ФИО должно быть заполненно.');
+        errorUpload = 1;
+        return
+      }
       if (e) {
         var itemGender;
         itemGender = toTrimAndToLower(xlsxDataGlobal[i][e]);
@@ -239,26 +284,28 @@ console.log(columnsNo);
         tmpArr.push(female);
       }
 
-      tmpArr.push(xlsxDataGlobal[i][f]); // cell_phone
+
 
       if (first[0] !== '_none_') {
         tmpArr.push(first[0]);
       } else {
         var locKeyCitizenship,
-        items = usefulData.citizenshipInvert,
-        itemCitizenship = '', itemOurCitizenship = '';
+        items = data_page.country_list,
+        itemCitizenship = '', itemOurCitizenship = '', locKeyCitizenshipKey;
         itemCitizenship = toTrimAndToLower(xlsxDataGlobal[i][g]);
 
         for (var key in items) {
           itemOurCitizenship = items[key] && isNaN(items[key]) ? items[key].toLowerCase(): items[key];
           if (key === itemCitizenship) {
             locKeyCitizenship = items[key];
+            locKeyCitizenshipKey = key;
           } else if (itemOurCitizenship === itemCitizenship) {
             locKeyCitizenship = items[key];
+            locKeyCitizenshipKey = key;
           }
         }
         if (locKeyCitizenship) {
-          tmpArr.push(locKeyCitizenship); // citizenship_key
+          tmpArr.push(locKeyCitizenshipKey); // citizenship_key
         } else if (i !== 0) {
           showError('Страна гражданства не определена, или её нет в нашей базе, обратитесь к администратору сайта.');
           errorUpload = 1;
@@ -268,28 +315,14 @@ console.log(columnsNo);
         }
         // Также нужно искать страну по ключу если кто то будет использовать ключи в экспортируемом файле
       }
-      if (first[1] !== '_none_') {
+
+      if (first[1] !== '') {
         tmpArr.push(first[1]);
       } else {
-        var localityArr = usefulData.localityInvert, locKey = '', localityNew = '', itemLocality = '';
-
-          itemLocality = toTrimAndToLower(xlsxDataGlobal[i][h]);
-
-          for (var key in localityArr) {
-            if (key === itemLocality) {
-              locKey = localityArr[key];
-            }
-          }
-          if (locKey) {
-            tmpArr.push(locKey); // locality_key
-            localityNew = '';
-          } else {
-            locKey = '';
-            tmpArr.push(locKey);
-            localityNew = xlsxDataGlobal[i][h];
-          }
+        tmpArr.push(xlsxDataGlobal[i][h]);
       }
-      if (first[2] !== '_none_') {
+
+    /*  if (first[2] !== '_none_') {
         tmpArr.push(first[2]);
       } else {
         var itemsCategory = usefulData.categoryInvert, itemCategory = '', itemCategoryTemp='';
@@ -319,31 +352,80 @@ console.log(columnsNo);
           tmpArr.push('');
         }
       }
+
+      */
+      tmpArr.push(xlsxDataGlobal[i][b]); // email
+      tmpArr.push(xlsxDataGlobal[i][f]); // cell_phone
+// START date parsing
+
+    /*  dateOrd = xlsxDataGlobal[i][c];
+
+      if (dateOrd) {
+        var yyyy = dateOrd.slice(6,10),
+        mm = dateOrd.slice(5,7),
+        dd = dateOrd.slice(0,4);
+        dateOrd = yyyy + '-' + mm + '-' + dd;
+
+        //dateOrdReady = dateOrd.substr(0, 0) + xlsxDataGlobal[i][c][3] + xlsxDataGlobal[i][c][4] + '.' + xlsxDataGlobal[i][c][0] + xlsxDataGlobal[i][c][1] + dateOrd.substr(5);
+        //dateOrd = new Date(dateOrdReady);
+      }
+*/
+      tmpArr.push(xlsxDataGlobal[i][c]); // order date
+// STOP date parsing
+
+// START Status
+var stt = '';
+switch (toTrimAndToLower(xlsxDataGlobal[i][d])) {
+  case 'недозвон':
+  stt = 1;
+  break;
+  case 'ошибка':
+  stt = 2;
+  break;
+  case 'отказ':
+  stt = 3;
+  break;
+  case 'заказ':
+  stt = 4;
+  break;
+  case 'продолжение':
+  stt = 5;
+  break;
+  case 'завершение':
+  stt = 6;
+  break;
+  case 'бланк':
+  stt = 7;
+  break;
+
+  default: '_none_'
+}
+
+      tmpArr.push(stt); // status toTrimAndToLower();
+// STOP Status
+      tmpArr.push(xlsxDataGlobal[i][k]); // Index Mail Post
       tmpArr.push(window.adminId); // adminId
 
-      //tmpArr.push(xlsxDataGlobal[i][l]); //
-      //tmpArr.push(xlsxDataGlobal[i][m]); //
-      //tmpArr.push(xlsxDataGlobal[i][n]); //
-      if (o) {
-        tmpArr.push(xlsxDataGlobal[i][o]);
-      } else {
-        tmpArr.push('1');
+// START date parsing
+      dateSnd = xlsxDataGlobal[i][l];
+      if (dateSnd) {
+        dateSndReady = dateSnd.substr(0, 0) + xlsxDataGlobal[i][l][3] + xlsxDataGlobal[i][l][4] + '.' + xlsxDataGlobal[i][l][0] + xlsxDataGlobal[i][l][1] + dateSnd.substr(5);
+        dateSnd = new Date(dateSndReady);
       }
+      tmpArr.push(dateSnd); // date sending
 
-      // new locality
-      tmpArr.push(localityNew);
+// STOP date parsing
+      tmpArr.push(xlsxDataGlobal[i][m]); // address
+      tmpArr.push(xlsxDataGlobal[i][n]); // area
+      tmpArr.push(xlsxDataGlobal[i][o]); // region of the work
+      tmpArr.push(xlsxDataGlobal[i][p]); // region
 
-      //tmpArr.push(xlsxDataGlobal[i][p]); //
-      //tmpArr.push(xlsxDataGlobal[i][q]); //
-      //tmpArr.push(xlsxDataGlobal[i][r]); //
-      //tmpArr.push(xlsxDataGlobal[i][s]); //
-      // tmpArr.push(xlsxDataGlobal[i][t]); //
 
 // Доделать добавление строк только отмеченных строк
       if (arrStr01.indexOf(i) !== -1 && $('#uploadStringsChkbx').prop('checked') || (!$('#uploadStringsChkbx').prop('checked'))) {
           newArrForServer.push(tmpArr);
       }
-
+/*
 // REG TABLE START
       tmpArrReg.push(xlsxDataGlobal[i][aa]); // other
 
@@ -351,77 +433,71 @@ console.log(columnsNo);
       aReg ? aReg = aReg.slice(9,17) : '';
       tmpArrReg.push(aReg); // id event
 
-      l ? tmpArrReg.push(xlsxDataGlobal[i][l]) : tmpArrReg.push($('.tab-pane.active').attr('data-start'));
-      m ? tmpArrReg.push(xlsxDataGlobal[i][m]) : tmpArrReg.push($('.tab-pane.active').attr('data-end'));
       tmpArrReg.push('01');
       tmpArrReg.push(window.adminId);
       tmpArrReg.push($('.tab-pane.active').attr('data-currency'));
       otherCollect ? tmpArrReg.push(otherCollect) : tmpArrReg.push(' ');
-      if (first[3] !== '_none_') {
-        tmpArrReg.push(first[3]);
-      } else {
-        var itemAccomTemp = toTrimAndToLower(xlsxDataGlobal[i][k]);
-        if (itemAccomTemp === 'да' || itemAccomTemp === 'требуется') {
-          tmpArrReg.push(1); // accom
-        } else {
-          tmpArrReg.push(0);
-        }
-      }
+
       tmpArrReg.push(null);
       tmpArrReg.push(null);
 
       if ((arrStr01.indexOf(i) !== -1 && $('#uploadStringsChkbx').prop('checked')) || (!$('#uploadStringsChkbx').prop('checked'))) {
           newArrForServerReg.push(tmpArrReg);
       }
-
+*/
 // REG TABLE STOP
 // LOOOOOOOOP
-      aa = aa !== '' ? Number(aa) + 30 : '';
-      b = b !== '' ? Number(b) + 30 : '';
-      bb = bb !== '' ? Number(bb) + 30 : '';
-      bb1 = bb1 !== '' ? Number(bb1) + 30 : '';
-      bb2 = bb2 !== '' ? Number(bb2) + 30 : '';
-      c = c !== '' ? Number(c) + 30 : '';
-      d = d !== '' ? Number(d) + 30 : '';
-      e = e !== '' ? Number(e) + 30 : '';
-      f = f !== '' ? Number(f) + 30 : '';
-      g = g !== '' ? Number(g) + 30 : '';
-      h = h !== '' ? Number(h) + 30 : '';
-      j = j !== '' ? Number(j) + 30 : '';
-      k = k !== '' ? Number(k) + 30 : '';
-      l = l !== '' ? Number(l) + 30 : '';
-      m = m !== '' ? Number(m) + 30 : '';
-      n = n !== '' ? Number(n) + 30 : '';
-      o = o !== '' ? Number(o) + 30 : '';
-      p = p !== '' ? Number(p) + 30 : '';
-      q = q !== '' ? Number(q) + 30 : '';
-      r = r !== '' ? Number(r) + 30 : '';
-      s = s !== '' ? Number(s) + 30 : '';
-      // t = t !== '' ? Number(t) + 30 : '';
+      aa = aa !== '' ? Number(aa) + 16 : '';
+      b = b !== '' ? Number(b) + 16 : '';
+      bb = bb !== '' ? Number(bb) + 16 : '';
+      bb1 = bb1 !== '' ? Number(bb1) + 16 : '';
+      bb2 = bb2 !== '' ? Number(bb2) + 16 : '';
+      c = c !== '' ? Number(c) + 16 : '';
+      d = d !== '' ? Number(d) + 16 : '';
+      e = e !== '' ? Number(e) + 16 : '';
+      f = f !== '' ? Number(f) + 16 : '';
+      g = g !== '' ? Number(g) + 16 : '';
+      h = h !== '' ? Number(h) + 16 : '';
+      j = j !== '' ? Number(j) + 16 : '';
+      k = k !== '' ? Number(k) + 16 : '';
+      l = l !== '' ? Number(l) + 16 : '';
+      m = m !== '' ? Number(m) + 16 : '';
+      n = n !== '' ? Number(n) + 16 : '';
+      o = o !== '' ? Number(o) + 16 : '';
+      p = p !== '' ? Number(p) + 16 : '';
+      q = q !== '' ? Number(q) + 16 : '';
+      r = r !== '' ? Number(r) + 16 : '';
+      s = s !== '' ? Number(s) + 16 : '';
+      t = t !== '' ? Number(t) + 16 : '';
     }
 
 // FOR REG TABLE
 
     console.log(newArrForServer);
     if (errorUpload === 0) {
-      var y = JSON.stringify(newArrForServerReg);
+      //var y = JSON.stringify(newArrForServerReg);
       var x = JSON.stringify(newArrForServer);
-      $.post('/ajax/excelUpload.php', {xlsx_array: x, xlsx_array_reg: y})
+      $.post('/ajax/excelUploadCnt.php', {xlsx_array: x})
       .done(function(data){
-        //console.log(data);
+        console.log(data);
       });
     }
   }
+
   prepareArrayUploadNew(fields,first);
   if (errorUpload === 0) {
     var countStrTotal = newArrForServer ? newArrForServer.length - 1 : 0;
     $('#modalUploadItems').modal('hide');
       setTimeout(function () {
-        loadDashboard();
         showHint('Обработано '+countStrTotal+' строк');
-      }, 350);
+      }, 700);
+  } else {
+    return
   }
-
+  setTimeout(function () {
+    $('#saveSpinner').show();
+    window.location = '/contacts';
+  }, 3000);
 });
 // STOP SAFE FUNCTION NEW UPLOAD BUTTON
 // START UPLOAD FILE
@@ -453,7 +529,7 @@ $('#upload_file').change(function() {
 // STOP UPLOAD FILE
 // START SELECT FIELDS BUILDER UPLOAD
 function buildModalSelect() {
-  var option = {genger: 'Пол', birth: 'Дата рождения', arrive: 'Прибытие', depart: 'Убытие', email: 'Емайл', phone: 'Телефон', parking: 'Парковка', russpeaking: 'Рускоговорящий?', vuz: 'Примечение к ВУЗу', other4: 'Прочее', other3: 'Прочее', other1: 'Прочее', other2: 'Прочее', other: 'Прочее'};
+  var option = {genger: 'Пол', email: 'Email', phone: 'Телефон', date_order: 'Дата заказа', date_sending: 'Дата закрытия', index_post: 'Индекс', region: 'Область', region_work: 'Регион работы', status: 'Статус', category: 'Категория',  typeAppeal: 'Тип обращения', address: 'Адрес', area: 'Район', other: 'Комментарий', other2: 'Доп. комментарий', other3: 'Доп. комментарий', other4: 'Доп. комментарий' };
   var elements = [];
   for (var i = 0; i < Object.keys(option).length; i++) {
     var options = [], conterForSelected = 0;
@@ -469,10 +545,10 @@ function buildModalSelect() {
           }
         }
       }
-      elements.push('<select class="float-left" name=""><option value="_none_"></option>');
+      elements.push('<div class="col-6"><select class="float-left form-control form-control-sm" name=""><option value="_none_"></option>');
       var optionsString = options.join('');
       elements.push(optionsString);
-      elements.push('</select><select class="float-right upload_fields" name=""></select>');
+      elements.push('</select></div><div class="col-6"><select class="float-right upload_fields form-control form-control-sm" name=""></select></div>');
     }
   var elementsString =  elements.join('');
   $('#newuploadBoard').append(elementsString);
@@ -521,33 +597,21 @@ function checkSelectGlobalValue(e) {
   // LOOP передать событие вфунцию и извлечь селектор или ID и состояние
   if ($('#uploadCountry').val() !== '_none_') {
     $('#citizenshipGlobalUpload').attr('disabled', true);
-    $('#citizenshipGlobalUpload').next().attr('disabled', true);
+    $('#citizenshipGlobalUploadVal').attr('disabled', true);
   } else {
     $('#citizenshipGlobalUpload').attr('disabled', false);
-    $('#citizenshipGlobalUpload').next().attr('disabled', false);
+    $('#citizenshipGlobalUploadVal').attr('disabled', false);
   }
-  if ($('#uploadLocality').val() !== '_none_') {
+  var a =$('#uploadLocality').val();
+  if ( a.length !== 0) {
     $('#localityGlobalUpload').attr('disabled', true);
-    $('#localityGlobalUpload').next().attr('disabled', true);
+    $('#localityGlobalUploadVal').attr('disabled', true);
   } else {
     $('#localityGlobalUpload').attr('disabled', false);
-    $('#localityGlobalUpload').next().attr('disabled', false);
-  }
-  if ($('#uploadCategory').val() !== '_none_') {
-    $('#categoryGlobalUpload').attr('disabled', true);
-    $('#categoryGlobalUpload').next().attr('disabled', true);
-  } else {
-    $('#categoryGlobalUpload').attr('disabled', false);
-    $('#categoryGlobalUpload').next().attr('disabled', false);
-  }
-  if ($('#uploadAccom').val() !== '_none_') {
-    $('#accomGlobalUpload').attr('disabled', true);
-    $('#accomGlobalUpload').next().attr('disabled', true);
-  } else {
-    $('#accomGlobalUpload').attr('disabled', false);
-    $('#accomGlobalUpload').next().attr('disabled', false);
+    $('#localityGlobalUploadVal').attr('disabled', false);
   }
 }
+/*
     // START CHECKING SELECT CONTENT
 $('#newuploadBoard select').change(function () {
   var lArr = xlsxDataGlobal[0] ? xlsxDataGlobal[0].length : 0;
@@ -650,11 +714,11 @@ $('#newuploadBoard select').change(function () {
       });
     } else if ($(this).prev().find('option:selected').val() === 'genger') {
 // genger checking should be here
-    } else if (($(this).prev().find('option:selected').val() === 'arrive') || ($(this).prev().find('option:selected').val() === 'depart')) {
+    } else if (($(this).prev().find('option:selected').val() === 'date_sending') || ($(this).prev().find('option:selected').val() === 'depart')) {
 // arive AND depart checking should be here
-    } else if ($(this).prev().find('option:selected').val() === 'russpeaking') {
+    } else if ($(this).prev().find('option:selected').val() === 'region_work') {
 // russpeaking checking should be here
-    } else if ($(this).prev().find('option:selected').val() === 'birth') {
+    } else if ($(this).prev().find('option:selected').val() === 'date_order') {
 // birthday checking should be here
     } else if ($(this).prev().attr('id') === 'categoryGlobalUpload') {
 // category checking should be here
@@ -682,12 +746,26 @@ $('#newuploadBoard select').change(function () {
     }
   }
 });
-    // START CHECKING SELECT CONTENT
+*/
+    // STOP CHECKING SELECT CONTENT
     //???
 $('#globalValueForFields select').change(function(e) {
     checkSelectGlobalValue(e);
 });
-$('#citizenshipGlobalUploadVal, #localityGlobalUploadVal, #categoryGlobalUploadVal, #accomGlobalUploadVal').change(function() {
+
+$('#uploadLocality').keyup(function(e) {
+    checkSelectGlobalValue(e);
+});
+
+$('#uploadLocality').focus(function(e) {
+    checkSelectGlobalValue(e);
+});
+
+$('#uploadLocality').focusout(function(e) {
+    checkSelectGlobalValue(e);
+});
+
+$('#citizenshipGlobalUploadVal, #localityGlobalUploadVal').change(function() {
     //checkSelectGlobalValue(e);
     // LOOP передать событие вфунцию и извлечь селектор или ID и состояние
     if ($('#citizenshipGlobalUploadVal').val() !== '_none_') {
@@ -695,26 +773,22 @@ $('#citizenshipGlobalUploadVal, #localityGlobalUploadVal, #categoryGlobalUploadV
     } else {
       $('#uploadCountry').attr('disabled', false);
     }
+
     if ($('#localityGlobalUploadVal').val() !== '_none_') {
       $('#uploadLocality').attr('disabled', true);
     } else {
       $('#uploadLocality').attr('disabled', false);
     }
-    if ($('#categoryGlobalUploadVal').val() !== '_none_') {
-      $('#uploadCategory').attr('disabled', true);
-    } else {
-      $('#uploadCategory').attr('disabled', false);
-    }
-    if ($('#accomGlobalUploadVal').val() !== '_none_') {
-      $('#uploadAccom').attr('disabled', true);
-    } else {
-      $('#uploadAccom').attr('disabled', false);
-    }
 });
   // STOP SELECT FIELDS BEHAVIOR UPLOAD
 
-$('form').on('submit', function (e) {
+// UPLOAD FUNCTIN START
+  $('#uploadSpinner').hide();
+  $('#saveSpinner').hide();
+  $('form').on('submit', function (e) {
     e.preventDefault();
+    $('#uploadSpinner').show();
+    $('#uploadBtn').attr('disabled',true);
     // logic
     $.ajax({
         url: this.action,
@@ -727,7 +801,7 @@ $('form').on('submit', function (e) {
           //console.log(xlsxDataGlobal);
         }
     });
-
+/*
     $.ajax({
         url: this.action,
         type: this.method,
@@ -739,28 +813,26 @@ $('form').on('submit', function (e) {
           //console.log(xlsxDataGlobalReg);
         }
     });
-    $('#psevdoSpiner').show();
-    $('.loader_weel').show();
+    */
     setTimeout(function () {
       var fieldsCount = xlsxDataGlobal[0] ? xlsxDataGlobal[0].length : 0;
       if (fieldsCount < 1) {
         $('#uploadMsgError').text('Файл не должен быть пустым');
-        $('#psevdoSpiner').hide();
-        $('.loader_weel').hide();
+        $('#uploadSpinner').hide();
         return
       }
       getUpdaterEditor(xlsxDataGlobal);
       //console.log(xlsxDataGlobal);
-      getUpdaterEditorForRegTbl(xlsxDataGlobalReg);
+      //getUpdaterEditorForRegTbl(xlsxDataGlobalReg);
       //console.log(xlsxDataGlobalReg);
       newFileUploader(xlsxDataGlobal); // REBUILD IT
       stringPrepareForShow(xlsxDataGlobal);
-      $('#psevdoSpiner').hide();
-      $('.loader_weel').hide();
+      $('#uploadSpinner').hide();
+      $('#uploadBtn').attr('disabled',false);
       collectString();
-    }, 2500);
+    }, 15000);
 });
-
+// UPLOAD FUNCTIN STOP
 $('#modalUploadItems').on('show', function () {
 
   $('#upload_file').val('');
@@ -782,16 +854,12 @@ $('#modalUploadItems').on('show', function () {
     }
   });
 });
-/*
-$('#modalUploadItems').on('hide', function () {
 
-});
-*/
   // START strings builder UPLOAD
 $('#uploadStringsShow').hide();
 $('#uploadStringsChkbx').change(function () {
   $(this).prop('checked') ? $('#uploadStringsShow').show() : $('#uploadStringsShow').hide();
-})
+});
 
 function stringPrepareForShow(xlsxData) {
 
@@ -802,7 +870,7 @@ function stringPrepareForShow(xlsxData) {
         var uuu = [];
         var counter = 0;
         for (var varvar in itemStr) {
-          if (counter === 2 || counter === 3 || counter === 11) {
+          if (counter === 0 || counter === 3 || counter === 7) {
             uuu.push(itemStr[varvar]);
           }
           counter++;
@@ -835,11 +903,3 @@ function collectString() {
   });
   console.log(arrStr);
 }
-  // STOP strings builder UPLOAD
-// START CHOISE TOOLTIP FOR COMBOBOX
-
-// STOP CHOISE TOOLTIP FOR COMBOBOX
-
-  // NEW FUN CHEK DELETED STRING and compare them with GENERAL array UPLOAD
-
-// STOP UPLOADING FILES \|/|\|/|\|/|

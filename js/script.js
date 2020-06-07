@@ -1317,7 +1317,7 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
 
         $("#service_ones_pvom").val (info["serving"] ? info["serving"] : "");
 
-        if (info["locality_key"] == '001192' && $('.add-member').attr('data-locality') == '001214') {
+        if (glbRoleAdmin>0) {
           $("#service_ones_pvom").parent('div').show();
         } else {
           $("#service_ones_pvom").parent('div').hide();

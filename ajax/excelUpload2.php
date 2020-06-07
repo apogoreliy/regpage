@@ -22,6 +22,10 @@ function fileUploader($upfile){
    $nrColumns = ord($highestColumn) - 64;
 
    for ($row = 1; $row <= $highestRow; ++ $row) {
+// limit of strings 999
+     if ($row > 9999) {
+       break;
+     }
      foreach($uploadString as $key => $value){
         unset($uploadString[$key]);
      }
@@ -34,7 +38,7 @@ function fileUploader($upfile){
          $valTmp = $cellTmp->getValue();
          //$valTmp = date('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($valTmp));
          $dataType = PHPExcel_Cell_DataType::dataTypeForValue($valTmp);
-         if ($dataType == 'n') {
+         if ($dataType == 'n' && strlen(strval($valTmp)) > 6) {
           $valTmpY = date('Y', PHPExcel_Shared_Date::ExcelToPHP($valTmp));
           $valTmpM = date('m', PHPExcel_Shared_Date::ExcelToPHP($valTmp));
           $valTmpD = date('d', PHPExcel_Shared_Date::ExcelToPHP($valTmp));
@@ -50,7 +54,7 @@ function fileUploader($upfile){
            $val = $cell->getValue();
            $val = date('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($val));
            $dataType = PHPExcel_Cell_DataType::dataTypeForValue($val);
-         } elseif ($col == 30) {
+         } elseif ($col == 16) {
            break;
          } else {
            $cell = $worksheet->getCellByColumnAndRow($col, $row);

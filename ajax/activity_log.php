@@ -1,5 +1,6 @@
 <?php
 include_once "ajax.php";
+include_once "../db/activitydb.php";
 $memberId = db_getMemberIdBySessionId (session_id());
 $adminCountries = db_getAdminCountryOnly($memberId);
 $adminRegionsAjax = db_getAdminRegionOnly($memberId);

@@ -458,12 +458,13 @@ var isFillTemplate = 0;
 
         function handleTemplate(mode, template){
             var modalWindow = $("#modalHandleTemplate");
+            var localityTmp = gloSingleLocality ? gloSingleLocality : template.localityKey;
             $("#modalHandleTemplate").attr('data-id', template.id);
             modalWindow.find('.modal-header h3').html( mode === 'add' ? 'Шаблон собрания' : 'Шаблон собрания' );
 
             modalWindow.find('.template-meeting-type').val(template.type).change();
             modalWindow.find('.template-name').val(template.name).keyup();
-            modalWindow.find('.template-locality').val(template.localityKey).change();
+            modalWindow.find('.template-locality').val(localityTmp).change();
 
             var adminsArrTemp = template.admins ? template.admins.split(',') : [],
                 participantsArrTemp = template.participants ? template.participants.split(',') : [],
@@ -890,8 +891,8 @@ var isFillTemplate = 0;
         function fillMeetingModalForm(textMode, date, locality, meetingType, note, countList, count, countGuests, countChildren, countFulltimers, countTrainees, isMeetingSummary, saintsCount, meetingName, members, participants){
             //window.selectedMeetingMembers = [];
 
-            var modal = $("#addEditMeetingModal"), isSingleCity = parseInt('<?php echo $isSingleCity; ?>');
-            locality = isSingleCity ? '<?php echo $singleLocality; ?>' : locality;
+            var modal = $("#addEditMeetingModal");
+            locality = gloIsSingleCity ? gloSingleLocality : locality;
 
             modal.find(".meetingName").val(meetingName || '');
             modal.find('.meetingDate').val(date || formatDate (new Date()));
@@ -1375,7 +1376,7 @@ var isFillTemplate = 0;
               $('#pvom_count').hide();
             }
 
-            var isSingleCity = parseInt('<?php echo $isSingleCity; ?>');
+            var isSingleCity = gloIsSingleCity;
 
             for (var i in meetings){
 
@@ -1586,7 +1587,7 @@ var isFillTemplate = 0;
 
         $("#meetingLocalityModal").change(function(){
           if (isFillTemplate === 0) {
-            if($(this).parents("#addEditMeetingModal").is(':visible')){
+            if($("#addEditMeetingModal").is(':visible')){
               //var locality = $(this).val();
               //  chechExtraFields(locality);
                 update_members_list(1,locOld);
@@ -1717,8 +1718,8 @@ var isFillTemplate = 0;
             var countLocalities = $('#meetingLocalityModal option').size();
 
             if(countLocalities == 1){
-                locality = $("#meetingLocalityModal option:first").val()
-                $("#meetingLocalityModal").val(locality).change()
+                locality = $("#meetingLocalityModal option:first").val();
+                //$("#meetingLocalityModal").val(locality).change() // эта строка глючит, зачем она?
             }
 
             var members = [], membersCounter =[], countMembers;
@@ -2175,8 +2176,7 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
          });
        }
 
-         function getMeStatistics (listMembers, meetingArray) {
-
+         function getMeStatistics (listMembers, meetingArray) {           
            $(meetingArray).each(function(i) {
              item = meetingArray[i];
              var meetingId = item.id;
@@ -2188,6 +2188,7 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
              meetigsList.push({meeting_id: meetingId, meeting_date: meetingDate, meeting_type: meetingType, meeting_locality: meetingLocality, meeting_participants: meetingParticipants});
            })
            listMeetings = meetigsList;
+
            $(listMembers).each(function (i) {
 
              var memberLocality_key = listMembers[i].locality_key;
@@ -2197,7 +2198,7 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
              var attendedMeeting = [];
              var aId = listMembers[i].id;
              $(listMeetings).each(function (ii) {
-               var bArr = listMeetings[ii]['meeting_participants'];
+               var bArr = listMeetings[ii]['meeting_participants'], bArrar;
                bArr ? bArrar = bArr.split(','):'';
                  $(bArrar).each(function (iii) {
                    if (bArrar[iii] === String(aId)) {

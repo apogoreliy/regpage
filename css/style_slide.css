@@ -294,14 +294,14 @@
 .cd-panel__header-watch {
   /*...*/
   position: absolute;
-  top: 60px;
+  top: 50px;
   width: 350px;
-  height: 50px;
+  height: 45px;
   transition: transform 0.3s 0s;
   transform: translateY(-80px);
-  padding: 0px 5px 10px 15px;
-  border-left: 1px solid gray;
-  border-top: 1px solid gray;
+  padding: 0px 0px 0px 0px;
+  /*border-left: 1px solid gray;
+  border-top: 1px solid gray;*/
   border-radius: 5px 0 0 0px;
 }
 
@@ -321,15 +321,16 @@
 
 .cd-panel__container-watch {
   /*...*/
-  position: absolute;
+  position: fixed;
   width: 350px;
-  height: 700px;
-  top: 110px;
+  height: 100%;
+  top: 0px;
   transition: transform 0.3s 0s;
   border-left: 1px solid gray;
   padding: 0px 5px 10px 15px;
   border-radius: 0 0 0 5px;
   border-bottom: 1px solid gray;
+  overflow-y: auto;
 }
 
 .cd-panel--from-right-watch .cd-panel__container-watch {
@@ -422,26 +423,27 @@
 .cd-panel-watch-mbl {
   /*...*/
   visibility: hidden;
-  transition: visibility 0s 0.6s;
+  /*transition: visibility 0s 0.6s;*/
 }
 
 .cd-panel-watch-mbl.cd-panel--is-visible-watch-mbl {
   visibility: visible;
-  transition: visibility 0s 0s;
+  /*transition: visibility 0s 0s;*/
 }
 
 .cd-panel__header-watch-mbl {
   /*...*/
   position: absolute;
-  top: 60px;
-  width: 90%;
-  height: 50px;
-  transition: transform 0.3s 0s;
-  transform: translateY(-80px);
-  padding: 0px 5px 10px 15px;
-  border-left: 1px solid gray;
-  border-top: 1px solid gray;
+  top: 50px;
+  width: 97%;
+  height: 45px;
+  /*transition: transform 0.3s 0s;
+  transform: translateY(-80px);*/
+  padding: 0px 0px 0px 0px;
+  /*border-left: 1px solid gray;
+  border-top: 1px solid gray;*/
   border-radius: 5px 0 0 0px;
+  background-color: rgba(255, 255, 255, 1);
 }
 
 .cd-panel--from-right-watch-mbl .cd-panel__header-watch-mbl {
@@ -453,24 +455,25 @@
 }
 
 .cd-panel--is-visible-watch-mbl .cd-panel__header-watch-mbl {
-  transition: transform 0.3s 0.0s;
+  /*transition: transform 0.3s 0.0s;
   transform: translateY(0px);
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);*/
 }
 
 .cd-panel__container-watch-mbl {
   /*...*/
-  position: absolute;
+  position: fixed;
   width: 90%;
-  height: 700px;
-  top: 110px;
-  transition: transform 0.3s 0s;
+  height: 100%;
+  top: 0;
+  /*transition: transform 0.3s 0s;*/
   border-left: 1px solid gray;
   padding: 0px 5px 10px 15px;
   border-radius: 0 0 0 5px;
   border-bottom: 1px solid gray;
+  overflow-y: auto;
 }
-
+/*
 .cd-panel--from-right-watch-mbl .cd-panel__container-watch-mbl {
   right: 0;
   transform: translate3d(100%, 0, 0);
@@ -480,11 +483,11 @@
   left: 0;
   transform: translate3d(-100%, 0, 0);
 }
-
+*/
 .cd-panel--is-visible-watch-mbl .cd-panel__container-watch-mbl {
-  transform: translate3d(0, 0, 0);
+  /*transform: translate3d(0, 0, 0);*/
   transition-delay: 0s;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 1);
 }
 
 .cd-btn-watch-mbl {

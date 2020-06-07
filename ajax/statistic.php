@@ -1,7 +1,9 @@
 <?php
 include_once "ajax.php";
+include_once "../db/statisticdb.php";
 
 $adminId = db_getMemberIdBySessionId (session_id());
+
 if (!$adminId)
 {
     header("HTTP/1.0 401 Unauthorized");

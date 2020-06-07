@@ -1,6 +1,6 @@
 <?php
 // DATA BASE QUERY
-
+// PRACTICES
 // Create the new string
 function db_newDayPractices($memberId){
   global $db;
@@ -81,6 +81,17 @@ function  db_getPracticesAll (){
   return $practices;
 }
 
+// Get Practices for user today
+function db_getPracticesToday($memberId){
+    global $db;
+    $memberId = $db->real_escape_string($memberId);
+    $currentDate = date("Y-m-d");
+    $res=db_query ("SELECT * FROM practices WHERE `member_id` = '$memberId' AND `date_practic` = '$currentDate'");
+    $practices = array ();
+    while ($row = $res->fetch_assoc()) $practices[]=$row;
+    return $practices;
+}
+
 function db_getPracticesForAdmin($userData){
   global $db;
     $localities = $db->real_escape_string($userData['localities']);
@@ -96,21 +107,12 @@ function db_getPracticesForAdmin($userData){
     FROM practices AS p
     INNER JOIN member m ON m.key = p.member_id
     INNER JOIN locality l ON l.key = m.locality_key
-    WHERE `date_practic` > '$currentDate' AND (m.locality_key = ".$localities.")
-    ORDER BY m.name ASC, p.date_practic DESC");
+    WHERE `date_practic` > '$currentDate' AND `serving` <> '' AND (m.locality_key = ".$localities.")
+    ORDER BY m.name DESC, p.date_practic ASC");
   $practices = array ();
   while ($row = $res->fetch_assoc()) $practices[]=$row;
   return $practices;
 }
 
-// Get Practices for user today
-function db_getPracticesToday($memberId){
-    global $db;
-    $memberId = $db->real_escape_string($memberId);
-    $currentDate = date("Y-m-d");
-    $res=db_query ("SELECT * FROM practices WHERE `member_id` = '$memberId' AND `date_practic` = '$currentDate'");
-    $practices = array ();
-    while ($row = $res->fetch_assoc()) $practices[]=$row;
-    return $practices;
-}
+
 ?>

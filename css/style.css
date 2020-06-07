@@ -1902,3 +1902,7 @@ input.error, .control-group.error select, textarea.error {
 .active_sub_string, .active_sub_string_mbl {
   background-color: lightyellow;
 }
+
+.active_string, .active_string_mbl {
+  font-weight: bold;
+}

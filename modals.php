@@ -371,6 +371,10 @@
                     <input type="checkbox" data-download="comment" id="download-comment">
                     <label for="download-comment">Комментарий</label>
                 </div>
+                <div>
+                    <input type="checkbox" data-download="region" id="download-region">
+                    <label for="download-region">Область</label>
+                </div>
             </div>
             <div style="display: inline-block;">
                 <div>

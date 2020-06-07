@@ -2,6 +2,7 @@
 include_once "header.php";
 include_once "nav.php";
 include_once "./modals.php";
+include_once "db/eventdb.php";
 
 $localities = db_getArchivedEventLocalities (); $eventTypes = db_getEventTypes();
 //$isSingleCity = db_isSingleCityArchiveEvent();
