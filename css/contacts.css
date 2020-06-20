@@ -34,13 +34,13 @@
   /*...*/
   position: fixed;
   top: 58px;
-  width: 400px;
+  width: 560px;
   height: 30px;
   transition: transform 0.3s 0s;
   transform: translateY(-80px);
   padding: 0px 5px 10px 15px;
-  border-left: 1px solid gray;
-  /*border-top: 1px solid gray;
+  /*border-left: 1px solid gray;
+  border-top: 1px solid gray;
   border-radius: 5px 0 0 0px;*/
   z-index: 2;
 }
@@ -62,15 +62,16 @@
 .cd-panel__container-watch {
   /*...*/
   position: fixed;
-  width: 400px;
+  width: 560px;
   height: 100%;
   top: 0;
   transition: transform 0.3s 0s;
   border-left: 1px solid gray;
-  padding: 0px 5px 10px 15px;
+  padding: 0px 0px 0px 15px;
   border-radius: 0 0 0 5px;
   border-bottom: 1px solid gray;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .cd-panel__content-watch {
   width: 98%;
@@ -164,3 +165,35 @@
 .float-right.upload_fields {
   margin-bottom: 10px;
 }
+
+/*BUTTONS BAR*/
+.contactsBtnsBar button {
+  margin-right: 5px;
+}
+
+.contactsBtnsBar select {
+  margin-right: 0px;
+}
+
+.contactsBtnsBar {
+  background-color: white;
+  margin-top: -50px;
+  margin-bottom: 5px;
+  margin-left: -30px !important;
+  margin-right: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 133px;
+  padding-left: 20px;
+  position: fixed;
+  max-width:1170px;
+  transition: margin-top 0.2s;
+}
+/*STOP BUTTONS BAR*/
+
+/*CHAT*/
+.about_message {
+  font-size: 12px  !important;
+  margin-right: 10px;
+}
+/*CHAT*/

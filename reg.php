@@ -296,7 +296,7 @@
         ?>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary disable-on-invalid role-admin" id="btnDoRegisterMember"><i class="icon-ok icon-white"></i> Зарегистрировать</button>
+        <button class="btn btn-primary disable-on-invalid role-admin" id="btnDoRegisterMember"><i class="fa fa-check icon-white"></i> Зарегистрировать</button>
         <button class="btn btn-info disable-on-invalid role-edit" id="btnDoSaveMember">Сохранить</button>
         <button class="btn close-form" data-dismiss="modal" aria-hidden="true">Отменить</button>
         <p id="forAdminRegNotice" style="color: red; font-style: bold; font-size: 16px; padding-top: 15px; text-align: center;"></p>
@@ -898,7 +898,9 @@ var globalSingleCity = "<?php echo $singleCity; ?>";
         arr.push("<option value='_all_' selected>&lt;все местности&gt;</option>");
 
         getLocalities(event, function(data){
+          if ($('#selAddMemberLocality').val() == undefined || $('#selAddMemberLocality').val() === '_all_') {
             $("#selAddMemberLocality").html(rebuildLocationsList(data.localities, locId, arr).join(""));
+          }
         });
 
         if(locId || catId || text || !hasAccessToAllLocals){

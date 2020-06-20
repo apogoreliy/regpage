@@ -274,5 +274,12 @@ function db_getResponsiblesLocality(){
   return $admins;
 
 }
+function getValueParamByName($name)
+{
+    $email = '';
+    $res = db_query("SELECT `value` FROM param WHERE `name` = '$name'");
+    while ($row = $res->fetch_assoc()) $email=$row['value'];
 
+    return $email;
+}
 ?>

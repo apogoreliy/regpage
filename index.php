@@ -792,7 +792,7 @@ $(document).ready(function(){
                 $(".handle-hidden-events, .block-hidden-events").hide();
             }
 
-            if(eventRows.length > 0 ){
+            if(eventRows.length > 0 || hidenEvents.length > 0){
                 $("#eventTabs .event-list-block").show();
                 $("#eventTabs .empty-meeting-list-info").hide();
 

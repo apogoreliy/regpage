@@ -1,7 +1,7 @@
 <?php
 // DATA BASE QUERY
 
-// VISITS 
+// VISITS
 
 function db_getVisits($adminId, $sort_type, $sort_field, $localityFilter, $meetingTypeFilter, $startDate, $endDate){
     global $db;
@@ -61,9 +61,6 @@ function db_setVisit($data){
     //$listCount = $members ? count(explode(',', $data['members'])) : db_getCountMembersByLocality($locality);
 
     if($visitId){
-       //if(checkDoubleMeeting($date, $locality, $actionType)){
-       //     return true;
-       // }
 
         db_query("UPDATE visits SET act='$actionType', admin_key='$adminIdIs',
                 date_visit='$date', locality_key='$locality', comments='$note', responsible='$responsible',

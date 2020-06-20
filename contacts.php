@@ -15,6 +15,17 @@
     $adminRole = db_getAdminRole($memberId);
     $adminRole === 0 ? $isAdminZero = 'style="display: none;' : '';
     $membersForCombobox = db_getAdminMembers($memberId);
+
+    function shortNameMember ($fullName='')
+      {
+        if ($fullName) {
+          $pieces = explode(" ", $fullName);
+          $shortName = $pieces[0].' '.$pieces[1];
+          return $shortName;
+        }
+      }
+
+
     //$bb = db_newDayPractices($memberId);
 // COOKIES РАЗОБРАТЬСЯ !!!
 //    $someselect = isset ($_COOKIE['someselectcookie']) ? $_COOKIE['someselectcookie'] : '_all_';
@@ -31,21 +42,21 @@
   <span id="saveSpinner" style="position: fixed; z-index: 1000; margin: 30% 50%; width: 3rem; height: 3rem;" class=" spinner-border text-primary"></span>
 <!-- Botton bar Statistic START -->
   <div class="row contactsBtnsBar" style="" id="contactsBtnsBar">
-    <div class="col-md-6" style="max-width:625px; min-width:300px; padding-right: 0; padding-left: 0;">
+    <div class="col-md-5" style="max-width:625px; min-width:300px; padding-right: 0; padding-left: 0;">
         <button id="addContact" class="btn btn-success btn-sm" type="button"><i class="fa fa-plus"></i> Добавить</button>
         <button id="openUploadModal" class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#modalUploadItems"><i class="fa fa-upload"></i> Загрузить</button>
         <button id="deleteContactsShowModal" class="btn btn-danger btn-sm" type="button" data-toggle="modal" data-target="#deleteContactsModal" disabled >Удалить</button>
         <?php if($adminRole !== 0) echo '<button id="appointResponsibleShow" style="background-color: #ff8c00; color: #fff" class="btn btn-warning btn-sm" type="button" disabled>Передать</button>'; ?>
     </div>
-    <div class="col-md-2" style="padding-left: 0; padding-right: 10px;">
-            <select id="respShow" class="form-control form-control-sm" name="" style="display: <?php if($adminRole === 0) echo 'none'?>">
-              <option value="_all_"></option>
-              <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name['name'])."</option>"; ?>
+    <div class="col-md-2" style="padding-left: 0; padding-right: 10px; display: <?php if($adminRole === 0) echo 'none'?>">
+            <select id="respShow" class="form-control form-control-sm" name="" style="display: ">
+              <option value="_all_">Все ответственные</option>
+              <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name['name']))."</option>"; ?>
             </select>
     </div>
     <div class="col-md-2" style="padding-left: 0; padding-right: 10px;">
             <select id="statusShow" class="form-control form-control-sm" name="">
-              <option value="_all_"></option>
+              <option value="_all_">Все статусы</option>
               <option value="7">Бланк</option>
               <option value="1">Недозвон</option>
               <option value="2">Ошибка</option>
@@ -55,20 +66,23 @@
               <option value="6">Завершение</option>
             </select>
     </div>
-    <div class="col-md-2" style="padding-left: 0; padding-right: 10px;">
+    <div class="col-md-1" style="padding-left: 0; padding-right: 10px;">
             <select id="maleShow" class="form-control form-control-sm" name="">
-              <option value="_all_"></option>
-              <option value="1">Муж</option>
-              <option value="0">Жен</option>
+              <option value="_all_">Пол</option>
+              <option value="1">муж.</option>
+              <option value="0">жен.</option>
             </select>
     </div>
-    <div style="text-align: left; margin-left: 15px; margin-top: 8px" id="selectAllChekboxMblShow"><input id="" type="checkbox" class="checkAllStrings" name="" value=""> Выбрать все</div>
-    <!--<div class="col-md-2">
-            <select id="" class="form-control btn-sm" name="">
-              <option value="_all_">Все</option>
-          <?php foreach ($localities as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+    <div class="col-md-2" style="padding-left: 0; padding-right: 10px; <?php if($adminRole !== 0) echo 'display: none;'?>">
+            <select id="myBlanks" class="form-control form-control-sm" name="">
+              <option value="1" selected>текущие</option>
+              <option value="0">переданные</option>
             </select>
-    </div>-->
+    </div>
+    <div class="col-md-2" style="padding-left: 0; padding-right: 10px;">
+        <input type="text" id="search-text" class="form-control form-control-sm" placeholder="Строка поиска">
+    </div>
+    <div style="text-align: left; margin-left: 10px; margin-top: 8px" id="selectAllChekboxMblShow"><input id="" type="checkbox" class="checkAllStrings" name="" value=""> Выбрать все</div>
   </div>
 <!-- Botton bar Statistic STOP -->
 <!-- List Statistic BEGIN -->
@@ -76,13 +90,13 @@
         <div id="" class="">
           <div class="tab-pane">
             <div class="cd-panel-watch cd-panel--from-right-watch js-cd-panel-main-watch">
-              <div class="cd-panel__container-watch" style="padding-right: 10px; padding-left: 10px;">
+              <div class="cd-panel__container-watch">
                 <div id="sideBarBlankContact" class="cd-panel__content-watch">
          <!-- your side panel content here -->
-            <div style="height:110px">
+            <div style="height:110px; margin-left: -10px; margin-bottom: 15px; border-bottom: 1px solid #eee;" >
             </div>
             <header class="cd-panel__header-watch">
-              <h3>Карточка контакта</h3>
+              <h5><b>Карточка контакта</b></h5>
               <a href="#0" class="cd-panel__close-watch js-cd-close-watch">Закрыть</a>
             </header>
 
@@ -112,7 +126,7 @@
               <div class="tab-pane container active" id="personalBlankTab" style="padding: 0;">
                 <div class="row" style="margin-top: 10px;">
                   <div class="col-6">
-                    <label for="">Страна</label>
+                    <label for="" class="required-for-label">Страна</label>
                     <!--<input type="text" class="form-control form-control-sm" id="countryContact" placeholder="">-->
                     <select class="form-control form-control-sm" id="countryContact">
                       <option value=""></option>
@@ -127,7 +141,7 @@
                     </select>
                   </div>
                   <div class="col-6">
-                    <label for="">Пол</label>
+                    <label for="" class="required-for-label">Пол</label>
                     <select type="text" class="form-control form-control-sm" id="maleContact" placeholder="">
                       <option value="_none_">
                       <option value="1">муж.
@@ -188,45 +202,47 @@
                   <div class="col-6">
                     <label for="">Ответственный</label>
                     <select id="responsibleContact" class="form-control form-control-sm" name="" data-responsible_previous="" data-responsible="" title="Ответственный">
-                      <?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name['name'])."</option>"; ?>
+                      <?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name['name']))."</option>"; ?>
                     </select>
                     <!--<input type="text" class="form-control" id="responsibleContact" placeholder="Ответственный" data-responsible_previous="" data-responsible="">-->
                   </div>
                 </div>
-                <div class="" style="text-align: right; background-color: #f5f5f5; margin-left: -15px; margin-right: -15px; margin-top: 15px; padding-top: 15px; padding-bottom: 15px; border-top: 1px solid lightgrey;">
-
-                  <input id="orderSentToContact" class="btn btn-secondary btn-sm" type="button" data-id_admin="" data-id="" value="Отправить заказ" style="margin-right: 30px;" data-target="#saveConfirm" data-toggle="modal">
-                  <input id="saveContact" class="btn btn-info btn-sm" type="button" data-id_admin="" data-id="" value="Сохранить" style="margin-right: 30px;">
-                  <input class="btn btn-secondary btn-sm" id="cd-panel__close-watch" type="button" name="" value="Закрыть" style="margin-right: 15px;">
-                </div>
               </div>
-              <div class="tab-pane container fade" id="blankHistoryTab" style="padding: 0;">
-              <!-- Прокрутка при переполнении для нижнего дива-->
-              <div class="row" style="margin-top: 10px;">
-                <div class="col-6"><span>Заказ от: </span><span id="orderDate"></span></div>
-                <div class="col-6"><span>Отправка: </span><span id="sendingDate"></span></div>
-              </div>
-              <hr>
-                <div id="chatBlock" class="container" style="min-height: 250px; max-height: 600px; overflow-y: auto;">
 
-                </div>
-                <div class="row" style="margin-top: 10px;" >
-                  <div class="col-12">
-                    <div class="input-group">
-                      <input type="text" class="form-control form-control-sm" id="msgChatText" placeholder="Поле для записи" style="border:0;">
-                      <div class="input-group-btn">
-                        <button id="msgChatSend" class="btn btn-default" type="submit"><i class="fa fa-send-o" style="color:grey; font-size:20px"></i></button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </div>
             <div class="tab-pane container fade" id="blankCommentTab" style="padding: 0;">
               <div class="row" style="margin-top: 20px;">
                 <div class="col-12">
-                  <textarea id="commentContact" class="form-control form-control-sm" rows="15" cols="80" style="width: 370px;"></textarea>
+                  <textarea id="commentContact" class="form-control form-control-sm" rows="15" cols="80" style="width: 100%;"></textarea>
                 </div>
               </div>
+            </div>
+            <div class="tab-pane container fade" id="blankHistoryTab" style="padding: 0;">
+            <!-- Прокрутка при переполнении для нижнего дива-->
+            <div class="row" style="margin-top: 10px; margin-left: 0px; margin-right: 0px;">
+              <div class="col-6"><span id="labelOrderDate">Заказа НЗ не было</span><span id="orderDate"></span><i class="cursor-pointer fa fa-pencil" id="orderDateEditIco" style="padding-left: 0px; font-size:14px;"></i>
+                <span style="display: none;"><input type="date" id="orderDateEdit"><i class="cursor-pointer fa fa-check-circle" id="orderDateEditIcoOk" style="padding-left: 10px; color: green; font-size:20px;"></i><i class="cursor-pointer fa fa-ban" id="orderDateEditIcoCancel" style="padding-left: 10px; color: red; font-size:20px;"></i></span>
+                </div>
+              <div class="col-6"><span>Отправка: </span><span id="sendingDate"></span></div>
+            </div>
+            <hr>
+              <div id="chatBlock" class="container" style="min-height: 200px; overflow-y: auto;">
+              </div>
+              <div class="row" style="padding-top: 10px; border-top: 1px solid lightgrey;">
+                <div class="col-12">
+                  <div class="input-group">
+                    <input type="text" class="form-control form-control-sm" id="msgChatText" placeholder="Поле для записи" style="border:0;">
+                    <div class="input-group-btn">
+                      <button id="msgChatSend" class="btn btn-default" type="submit"><i class="fa fa-send-o" style="color:grey; font-size:20px"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+            <div class="" style="text-align: right; background-color: #f5f5f5; margin-left: -15px; margin-right: -15px; padding-top: 15px; padding-bottom: 15px; border-top: 1px solid lightgrey;">
+
+              <input id="orderSentToContact" class="btn btn-secondary btn-sm" type="button" data-id_admin="" data-id="" value="Отправить заказ" style="margin-right: 230px;" data-target="#saveConfirm" data-toggle="modal">
+              <input id="saveContact" class="btn btn-info btn-sm" type="button" data-id_admin="" data-id="" value="Сохранить" style="margin-right: 5px;">
+              <input class="btn my_btn_cancel btn-sm" id="cd-panel__close-watch" type="button" name="" value="Закрыть" style="margin-right: 15px;">
             </div>
           </div>
     </div> <!-- cd-panel__content -->
@@ -387,14 +403,16 @@
       <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
+          <h5>Заказ будет отправлен на обработку</h5>
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         </div>
         <div class="modal-body">
-          <h4>Заказ будет отправлен в BFA</h4>
+          <h6>Примечание к заказу</h6>
+          <textarea id="adminNotes" name="name" rows="3" cols="56"></textarea>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-success" id="saveConfirmBtn" data-dismiss="modal" aria-hidden="true">Сохранить</button>
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Отменить</button>
+          <button class="btn btn-sm btn-secondary" id="saveConfirmBtn" data-dismiss="modal" aria-hidden="true">Отправить</button>
+          <button class="btn btn-sm my_btn_cancel" data-dismiss="modal" aria-hidden="true">Отменить</button>
         </div>
         </div>
       </div>
@@ -540,7 +558,7 @@
       data_page.admin_role = '<?php echo $adminRole; ?>';
 
     </script>
-    <script src="/js/contacts.js?v3"></script>
+    <script src="/js/contacts.js?v5"></script>
     <script src="/js/contactsupload.js?v3"></script>
 <?php
     include_once "footer2.php";

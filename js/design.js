@@ -7,13 +7,18 @@ function handleScrollUp(){
 
     if (height>600 && (window.pageYOffset > 300 || document.documentElement.scrollTop >50)) {
       if ($('.contactsBtnsBar').css('margin-top') !=='-77px') {
+				if ($(window).width()>=769 && $(window).width()<1200) {
+				//	$('.contactsBtnsBar').css('padding-right','150px');
+				}
 				$('.contactsBtnsBar').css('margin-top', '-77px');
 				$('.contactsBtnsBar').css('border-bottom', '1px solid lightgrey');
+				$('.contactsBtnsBar').css('background-color', '#eee');
       }
     } else {
       if ($('.contactsBtnsBar').css('margin-top') !== '-50px') {
 				$('.contactsBtnsBar').css('margin-top', '-50px');
 				$('.contactsBtnsBar').css('border-bottom', 'none');
+				$('.contactsBtnsBar').css('background-color', 'white');
       }
     }
 }
@@ -36,11 +41,42 @@ $(".scroll-up").click(function(e){
 
 // START Menu & resize
 // width
+
+
+/*
+if ($(window).width()>=1200) {
+	//$('.contactsBtnsBar').css('padding-right','349px');
+}
+*/
+
+	if ($(window).height()>=550) {
+		var windowScreenHeight = $(window).height();
+		var mainBlockHeight = windowScreenHeight;
+		if (data_page.admin_role > 0 && windowScreenHeight < 735) {
+			mainBlockHeight = mainBlockHeight - 323;
+		} else {
+			mainBlockHeight = mainBlockHeight - 363;
+		}
+		var commentBlockHeight = windowScreenHeight - 373;
+		var chatBlockHeight = windowScreenHeight - 466;
+
+		chatBlockHeight+= 'px';
+		commentBlockHeight+= 'px';
+		mainBlockHeight+= 'px';
+
+		$('#chatBlock').css('height', chatBlockHeight);
+		$('#commentContact').parent().parent().css('height', commentBlockHeight);
+		$('#personalBlankTab').css('height', mainBlockHeight);
+	}
+
   if ($(window).width()>=769) {
 		//$('.show-name-list').hide();
     $('#listContactsMbl').hide();
     $('#listContacts').show();
     $('#selectAllChekboxMblShow').hide();
+		if (data_page.admin_role === '0') {
+			$('.contactsBtnsBar').css('padding-right', '300px');
+		}
   } else {
 		$('.show-name-list').show();
     $('#listContactsMbl').show();
@@ -69,7 +105,19 @@ $(".scroll-up").click(function(e){
     $('.nav-sub-container').css('min-width', '100%');
     $('#helpButton').hide();
     $('#helpButtonMbl').show();
+		//mobile
+		if (data_page.admin_role === '0') {
+			$('#listContactsMbl').css('padding-top', '170px');
+		} else {
+			$('#listContactsMbl').css('padding-top', '210px');
+		}
+		$('.cd-panel__header-watch').css('width', '100%');
+		$('.cd-panel__container-watch').css('width', '100%');
+		$('#orderSentToContact').css('margin-right', '40px');
+		$('#myBlanks').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px;');
+		$('#search-text').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px;');
   }
+
 // resize
   $(window).resize(function(){
     if ($(window).width()>=769) {
@@ -99,6 +147,13 @@ $(".scroll-up").click(function(e){
       $('.nav-sub-container').css('min-width', '1170px');
       $('#helpButton').show();
       $('#helpButtonMbl').hide();
+			//Desktop
+			$('.cd-panel__header-watch').css('width', '560px');
+			$('.cd-panel__container-watch').css('width', '560px');
+			$('#orderSentToContact').css('margin-right', '230px');
+			$('#myBlanks').parent().attr('style', 'padding-left: 0; padding-right: 10px;');
+			$('#search-text').parent().attr('style', 'padding-left: 0; padding-right: 10px;');
+
     } else if ($(window).width()<769) {
 			$('.show-name-list').show();
       $('#listContactsMbl').show();
@@ -120,13 +175,17 @@ $(".scroll-up").click(function(e){
       $('.nav-sub-container').css('min-width', '100%');
       $('#helpButton').hide();
       $('#helpButtonMbl').show();
-  /*    $('#navbarNav ul').css('font-weight', 'bold');
-      $('#navbarNav ul').css('padding', '10px 10px');
-      $('#contactsBtnsBar').css('padding-left', '8px');
-      $('#respShow').parent().css('padding-left', '8px');
-      $('#statusShow').parent().css('padding-left', '8px');
-      $('#maleShow').parent().css('padding-left', '8px');
-      */
+			//mobile
+			if (data_page.admin_role === '0') {
+				$('#listContactsMbl').css('padding-top', '170px');
+			} else {
+				$('#listContactsMbl').css('padding-top', '210px');
+			}
+			$('.cd-panel__header-watch').css('width', '100%');
+			$('.cd-panel__container-watch').css('width', '100%');
+			$('#orderSentToContact').css('margin-right', '40px');
+			$('#myBlanks').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px;');
+			$('#search-text').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px;');
     }
   });
 // STOP Menu & resize

@@ -178,7 +178,7 @@
 </div>
 <div class="controls ">
     <div class="control-group row-fluid " style="width: 48%;">
-        <label class="span12">Дата приезда<sup>*</sup> <a href="#" class="tooltipArrDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
+        <label class="span12">Дата начала<sup>*</sup> <a href="#" class="tooltipArrDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
         <input class="span12 emArrDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required">
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
@@ -186,7 +186,7 @@
         <input class="span12 emArrTime" type="time" maxlength="5" tooltip="tooltipArr">
     </div>
     <div class="control-group row-fluid " style="width: 48%;">
-        <label class="span12">Дата отъезда<sup>*</sup> <a href="#" class="tooltipDepDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
+        <label class="span12">Дата окончания<sup>*</sup> <a href="#" class="tooltipDepDate" rel="tooltip" data-placement="right" data-toggle="tooltip" title="" tabindex="-1"><i class="icon-question-sign"></i></a></label>
         <input class="span12 emDepDate datepicker-form" type="text" maxlength="5" placeholder="ДД.ММ" valid="required">
     </div>
     <div class="control-group row-fluid " style="width: 48%; float: right;">
