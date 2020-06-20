@@ -19,6 +19,7 @@ label.required-for-label:after
     color: red;
     content: " *";
 }
+
 /*ALERT MESSAGE*/
 #globalError, #globalHint {
   z-index: 2001;
@@ -41,6 +42,12 @@ label.required-for-label:after
 }
 /*STOP ALERT MESSAGE*/
 
+/*Buttons*/
+.my_btn_cancel {
+  background-color: #e6e6e6 !important;
+  border: 1px solid lightgrey !important;
+}
+/*STOP Buttons*/
 .cursor-pointer {
   cursor: pointer;
 }
@@ -87,29 +94,3 @@ label.required-for-label:after
   border-left: 1px solid #716f6f;
 }
 /*NAVBARS STOP*/
-
-/*CONTACT PAGE*/
-  /*BUTTONS BAR*/
-.contactsBtnsBar button {
-  margin-right: 5px;
-}
-
-.contactsBtnsBar select {
-  margin-right: 0px;
-}
-
-.contactsBtnsBar {
-  background-color: white;
-  margin-top: -50px;
-  margin-bottom: 5px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 10px;
-  padding-bottom: 15px;
-  padding-right: 150px;
-  position: fixed;
-  max-width:1170px;
-  transition: margin-top 0.2s;
-}
-  /*STOP BUTTONS BAR*/
-/*STOP CONTACT PAGE*/

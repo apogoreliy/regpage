@@ -37,7 +37,7 @@ if(isset($_GET['responsible_set'])){
 }
 
 if(isset($_GET['add_crm_id'])){
-    db_crmIdSet($_GET['crm_id'], $_GET['id'], $adminId, $_GET['text'], $_GET['comment']);
+    db_crmIdSet($_GET['crm_id'], $_GET['id'], $adminId, $_GET['text'], $_GET['comment'],$_GET['notes']);
     exit();
 }
 
@@ -53,41 +53,35 @@ if(isset($_GET['new_message'])){
 }
 
 if(isset($_GET['update_message'])){
-    db_newChatMsg($adminId, $_GET['data']);
+    db_updateChatMsg($_GET['id'], $_GET['text']);
     exit();
 }
 
-/*
+if(isset($_GET['delete_message'])){
+    db_deleteChatMsg($_GET['id']);
+    exit();
+}
+
 //EMAIL TO UKRAINE
-if (isset ($_POST ['message']) && isset ($_POST ['event']) && isset ($_POST ['name']) && isset ($_POST ['email']) && !isset ($_POST['admins']))
+if (isset ($_POST['text_message']))
 {
-    $email = db_getTeamEmail ($_POST ['event']);
-    $adminId = db_getMemberIdBySessionId (session_id());
-    $locality = db_getMemberLocality($adminId);
-    $locality = $locality ? "\r\n\r\nНаселённый пункт отправителя: $locality" : "";
+    $email = getValueParamByName('crm_ua_email');
+    //$adminId = db_getMemberIdBySessionId (session_id());
     $error = null;
-
-    $message = stripslashes ($_POST ['message']).$locality;
-
+    $message = stripslashes($_POST['text_message']);
     if ($email){
-        $from_name = stripslashes ($_POST ['name']);
-        $from_email = stripslashes ($_POST ['email']);
-        $arrEmails = explode(',', $email);
-        foreach ($arrEmails as $value) {
-            $res = EMAILS::sendEmail ($value, "Сообщение с сайта reg-page.ru: ".($from_name), $message, $from_email);
+            $res = EMAILS::sendEmail ($email, "Новый заказ с сайта регистрации", $message);
             if($res != null){
                 $error = $res;
             }
-        }
     }
-    else
-        $error = "Сообщение не может быть послано, т.к. адрес команды регистрации не определен";
-
+    else {
+        $error = "Сообщение не может быть послано, т.к. адрес не определен";
+    }
     if($error == null){
         echo json_encode(["result"=>true]);
         exit;
     }
 }
-*/
 
 ?>

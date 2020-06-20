@@ -33,8 +33,10 @@
     }, 10);
     if ($('#modalEditMember').find('.emNewLocality').is(':visible')) {
       var newLocalityLength = $('#modalEditMember').find('.emNewLocality').val();
+      var newLocalityLengthLenght;
+      newLocalityLength ? newLocalityLengthLenght = newLocalityLength.length : newLocalityLengthLenght = 0;
     }
-    if (globalSingleCity && $('#modalEditMember').find('.emLocality').val() === '_none_' && newLocalityLength.length < 1) {
+    if (globalSingleCity && $('#modalEditMember').find('.emLocality').val() === '_none_' && newLocalityLengthLenght < 1) {
       $('.emLocality option').each(function () {
           $(this).val() === '_none_' ? '' : $('.emLocality').val($(this).val());
       });

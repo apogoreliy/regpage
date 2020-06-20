@@ -121,7 +121,7 @@ switch ($h) {
                 if (strpos ($s,"/practices")!==FALSE) {echo " class='active'";}
                 echo"><a class='nav-link' href='/practices'>Практики</a></li>";
             }
-            if(isset($memberId) && (in_array('14', db_getUserSettings($memberId))) && !isset($isGuest)) {
+            if(isset($memberId) && ((in_array('14', db_getUserSettings($memberId))) || db_getAnyActiveContactStr($memberId)) && !isset($isGuest)) {
                 echo '<li ';
                 if (strpos ($s,"/contacts") ==FALSE) {echo "class='nav-item active'";}else{echo "class='nav-item'";}
                 echo"><a class='nav-link' href='/contacts'>Контакты</a></li>";

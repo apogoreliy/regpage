@@ -72,4 +72,29 @@ function showError(html, autohide) {
 	  }
 	  return weekday[dayNumber];
 	}
+	// date convert mmyyyy to yyyymmdd & yyyymmdd to mmyyyy
+	function dateStrToddmmyyyyToyyyymmdd(date, toRus, separator) {
+		var yyyy, mm, dd;
+
+		if (!date) {
+			console.log('function should receive the next parameter: DATE');
+			return
+		}
+
+		if (toRus) {
+			separator ? '' : separator = '.';
+			yyyy = date.slice(0,4),
+			mm = date.slice(5,7),
+			dd = date.slice(8,10);
+			date = dd + separator + mm + separator + yyyy;
+		} else if (!toRus || toRus == 0){
+			separator ? '' : separator = '-';
+			yyyy = date.slice(6,10),
+			mm = date.slice(3,5),
+			dd = date.slice(0,2);
+			date = yyyy + '-' + mm + '-' + dd;
+		}
+		return date
+	}
+
 // STOP DATES

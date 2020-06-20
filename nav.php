@@ -158,7 +158,7 @@ switch ($h) {
                 echo"><a href='/statistic'>Статистика</a></li>";
             }*/
 
-            if(isset($memberId) && !isset($isGuest) && (in_array('14', db_getUserSettings($memberId)))) {
+            if(isset($memberId) && !isset($isGuest) && ((in_array('14', db_getUserSettings($memberId))) || db_getAnyActiveContactStr($memberId))) {
                 echo '<li  class="nav-item"';
                 if (strpos ($s,"/contacts")!==FALSE) {echo " class='active'";}
                 echo"><a class='nav-link' href='/contacts'>Контакты</a></li>";

@@ -31,9 +31,10 @@ function db_newOrUpdateContactString($memberId, $data){
   $data['region'] ? $region =  $db->real_escape_string($data['region']) : $region ='';
   $data['region_work'] ? $regionWork =  $db->real_escape_string($data['region_work']) : $regionWork ='';
   $data['country'] ? $countryKey =  $db->real_escape_string($data['country']) : $countryKey ='';
+  $data['order_date'] ? $orderDate =  $db->real_escape_string($data['order_date']) : $orderDate = NULL;
   $newId = db_getNewContactId ();
   if ($Id) {
-    db_query("UPDATE contacts SET `name`='$name', `phone`='$phone', `locality`='$locality', `male`='$male', `status`='$status', `email`='$email', `responsible`='$responsible', `responsible_previous`='$responsiblePrev', `area`='$area', `address`= '$address', `comment`= '$comment', `index_post` = '$index', `region` = '$region', `region_work` = '$regionWork', `country_key`='$countryKey'  WHERE `id` = '$Id'");
+    db_query("UPDATE contacts SET `name`='$name', `phone`='$phone', `locality`='$locality', `male`='$male', `status`='$status', `email`='$email', `responsible`='$responsible', `responsible_previous`='$responsiblePrev', `area`='$area', `address`= '$address', `comment`= '$comment', `index_post` = '$index', `region` = '$region', `region_work` = '$regionWork', `country_key`='$countryKey', `order_date`='$orderDate' WHERE `id` = '$Id'");
     return 'update';
   } else {
     db_query("INSERT INTO contacts (`id`, `name`, `phone`, `locality`, `male`, `status`, `email`, `responsible`, `responsible_previous`, `area`, `address`, `comment`, `index_post`, `region`, `region_work`, `country_key`) VALUES ('$newId', '$name', '$phone', '$locality', '$male', '$status', '$email', '$responsible', '$responsiblePrev', '$area', '$address', '$comment', '$index', '$region', '$regionWork', '$countryKey')");
@@ -99,13 +100,13 @@ function db_getContactsStrings($memberId, $role){
     c.sending_date, c.crm_id, m.name AS member_name
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
-    WHERE c.responsible = '$memberId' ORDER BY c.name");
+    WHERE c.responsible_previous = '$memberId' OR c.responsible = '$memberId' ORDER BY c.name");
     while ($row = $res->fetch_assoc()) $result[]=$row;
   }
   return $result;
 }
 // set CRM ID
-function  db_crmIdSet($idCRM, $id, $memberId, $text, $comment){
+function  db_crmIdSet($idCRM, $id, $memberId, $text, $comment, $notes){
   global $db;
   $id = $db->real_escape_string($id);
   $idCRM = $db->real_escape_string($idCRM);
@@ -114,6 +115,10 @@ function  db_crmIdSet($idCRM, $id, $memberId, $text, $comment){
   $comment = $db->real_escape_string($comment);
   db_query("UPDATE contacts SET `crm_id` = '$idCRM', `order_date` = NOW(), `comment` = '$comment' WHERE `id` = '$id'");
   db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$id', '$memberId', '$text')");
+  if ($notes) {
+    $notes = $db->real_escape_string($notes);
+    db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$id', '$memberId', '$notes')");
+  }
 }
 
 // CHAT
@@ -126,10 +131,17 @@ function db_newChatMsg($memberId, $data){
   db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$id', '$memberId', '$text')");
 }
 // update message
-function db_updateChatMsg($memberId, $data){
+function db_updateChatMsg($id, $text){
   global $db;
-  $memberId = $db->real_escape_string($memberId);
-  db_query("UPDATE chat SET `message` = '', WHERE `id` = ''");
+  $id = $db->real_escape_string($id);
+  $text = $db->real_escape_string($text);
+  db_query("UPDATE chat SET `message` = '$text' WHERE `id` = '$id'");
+}
+// delete message
+function db_deleteChatMsg($id){
+  global $db;
+  $id = $db->real_escape_string($id);
+  $res = db_query("DELETE FROM chat WHERE `id`='$id'");
 }
 
 // get the messages

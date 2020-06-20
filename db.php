@@ -3125,7 +3125,7 @@ function db_sendMessagesToMembersAdmins($eventId, $name, $locality){
 
     $title = 'Сообщение с сайта регистрации reg-page.ru';
     $headers = "MIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\nFrom: REG-PAGE<info@reg-page.ru>\r\nReply-To: REG-PAGE<info@reg-page.ru>\r\n";
-
+if ($admins) {
     foreach($admins as $admin){
         $adminEmail = $admin['email'];
         $body = "Здравствуйте, ". $admin['name']."!".
@@ -3137,6 +3137,7 @@ function db_sendMessagesToMembersAdmins($eventId, $name, $locality){
         //EMAILS::sendEmail($adminEmail, $title, $body, 'REG-PAGE<info@reg-page.ru>');
         //mail($adminEmail, $title, $body, $headers);
     }
+  }
 }
 
 function db_checkIfUserAddedToReg($eventId, $memberId){
@@ -3710,7 +3711,7 @@ function db_removeFilter($filter_id){
 
     db_query("DELETE FROM filter WHERE id='$_filter_id' ");
 }
-
+// SETTINGS
 function db_getSettings(){
     $res = db_query("SELECT * FROM setting_category sc
                      LEFT JOIN setting_item si ON si.setting_category_key=sc.category_key");
@@ -3735,6 +3736,17 @@ function db_getUserSettings($admin_key){
     }
 
     return $settings;
+}
+//NAV OPTION
+function db_getAnyActiveContactStr ($activeAdmin)
+{
+    global $db;
+    $activeAdmin = $db->real_escape_string($activeAdmin);
+    $key;
+    $res=db_query ("SELECT `id` FROM contacts WHERE `responsible` = '$activeAdmin' LIMIT 1");
+    while ($row = $res->fetch_assoc()) $key=$row['id'];
+
+    return $key;
 }
 
 function db_getUserAccessAreaSettings($admin_key){

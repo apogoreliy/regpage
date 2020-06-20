@@ -283,11 +283,11 @@ var memberId = '<?php echo $memberId; ?>';
             $.post('/ajax/set.php?set_login', {login : login})
             .done(function(data){
                 if(data.result){
-                    window.location = '/login';
+                    //window.location = '/login';
                 }
                 else{
-                    showError("Укажите логин");
                 }
+                    showError("Укажите логин");
             });
         }
     });
