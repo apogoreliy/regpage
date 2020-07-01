@@ -82,6 +82,18 @@ function db_responsibleSet($id, $responsibleNew, $adminId){
     db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$value[0]', '$adminId', '$text')");
   }
 }
+// responsible set for admin 0
+function db_responsibleSetZero($data, $adminId){
+  global $db;
+  $adminId = $db->real_escape_string($adminId);
+  $text;
+  foreach ($data as $value) {
+    $text = 'Назначен ответственный '.$value[2];
+    db_query ("UPDATE contacts SET `responsible` = '$value[1]', `responsible_previous` = '$adminId' WHERE `id`='$value[0]'");
+    db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$value[0]', '$adminId', '$text')");
+  }
+}
+
 // get the contact
 function db_getContactsStrings($memberId, $role){
   global $db;
@@ -123,12 +135,21 @@ function  db_crmIdSet($idCRM, $id, $memberId, $text, $comment, $notes){
 
 // CHAT
 // new message
-function db_newChatMsg($memberId, $data){
+function db_newChatMsg($memberId, $data, $list=false){
   global $db;
   $id = $db->real_escape_string($data['id']);
   $text = $db->real_escape_string($data['text']);
   $memberId = $db->real_escape_string($memberId);
+  $memberId = $db->real_escape_string($memberId);
   db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$id', '$memberId', '$text')");
+  if ($list) {
+    $result = [];
+    $res=db_query ("SELECT * FROM chat WHERE `group_id` = '$id' ORDER BY `time_stamp`");
+    while ($row = $res->fetch_assoc()) $result[]=$row;
+
+    return $result;
+  }
+  return false;
 }
 // update message
 function db_updateChatMsg($id, $text){
@@ -198,5 +219,55 @@ function db_getregionOfWork ()
     while ($row = $res->fetch_assoc()) $region[$row['id']]=$row['region'];
     return $region;
 }
+// members - admins for combobox
+function db_getAdminMembersAdmins ($adminId)
+{
+    global $db;
+    $adminId = $db->real_escape_string($adminId);
+
+    $res=db_query ("SELECT DISTINCT * FROM (
+                        SELECT m.key as id, m.name as name, l.name as locality, l.key as locId, m.category_key as catId
+                        FROM access a
+                        LEFT JOIN country c ON c.key = a.country_key
+                        LEFT JOIN region r ON r.key = a.region_key or c.key=r.country_key
+                        INNER JOIN locality l ON l.region_key = r.key OR l.key=a.locality_key
+                        INNER JOIN member m ON m.locality_key = l.key
+                        WHERE a.member_key='$adminId'
+                        UNION
+                        SELECT m.key as id, m.name as name, COALESCE(l.name, m.new_locality) as locality,
+                        l.key as locId, m.category_key as catId
+                        FROM member m
+                        LEFT JOIN locality l ON l.key=m.locality_key
+                        WHERE m.admin_key='$adminId'
+                        UNION
+                        SELECT m.key as id, m.name as name, COALESCE(l.name, m.new_locality) as locality, l.key as locId,
+                        m.category_key as catId
+                        FROM reg
+                        INNER JOIN member m ON m.key=reg.member_key
+                        LEFT JOIN locality l ON l.key=m.locality_key
+                        WHERE reg.admin_key='$adminId'
+                        ) q ORDER BY q.name");
+
+    $members = array ();
+    while ($row = $res->fetch_assoc())
+        $members[$row['id']]=array (
+            "name" => $row['name'],
+            "locality" => $row['locality'],
+            "localityId" => $row['locId'],
+            "categoryId" => $row['catId']
+        );
+
+    $list=[];
+      foreach ($members as $key => $value) {
+        $result='';
+        $res=db_query ("SELECT `login` FROM admin WHERE `member_key` = '$key'");
+        while ($row = $res->fetch_assoc()) $result=$row['login'];
+
+        if ($result) {
+          $list[$key]=$value;
+        }
+      }
+      return $list;
+    }
 
 ?>

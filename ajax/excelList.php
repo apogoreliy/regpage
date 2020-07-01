@@ -861,7 +861,7 @@ else if (isset ($_POST ['members']) && isset ($_POST ['memberslength']) && isset
                       $abcdes = strval($membersAll[$m]['mate_key']);
                       $namesmembers = db_getMemberNameMate($abcdes);
                       $getStatus = db_getStatus($membersAll[$m]['status_key']);
-                        $locality = explode(':', $membersAll[$m]['locality'])[0];
+                        $locality = $membersAll[$m]['locality']; /*explode(':', $membersAll[$m]['locality'])[0];*/
                         switch ($d['name']) {
                             case 'birth_date':
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($ind.''.$i, $membersAll[$m]['birth_date']);
@@ -1101,7 +1101,36 @@ else if (isset($_POST ['members']) && ($_POST['page'] == 'meeting_members')) {
         foreach($meetingsDates as $meetingDate){
             foreach($meetings as $meeting){
                 if($meetingDate == substr($meeting, 3)){
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($rowIndexMeeting.''.$rowNumber, substr($meeting, 0,2) == 'LT' ? 'Трапеза' : 'Молитвенное');
+                  switch (substr($meeting, 0,2)) {
+                      case 'LT':
+                          $typeThisMeeting = 'Трапеза';
+                          break;
+                      case 'PM':
+                          $typeThisMeeting = 'Молитвенное';
+                          break;
+                      case 'GM':
+                          $typeThisMeeting = 'Групповое';
+                          break;
+                      case 'HM':
+                          $typeThisMeeting = 'Домашнее';
+                          break;
+                      case 'YM':
+                          $typeThisMeeting = 'Молодёжное';
+                          break;
+                      case 'CM':
+                          $typeThisMeeting = 'Детское';
+                          break;
+                      case 'KM':
+                          $typeThisMeeting = 'Координация';
+                          break;
+                      case 'VT':
+                          $typeThisMeeting = 'Видеообучение';
+                          break;
+                      default :
+                          $typeThisMeeting = '';
+                  }
+
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($rowIndexMeeting.''.$rowNumber, $typeThisMeeting);
                 }
             }
             $rowIndexMeeting ++;

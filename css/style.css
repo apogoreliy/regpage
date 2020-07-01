@@ -701,6 +701,9 @@ input.error, .control-group.error select, textarea.error {
 .KM-meeting{
     background-color: violet;
 }
+.VT-meeting{
+    background-color: black;
+}
 .statistic-bar-form{
     margin-left: 2px;
     margin-right: 5px;

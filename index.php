@@ -770,7 +770,7 @@ $(document).ready(function(){
                             '<div><span style="margin-top:5px; margin-right:5px;" class="label label-'+regstateClass+'">'+ regstateText + '</span>' + icons+ '</div>'+
                         '</div>';
 
-                if((!parseInt(isUserWithRights) && parseInt(event.private)>0 && !in_array(event.id, evArr.split(',')) && event.regstate_key === null) || ((memberId !== event.author || memberId === '000005716') && !isEventActive)){
+                if((!parseInt(isUserWithRights) && parseInt(event.private)>0 && !in_array(event.id, evArr) && event.regstate_key === null) || ((memberId !== event.author || memberId === '000005716') && !isEventActive)){
                     continue;
                 }
                 else if(in_array(event.id, hidenEvents)){

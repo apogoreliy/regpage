@@ -836,6 +836,26 @@ var globalSingleCity = "<?php echo $singleCity; ?>";
 
     function buildFilterLocalitiesList(eventId, localities){
         var form = $('#eventTab-'+eventId);
+        if (localities) {
+          var sortable = [];
+          for (var vehicle in localities) {
+              sortable.push([vehicle, localities[vehicle]]);
+          }
+          sortable.sort(function(a, b) {
+            if (a[1] > b[1]) {
+              return 1;
+            }
+            if (a[1] < b[1]) {
+              return -1;
+            }
+            return 0;
+          });
+          localities =[];
+
+          for (var i = 0; i < sortable.length; i++) {
+            localities[sortable[i][0]] = sortable[i][1];
+          }
+        }
         if(eventId){
             var arr = [], value = form.find(".filterLocality-"+eventId).val();
             arr.push("<option value='_all_' "+ (!value || value === '_all_' ? 'selected' : '') + ") +>Все местности</option>\n\
@@ -1551,7 +1571,7 @@ setTimeout(function () {
                 }
             });
         });
-      }, 150);
+      }, 200);
     }
 
     function buildUserEmailsList(emails){
@@ -1632,7 +1652,7 @@ setTimeout(function () {
             url: "/ajax/excelList.php",
             data: "members="+JSON.stringify(members)+req+doc,
             cache: false,
-            success: function(data) {
+            success: function(data) {              
                 document.location.href="./ajax/excelList.php?file="+data;
                 setTimeout(function(){
                     deleteFile(data);

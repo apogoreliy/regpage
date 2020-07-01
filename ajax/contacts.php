@@ -36,6 +36,11 @@ if(isset($_GET['responsible_set'])){
     exit();
 }
 
+if(isset($_GET['responsible_set_zero'])){
+    db_responsibleSetZero($_GET['data'], $adminId);
+    exit();
+}
+
 if(isset($_GET['add_crm_id'])){
     db_crmIdSet($_GET['crm_id'], $_GET['id'], $adminId, $_GET['text'], $_GET['comment'],$_GET['notes']);
     exit();
@@ -48,7 +53,7 @@ if(isset($_GET['get_messages'])){
 }
 
 if(isset($_GET['new_message'])){
-    db_newChatMsg($adminId, $_GET['data']);
+    echo json_encode(["messages"=>db_newChatMsg($adminId, $_GET['data'], $_GET['list'])]);
     exit();
 }
 

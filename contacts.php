@@ -14,7 +14,7 @@
     $adminLocality = db_getAdminLocality($memberId);
     $adminRole = db_getAdminRole($memberId);
     $adminRole === 0 ? $isAdminZero = 'style="display: none;' : '';
-    $membersForCombobox = db_getAdminMembers($memberId);
+    $membersForCombobox = db_getAdminMembersAdmins($memberId);
 
     function shortNameMember ($fullName='')
       {
@@ -42,19 +42,19 @@
   <span id="saveSpinner" style="position: fixed; z-index: 1000; margin: 30% 50%; width: 3rem; height: 3rem;" class=" spinner-border text-primary"></span>
 <!-- Botton bar Statistic START -->
   <div class="row contactsBtnsBar" style="" id="contactsBtnsBar">
-    <div class="col-md-5" style="max-width:625px; min-width:300px; padding-right: 0; padding-left: 0;">
+    <div class="" style="max-width:625px; min-width:300px; padding-right: 5px; padding-left: 0;">
         <button id="addContact" class="btn btn-success btn-sm" type="button"><i class="fa fa-plus"></i> Добавить</button>
         <button id="openUploadModal" class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#modalUploadItems"><i class="fa fa-upload"></i> Загрузить</button>
         <button id="deleteContactsShowModal" class="btn btn-danger btn-sm" type="button" data-toggle="modal" data-target="#deleteContactsModal" disabled >Удалить</button>
-        <?php if($adminRole !== 0) echo '<button id="appointResponsibleShow" style="background-color: #ff8c00; color: #fff" class="btn btn-warning btn-sm" type="button" disabled>Передать</button>'; ?>
+        <button id="appointResponsibleShow" style="background-color: #ff8c00; color: #fff" class="btn btn-warning btn-sm" type="button" disabled>Передать</button>
     </div>
-    <div class="col-md-2" style="padding-left: 0; padding-right: 10px; display: <?php if($adminRole === 0) echo 'none'?>">
-            <select id="respShow" class="form-control form-control-sm" name="" style="display: ">
+    <div class="" style="padding-left: 0; padding-right: 10px; display: <?php if($adminRole === 0) echo 'none'?>">
+            <select id="respShow" class="form-control form-control-sm" name="" style="width:180px;">
               <option value="_all_">Все ответственные</option>
               <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name['name']))."</option>"; ?>
             </select>
     </div>
-    <div class="col-md-2" style="padding-left: 0; padding-right: 10px;">
+    <div class="" style="padding-left: 0; padding-right: 10px;">
             <select id="statusShow" class="form-control form-control-sm" name="">
               <option value="_all_">Все статусы</option>
               <option value="7">Бланк</option>
@@ -66,21 +66,23 @@
               <option value="6">Завершение</option>
             </select>
     </div>
-    <div class="col-md-1" style="padding-left: 0; padding-right: 10px;">
+    <div class="" style="padding-left: 0; padding-right: 10px;">
             <select id="maleShow" class="form-control form-control-sm" name="">
-              <option value="_all_">Пол</option>
+              <option value="_all_">Все</option>
               <option value="1">муж.</option>
               <option value="0">жен.</option>
             </select>
     </div>
-    <div class="col-md-2" style="padding-left: 0; padding-right: 10px; <?php if($adminRole !== 0) echo 'display: none;'?>">
+    <?php if($adminRole === 0) {?>
+    <div class="" style="padding-left: 0; padding-right: 10px;">
             <select id="myBlanks" class="form-control form-control-sm" name="">
-              <option value="1" selected>текущие</option>
-              <option value="0">переданные</option>
+              <option value="1" selected>Мои контакты</option>
+              <option value="0">Переданные</option>
             </select>
     </div>
-    <div class="col-md-2" style="padding-left: 0; padding-right: 10px;">
-        <input type="text" id="search-text" class="form-control form-control-sm" placeholder="Строка поиска">
+  <?php }; ?>
+    <div class="" style="padding-left: 0; padding-right: 10px;">
+        <input type="search" id="search-text" class="form-control form-control-sm" name="search-text"  style="width:140px;" placeholder="Поиск">
     </div>
     <div style="text-align: left; margin-left: 10px; margin-top: 8px" id="selectAllChekboxMblShow"><input id="" type="checkbox" class="checkAllStrings" name="" value=""> Выбрать все</div>
   </div>
@@ -89,35 +91,33 @@
       <div class="" id="desctop_visible" style="margin-top: 60px;">
         <div id="" class="">
           <div class="tab-pane">
+            <a href="#0" class="cd-panel__close-watch js-cd-close-watch">Закрыть</a>
             <div class="cd-panel-watch cd-panel--from-right-watch js-cd-panel-main-watch">
               <div class="cd-panel__container-watch">
                 <div id="sideBarBlankContact" class="cd-panel__content-watch">
          <!-- your side panel content here -->
-            <div style="height:110px; margin-left: -10px; margin-bottom: 15px; border-bottom: 1px solid #eee;" >
+            <div style="height:40px; margin-left: -10px; margin-bottom: 18px;">
             </div>
             <header class="cd-panel__header-watch">
-              <h5><b>Карточка контакта</b></h5>
-              <a href="#0" class="cd-panel__close-watch js-cd-close-watch">Закрыть</a>
             </header>
-
               <div class="row">
-                <div class="col-12">
+                <div class="col-12" style="padding-left: 9px;">
                   <label for="" class="required-for-label">ФИО</label>
                   <input type="text" class="form-control form-control-sm" id="nameContact" placeholder="">
                 </div>
               </div>
               <div class="row" style="margin-top: 10px;">
-                <div class="col-6">
+                <div class="col-6" style="padding-right: 5px; padding-left: 9px;">
                   <label for="">Телефон</label>
                   <input type="text" class="form-control form-control-sm" id="phoneContact" placeholder="">
                 </div>
-                <div class="col-6">
-                  <label for="">Емайл</label>
+                <div class="col-6" style="padding-left: 5px;">
+                  <label for="">Email</label>
                   <input type="email" class="form-control form-control-sm" id="emailContact" placeholder="">
                 </div>
               </div>
 
-            <ul class="nav nav-tabs" style="margin-top: 10px">
+            <ul class="nav nav-tabs" style="margin-top: 10px; margin-left: -5px;">
               <li class="nav-item" id="personalBlank" style=""><a class="nav-link active" data-toggle="tab" href="#personalBlankTab" data-id="">Данные</a></li>
               <li class="nav-item" id="blankComment" style=""><a class="nav-link" data-toggle="tab" href="#blankCommentTab">Комментарий</a></li>
               <li class="nav-item" id="blankHistory" style=""><a class="nav-link" data-toggle="tab" href="#blankHistoryTab">История</a></li>
@@ -125,7 +125,7 @@
             <div class="tab-content">
               <div class="tab-pane container active" id="personalBlankTab" style="padding: 0;">
                 <div class="row" style="margin-top: 10px;">
-                  <div class="col-6">
+                  <div class="col-6" style="padding-right: 5px; padding-left: 9px;">
                     <label for="" class="required-for-label">Страна</label>
                     <!--<input type="text" class="form-control form-control-sm" id="countryContact" placeholder="">-->
                     <select class="form-control form-control-sm" id="countryContact">
@@ -140,7 +140,7 @@
                       <option value="EE">Эстония</option>
                     </select>
                   </div>
-                  <div class="col-6">
+                  <div class="col-6" style="padding-left: 5px;">
                     <label for="" class="required-for-label">Пол</label>
                     <select type="text" class="form-control form-control-sm" id="maleContact" placeholder="">
                       <option value="_none_">
@@ -150,33 +150,33 @@
                   </div>
                 </div>
                 <div class="row" style="margin-top: 10px;">
-                  <div class="col-6">
+                  <div class="col-6" style="padding-right: 5px; padding-left: 9px;">
                     <label for="">Область</label>
                     <input type="text" class="form-control form-control-sm" id="regionContact" placeholder="">
                   </div>
-                  <div class="col-6">
+                  <div class="col-6" style="padding-left: 5px;">
                     <label for="">Район (при наличии)</label>
                     <input type="text" class="form-control form-control-sm" id="areaContact" placeholder="">
                   </div>
                 </div>
                 <div class="row" style="margin-top: 10px;">
-                  <div class="col-6">
+                  <div class="col-6" style="padding-right: 5px; padding-left: 9px;">
                     <label for="">Населённый пункт</label>
                     <input type="text" class="form-control form-control-sm" id="localityContact" placeholder="">
                   </div>
-                  <div class="col-6">
+                  <div class="col-6" style="padding-left: 5px;">
                     <label for="">Индекс</label>
                     <input type="text" class="form-control form-control-sm" id="indexContact" maxlength="6" placeholder="">
                   </div>
                 </div>
                 <div class="row" style="margin-top: 10px;">
-                  <div class="col-12">
+                  <div class="col-12" style="padding-left: 9px;">
                     <label for="">Адрес</label>
                     <input type="text" class="form-control form-control-sm" id="addressContact" placeholder="">
                   </div>
                 </div>
                 <div class="row" style="margin-top: 10px;">
-                  <div class="col-12" <?php echo $isAdminZero; ?> >
+                  <div class="col-12" <?php echo $isAdminZero; ?>  style="padding-left: 9px;">
                     <label for="">Регион работы</label>
                     <select id="regionWorkContact" class="form-control form-control-sm" name="" title="Регион работы">
                       <option value=""></option>
@@ -186,7 +186,7 @@
                   </div>
                 </div>
                 <div class="row" style="margin-top: 10px;">
-                  <div class="col-6">
+                  <div class="col-6" style="padding-right: 5px; padding-left: 9px;">
                     <label for="">Статус</label>
                     <select class="form-control form-control-sm" id="statusContact" class="selectpicker">
                       <option value="" selected></option>
@@ -199,7 +199,7 @@
                       <option value="6">Завершение</option>
                     </select>
                   </div>
-                  <div class="col-6">
+                  <div class="col-6" style="padding-left: 5px;">
                     <label for="">Ответственный</label>
                     <select id="responsibleContact" class="form-control form-control-sm" name="" data-responsible_previous="" data-responsible="" title="Ответственный">
                       <?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name['name']))."</option>"; ?>
@@ -211,7 +211,7 @@
 
             <div class="tab-pane container fade" id="blankCommentTab" style="padding: 0;">
               <div class="row" style="margin-top: 20px;">
-                <div class="col-12">
+                <div class="col-12" style="padding-left: 9px;">
                   <textarea id="commentContact" class="form-control form-control-sm" rows="15" cols="80" style="width: 100%;"></textarea>
                 </div>
               </div>
@@ -237,10 +237,10 @@
                   </div>
                 </div>
               </div>
-          </div>
+            </div>
             <div class="" style="text-align: right; background-color: #f5f5f5; margin-left: -15px; margin-right: -15px; padding-top: 15px; padding-bottom: 15px; border-top: 1px solid lightgrey;">
 
-              <input id="orderSentToContact" class="btn btn-secondary btn-sm" type="button" data-id_admin="" data-id="" value="Отправить заказ" style="margin-right: 230px;" data-target="#saveConfirm" data-toggle="modal">
+              <input id="orderSentToContact" class="btn btn-secondary btn-sm" type="button" data-id_admin="" data-id="" value="Отправить заказ" style="margin-right: 95px;" data-target="#saveConfirm" data-toggle="modal">
               <input id="saveContact" class="btn btn-info btn-sm" type="button" data-id_admin="" data-id="" value="Сохранить" style="margin-right: 5px;">
               <input class="btn my_btn_cancel btn-sm" id="cd-panel__close-watch" type="button" name="" value="Закрыть" style="margin-right: 15px;">
             </div>
@@ -252,11 +252,11 @@
               <thead>
                 <tr>
                 <th style="text-align: left;"><input id="checkAllStrings" type="checkbox" class="" name="" value=""></th>
-                <th style="text-align: left; min-width:70px"><a id="sort-id" href="#" title="сортировать">ФИО</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;">Местность</th>
+                <th style="text-align: left; min-width:70px"><a id="sort-name-contact" href="#" title="сортировать">ФИО</a>&nbsp;<i class="fa fa-caret-down"></i></th>
+                <th style="text-align: left;"><a id="sort-locality-contact" href="#" title="сортировать">Местность<i class="fa icon_none"></a>&nbsp;</i></th>
                 <th style="text-align: left;">Телефон</th>
                 <th style="text-align: left;">Статус</th>
-                <th style="text-align: left;">Ответственный</th>
+                <th style="text-align: left; min-width:150px;">Ответственный</th>
                 </tr>
               </thead>
               <tbody><tr><td colspan="12"><h3 style="text-align: center">Загрузка списка.</h3></td></tr></tbody>
@@ -428,6 +428,9 @@
           </div>
           <div class="modal-body">
             <div class="col-md-12" style="padding-left: 0;">
+              Внимание! За один раз можно передать не более 100 контактов!
+            </div>
+            <div class="col-md-12" style="padding-left: 0;">
                 <select id="responsibleList" class="form-control form-control-sm" name="">
                   <option value="_all_"></option>
                   <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name['name'])."</option>"; ?>
@@ -442,18 +445,53 @@
       </div>
     </div>
 <!-- STOP Modal set responsible -->
+<!-- START Modal set responsible admin 0 -->
+    <div id="setResponsibleModalAdminZero" data-width="400" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+          </div>
+          <div class="modal-body">
+            <div class="col-md-12" style="padding-left: 0;">
+              Передать выбранные контакты?<br>
+              Внимание! За один раз можно передать не более 100 контактов!
+            </div>
+            <div class="col-md-12" style="padding-left: 0; overflow-y: auto; max-height: 300px;" id="listForSetRespAdminZero">
+
+            </div>
+          </div>
+            <div class="modal-footer">
+              <button class="btn btn-sm btn-success" id="appointResponsibleAdminZero" data-dismiss="modal" aria-hidden="true" >Передать</button>
+              <button class="btn  btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Отмена</button>
+            </div>
+          </div>
+      </div>
+    </div>
+<!-- STOP Modal set responsible admin 0 -->
+
 <!-- START Modal delete contact -->
     <div id="deleteContactsModal" data-width="400" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5>Удалить выбранные контакты</h5>
+            <h5>Удалить выбранные контакты?</h5>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
           </div>
           <div class="modal-body">
-            <div class="col-md-12" style="padding-left: 0;">
+            <div class="row">
+              <div class="col-md-12">
+                Данные будут удалены без возможности восстановления.<br>
+                Внимание! За один раз можно удалить не более 100 контактов!<br>
+                Будут удалены следующие контакты - <br>
+              </div>
             </div>
+            <div class="row">
+              <div class="col-md-12" id="listDeleteStr" style="max-height:300px; overflow-y: auto;">
+              </div>
             </div>
+          </div>
             <div class="modal-footer">
               <button class="btn btn-sm btn-danger" id="deleteContact" data-dismiss="modal" aria-hidden="true" disabled>Удалить</button>
               <button class="btn  btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Отмена</button>
@@ -558,7 +596,7 @@
       data_page.admin_role = '<?php echo $adminRole; ?>';
 
     </script>
-    <script src="/js/contacts.js?v5"></script>
+    <script src="/js/contacts.js?v9"></script>
     <script src="/js/contactsupload.js?v3"></script>
 <?php
     include_once "footer2.php";

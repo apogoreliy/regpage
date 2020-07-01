@@ -117,15 +117,17 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
             <div style="margin-bottom: 10px;">
                 <a class="show-templates open-in-meeting-window">Заполнить из шаблона</a>
             </div>
-            <div class="control-group row-fluid">
-              <select class="span4" id="meetingLocalityModal" valid="required" style="width: 46.5%;">
+            <div class="control-group row-fluid" style="width: 46.5%;">
+              <select class="span4" id="meetingLocalityModal" valid="required" >
                   <?php
                       foreach ($localities as $id => $name) {
                           echo "<option value='$id' ". ($id==$selMeetingLocality || $isSingleCity ? 'selected' : '') ." >".htmlspecialchars ($name)."</option>";
                       }
                   ?>
               </select>
-                <select id="meetingCategory" class="span12" valid="required" style="width: 48%; float: right;">
+              </div>
+              <div class="control-group row-fluid" style="width: 48%; float: right;">
+                <select id="meetingCategory" class="span12" valid="required">
                     <?php foreach ($meetingsTypes as $id => $name) {
                         echo "<option value='$id'>".htmlspecialchars ($name)."</option>";
                     } ?>
@@ -388,8 +390,8 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
     <div class="modal-body">
         <div class="desctop-visible tablets-visible">
           <div id="template">
-                <div class="control-group row-fluid">
-                    <select class="span12 template-locality" valid="required" style="width: 48%;">
+                <div class="control-group row-fluid" style="width: 48%;">
+                    <select class="span12 template-locality" valid="required" >
                         <option value='_none_' >&nbsp;</option>
                         <?php
                             foreach ($localities as $id => $name) {
@@ -397,7 +399,9 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
                             }
                         ?>
                     </select>
-                    <select  class="span12 template-meeting-type" valid="required"  style="width: 48%; float: right;">
+                    </div>
+                    <div class="control-group row-fluid"  style="width: 48%; float: right;">
+                    <select  class="span12 template-meeting-type" valid="required">
                         <option value='_none_'>&nbsp;</option>
                         <?php
                             foreach ($meetingsTypes as $id => $name) {
@@ -642,7 +646,7 @@ var gloIsSingleCity = parseInt('<?php echo $isSingleCity; ?>');
 var gloSingleLocality = gloIsSingleCity ? '<?php echo $singleLocality; ?>' : '';
 </script>
 
-<script src="/js/meetings.js?v130"></script>
+<script src="/js/meetings.js?v131"></script>
 <?php
     include_once './footer.php';
 ?>
