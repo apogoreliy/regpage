@@ -8,16 +8,20 @@ function handleScrollUp(){
     if (height>600 && (window.pageYOffset > 300 || document.documentElement.scrollTop >50)) {
       if ($('.contactsBtnsBar').css('margin-top') !=='-77px') {
 				if ($(window).width()>=769 && $(window).width()<1200) {
-				//	$('.contactsBtnsBar').css('padding-right','150px');
+				//$('.contactsBtnsBar').css('padding-right','90px');
 				}
 				$('.contactsBtnsBar').css('margin-top', '-77px');
-				$('.contactsBtnsBar').css('border-bottom', '1px solid lightgrey');
+				$('.contactsBtnsBar').css('border-bottom', '1px solid #ddd');
+				$('.contactsBtnsBar').css('border-left', '1px solid #ddd');
+				$('.contactsBtnsBar').css('border-right', '1px solid #ddd');
 				$('.contactsBtnsBar').css('background-color', '#eee');
       }
     } else {
       if ($('.contactsBtnsBar').css('margin-top') !== '-50px') {
 				$('.contactsBtnsBar').css('margin-top', '-50px');
 				$('.contactsBtnsBar').css('border-bottom', 'none');
+				$('.contactsBtnsBar').css('border-left', 'none');
+				$('.contactsBtnsBar').css('border-right', 'none');
 				$('.contactsBtnsBar').css('background-color', 'white');
       }
     }
@@ -52,13 +56,13 @@ if ($(window).width()>=1200) {
 	if ($(window).height()>=550) {
 		var windowScreenHeight = $(window).height();
 		var mainBlockHeight = windowScreenHeight;
-		if (data_page.admin_role > 0 && windowScreenHeight < 735) {
-			mainBlockHeight = mainBlockHeight - 323;
+		if (data_page.admin_role > 0 && windowScreenHeight < 675) {
+			mainBlockHeight = mainBlockHeight - 258;
 		} else {
-			mainBlockHeight = mainBlockHeight - 363;
+			mainBlockHeight = mainBlockHeight - 298;
 		}
-		var commentBlockHeight = windowScreenHeight - 373;
-		var chatBlockHeight = windowScreenHeight - 466;
+		var commentBlockHeight = windowScreenHeight - 308;
+		var chatBlockHeight = windowScreenHeight - 401;
 
 		chatBlockHeight+= 'px';
 		commentBlockHeight+= 'px';
@@ -75,7 +79,10 @@ if ($(window).width()>=1200) {
     $('#listContacts').show();
     $('#selectAllChekboxMblShow').hide();
 		if (data_page.admin_role === '0') {
-			$('.contactsBtnsBar').css('padding-right', '300px');
+			$('.contactsBtnsBar').css('padding-right', '200px');
+		}
+		if ($(window).width()>=769 && $(window).width()<1200) {
+			$('#orderSentToContact').css('margin-right','90px');
 		}
   } else {
 		$('.show-name-list').show();
@@ -97,6 +104,7 @@ if ($(window).width()>=1200) {
     $('#statusShow').parent().css('margin-top', '4px');
     $('#maleShow').parent().css('margin-top', '4px');
     $('#contactsBtnsBar').css('min-width', '100px');
+		$('#contactsBtnsBar').css('width', '100%');
     $('.fa-question').parent().parent().css('margin-left', '0px');
     $('.divider-vertical').css('height', '0px');
     $('.divider-vertical').css('width', '120px');
@@ -139,7 +147,7 @@ if ($(window).width()>=1200) {
       $('#respShow').parent().css('margin-top', '0px');
       $('#statusShow').parent().css('margin-top', '0px');
       $('#maleShow').parent().css('margin-top', '0px');
-      $('#contactsBtnsBar').css('min-width', '700px');
+      $('#contactsBtnsBar').css('width', '1170px');
       $('.divider-vertical').css('height', '34px');
       $('.divider-vertical').css('width', '0px');
       $('.divider-vertical').css('border-left', '1px solid  #716f6f');
@@ -148,9 +156,9 @@ if ($(window).width()>=1200) {
       $('#helpButton').show();
       $('#helpButtonMbl').hide();
 			//Desktop
-			$('.cd-panel__header-watch').css('width', '560px');
-			$('.cd-panel__container-watch').css('width', '560px');
-			$('#orderSentToContact').css('margin-right', '230px');
+			$('.cd-panel__header-watch').css('width', '420px');
+			$('.cd-panel__container-watch').css('width', '420px');
+			$('#orderSentToContact').css('margin-right', '90px');
 			$('#myBlanks').parent().attr('style', 'padding-left: 0; padding-right: 10px;');
 			$('#search-text').parent().attr('style', 'padding-left: 0; padding-right: 10px;');
 

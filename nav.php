@@ -122,7 +122,7 @@ switch ($h) {
                 echo"><a href='/youth'>Молодёжь</a></li>";
             }*/
 
-            if((!isset($isGuest) && db_isAdmin($memberId) && (!in_array('8', db_getUserSettings($memberId)))) || (db_hasAdminFullAccess($memberId) && (!in_array('8', db_getUserSettings($memberId))))) {
+            if((!isset($isGuest) && db_isAdmin($memberId) && (!in_array('8', db_getUserSettings($memberId))))) {
                 echo '<li';
                 if (strpos ($s,"/meetings")!==FALSE || strpos ($s,"/visits")!==FALSE ) {echo " class='active'";}
                 echo"><a href='/meetings'>Собрания</a></li>";

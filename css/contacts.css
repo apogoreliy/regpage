@@ -33,16 +33,16 @@
 .cd-panel__header-watch {
   /*...*/
   position: fixed;
-  top: 58px;
-  width: 560px;
-  height: 30px;
+  top: 50px;
+  width: 420px;
+  height: 0px;
   transition: transform 0.3s 0s;
   transform: translateY(-80px);
-  padding: 0px 5px 10px 15px;
+  padding: 0px 5px 0px 15px;
   /*border-left: 1px solid gray;
   border-top: 1px solid gray;
-  border-radius: 5px 0 0 0px;*/
-  z-index: 2;
+  border-radius: 5px 0 0 0px;
+  z-index: 2;*/
 }
 
 .cd-panel--from-right-watch .cd-panel__header-watch {
@@ -62,7 +62,7 @@
 .cd-panel__container-watch {
   /*...*/
   position: fixed;
-  width: 560px;
+  width: 420px;
   height: 100%;
   top: 0;
   transition: transform 0.3s 0s;
@@ -119,28 +119,47 @@
 }
 
 /*CLOSE BUTTON*/
+.cd-panel__close-watch-visible {
+  /*position: absolute;
+  top: 49px;
+  right: 420px !important;*/
+  visibility: visible !important;
+  transform: translate3d(-100%, 0, 0) !important;
+  transition: transform 0.3s 0s;
+  transition-delay: 0s;
+}
+
 .cd-panel__close-watch {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 60px;
+  position: fixed;
+  background-color: #e6e6e6;
+  top: 81px;
+  right: 0px;
+  height: 29px;
+  width: 437px;
+  margin-right: -420px;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.3s 0s;
   /* image replacement */
   display: inline-block;
   overflow: hidden;
   text-indent: 100%;
   white-space: nowrap;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border: 1px solid grey;
+  visibility: hidden;
+  /*transition: visibility 0s 0.3s;*/
 }
 
 .cd-panel__close-watch::before, .cd-panel__close-watch::after {
   /* close icon created in CSS */
   content: '';
   position: absolute;
-  top: 15px;
-  left: 20px;
-  height: 3px;
-  width: 20px;
-  background-color: #424f5c;
+  top: 13px;
+  left: 10px;
+  height: 2px;
+  width: 15px;
+  background-color: black;
   /* this fixes a bug where pseudo elements are slighty off position */
   -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
@@ -159,8 +178,10 @@
 }
 
 .cd-panel__close-watch:hover::before, .cd-panel__close-watch:hover::after {
-  background-color: #424f5c;
+  background-color: grey;
 }
+/*Close btn STOP*/
+
 /*SIDE PANEL STOP*/
 .float-right.upload_fields {
   margin-bottom: 10px;
@@ -183,10 +204,10 @@
   margin-right: auto;
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-right: 133px;
+  padding-right: 130px;
   padding-left: 20px;
   position: fixed;
-  max-width:1170px;
+  width:1170px;
   transition: margin-top 0.2s;
 }
 /*STOP BUTTONS BAR*/

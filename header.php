@@ -33,7 +33,7 @@ include_once "preheader.php";
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
     <link href="css/bootstrap-modal.css" rel="stylesheet" />
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet" />
-    <link href="css/style.css?v69" rel="stylesheet" />
+    <link href="css/style.css?v70" rel="stylesheet" />
     <link href="css/style_slide.css?v2" rel="stylesheet" />
 
     <script src="js/jquery.min.js" type="text/javascript"></script>
@@ -53,8 +53,8 @@ include_once "preheader.php";
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link rel="stylesheet" href="https://cdn.envybox.io/widget/cbk.css">
-    <script type="text/javascript" src="https://cdn.envybox.io/widget/cbk.js?wcb_code=27de0b86fa9a7c4373ae996711b6f549" charset="UTF-8" async></script>
+  <!--  <link rel="stylesheet" href="https://cdn.envybox.io/widget/cbk.css">
+    <script type="text/javascript" src="https://cdn.envybox.io/widget/cbk.js?wcb_code=27de0b86fa9a7c4373ae996711b6f549" charset="UTF-8" async></script>-->
 </head>
 
 <body style="padding-left: 5px; padding-right: 5px;">

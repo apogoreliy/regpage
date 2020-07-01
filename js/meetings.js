@@ -804,6 +804,9 @@ var isFillTemplate = 0;
                           case 'KM':
                               shortNameMeeting = 'K';
                               break;
+                          case 'VT':
+                              shortNameMeeting = 'В';
+                              break;
                          case '':
                               shortNameMeeting = '';
                               break;
@@ -1755,7 +1758,7 @@ var isFillTemplate = 0;
                     }
                     })
                   }
-            } else if (changeLocalityBox != 1 && (meetingType === 'GM' || meetingType === 'CM' || meetingType === 'HM' || meetingType === 'YM') && locality && title === 'Новое собрание' && countMembers != 0) {
+            } else if (changeLocalityBox != 1 && (meetingType === 'GM' || meetingType === 'CM' || meetingType === 'HM' || meetingType === 'YM' || meetingType === 'VT') && locality && title === 'Новое собрание' && countMembers != 0) {
               if (confirm("Внимание! Очистить список участников?")) {
                 var modalWindow = $("#addEditMeetingModal");
                 modalWindow.find('.members-available').html('');
@@ -1766,7 +1769,7 @@ var isFillTemplate = 0;
                 //(meetingLocalityModal == '001013' || meetingLocalityModal == '001009') ? $('.meeting-count-fulltimers').val('0') : '';
                 // $('#meetingLocalityModal').val() == '001009' ? $('.meeting-count-trainees').val('0') : '';
               }
-            } else if (changeLocalityBox == 1 && (meetingType === 'GM' || meetingType === 'CM' || meetingType === 'HM' || meetingType === 'YM' || meetingType === 'LT' || meetingType === 'PM') && locality && title === 'Новое собрание' && countMembers != 0) {
+            } else if (changeLocalityBox == 1 && (meetingType === 'GM' || meetingType === 'CM' || meetingType === 'HM' || meetingType === 'YM' || meetingType === 'LT' || meetingType === 'PM' || meetingType === 'VT') && locality && title === 'Новое собрание' && countMembers != 0) {
               if (confirm("Внимание! Список будет очищен! Продолжить?")) {
               changeLocalityBox = 0;
               var modalWindow = $("#addEditMeetingModal");
@@ -2176,7 +2179,7 @@ var modalAddMembersTemplate = $("#modalAddMembersTemplate");
          });
        }
 
-         function getMeStatistics (listMembers, meetingArray) {           
+         function getMeStatistics (listMembers, meetingArray) {
            $(meetingArray).each(function(i) {
              item = meetingArray[i];
              var meetingId = item.id;
