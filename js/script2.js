@@ -34,13 +34,13 @@ function showError(html, autohide) {
     return shortName;
   }
 // Lastname F.T.
-	function shortNames3(fullName) {
+	function shortNames3(fullName, nameOnly) {
 		var shortName;
 		fullName ? fullName = fullName.split(' ') : '';
 		if (fullName) {
 			shortName = fullName[0] + ' ' + fullName[1][0] + '. ';
 		}
-		if (fullName[2]) {
+		if (fullName[2] && !nameOnly) {
 			shortName = shortName + fullName[2][0] + '. ';
 		}
 		return shortName;

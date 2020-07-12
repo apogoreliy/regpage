@@ -2521,3 +2521,10 @@ function renewComboLists(comboboxSelector) {
     $(comboboxSelector).val(pathpath);
   }
 }
+
+//notification
+$('.bell-alarm, .bell-alarm-mbl').click(function () {
+	if (window.location !== '/contacts') {
+		window.location = '/contacts';
+	}
+});

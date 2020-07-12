@@ -46,6 +46,12 @@ if(isset($_GET['add_crm_id'])){
     exit();
 }
 
+// Statistic status
+if(isset($_GET['add_history_status'])){
+    db_addStatusHistoryStr($_GET['status']);
+    exit();
+}
+
 // CHAT
 if(isset($_GET['get_messages'])){
     echo json_encode(["messages"=>db_getChatMessages($adminId,$_GET['id'])]);
@@ -87,6 +93,17 @@ if (isset ($_POST['text_message']))
         echo json_encode(["result"=>true]);
         exit;
     }
+}
+
+// notification
+if(isset($_GET['set_notice'])){
+    db_newNotification($_GET['admin'],$_GET['contact']);
+    exit();
+}
+
+if(isset($_GET['delete_notices'])){
+    db_deleteNotification($_GET['id']);
+    exit();
 }
 
 ?>

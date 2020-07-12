@@ -3,6 +3,8 @@ $s = $_SERVER["SCRIPT_NAME"];
 $isEventAdminNav = isset($memberId) ? db_hasRightToHandleEvents($memberId) : false;
 $h = ($_SERVER['PHP_SELF']);
 $res = '';
+db_checkNotice($memberId) ? $noticeOn = '' : $noticeOn = 'none';
+$tempTmp = db_checkNotice($memberId);
 switch ($h) {
      case '/index.php':
         $res = 'События';
@@ -58,6 +60,8 @@ switch ($h) {
       <span class="show-name-list" style="color: white; display:none;"><b><?php echo $res; ?></b></span>
       <div class="row">
         <ul id="helpButtonMbl" class="nav" style="margin-left: auto; margin-right: 10px; display: none;">
+          <i class="fa fa-bell bell-alarm-mbl cursor-pointer" style="<?php echo db_checkNotice($memberId); ?>" title="У вас есть новые карточки"></i>
+          <!--<i class="fa fa-envelope envelope-support-mbl cursor-pointer" title="Обратится в службу поддержки"></i>-->
           <li class="nav-item dropdown" style="margin-top: 3px;">
             <a class="btn help_link" type="button" data-toggle="dropdown" style="background-color: white; font-size: 14px; padding: 3px 10px!important;"><i class="fa fa-question fa-lg"></i><span class="hide-name"></span></a>
               <ul class="dropdown-menu pull-right" style="padding: 5px; left: -320%; min-width: 190px">
@@ -188,6 +192,8 @@ switch ($h) {
                 echo '><a href="/signup">Создать учётную запись</a></li>';
             }
             ?>
+            <i class="fa fa-bell bell-alarm cursor-pointer" style="<?php echo db_checkNotice($memberId); ?>" title="У вас есть новые карточки"></i>
+            <!--<i class="fa fa-envelope envelope-support cursor-pointer" title="Обратится в службу поддержки"></i>-->
             <ul id="helpButton" class="nav" style="margin-left: auto; margin-right: 10px;">
               <li class="nav-item dropdown" style="margin-top: 3px;">
                 <a class="btn dropdown-toggle help_link" type="button" data-toggle="dropdown" style="background-color: white; font-size: 14px; padding: 3px 10px!important;"><i class="fa fa-question fa-lg"></i><span class="hide-name"> Помощь</span></a>
@@ -283,4 +289,5 @@ referenceSysAnew();
         }
     }
     var glbRoleAdmin = parseInt('<?php echo db_getAdminRole($memberId); ?>');
+    
 </script>

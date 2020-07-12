@@ -93,4 +93,32 @@ label.required-for-label:after
   padding: 0;
   border-left: 1px solid #716f6f;
 }
+
+.bell-alarm {
+  margin-left: 10px;
+  margin-top: 7px;
+  font-size: 18px;
+  color: gold;
+}
+
+.bell-alarm-mbl {
+  margin-right: 10px;
+  margin-top: 7px;
+  font-size: 18px;
+  color: gold;
+}
+
+.envelope-support {
+  margin-left: 10px;
+  margin-top: 7px;
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.envelope-support-mbl {
+  margin-right: 10px;
+  margin-top: 7px;
+  font-size: 18px;
+  color: #FFFFFF;
+}
 /*NAVBARS STOP*/

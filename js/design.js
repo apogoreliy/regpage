@@ -57,8 +57,10 @@ if ($(window).width()>=1200) {
 		var windowScreenHeight = $(window).height();
 		var mainBlockHeight = windowScreenHeight;
 		if (data_page.admin_role > 0 && windowScreenHeight < 675) {
-			mainBlockHeight = mainBlockHeight - 258;
-		} else {
+			mainBlockHeight = mainBlockHeight - 170 - (windowScreenHeight - 550);
+		} else if (data_page.admin_role === '0' && windowScreenHeight < 615) {
+			mainBlockHeight = mainBlockHeight - 225 - (windowScreenHeight - 550);
+		}else {
 			mainBlockHeight = mainBlockHeight - 298;
 		}
 		var commentBlockHeight = windowScreenHeight - 308;
@@ -77,7 +79,7 @@ if ($(window).width()>=1200) {
 		//$('.show-name-list').hide();
     $('#listContactsMbl').hide();
     $('#listContacts').show();
-    $('#selectAllChekboxMblShow').hide();
+    $('#selectAllChekboxMblShow').hide();		
 		if (data_page.admin_role === '0') {
 			$('.contactsBtnsBar').css('padding-right', '200px');
 		}

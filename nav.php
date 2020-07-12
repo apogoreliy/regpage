@@ -58,12 +58,13 @@ switch ($h) {
   <div class="navbar-inner">
     <div class="container">
         <span class="show-name-list" style="margin-top:10px;"><?php echo $res; ?></span>
+        <i class="fa fa-bell bell-alarm-mbl cursor-pointer" style="color: gold; font-size: 18px; margin-top: 12px; margin-left: 150px; <?php echo db_checkNotice($memberId); ?>" aria-hidden="true" title="У вас есть новые карточки"></i>
+        <!--<i class="fa fa-envelope cursor-pointer" title="Обратится в службу поддержки" aria-hidden="true" style="color: white; font-size: 18px; margin-top: 13px;"></i>-->
         <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-
         <div class="btn-group" style="float: right; margin-right: 10px;">
           <a class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: 1px; height: 19px;"><i class="fa fa-question fa-lg"></i><span class="hide-name" style="padding-left: 5px">Помощь</span></a>
             <ul class="dropdown-menu pull-right">
@@ -89,7 +90,6 @@ switch ($h) {
                 ?>
             </ul>
         </div>
-
         <!-- <span class="btn fa fa-envelope-o fa-lg send-message-support-phone" style="float: right;" data-toggle="modal" data-target="#messageAdmins" title="Отправить сообщение службе поддержки" aria-hidden="true"></span> -->
 
         <div class="nav-collapse collapse">
@@ -240,6 +240,8 @@ switch ($h) {
                 echo '><a href="/signup">Создать учётную запись</a></li>';
             }
             ?>
+            <i class="fa fa-bell bell-alarm cursor-pointer" style="color: gold; font-size: 18px; margin-top: 12px; margin-left: 10px; <?php echo db_checkNotice($memberId); ?>" aria-hidden="true" title="У вас есть новые карточки"></i>
+            <!--<i class="fa fa-envelope cursor-pointer" title="Обратится в службу поддержки" aria-hidden="true" style="color: white; font-size: 18px; margin-top: 13px;"></i>-->
         </ul>
       </div><!--/.nav-collapse -->
       <div class='notifications center'></div>
@@ -309,4 +311,18 @@ referenceSysAnew();
         }
     }
     var glbRoleAdmin = parseInt('<?php echo db_getAdminRole($memberId); ?>');
+
+    // notifications
+    $('.bell-alarm').click(function () {
+    	if (window.location != '/contacts') {
+        document.cookie = "sort_new=sort_new";
+    		window.location = '/contacts';
+    	}
+    });
+    if ($(window).width()>=769) {
+      $('.bell-alarm-mbl').hide();
+    } else {
+      $('.bell-alarm').hide();
+    }
+    // STOP notifications
 </script>
