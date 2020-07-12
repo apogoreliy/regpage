@@ -53,7 +53,7 @@ function db_getContactString ($id){
   $result = [];
 
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name
+    c.sending_date, c.crm_id, m.name AS member_name, notice
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
     WHERE c.id = '$id'");
@@ -80,6 +80,7 @@ function db_responsibleSet($id, $responsibleNew, $adminId){
   foreach ($id as $value) {
     db_query ("UPDATE contacts SET `responsible` = '$responsibleKey', `responsible_previous` = '$value[1]' WHERE `id`='$value[0]'");
     db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$value[0]', '$adminId', '$text')");
+    db_newNotification($responsibleKey, $value[0]);
   }
 }
 // responsible set for admin 0
@@ -91,6 +92,7 @@ function db_responsibleSetZero($data, $adminId){
     $text = 'Назначен ответственный '.$value[2];
     db_query ("UPDATE contacts SET `responsible` = '$value[1]', `responsible_previous` = '$adminId' WHERE `id`='$value[0]'");
     db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$value[0]', '$adminId', '$text')");
+    db_newNotification($value[1], $value[0]);
   }
 }
 
@@ -102,14 +104,14 @@ function db_getContactsStrings($memberId, $role){
   $result = [];
   if ($role > 0) {
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name
+    c.sending_date, c.crm_id, m.name AS member_name, notice
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
     WHERE c.responsible_previous = '$memberId' OR c.responsible = '$memberId' ORDER BY c.name");
     while ($row = $res->fetch_assoc()) $result[]=$row;
   } else {
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name
+    c.sending_date, c.crm_id, m.name AS member_name, notice
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
     WHERE c.responsible_previous = '$memberId' OR c.responsible = '$memberId' ORDER BY c.name");
@@ -267,7 +269,45 @@ function db_getAdminMembersAdmins ($adminId)
           $list[$key]=$value;
         }
       }
-      return $list;
-    }
+    return $list;
+}
+
+function db_addStatusHistoryStr($status)
+{
+  global $db;
+  $status = $db->real_escape_string($status);
+  db_query("INSERT INTO contacts_statistic (`date_changed`, `status`) VALUES (NOW(), '$status')");
+}
+
+function db_getMemberListAdminsForContacts ()
+{
+    $res=db_query ("SELECT a.member_key as id, m.name as name
+        FROM admin as a
+        INNER JOIN member m ON m.key = a.member_key
+        ");
+
+    $members = array ();
+    while ($row = $res->fetch_assoc()) $members[$row['id']]=$row['name'];
+    return $members;
+}
+
+// new notification
+function db_newNotification($adminId, $contactId){
+  global $db;
+  $contactId = $db->real_escape_string($contactId);
+  $adminId = $db->real_escape_string($adminId);
+
+  db_query("UPDATE contacts SET `notice` = 1 WHERE `id` = '$contactId'");
+
+}
+
+// delete notification
+function db_deleteNotification($id)
+{
+  global $db;
+  $id = $db->real_escape_string($id);
+
+  db_query("UPDATE contacts SET `notice` = 0 WHERE `id` = '$id'");
+}
 
 ?>

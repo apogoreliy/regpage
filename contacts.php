@@ -8,13 +8,14 @@
       echo "Location: http://www.reg-page.ru/settings.php";
       exit();
     }*/
-
+    $bellOn = $_COOKIE['sort_new'] == 'sort_new' ? $_COOKIE['sort_new'] : '';
     $localities = db_getAdminMeetingLocalities($memberId);
     $isSingleCity = db_isSingleCityAdmin($memberId);
     $adminLocality = db_getAdminLocality($memberId);
     $adminRole = db_getAdminRole($memberId);
     $adminRole === 0 ? $isAdminZero = 'style="display: none;' : '';
     $membersForCombobox = db_getAdminMembersAdmins($memberId);
+    $listAdmins = db_getMemberListAdminsForContacts();
 
     function shortNameMember ($fullName='')
       {
@@ -85,6 +86,18 @@
         <input type="search" id="search-text" class="form-control form-control-sm" name="search-text"  style="width:140px;" placeholder="Поиск">
     </div>
     <div style="text-align: left; margin-left: 10px; margin-top: 8px" id="selectAllChekboxMblShow"><input id="" type="checkbox" class="checkAllStrings" name="" value=""> Выбрать все</div>
+
+    <div class="dropdown" style="display: none;">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span class="sortName">Сортировать</span>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" id="dropdownMenu" aria-labelledby="dropdownMenu1">
+            <li><a id="sort-date" href="#" title="сортировать">Дата</a>&nbsp;<i class="icon-chevron-down"></i></li>
+            <li><a id="sort-meeting_type" href="#" title="сортировать">Собрание</a>&nbsp;<i class="icon-chevron-up"></i></li>
+            <li><a id="sort-list_count" href="#" title="сортировать">На собрании</a>&nbsp;<i class="icon-none"></i></li>
+        </ul>
+    </div>
   </div>
 <!-- Botton bar Statistic STOP -->
 <!-- List Statistic BEGIN -->
@@ -428,9 +441,6 @@
           </div>
           <div class="modal-body">
             <div class="col-md-12" style="padding-left: 0;">
-              Внимание! За один раз можно передать не более 100 контактов!
-            </div>
-            <div class="col-md-12" style="padding-left: 0;">
                 <select id="responsibleList" class="form-control form-control-sm" name="">
                   <option value="_all_"></option>
                   <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name['name'])."</option>"; ?>
@@ -455,8 +465,7 @@
           </div>
           <div class="modal-body">
             <div class="col-md-12" style="padding-left: 0;">
-              Передать выбранные контакты?<br>
-              Внимание! За один раз можно передать не более 100 контактов!
+              <b>Передать выбранные контакты?</b><br>
             </div>
             <div class="col-md-12" style="padding-left: 0; overflow-y: auto; max-height: 300px;" id="listForSetRespAdminZero">
 
@@ -482,9 +491,8 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-md-12">
-                Данные будут удалены без возможности восстановления.<br>
-                Внимание! За один раз можно удалить не более 100 контактов!<br>
-                Будут удалены следующие контакты - <br>
+                <b>Данные будут удалены без возможности восстановления.</b><br>
+                Будут удалены следующие контакты: <br>
               </div>
             </div>
             <div class="row">
@@ -581,7 +589,6 @@
       }
       serving_onesTmp=[];
 
-
       data_page.admin_localities = [];
       var admin_localities = '<?php foreach ($localities as $id => $name) echo $id.'_'.$name.'_'; ?>';
       var admin_localitiesTmp = admin_localities ? admin_localities.split('_') : [];
@@ -592,11 +599,20 @@
         }
       }
       admin_localitiesTmp=[];
-
       data_page.admin_role = '<?php echo $adminRole; ?>';
+      data_page.full_admin_list =[];
+      var admins_list = '<?php foreach ($listAdmins as $id => $name) echo $id.'_'.$name.'_'; ?>';
+      var admin_list_tmp = admins_list ? admins_list.split('_') : [];
+      for (var i = 0; i < admin_list_tmp.length; i = i + 2) {
+        if (admin_list_tmp[i+1]) {
+          data_page.full_admin_list[String(admin_list_tmp[i])] = admin_list_tmp[i+1];
+        }
+      }
+      admins_list = [], admin_list_tmp = [];
 
+      data_page.sort_new = '<?php echo $bellOn; ?>';
     </script>
-    <script src="/js/contacts.js?v9"></script>
+    <script src="/js/contacts.js?v13"></script>
     <script src="/js/contactsupload.js?v3"></script>
 <?php
     include_once "footer2.php";

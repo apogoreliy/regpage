@@ -7,10 +7,18 @@ $(document).ready(function(){
   if (data_page.admin_role === '0') {
     $('#responsibleContact').html('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
   } else {
-    $('#responsibleContact').val(window.adminId);
+    var checkOption;
+    $('#responsibleContact option').each(function() {
+      if ($(this).val() === window.adminId) {
+        checkOption = 1;
+        $('#responsibleContact').val(window.adminId);
+      }
+    });
+    if (!checkOption) {
+      $('#responsibleContact').append('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
+      $('#respShow').append('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
+    }
   }
-
-
 
 function contactsStringsLoad(x, idStr, sort) {
  if (!sort) {
@@ -42,18 +50,22 @@ function contactsStringsLoad(x, idStr, sort) {
     }
     return result
   }
+
+  var newString, prevAdm, dateorder, datesending, idStrMbl = '', idStrDsk = '';
   for (var i = 0; i < x.length; i++) {
 
-    var prevAdm, dateorder, datesending, idStrMbl = '', idStrDsk = '';
+    idStrMbl = '';
+    idStrDsk = '';
+
     if ($(window).width()>=769) {
       idStrDsk = idStr;
     } else {
       idStrMbl = idStr;
     }
     if (data_page.admin_role > 0) {
-      prevAdm = data_page.members_responsibles[x[i].responsible_previous];
+      prevAdm = data_page.full_admin_list[x[i].responsible_previous];
     } else {
-      prevAdm = data_page.members_admin_responsibles[x[i].responsible_previous];
+      prevAdm = data_page.full_admin_list[x[i].responsible_previous];
     }
     prevAdm ? prevAdm = twoNames2(prevAdm) : prevAdm = '';
     statusSwitch(x[i].status);
@@ -77,10 +89,11 @@ function contactsStringsLoad(x, idStr, sort) {
       datesending = x[i].sending_date.slice(0,10);
       datesending = dateStrToddmmyyyyToyyyymmdd(datesending, true);
     }
+    x[i].notice === '1' && x[i].responsible === window.adminId ? newString = 'bg-notice-string ' : newString = '';
 
-    tableData.push('<tr class="contacts_str '+(idStrDsk === x[i].id ? 'active_string' : '')+' cursor-pointer" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+x[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+comSlice+'</span></td><td><span  class="data_locality">'+(x[i].locality === ' ' ? '' : x[i].locality)+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+x[i].region+'</span></td><td class="data_phone">'+x[i].phone+'</td><td class="data_status">'+statusSwitch(x[i].status)+'</td><td><span class="data_responsible_sort_name">'+twoNames2(x[i].member_name)+'</span><br><span class="data_responsible_previous grey_text">'+prevAdm+'</span></td></tr>');
+    tableData.push('<tr class="'+newString+'contacts_str '+(idStrDsk === x[i].id ? 'active_string' : '')+' cursor-pointer" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+x[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+comSlice+'</span></td><td><span  class="data_locality">'+(x[i].locality === ' ' ? '' : x[i].locality)+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+x[i].region+'</span></td><td class="data_phone">'+x[i].phone+'</td><td class="data_status">'+statusSwitch(x[i].status)+'</td><td><span class="data_responsible_sort_name">'+twoNames2(x[i].member_name)+'</span><br><span class="data_responsible_previous grey_text">'+prevAdm+'</span></td></tr>');
 
-    tableDataMbl.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="contacts_str cursor-pointer '+(idStrMbl === x[i].id ? 'active_string' : '')+'" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'"><div><input class="checkboxString" type="checkbox"><span class="data_name"> <b>'+x[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 17px;"> '+(x[i].locality === ' ' ? '' : x[i].locality)+', </span><span class="" style="margin-left: 0"> '+x[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+x[i].phone+'">'+x[i].phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+statusSwitch(x[i].status)+'</div></div>');
+    tableDataMbl.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+newString+'contacts_str cursor-pointer '+(idStrMbl === x[i].id ? 'active_string' : '')+'" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+x[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;">'+(x[i].locality === ' ' ? '' : x[i].locality)+'</span><span>, </span><span class="" style="margin-left: 0"> '+x[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+x[i].phone+'">'+x[i].phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+statusSwitch(x[i].status)+'</div></div>');
   }
    $('#listContacts tbody').html(tableData);
    $('#listContactsMbl').html(tableDataMbl);
@@ -121,7 +134,8 @@ function contactsStringsLoad(x, idStr, sort) {
      data_status: $(this).find('.data_status').text(),
      responsible_sort_name: $(this).find('.data_responsible_sort_name').text(),
      responsible_previous_short_name: $(this).find('.data_responsible_previous').text(),
-     active_string: $(this).hasClass('active_string')
+     active_string: $(this).hasClass('active_string'),
+     notice: $(this).hasClass('bg-notice-string')
    });
  });
 
@@ -168,9 +182,9 @@ function contactsStringsLoad(x, idStr, sort) {
    }
    for (var i = 0; i < stringsArr.length; i++) {
 
-   tableDataSort.push('<tr class="contacts_str '+(stringsArr[i].active_string && isDsk ? 'active_string' : '')+' cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+ stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+stringsArr[i].address+'" data-area="'+stringsArr[i].area+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+stringsArr[i].region+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+stringsArr[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+stringsArr[i].shortComment+'</span></td><td><span  class="data_locality">'+stringsArr[i].locality+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+stringsArr[i].region+'</span></td><td class="data_phone">'+stringsArr[i].data_phone+'</td><td class="data_status">'+stringsArr[i].data_status+'</td><td><span class="data_responsible_sort_name">'+stringsArr[i].responsible_sort_name+'</span><br><span class="data_responsible_previous grey_text">'+stringsArr[i].responsible_previous_short_name+'</span></td></tr>');
+   tableDataSort.push('<tr class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str '+(stringsArr[i].active_string && isDsk ? 'active_string' : '')+' cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+ stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+stringsArr[i].address+'" data-area="'+stringsArr[i].area+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+stringsArr[i].region+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+stringsArr[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+stringsArr[i].shortComment+'</span></td><td><span  class="data_locality">'+stringsArr[i].locality+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+stringsArr[i].region+'</span></td><td class="data_phone">'+stringsArr[i].data_phone+'</td><td class="data_status">'+stringsArr[i].data_status+'</td><td><span class="data_responsible_sort_name">'+stringsArr[i].responsible_sort_name+'</span><br><span class="data_responsible_previous grey_text">'+stringsArr[i].responsible_previous_short_name+'</span></td></tr>');
 
-   tableDataMblSort.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="contacts_str cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+(stringsArr[i].address === ' ' ? '' : stringsArr[i].address)+'" data-area="'+(stringsArr[i].area === ' ' ? '' : stringsArr[i].area)+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+(stringsArr[i].region === ' ' ? '' : stringsArr[i].region)+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><div><input class="checkboxString" type="checkbox"><span class="data_name"> <b>'+stringsArr[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 17px;"> '+stringsArr[i].locality+', </span><span class="" style="margin-left: 0"> '+stringsArr[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+stringsArr[i].data_phone+'">'+stringsArr[i].phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+stringsArr[i].data_status+'</div></div>');
+   tableDataMblSort.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+(stringsArr[i].address === ' ' ? '' : stringsArr[i].address)+'" data-area="'+(stringsArr[i].area === ' ' ? '' : stringsArr[i].area)+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+(stringsArr[i].region === ' ' ? '' : stringsArr[i].region)+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+stringsArr[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;"> '+stringsArr[i].locality+'</span><span>, </span></span><span class="" style="margin-left: 0"> '+stringsArr[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+stringsArr[i].data_phone+'">'+stringsArr[i].phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+stringsArr[i].data_status+'</div></div>');
 
  }
   $('#listContacts tbody').html(tableDataSort);
@@ -202,6 +216,10 @@ function contactsStringsLoad(x, idStr, sort) {
 
    $('.contacts_str').click(function(e) {
      e.stopPropagation();
+     if ($(this).hasClass('bg-notice-string')) {
+       $(this).removeClass('bg-notice-string')
+       deleteNoticesAboutContact($(this).attr('data-id'));
+     }
      $('#orderDateEditIco').show();
      $('#orderDateEdit').parent().hide();
      if ($('.cd-panel-watch').hasClass('cd-panel--is-visible-watch')) {
@@ -388,8 +406,56 @@ function contactsStringsLoad(x, idStr, sort) {
        }, 120);*/
      }
    });
+   $('.bell-alarm, .bell-alarm-mbl').click(function () {
+     if ($(this).hasClass('this_sorted')) {
+       filtersOfString();
+       $('.bell-alarm').removeClass('this_sorted');
+       $('.bell-alarm-mbl').removeClass('this_sorted');
+     } else {
+        if (window.location.pathname === '/contacts') {
+         var cheking = 0;
+         $('.contacts_str').each(function () {
+           if ($(this).hasClass('bg-notice-string')) {
+             cheking++;
+             $(this).show();
+           } else {
+             $(this).hide();
+           }
+         });
+         if (cheking === 0) {
+           filtersOfString();
+         } else {
+           $('.bell-alarm').addClass('this_sorted');
+           $('.bell-alarm-mbl').addClass('this_sorted');
+         }
+       }
+     }
+   });
+
+   if (data_page.sort_new === 'sort_new') {
+     $('.contacts_str').each(function () {
+       if ($(this).hasClass('bg-notice-string')) {         
+         $(this).show();
+       } else {
+         $(this).hide();
+       }
+     });
+     document.cookie = "sort_new=none";
+   }
+
    setTimeout(function () {
-     filtersOfString();
+     if (!data_page.sort_new) {
+      filtersOfString();
+     } else {
+       data_page.sort_new = '';
+       $('.contacts_str').each(function () {
+         if ($(this).hasClass('bg-notice-string')) {
+           $(this).show();
+         } else {
+           $(this).hide();
+         }
+       });
+     }
    }, 50);
 }
 
@@ -513,6 +579,22 @@ function historyBuilder(data) {
       });
     }
 
+// notification
+// add notice about contact
+  function addNoticeAboutContact(idAdmin, idContact) {
+    if (idContact) {
+      $.get('/ajax/contacts.php?set_notice', {admin: idAdmin, contact: idContact})
+      .done (function(data) {
+      });
+    }
+  }
+// delete notice about contact
+  function deleteNoticesAboutContact(id) {
+    $.get('/ajax/contacts.php?delete_notices', {id: id})
+    .done (function(data) {
+    });
+  }
+
 // ADD NEW CONTACT
   function clearingBlankOfContact() {
 
@@ -559,10 +641,19 @@ function historyBuilder(data) {
     // create new contact AND responsible has been choisen
     currentResponsible = $('#responsibleContact').val();
     prevResponsible = $('#responsibleContact').attr('data-responsible_previous');
+    // add notice
+    if (currentResponsible !== window.adminId) {
+      prevResponsible = window.adminId;
+    }
   } else if ($('#responsibleContact').val() && ($('#responsibleContact').val() !== $('#responsibleContact').attr('data-responsible'))) {
+    // responsible has been changed
     currentResponsible = $('#responsibleContact').val();
     prevResponsible = $('#responsibleContact').attr('data-responsible');
     setTimeout(function () {
+      // add notice
+      if (currentResponsible !== window.adminId) {
+        addNoticeAboutContact(currentResponsible, $('#saveContact').attr('data-id'));
+      }
       if (data_page.admin_role === '0') {
           clearingBlankOfContact();
           $('.cd-panel-watch').removeClass('cd-panel--is-visible-watch');
@@ -595,6 +686,12 @@ function historyBuilder(data) {
       data.order_date = null;
     }
 
+    if ($('#statusContact').val() && $('#statusContact').val() !== $('.active_string').attr('data-status_key')) {
+      $.get('/ajax/contacts.php?add_history_status', {status: $('#statusContact').val()})
+      .done (function(data) {
+      });
+    }
+
     $('#saveContact').attr('data-id_admin') ? data.admin = $('#saveContact').attr('data-id_admin') : data.admin = window.adminId;
 
     $.get('/ajax/contacts.php?new_update_contact', {data: data})
@@ -604,6 +701,11 @@ function historyBuilder(data) {
           $('#saveContact').attr('data-id_admin', window.adminId);
 
           if ($('#responsibleContact').val()) {
+            if ($('#responsibleContact').val() !== window.adminId) {
+              // Проблема айакс внутри аякса, надо внешний переделать на пост.
+              console.log('Im here mushkela!');
+              addNoticeAboutContact($('#responsibleContact').val(), data.id);
+            }
             $('#responsibleContact').attr('data-responsible', $('#responsibleContact').val());
           } else {
             $('#responsibleContact').attr('data-responsible', window.adminId);
@@ -746,7 +848,7 @@ function historyBuilder(data) {
         showHint('Назначаемый ответственный не должен совпадать с текущим ответственным');
         return
       }
-      var responsibleArr = [$('#responsibleList').val(), shortNames3($('#responsibleList option:selected').text())];
+      var responsibleArr = [$('#responsibleList').val(), shortNames3($('#responsibleList option:selected').text(), true)];
     // ПРОВЕРИТЬ на больших объёмах, возможно лучше действовать синхронно, что бы запрос не выполнился прежде формирования   массива содержащего данные для запроса
       $.get('/ajax/contacts.php?responsible_set', {id: data, responsible: responsibleArr})
         .done (function(data) {
@@ -857,6 +959,7 @@ function historyBuilder(data) {
         $('.active_string').attr('data-responsible_previous', data.responsible_previous);
         $('.active_string').attr('data-id', data.id);
         $('.active_string').attr('data-status_key',data.status);
+        $('.active_string').find('.data_status').text($('#statusContact option:selected').text());
         $('.active_string').find('.data_responsible_sort_name').text(twoNames2(data.member_name));
         $('.active_string').find('.data_responsible_previous').text(twoNames2(data_page.members_responsibles[data.responsible_previous]));
 
@@ -1271,6 +1374,10 @@ function sendTheOrder(ua) {
       $('#listDeleteStr').html(list);
     });
 
+    // notifications
+
+
+    // STOP notifications
 // STOP change date in the blank
   /*$('#openUploadModal').click(function() {
     $('#uploadModal').modal('show');
