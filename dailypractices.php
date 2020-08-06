@@ -1,8 +1,11 @@
 <?php
 //Автоматическое добавление строк для учёта практик (practices) выполняется по заданию (cron)
 include_once 'db.php';
+include_once 'logWriter.php';
 
 function db_newDailyPractices(){
+
+  logFileWriter(false, 'ПРАКТИКИ. Автоматическое добавление строк учёта практик.', 'DEBUG');
 
   $currentDate = date("Y-m-d");
   $yesterday = date("Y-m-d", strtotime("-1 days"));
@@ -21,6 +24,7 @@ function db_newDailyPractices(){
       //$resultat
       echo "$aa, ";
       db_query("INSERT INTO practices (`date_create`, `member_id`, `date_practic`) VALUES (NOW(), '$aa', '$currentDate')");
+      logFileWriter($aa, 'ПРАКТИКИ. АВТОМАТИЧЕСКОЕ ОБСЛУЖИВАНИЕ СЕРВЕРА. Добавлена строка учёта практик для данного пользователя.', 'DEBUG');
     }
   }
 }

@@ -77,9 +77,10 @@ if ($(window).width()>=1200) {
 
   if ($(window).width()>=769) {
 		//$('.show-name-list').hide();
+		$('#dropdownMenuContacts').hide();
     $('#listContactsMbl').hide();
     $('#listContacts').show();
-    $('#selectAllChekboxMblShow').hide();		
+    $('#selectAllChekboxMblShow').hide();
 		if (data_page.admin_role === '0') {
 			$('.contactsBtnsBar').css('padding-right', '200px');
 		}
@@ -87,6 +88,7 @@ if ($(window).width()>=1200) {
 			$('#orderSentToContact').css('margin-right','90px');
 		}
   } else {
+		$('.bell-alarm').hide();
 		$('.show-name-list').show();
     $('#listContactsMbl').show();
     $('#listContacts').hide();
@@ -107,6 +109,7 @@ if ($(window).width()>=1200) {
     $('#maleShow').parent().css('margin-top', '4px');
     $('#contactsBtnsBar').css('min-width', '100px');
 		$('#contactsBtnsBar').css('width', '100%');
+		$('.contactsBtnsBar').css('padding-right', '20px');
     $('.fa-question').parent().parent().css('margin-left', '0px');
     $('.divider-vertical').css('height', '0px');
     $('.divider-vertical').css('width', '120px');
@@ -117,9 +120,9 @@ if ($(window).width()>=1200) {
     $('#helpButtonMbl').show();
 		//mobile
 		if (data_page.admin_role === '0') {
-			$('#listContactsMbl').css('padding-top', '170px');
+			$('#listContactsMbl').css('padding-top', '130px');
 		} else {
-			$('#listContactsMbl').css('padding-top', '210px');
+			$('#listContactsMbl').css('padding-top', '170px');
 		}
 		$('.cd-panel__header-watch').css('width', '100%');
 		$('.cd-panel__container-watch').css('width', '100%');
@@ -137,8 +140,6 @@ if ($(window).width()>=1200) {
       $('#selectAllChekboxMblShow').hide();
       $('#navbarNav ul').css('font-weight', 'normal');
       $('#navbarNav ul').css('padding', '0');
-      $('#addContact').html('<i class="fa fa-plus"></i> Добавить');
-      $('#openUploadModal').html('<i class="fa fa-upload"></i> Загрузить');
       $('#addContact').parent().css('padding-left', '0px');
       $('#respShow').parent().css('padding-left', '0px');
       $('#statusShow').parent().css('padding-left', '0px');
@@ -169,8 +170,6 @@ if ($(window).width()>=1200) {
       $('#listContactsMbl').show();
       $('#listContacts').hide();
       $('#selectAllChekboxMblShow').show();
-      $('#openUploadModal').html('<i class="fa fa-upload"></i>');
-      $('#addContact').html('<i class="fa fa-plus"></i>');
       $('#respShow').parent().css('margin-right', '8px');
       $('#statusShow').parent().css('margin-right', '8px');
       $('#maleShow').parent().css('margin-right', '8px');

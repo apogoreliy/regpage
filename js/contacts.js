@@ -17,6 +17,7 @@ $(document).ready(function(){
     if (!checkOption) {
       $('#responsibleContact').append('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
       $('#respShow').append('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
+      $('#responsibleList').append('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
     }
   }
 
@@ -45,13 +46,13 @@ function contactsStringsLoad(x, idStr, sort) {
       result = 'Завершение';
       break;
       case '7':
-      result = 'Бланк';
+      result = 'В работе';
       break;
     }
     return result
   }
 
-  var newString, prevAdm, dateorder, datesending, idStrMbl = '', idStrDsk = '';
+  var newString, prevAdm, dateorder, datesending, idStrMbl = '', idStrDsk = '',respChange = false;
   for (var i = 0; i < x.length; i++) {
 
     idStrMbl = '';
@@ -67,6 +68,20 @@ function contactsStringsLoad(x, idStr, sort) {
     } else {
       prevAdm = data_page.full_admin_list[x[i].responsible_previous];
     }
+// ADD new responsibles in the list
+
+    if (!data_page.members_responsibles[x[i].responsible_previous] && x[i].responsible_previous) {
+      data_page.members_responsibles[x[i].responsible_previous] = data_page.full_admin_list[x[i].responsible_previous];
+      respChange = true;
+    }
+
+    if (!data_page.members_responsibles[x[i].responsible] && x[i].responsible) {
+      data_page.members_responsibles[x[i].responsible] = data_page.full_admin_list[x[i].responsible];
+      respChange = true;
+    }
+
+// STOP ADD new responsibles in the list
+
     prevAdm ? prevAdm = twoNames2(prevAdm) : prevAdm = '';
     statusSwitch(x[i].status);
     tempCom = x[i].comment;
@@ -95,6 +110,32 @@ function contactsStringsLoad(x, idStr, sort) {
 
     tableDataMbl.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+newString+'contacts_str cursor-pointer '+(idStrMbl === x[i].id ? 'active_string' : '')+'" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+x[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;">'+(x[i].locality === ' ' ? '' : x[i].locality)+'</span><span>, </span><span class="" style="margin-left: 0"> '+x[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+x[i].phone+'">'+x[i].phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+statusSwitch(x[i].status)+'</div></div>');
   }
+
+  if (respChange) {
+    var sortable = [];
+    for (var vehicle in data_page.members_responsibles) {
+        sortable.push([vehicle, data_page.members_responsibles[vehicle]]);
+    }
+    sortable.sort(function(a, b) {
+      if (a[1] > b[1]) {
+        return 1;
+      }
+      if (a[1] < b[1]) {
+        return -1;
+      }
+      return 0;
+    });
+
+    var options = [];
+    options.push('<option selected value="_all_">Все ответственные');
+    for (var i = 0; i < sortable.length; i++) {
+      options.push('<option value="'+sortable[i][0]+'">'+twoNames2(sortable[i][1])+'');
+    }
+    $('#responsibleContact').html(options);
+    $('#respShow').html(options);
+    $('#responsibleList').html(options);
+  }
+
    $('#listContacts tbody').html(tableData);
    $('#listContactsMbl').html(tableDataMbl);
  } else {
@@ -108,7 +149,7 @@ function contactsStringsLoad(x, idStr, sort) {
 //attr & classes
    stringsArr.push ({
      id : $(this).attr('data-id'),
-     crm_id : $(this).attr('data_crm_id'),
+     crm_id : $(this).attr('data-crm_id'),
      responsible_name : $(this).attr('data-responsible_name'),
      other : $(this).attr('data-other'),
      time_stamp : $(this).attr('data-date'),
@@ -184,7 +225,7 @@ function contactsStringsLoad(x, idStr, sort) {
 
    tableDataSort.push('<tr class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str '+(stringsArr[i].active_string && isDsk ? 'active_string' : '')+' cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+ stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+stringsArr[i].address+'" data-area="'+stringsArr[i].area+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+stringsArr[i].region+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+stringsArr[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+stringsArr[i].shortComment+'</span></td><td><span  class="data_locality">'+stringsArr[i].locality+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+stringsArr[i].region+'</span></td><td class="data_phone">'+stringsArr[i].data_phone+'</td><td class="data_status">'+stringsArr[i].data_status+'</td><td><span class="data_responsible_sort_name">'+stringsArr[i].responsible_sort_name+'</span><br><span class="data_responsible_previous grey_text">'+stringsArr[i].responsible_previous_short_name+'</span></td></tr>');
 
-   tableDataMblSort.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+(stringsArr[i].address === ' ' ? '' : stringsArr[i].address)+'" data-area="'+(stringsArr[i].area === ' ' ? '' : stringsArr[i].area)+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+(stringsArr[i].region === ' ' ? '' : stringsArr[i].region)+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+stringsArr[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;"> '+stringsArr[i].locality+'</span><span>, </span></span><span class="" style="margin-left: 0"> '+stringsArr[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+stringsArr[i].data_phone+'">'+stringsArr[i].phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+stringsArr[i].data_status+'</div></div>');
+   tableDataMblSort.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+(stringsArr[i].address === ' ' ? '' : stringsArr[i].address)+'" data-area="'+(stringsArr[i].area === ' ' ? '' : stringsArr[i].area)+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+(stringsArr[i].region === ' ' ? '' : stringsArr[i].region)+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+stringsArr[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;"> '+stringsArr[i].locality+'</span><span>, </span></span><span class="" style="margin-left: 0"> '+stringsArr[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+stringsArr[i].data_phone+'">'+stringsArr[i].data_phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+stringsArr[i].data_status+'</div></div>');
 
  }
   $('#listContacts tbody').html(tableDataSort);
@@ -382,17 +423,20 @@ function contactsStringsLoad(x, idStr, sort) {
      if ($(this).prop('checked')) {
        $('#deleteContact').attr('disabled') ? $('#deleteContact').attr('disabled', false) : '';
        $('#deleteContactsShowModal').attr('disabled') ? $('#deleteContactsShowModal').attr('disabled', false) : '';
+       $('#appointStatusShow').attr('disabled') ? $('#appointStatusShow').attr('disabled', false) : '';
        $('#appointResponsible').attr('disabled') ? $('#appointResponsible').attr('disabled', false) : '';
        $('#appointResponsibleShow').attr('disabled') ? $('#appointResponsibleShow').attr('disabled', false) : '';
      } else {
        $('#deleteContact').attr('disabled', true);
        $('#deleteContactsShowModal').attr('disabled', true);
+       $('#appointStatusShow').attr('disabled', true);
        $('#appointResponsible').attr('disabled', true);
        $('#appointResponsibleShow').attr('disabled', true);
        $('.contacts_str').find('.checkboxString').each(function () {
          if ($(this).prop('checked')) {
            $('#deleteContact').attr('disabled', false);
            $('#deleteContactsShowModal').attr('disabled', false);
+           $('#appointStatusShow').attr('disabled', false);
            $('#appointResponsible').attr('disabled', false);
            $('#appointResponsibleShow').attr('disabled', false);
          }
@@ -433,8 +477,10 @@ function contactsStringsLoad(x, idStr, sort) {
    });
 
    if (data_page.sort_new === 'sort_new') {
+     $('.bell-alarm').addClass('this_sorted');
+     $('.bell-alarm-mbl').addClass('this_sorted');
      $('.contacts_str').each(function () {
-       if ($(this).hasClass('bg-notice-string')) {         
+       if ($(this).hasClass('bg-notice-string')) {
          $(this).show();
        } else {
          $(this).hide();
@@ -471,7 +517,7 @@ function historyBuilder(data) {
         if (data[i].member_key === variable) {
           nameTmp = data_page.members_admin_responsibles[variable].split(' ');
            name = nameTmp[0] + ' ' + nameTmp[1][0] + '. ';
-          if (name[2]) {
+          if (nameTmp[2]) {
             name = name + nameTmp[2][0] + '. ';
           }
         }
@@ -481,7 +527,7 @@ function historyBuilder(data) {
           if (data[i].member_key === variable) {
             nameTmp = data_page.members_responsibles[variable].split(' ');
              name = nameTmp[0] + ' ' + nameTmp[1][0] + '. ';
-            if (name[2]) {
+            if (nameTmp[2]) {
               name = name + nameTmp[2][0] + '. ';
             }
           }
@@ -509,7 +555,7 @@ function historyBuilder(data) {
 
   $('.edit_history_msg').click(function (e) {
     e.stopPropagation();
-    if ($('#myBlanks').val() === '0') {
+    if ($('#myBlanks').val() === '0' &&  data_page.admin_role === '0') {
       return
     }
 
@@ -597,7 +643,7 @@ function historyBuilder(data) {
 
 // ADD NEW CONTACT
   function clearingBlankOfContact() {
-
+    $('.active_string').removeClass('active_string');
     $('#orderDateEditIco').show();
     $('#orderDateEdit').parent().hide();
     $('#sideBarBlankContact').find('input').each(function () {
@@ -744,7 +790,7 @@ function historyBuilder(data) {
         stringUpdater($('#saveContact').attr('data-id'));
         //contactsListUpdate();
         showHint('Карточка сохранена.')
-      }, 500);
+      }, 1250);
   }
 
   $('#nameContact').keyup(function () {
@@ -793,7 +839,7 @@ function historyBuilder(data) {
 
     // ПРОВЕРИТЬ на больших объёмах, возможно лучше действовать синхронно, что бы запрос не выполнился прежде формирования массива содержащего данные для запроса
 
-    $.get('/ajax/contacts.php?delete_contact', {id: dataStr})
+    $.post('/ajax/contacts.php', {type: 'delete_contact',delete_contacts_id: dataStr})
       .done (function(data) {
       });
 
@@ -806,11 +852,49 @@ function historyBuilder(data) {
   $('#deleteContact').click(function() {
     deleteContact();
     $('#deleteContactsShowModal').attr('disabled', true);
+    $('#appointStatusShow').attr('disabled', true);
     //$('#deleteContact').attr('disabled', true);
     $('#appointResponsible').attr('disabled', true);
     $('#appointResponsibleShow').attr('disabled', true);
     $('#checkAllStrings').prop('checked', false);
   });
+
+  function statusContacts() {
+    var dataStr = [];
+    $('.contacts_str').each(function () {
+      if ($(this).is(':visible') && $(this).find('.checkboxString').prop('checked')) {
+        dataStr.push($(this).attr('data-id'));
+        if ($(this).attr('data-id')=== $('#saveContact').attr('data-id')) {
+          clearingBlankOfContact();
+          $('.cd-panel-watch').removeClass('cd-panel--is-visible-watch');
+          $('.cd-panel__close-watch').removeClass('cd-panel__close-watch-visible');
+        }
+      }
+    });
+
+    // ПРОВЕРИТЬ на больших объёмах, возможно лучше действовать синхронно, что бы запрос не выполнился прежде формирования массива содержащего данные для запроса
+
+    $.post('/ajax/contacts.php', {type: 'set_status_multiple', new_status: $('#comboStatusModal').val(), contact_id: dataStr})
+      .done (function(data) {
+      });
+
+    setTimeout(function () {
+      showHint('Назначен статус: '+$('#comboStatusModal option:selected').text())
+      contactsListUpdate();
+    }, 100);
+  }
+
+  $('#statusContactBtn').click(function() {
+    statusContacts();
+    //comboStatusModal statusContactBtn
+    $('#deleteContactsShowModal').attr('disabled', true);
+    $('#appointStatusShow').attr('disabled', true);
+    $('#appointResponsible').attr('disabled', true);
+    $('#appointResponsibleShow').attr('disabled', true);
+    $('#checkAllStrings').prop('checked', false);
+    $('#checkAllStrings').prop('checked', false);
+  });
+
 // responsible set
   function responsibleSetContact() {
     if (data_page.admin_role === '0') {
@@ -822,7 +906,7 @@ function historyBuilder(data) {
         }
       });
       if (listZero.length > 0) {
-        $.get('/ajax/contacts.php?responsible_set_zero', {data: listZero})
+        $.post('/ajax/contacts.php', {type: 'responsible_set_zero',data: listZero})
           .done (function(data) {
           });
           setTimeout(function () {
@@ -849,8 +933,9 @@ function historyBuilder(data) {
         return
       }
       var responsibleArr = [$('#responsibleList').val(), shortNames3($('#responsibleList option:selected').text(), true)];
+
     // ПРОВЕРИТЬ на больших объёмах, возможно лучше действовать синхронно, что бы запрос не выполнился прежде формирования   массива содержащего данные для запроса
-      $.get('/ajax/contacts.php?responsible_set', {id: data, responsible: responsibleArr})
+      $.post('/ajax/contacts.php', {type: 'responsible_set', responsible: responsibleArr, id: data})
         .done (function(data) {
         });
 
@@ -866,6 +951,7 @@ function historyBuilder(data) {
     if (data_page.admin_role === '0') {
       responsibleSetContact();
       $('#deleteContactsShowModal').attr('disabled', true);
+      $('#appointStatusShow').attr('disabled', true);
       $('#deleteContact').attr('disabled', true);
       $('#appointResponsibleShow').attr('disabled', true);
       $('#checkAllStrings').prop('checked', false);
@@ -876,6 +962,7 @@ function historyBuilder(data) {
       } else {
         responsibleSetContact();
         $('#deleteContactsShowModal').attr('disabled', true);
+        $('#appointStatusShow').attr('disabled', true);
         $('#deleteContact').attr('disabled', true);
         $('#appointResponsibleShow').attr('disabled', true);
         $('#checkAllStrings').prop('checked', false);
@@ -1026,7 +1113,7 @@ function historyBuilder(data) {
     var counter;
     counters = 0;
       $('.contacts_str').each(function () {
-        if (counters > 100) {
+        if (counters > 999) {
           return
         }
         if ($('#checkAllStrings').prop('checked')) {
@@ -1034,6 +1121,7 @@ function historyBuilder(data) {
             $(this).find('.checkboxString').prop('checked', true);
             $('#deleteContact').attr('disabled') ? $('#deleteContact').attr('disabled', false) : '';
             $('#deleteContactsShowModal').attr('disabled') ? $('#deleteContactsShowModal').attr('disabled', false) : '';
+            $('#appointStatusShow').attr('disabled') ? $('#appointStatusShow').attr('disabled', false) : '';
             $('#appointResponsible').attr('disabled') ? $('#appointResponsible').attr('disabled', false) : '';
             $('#appointResponsibleShow').attr('disabled') ? $('#appointResponsibleShow').attr('disabled', false) : '';
             counters++
@@ -1042,6 +1130,7 @@ function historyBuilder(data) {
           $(this).find('.checkboxString').prop('checked', false);
           $('#deleteContact').attr('disabled') ? '' : $('#deleteContact').attr('disabled', true);
           $('#deleteContactsShowModal').attr('disabled') ? '' : $('#deleteContactsShowModal').attr('disabled', true);
+          $('#appointStatusShow').attr('disabled') ? '' : $('#appointStatusShow').attr('disabled', true);
           $('#appointResponsible').attr('disabled') ? '' : $('#appointResponsible').attr('disabled', true);
           $('#appointResponsibleShow').attr('disabled') ? '' : $('#appointResponsibleShow').attr('disabled', true);
         }
@@ -1054,6 +1143,7 @@ function historyBuilder(data) {
             $(this).find('.checkboxString').prop('checked', true);
             $('#deleteContact').attr('disabled') ? $('#deleteContact').attr('disabled', false) : '';
             $('#deleteContactsShowModal').attr('disabled') ? $('#deleteContactsShowModal').attr('disabled', false) : '';
+            $('#appointStatusShow').attr('disabled') ? $('#appointStatusShow').attr('disabled', false) : '';
             $('#appointResponsible').attr('disabled') ? $('#appointResponsible').attr('disabled', false) : '';
             $('#appointResponsibleShow').attr('disabled') ? $('#appointResponsibleShow').attr('disabled', false) : '';
           }
@@ -1061,6 +1151,7 @@ function historyBuilder(data) {
           $(this).find('.checkboxString').prop('checked', false);
           $('#deleteContact').attr('disabled') ? '' : $('#deleteContact').attr('disabled', true);
           $('#deleteContactsShowModal').attr('disabled') ? '' : $('#deleteContactsShowModal').attr('disabled', true);
+          $('#appointStatusShow').attr('disabled') ? '' : $('#appointStatusShow').attr('disabled', true);
           $('#appointResponsible').attr('disabled') ? '' : $('#appointResponsible').attr('disabled', true);
           $('#appointResponsibleShow').attr('disabled') ? '' : $('#appointResponsibleShow').attr('disabled', true);
         }
@@ -1112,7 +1203,7 @@ function sendTheOrder(ua) {
 
     if (ua === 'UA') {
       var textMessage = 'ФИО: '+ name +'<br>Страна: '+ country +'<br>Область: '+ region +'<br>Район: '+ area +'<br>Местность: '+ locality +'<br>Адрес: '+ address +'<br>Индекс:'+ index  +'<br>Количество: '+ howMuch +'<br>Телефон: '+ phone +'<br>Емайл: '+ email +'<br>Комментарий: '+ commentNotForCrm + '. ' + notesOfAdmin +'<br>Отправлено с сайта: '+ dateNow + '<br>Отправил: '+ twoNames2(data_page.admin_name);
-      $.post('ajax/contacts.php', {text_message: textMessage, name: twoNames2(data_page.admin_name)})
+      $.post('ajax/contacts.php', {type: 'message_ua',text_message: textMessage, name: twoNames2(data_page.admin_name)})
       .done (function(data) {
           if (data) {
             addCrmId(data);
@@ -1173,8 +1264,13 @@ function sendTheOrder(ua) {
       $('#regionContact').css('border-color', '#ced4da');
       $('#phoneContact').css('border-color', '#ced4da');
       $('#nameContact').css('border-color', '#ced4da');
+      $('#saveConfirm').show();
     }
     $('#adminNotes').val('');
+  });
+
+  $('#saveCancelConfirmBtn').click(function() {
+    $('#saveConfirm').hide();
   });
 
   $('#saveConfirmBtn').click(function() {
@@ -1248,10 +1344,10 @@ function sendTheOrder(ua) {
       // STOP Search text
 
       //Filter currents blanks
-        data_page.admin_role === '0' ? filterBlank = ($('#myBlanks').val() === '1' && $(this).attr('data-responsible') === window.adminId) || ($('#myBlanks').val() === '0' && $(this).attr('data-responsible_previous') === window.adminId) : filterBlank = true;
+        data_page.admin_role === '0' ? filterBlank = ($('#myBlanks').val() === '1' && $(this).attr('data-responsible') === window.adminId) || ($('#myBlanks').val() === '0' && $(this).attr('data-responsible_previous') === window.adminId) : filterBlank = ($('#myBlanks').val() === '1' && $(this).attr('data-responsible') === window.adminId) || ($('#myBlanks').val() === '0' && $(this).attr('data-responsible_previous') === window.adminId) || ($('#myBlanks').val() === '_all_');
       //Stop Filter currents blanks
 
-        if ($('#myBlanks').val() === '0') {
+        if ($('#myBlanks').val() === '0' &&  data_page.admin_role === '0') {
           $('#checkAllStrings').attr('disabled', true);
           $('#addContact').attr('disabled', true);
         } else {
@@ -1259,9 +1355,9 @@ function sendTheOrder(ua) {
           $('#addContact').attr('disabled', false);
         }
 
-        if (($('#maleShow').val() === '_all_' || $('#maleShow').val() === $(this).attr('data-male')) && ($('#statusShow').val() === '_all_' || $('#statusShow').val() === $(this).attr('data-status_key')) && ($('#respShow').val() === '_all_' || $('#respShow').val() === $(this).attr('data-responsible')) && filterBlank && searchResult) {
+        if (($('#maleShow').val() === '_all_' || $('#maleShow').val() === $(this).attr('data-male')) && ($('#statusShow').val() === '_all_' || $('#statusShow').val() === $(this).attr('data-status_key')) && ($('#respShow').val() === '_all_' || ($('#respShow').val() === $(this).attr('data-responsible') || $('#respShow').val() === $(this).attr('data-responsible_previous'))) && filterBlank && searchResult) {
           $(this).show();
-          if ($('#myBlanks').val() === '0') {
+          if ($('#myBlanks').val() === '0' &&  data_page.admin_role === '0') {
             $(this).find('.checkboxString').attr('disabled', true);
           } else {
             $(this).find('.checkboxString').attr('disabled', false);
@@ -1279,17 +1375,31 @@ function sendTheOrder(ua) {
 
   $('#maleShow, #statusShow, #respShow, #myBlanks').change(function (event) {
     event.stopPropagation();
+    if (event.target.id === 'myBlanks' && event.target.value === '1' && $('#respShow').val() !== '_all_') {
+      $('#respShow').val('_all_');
+    }
     filtersOfString();
   });
 
+/*
   $('#search-text').bind("paste keyup", function(event){
     event.stopPropagation();
     filtersOfString();
     });
+*/
+  $('#searchBtn').click(function(){
+    filtersOfString();
+  });
+
+  $('#search-text').keypress(function(event){
+    if (event.which == 13) {
+      filtersOfString();
+    }
+  });
 
     $('#search-text').click(function(event){
       event.stopPropagation();
-      if ($(this).val().length > 2) {
+      if ($(this).val().length > 0) {
         setTimeout(function () {
           if (!$('#search-text').val()) {
             filtersOfString();
@@ -1326,13 +1436,16 @@ function sendTheOrder(ua) {
       $(this).parent().hide();
     });
 
-    $('#sort-name-contact').click(function () {
+    $('#sort-name-contact, #sort-name').click(function () {
       if ($(this).next().hasClass('icon_none')) {
         $(this).next().removeClass('icon_none');
         $(this).next().addClass('fa-caret-down');
         $('#sort-locality-contact').next().removeClass('fa-caret-down');
         $('#sort-locality-contact').next().removeClass('fa-caret-up');
         $('#sort-locality-contact').next().addClass('icon_none');
+        $('#sort-locality').next().removeClass('fa-caret-down');
+        $('#sort-locality').next().removeClass('fa-caret-up');
+        $('#sort-locality').next().addClass('icon_none');
         contactsStringsLoad([], false, 'sortingByName2');
       } else if ($(this).next().hasClass('fa-caret-down')) {
         $(this).next().removeClass('fa-caret-down');
@@ -1345,13 +1458,16 @@ function sendTheOrder(ua) {
       }
     });
 
-    $('#sort-locality-contact').click(function () {
+    $('#sort-locality-contact, #sort-locality').click(function () {
       if ($(this).next().hasClass('icon_none')) {
         $(this).next().removeClass('icon_none');
         $(this).next().addClass('fa-caret-down');
         $('#sort-name-contact').next().removeClass('fa-caret-down');
         $('#sort-name-contact').next().removeClass('fa-caret-up');
         $('#sort-name-contact').next().addClass('icon_none');
+        $('#sort-name').next().removeClass('fa-caret-down');
+        $('#sort-name').next().removeClass('fa-caret-up');
+        $('#sort-name').next().addClass('icon_none');
         contactsStringsLoad([], false, 'sortingByLocality2')
       } else if ($(this).next().hasClass('fa-caret-down')) {
         $(this).next().removeClass('fa-caret-down');
@@ -1372,6 +1488,25 @@ function sendTheOrder(ua) {
         }
       });
       $('#listDeleteStr').html(list);
+    });
+
+    $('#appointStatusShow').click(function () {
+      var list =[];
+      $('#comboStatusModal').val('');
+      $('.contacts_str').each(function () {
+        if ($(this).is(':visible') && $(this).find('.checkboxString').prop('checked')) {
+          list.push($(this).find('.data_name').text()+'<br>');
+        }
+      });
+      $('#listStatusStr').html(list);
+    });
+
+    $('#comboStatusModal').change(function() {
+      if ($('#comboStatusModal').val()) {
+        $('#statusContactBtn').attr('disabled', false)
+      } else {
+        $('#statusContactBtn').attr('disabled', true)
+      }
     });
 
     // notifications

@@ -53,21 +53,27 @@ function db_getContactString ($id){
   $result = [];
 
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name, notice
+    c.sending_date, c.crm_id, m.name AS member_name, c.notice
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
-    WHERE c.id = '$id'");
+    WHERE c.id = '$id' AND c.notice <> 2");
     while ($row = $res->fetch_assoc()) $result[]=$row;
 
   return $result;
 }
 // Delete contacts strings
-function db_deleteContactString($id){
-  global $db;
-  //$id = $db->real_escape_string($id);
+function db_deleteContactString($id, $adminId){
+  foreach ($id as $value) {
+    db_query ("UPDATE contacts SET `notice` = 2 WHERE `id`='$value'");
+    logFileWriter($adminId, 'Перемещён в корзину контакт '.$value);
+  }
+}
+// Delete contacts strings from DATABASE
+function db_deleteContactStringTotal($id, $adminId){
   foreach ($id as $value) {
     db_query ("DELETE FROM contacts WHERE `id`='$value'");
     db_query ("DELETE FROM chat WHERE `group_id`='$value'");
+    logFileWriter($adminId, 'Удалён из базы контакт '.$value);
   }
 }
 // responsible set
@@ -81,6 +87,8 @@ function db_responsibleSet($id, $responsibleNew, $adminId){
     db_query ("UPDATE contacts SET `responsible` = '$responsibleKey', `responsible_previous` = '$value[1]' WHERE `id`='$value[0]'");
     db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$value[0]', '$adminId', '$text')");
     db_newNotification($responsibleKey, $value[0]);
+    $textLog = 'Контакт ID - '.$value[0].'. '.$text.'. Предыдущий '.$value[1].'.';
+    logFileWriter($adminId, $textLog);
   }
 }
 // responsible set for admin 0
@@ -93,6 +101,8 @@ function db_responsibleSetZero($data, $adminId){
     db_query ("UPDATE contacts SET `responsible` = '$value[1]', `responsible_previous` = '$adminId' WHERE `id`='$value[0]'");
     db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$value[0]', '$adminId', '$text')");
     db_newNotification($value[1], $value[0]);
+    $textLog = 'Контакт ID - '.$value[0].'. '.$text.'. Предыдущий '.$adminId.'.';
+    logFileWriter($adminId, $textLog);
   }
 }
 
@@ -104,17 +114,17 @@ function db_getContactsStrings($memberId, $role){
   $result = [];
   if ($role > 0) {
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name, notice
+    c.sending_date, c.crm_id, m.name AS member_name, c.notice
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
-    WHERE c.responsible_previous = '$memberId' OR c.responsible = '$memberId' ORDER BY c.name");
+    WHERE (c.responsible_previous = '$memberId' OR c.responsible = '$memberId') AND c.notice <> 2 ORDER BY c.name");
     while ($row = $res->fetch_assoc()) $result[]=$row;
   } else {
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name, notice
+    c.sending_date, c.crm_id, m.name AS member_name, c.notice
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
-    WHERE c.responsible_previous = '$memberId' OR c.responsible = '$memberId' ORDER BY c.name");
+    WHERE (c.responsible_previous = '$memberId' OR c.responsible = '$memberId') AND c.notice <> 2 ORDER BY c.name");
     while ($row = $res->fetch_assoc()) $result[]=$row;
   }
   return $result;
@@ -251,14 +261,16 @@ function db_getAdminMembersAdmins ($adminId)
                         ) q ORDER BY q.name");
 
     $members = array ();
-    while ($row = $res->fetch_assoc())
+    while ($row = $res->fetch_assoc()){
+      $names = split(' ', $row['name']);
+      $twoName = $names[0].' '.$names[1];
         $members[$row['id']]=array (
-            "name" => $row['name'],
+            "name" => $twoName,
             "locality" => $row['locality'],
             "localityId" => $row['locId'],
             "categoryId" => $row['catId']
         );
-
+      }
     $list=[];
       foreach ($members as $key => $value) {
         $result='';
@@ -310,4 +322,33 @@ function db_deleteNotification($id)
   db_query("UPDATE contacts SET `notice` = 0 WHERE `id` = '$id'");
 }
 
+// responsible set
+function db_statusMultipleSet($id, $statusNew){
+  global $db;
+  $statusNew = $db->real_escape_string($statusNew);
+  foreach ($id as $value) {
+    db_query ("UPDATE contacts SET `status` = '$statusNew' WHERE `id`='$value'");
+    db_addStatusHistoryStr($statusNew);
+  }
+}
+/*
+function logFileWriter2($logMemberId, $info)
+{
+  $logAdminName = db_getAdminNameById($logMemberId);
+  $logAdminLocaity = db_getLocalityByKey(db_getAdminLocality($logMemberId));
+  $logAdminCountry = db_getAdminCountry($logMemberId);
+  $logAdminRole = db_getAdminRole($logMemberId);
+
+  $file = 'logFile_'.date("d-m-Y").'.txt'; //
+  //Добавим разделитель, чтобы мы смогли отличить каждую запись
+  $text = 'DEBUG ==================================================='.PHP_EOL;
+  $text .=  date('d-m-Y H:i:s') .PHP_EOL; //Добавим актуальную дату после текста или дампа массива
+  $text .= 'Admin is '.$logAdminName.'. Key is '. $logMemberId.'. Role is '.$logAdminRole.'. '.$logAdminCountry.'. '. $logAdminLocaity.'. '.PHP_EOL;
+  $text .= $info.PHP_EOL.PHP_EOL;
+
+  $fOpen = fopen($file,'a'); //Открываем файл или создаём если его нет
+  fwrite($fOpen, $text); //Записываем
+  fclose($fOpen); //Закрываем файл
+}
+*/
 ?>

@@ -26,18 +26,18 @@ if(isset($_GET['new_update_contact'])){
     exit();
 }
 
-if(isset($_GET['delete_contact'])){
-    db_deleteContactString($_GET['id']);
+if(isset($_POST['type']) && $_POST['type'] === 'delete_contact'){
+    db_deleteContactString($_POST['delete_contacts_id'], $adminId);
     exit();
 }
 
-if(isset($_GET['responsible_set'])){
-    db_responsibleSet($_GET['id'], $_GET['responsible'], $adminId);
+if(isset($_POST['type']) && $_POST['type'] === 'responsible_set'){
+    db_responsibleSet($_POST['id'], $_POST['responsible'], $adminId);
     exit();
 }
 
-if(isset($_GET['responsible_set_zero'])){
-    db_responsibleSetZero($_GET['data'], $adminId);
+if(isset($_POST['type']) && $_POST['type'] === 'responsible_set_zero'){
+    db_responsibleSetZero($_POST['data'], $adminId);
     exit();
 }
 
@@ -74,7 +74,7 @@ if(isset($_GET['delete_message'])){
 }
 
 //EMAIL TO UKRAINE
-if (isset ($_POST['text_message']))
+if (isset($_POST['type']) && $_POST['type'] === 'message_ua')
 {
     $email = getValueParamByName('crm_ua_email');
     //$adminId = db_getMemberIdBySessionId (session_id());
@@ -103,6 +103,12 @@ if(isset($_GET['set_notice'])){
 
 if(isset($_GET['delete_notices'])){
     db_deleteNotification($_GET['id']);
+    exit();
+}
+
+// set status multiple
+if(isset($_POST['type']) && $_POST['type'] === 'set_status_multiple'){
+    db_statusMultipleSet($_POST['contact_id'], $_POST['new_status']);
     exit();
 }
 
