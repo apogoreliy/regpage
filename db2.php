@@ -299,4 +299,5 @@ function db_checkNotice ($adminId)
       return 'display: none';
     }
 }
+
 ?>

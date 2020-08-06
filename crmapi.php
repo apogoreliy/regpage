@@ -14,6 +14,10 @@ $value6 = $_POST['value6'];
 $value7 = $_POST['value7'];
 $value8 = $_POST['value8'];
 
+if (!$name || !$phone || !$value8 || !$value6) {
+  return 'error: the fields has been empty';
+}
+
 $curl = curl_init();
 
 $data = [

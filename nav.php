@@ -319,6 +319,12 @@ referenceSysAnew();
     		window.location = '/contacts';
     	}
     });
+    $('.bell-alarm-mbl').click(function () {
+    	if (window.location != '/contacts') {
+        document.cookie = "sort_new=sort_new";
+    		window.location = '/contacts';
+    	}
+    });
     if ($(window).width()>=769) {
       $('.bell-alarm-mbl').hide();
     } else {

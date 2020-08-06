@@ -1,6 +1,7 @@
 $(document).ready(function(){
   var sessionsGlobal = [];
-  var tormozzz = [];  
+  var tormozzz = [];
+/*
   $('#copySessions').click(function() {
     if (window.confirm("Do you really want to copy sessions?")) {
       $.when(getSessionsAdmins()).then(eachSession());
@@ -30,4 +31,5 @@ $(document).ready(function(){
       sessionsGlobal = data.sessions;
     });
   }
+  */
 });

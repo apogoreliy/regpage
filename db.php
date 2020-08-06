@@ -10,7 +10,7 @@ require_once 'FirePHP.class.php';
 require_once 'config.php';
 include_once 'utils.php';
 include_once 'db2.php';
-
+//include_once 'logWriter.php';
 
 // establish mySQLi connection
 

@@ -1,6 +1,7 @@
 <?php
     include_once "header2.php";
     include_once "nav2.php";
+    include_once 'logWriter.php';
     include_once "db/contactsdb.php";
 
     /*$hasMemberRightToSeePage = db_isAdmin($memberId);
@@ -44,10 +45,11 @@
 <!-- Botton bar Statistic START -->
   <div class="row contactsBtnsBar" style="" id="contactsBtnsBar">
     <div class="" style="max-width:625px; min-width:300px; padding-right: 5px; padding-left: 0;">
-        <button id="addContact" class="btn btn-success btn-sm" type="button"><i class="fa fa-plus"></i> Добавить</button>
-        <button id="openUploadModal" class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#modalUploadItems"><i class="fa fa-upload"></i> Загрузить</button>
-        <button id="deleteContactsShowModal" class="btn btn-danger btn-sm" type="button" data-toggle="modal" data-target="#deleteContactsModal" disabled >Удалить</button>
-        <button id="appointResponsibleShow" style="background-color: #ff8c00; color: #fff" class="btn btn-warning btn-sm" type="button" disabled>Передать</button>
+        <button id="addContact" class="btn btn-success btn-sm" type="button" title="Добавить новый контакт"><i class="fa fa-plus"></i></button>
+        <button id="openUploadModal" class="btn btn-primary btn-sm" title="Загрузить контакты из файла" type="button" data-toggle="modal" data-target="#modalUploadItems"><i class="fa fa-upload"></i></button>
+        <button id="deleteContactsShowModal" class="btn btn-danger btn-sm" title="Удалить выбранные контакты" type="button" data-toggle="modal" data-target="#deleteContactsModal" disabled ><i class="fa fa-trash"></i></button>
+        <button id="appointResponsibleShow" style="background-color: #ff8c00; color: #fff" class="btn btn-warning btn-sm" type="button" title="Передать выбранные контакты" disabled><i class="fa fa-exchange" aria-hidden="true"></i> Передать</button>
+        <button id="appointStatusShow" class="btn btn-secondary btn-sm" type="button" title="Задать статус выбранным контакты" data-toggle="modal" data-target="#statusContactsModal" disabled>Статус</button>
     </div>
     <div class="" style="padding-left: 0; padding-right: 10px; display: <?php if($adminRole === 0) echo 'none'?>">
             <select id="respShow" class="form-control form-control-sm" name="" style="width:180px;">
@@ -58,7 +60,7 @@
     <div class="" style="padding-left: 0; padding-right: 10px;">
             <select id="statusShow" class="form-control form-control-sm" name="">
               <option value="_all_">Все статусы</option>
-              <option value="7">Бланк</option>
+              <option value="7">В работе</option>
               <option value="1">Недозвон</option>
               <option value="2">Ошибка</option>
               <option value="3">Отказ</option>
@@ -74,30 +76,37 @@
               <option value="0">жен.</option>
             </select>
     </div>
-    <?php if($adminRole === 0) {?>
+
     <div class="" style="padding-left: 0; padding-right: 10px;">
             <select id="myBlanks" class="form-control form-control-sm" name="">
+              <?php if($adminRole !== 0) {?>
+                <option value="_all_">Все</option>
+                <?php }; ?>
               <option value="1" selected>Мои контакты</option>
               <option value="0">Переданные</option>
             </select>
     </div>
-  <?php }; ?>
-    <div class="" style="padding-left: 0; padding-right: 10px;">
-        <input type="search" id="search-text" class="form-control form-control-sm" name="search-text"  style="width:140px;" placeholder="Поиск">
-    </div>
-    <div style="text-align: left; margin-left: 10px; margin-top: 8px" id="selectAllChekboxMblShow"><input id="" type="checkbox" class="checkAllStrings" name="" value=""> Выбрать все</div>
 
-    <div class="dropdown" style="display: none;">
-        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <span class="sortName">Сортировать</span>
-            <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" id="dropdownMenu" aria-labelledby="dropdownMenu1">
-            <li><a id="sort-date" href="#" title="сортировать">Дата</a>&nbsp;<i class="icon-chevron-down"></i></li>
-            <li><a id="sort-meeting_type" href="#" title="сортировать">Собрание</a>&nbsp;<i class="icon-chevron-up"></i></li>
-            <li><a id="sort-list_count" href="#" title="сортировать">На собрании</a>&nbsp;<i class="icon-none"></i></li>
-        </ul>
+    <div class="" style="padding-left: 0; padding-right: 10px;">
+      <div class="input-group mb-3" style="margin-bottom: 0px!important;">
+          <input type="search" id="search-text" class="form-control form-control-sm" name="search-text"  style="width:100px;" placeholder="Поиск">
+          <div class="input-group-append">
+            <button id="searchBtn" class="btn btn-secondary btn-sm" type="submit"><i class="fa fa-search"></i></button>
+          </div>
+        </div>
     </div>
+    <div style="text-align: left; margin-left: 10px; margin-top: 8px" id="selectAllChekboxMblShow"><label class="form-check-label font-weight-normal"><input id="" type="checkbox" class="checkAllStrings" name="" value=""> Выбрать все</label></div>
+<!-- Dropdown Menu START-->
+    <div id="dropdownMenuContacts" class="dropdown" style="padding-top: 4px; margin-left: 10px; display: none;">
+        <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenuContacts" data-toggle="dropdown">
+            <span class="sortName">Сортировать</span>
+        </button>
+        <div class="dropdown-menu">
+          <span class="dropdown-item"><a id="sort-name" href="#" title="сортировать">ФИО </a><i class="fa fa-caret-down"></i></span>
+          <span class="dropdown-item"><a id="sort-locality" href="#" title="сортировать">Местность </a><i class="fa icon_none"></i></span>
+        </div>
+    </div>
+<!-- Dropdown Menu STOP-->
   </div>
 <!-- Botton bar Statistic STOP -->
 <!-- List Statistic BEGIN -->
@@ -203,7 +212,7 @@
                     <label for="">Статус</label>
                     <select class="form-control form-control-sm" id="statusContact" class="selectpicker">
                       <option value="" selected></option>
-                      <option value="7">Бланк</option>
+                      <option value="7">В работе</option>
                       <option value="1">Недозвон</option>
                       <option value="2">Ошибка</option>
                       <option value="3">Отказ</option>
@@ -253,7 +262,7 @@
             </div>
             <div class="" style="text-align: right; background-color: #f5f5f5; margin-left: -15px; margin-right: -15px; padding-top: 15px; padding-bottom: 15px; border-top: 1px solid lightgrey;">
 
-              <input id="orderSentToContact" class="btn btn-secondary btn-sm" type="button" data-id_admin="" data-id="" value="Отправить заказ" style="margin-right: 95px;" data-target="#saveConfirm" data-toggle="modal">
+              <input id="orderSentToContact" class="btn btn-secondary btn-sm" type="button" data-id_admin="" data-id="" value="Отправить заказ" style="margin-right: 95px;" data-target="" data-toggle="modal">
               <input id="saveContact" class="btn btn-info btn-sm" type="button" data-id_admin="" data-id="" value="Сохранить" style="margin-right: 5px;">
               <input class="btn my_btn_cancel btn-sm" id="cd-panel__close-watch" type="button" name="" value="Закрыть" style="margin-right: 15px;">
             </div>
@@ -264,7 +273,7 @@
             <table id="listContacts" class="table table-hover">
               <thead>
                 <tr>
-                <th style="text-align: left;"><input id="checkAllStrings" type="checkbox" class="" name="" value=""></th>
+                <th style="text-align: left;"><input id="checkAllStrings" type="checkbox" class="" name="" value="" style="margin-top: 5px;"></th>
                 <th style="text-align: left; min-width:70px"><a id="sort-name-contact" href="#" title="сортировать">ФИО</a>&nbsp;<i class="fa fa-caret-down"></i></th>
                 <th style="text-align: left;"><a id="sort-locality-contact" href="#" title="сортировать">Местность<i class="fa icon_none"></a>&nbsp;</i></th>
                 <th style="text-align: left;">Телефон</th>
@@ -424,8 +433,8 @@
           <textarea id="adminNotes" name="name" rows="3" cols="56"></textarea>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-sm btn-secondary" id="saveConfirmBtn" data-dismiss="modal" aria-hidden="true">Отправить</button>
-          <button class="btn btn-sm my_btn_cancel" data-dismiss="modal" aria-hidden="true">Отменить</button>
+          <button class="btn btn-sm btn-secondary" id="saveConfirmBtn" data-dismiss="" aria-hidden="true">Отправить</button>
+          <button class="btn btn-sm my_btn_cancel" id="saveCancelConfirmBtn" data-dismiss="" aria-hidden="true">Отменить</button>
         </div>
         </div>
       </div>
@@ -507,6 +516,8 @@
           </div>
       </div>
     </div>
+
+<!-- SAVE COMFIRME-->
     <div class="modal">
       <!-- STOP Modal delete contact -->
       <!--Содержимое модального окна-->
@@ -515,6 +526,45 @@
       <button class="button-close" id="">Отмена</button>
     </div>
 <!-- STOP Modal delete contact -->
+
+<!-- START Modal status contact -->
+  <div id="statusContactsModal" data-width="400" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Задать выбранным контактам статус</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <select id="comboStatusModal" class="form-control form-control-sm" name="">
+                <option value="" selected></option>
+                <option value="7">В работе</option>
+                <option value="1">Недозвон</option>
+                <option value="2">Ошибка</option>
+                <option value="3">Отказ</option>
+                <option value="4">Заказ</option>
+                <option value="5">Продолжение</option>
+                <option value="6">Завершение</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12" id="listStatusStr" style="max-height:300px; margin-top: 10px; overflow-y: auto;">
+            </div>
+          </div>
+        </div>
+          <div class="modal-footer">
+            <button class="btn btn-sm btn-danger" id="statusContactBtn" data-dismiss="modal" aria-hidden="true" disabled>Задать</button>
+            <button class="btn  btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Отмена</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal">
+<!-- STOP Modal status contact -->
+
     <script>
       var data_page = {};
 
@@ -612,7 +662,7 @@
 
       data_page.sort_new = '<?php echo $bellOn; ?>';
     </script>
-    <script src="/js/contacts.js?v13"></script>
+    <script src="/js/contacts.js?v20"></script>
     <script src="/js/contactsupload.js?v3"></script>
 <?php
     include_once "footer2.php";
