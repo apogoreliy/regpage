@@ -1,7 +1,6 @@
 <?php
     include_once "header2.php";
     include_once "nav2.php";
-    include_once 'logWriter.php';
     include_once "db/contactsdb.php";
 
     /*$hasMemberRightToSeePage = db_isAdmin($memberId);
@@ -41,7 +40,6 @@
 
   </div>
 <div class="container">
-  <span id="saveSpinner" style="position: fixed; z-index: 1000; margin: 30% 50%; width: 3rem; height: 3rem;" class=" spinner-border text-primary"></span>
 <!-- Botton bar Statistic START -->
   <div class="row contactsBtnsBar" style="" id="contactsBtnsBar">
     <div class="" style="max-width:625px; min-width:300px; padding-right: 5px; padding-left: 0;">
@@ -273,7 +271,7 @@
             <table id="listContacts" class="table table-hover">
               <thead>
                 <tr>
-                <th style="text-align: left;"><input id="checkAllStrings" type="checkbox" class="" name="" value="" style="margin-top: 5px;"></th>
+                <th style="text-align: left;"><input id="checkAllStrings" type="checkbox" class="" name="" value="" style="margin-top: 5px;" title="Выбрать все записи в списке"></th>
                 <th style="text-align: left; min-width:70px"><a id="sort-name-contact" href="#" title="сортировать">ФИО</a>&nbsp;<i class="fa fa-caret-down"></i></th>
                 <th style="text-align: left;"><a id="sort-locality-contact" href="#" title="сортировать">Местность<i class="fa icon_none"></a>&nbsp;</i></th>
                 <th style="text-align: left;">Телефон</th>
@@ -421,12 +419,12 @@
     </div>
 <!-- STOP Modal message upload xlsx -->
 <!-- STOP Modal save confirm-->
-    <div id="saveConfirm" data-width="400" class="modal" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div id="saveConfirm" data-width="400" class="modal" tabindex="-1" aria-hidden="true" style="display: none; background-color: rgba(255, 255, 255, 0.3);">
       <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
           <h5>Заказ будет отправлен на обработку</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+          <button id="saveConfirmCrosForClose" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         </div>
         <div class="modal-body">
           <h6>Примечание к заказу</h6>
@@ -469,12 +467,11 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5></h5>
+            <h5>Передать выбранные контакты?</h5>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
           </div>
           <div class="modal-body">
             <div class="col-md-12" style="padding-left: 0;">
-              <b>Передать выбранные контакты?</b><br>
             </div>
             <div class="col-md-12" style="padding-left: 0; overflow-y: auto; max-height: 300px;" id="listForSetRespAdminZero">
 
@@ -562,8 +559,19 @@
         </div>
       </div>
     </div>
-    <div class="modal">
 <!-- STOP Modal status contact -->
+
+<!-- START Modal SPINNER -->
+<div id="modalSpinner" class="modal" style="background-color: rgba(255, 255, 255, 0.3);" >
+  <div class="modal-dialog">
+    <div class="modal-content" style="border: none; background: none;" >
+      <div class="modal-body">
+        <div id="saveSpinner" style="margin: 30% 50%; width: 3rem; height: 3rem;" class="spinner-border text-primary"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- STOP Modal SPINNER -->
 
     <script>
       var data_page = {};
@@ -662,7 +670,7 @@
 
       data_page.sort_new = '<?php echo $bellOn; ?>';
     </script>
-    <script src="/js/contacts.js?v20"></script>
+    <script src="/js/contacts.js?v21"></script>
     <script src="/js/contactsupload.js?v3"></script>
 <?php
     include_once "footer2.php";

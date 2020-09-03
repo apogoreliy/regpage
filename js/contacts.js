@@ -819,6 +819,12 @@ function historyBuilder(data) {
     }
     $('#blankHistory').show();
     saveEditContact();
+    $('#modalSpinner').show();
+    $('#saveSpinner').show();
+    setTimeout(function () {
+      $('#modalSpinner').hide();
+    }, 2500);
+
   });
 // responsible delete
   function deleteContact() {
@@ -1053,6 +1059,8 @@ function historyBuilder(data) {
         if (data.order_date && data.order_date !== '0000-00-00') {
           dateOrd = dateStrToddmmyyyyToyyyymmdd(data.order_date, true);
           $('.active_string').attr('data-order_date', dateOrd);
+          $('#orderDateEdit').val(data.order_date);
+          $('#orderDate').text(dateOrd);
         } else {
           $('.active_string').attr('');
         }
@@ -1291,7 +1299,14 @@ function sendTheOrder(ua) {
         $('#saveConfirm').hide();
       }, 500);
     }
+    $('#modalSpinner').show();
+    $('#saveSpinner').show();
+    setTimeout(function () {
+      $('#modalSpinner').hide();
+
+    }, 2500);
   });
+
   $('#appointResponsibleShow').click(function() {
     if (data_page.admin_role !== '0') {
       $('#setResponsibleModal').modal().show();
@@ -1507,6 +1522,9 @@ function sendTheOrder(ua) {
       } else {
         $('#statusContactBtn').attr('disabled', true)
       }
+    });
+    $('#saveConfirmCrosForClose').click(function() {
+      $('#saveConfirm').hide();
     });
 
     // notifications

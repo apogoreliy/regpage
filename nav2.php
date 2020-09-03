@@ -51,6 +51,9 @@ switch ($h) {
     case '/contacts.php':
        $res = 'Контакты';
        break;
+    case '/panel.php':
+      $res = 'Панель';
+      break;
     default:
         $res = '';
         break;
@@ -193,6 +196,12 @@ switch ($h) {
             }
             ?>
             <i class="fa fa-bell bell-alarm cursor-pointer" style="<?php echo db_checkNotice($memberId); ?>" title="У вас есть новые карточки"></i>
+            <?php
+            //$memberId === '000001679' ||
+            if ($memberId === '000005716') {
+              echo '<i class="fa fa-wrench cursor-pointer" style="color: silver; font-size: 20px; margin-top: 5px; margin-left: 10px;" title="Дополнительные опции"></i>';
+            }
+            ?>
             <!--<i class="fa fa-envelope envelope-support cursor-pointer" title="Обратится в службу поддержки"></i>-->
             <ul id="helpButton" class="nav" style="margin-left: auto; margin-right: 10px;">
               <li class="nav-item dropdown" style="margin-top: 3px;">
@@ -280,6 +289,12 @@ referenceSysAnew();
     $(".send-message-regteam").click (function (){
         $("#sendMsgEventName").text ($('#events-list option:selected').text());
     });
+
+    $('.fa-wrench').click(function () {
+      if (window.location != '/panel') {
+        window.location = '/panel';
+      }
+    });
 // Give me Admin Role 0   ver 5.1.8
     function setAdminRole_0(element1, element2) {
         var adminRole = parseInt('<?php echo db_getAdminRole($memberId); ?>');
@@ -289,5 +304,5 @@ referenceSysAnew();
         }
     }
     var glbRoleAdmin = parseInt('<?php echo db_getAdminRole($memberId); ?>');
-    
+
 </script>

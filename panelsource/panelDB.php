@@ -7,7 +7,7 @@ function db_getSessionsAdmins(){
 		return $sessions;
 }
 
-
+/*
 function db_copySessions($adminId, $sessionId)
 {
 	global $db;
@@ -15,13 +15,14 @@ function db_copySessions($adminId, $sessionId)
 	$sessionId = $db->real_escape_string($sessionId);
 	db_query ("INSERT INTO admin_session (id_session, admin_key) VALUES ('$sessionId','$adminId')");
 }
-
+*/
 function db_delete_old_sessions()
 {
 	global $db;
   $datatime = date("Y-m-d H:i:s");
   db_query ("DELETE FROM admin_session WHERE ($datatime - `time_last_visit`)>356");
 }
+
 function db_getCustomPagesPanel(){
     $res = db_query("SELECT * FROM custom_page");
 
@@ -29,7 +30,45 @@ function db_getCustomPagesPanel(){
     while($row = $res->fetch_assoc()){
         $pages [$row['name']] = $row['value'];
     }
-
     return $pages;
 }
+
+function db_setPracticesForStudentsPVOM() {
+  logFileWriter(db_getMemberIdBySessionId (session_id()), 'ПРАКТИКИ. Пакетное добавление учёта практик для обучающихся ПВОМ администратором.', 'WARNING');
+  
+  $currentDate = date("Y-m-d");
+  $resultFoUser = ':';
+  $students = array();
+  $queryStudents=db_query ("SELECT `key` FROM member WHERE `locality_key` = '001192'");
+  while ($rowOfStudents = $queryStudents->fetch_assoc()) $students[]=$rowOfStudents['key'];
+
+  $checkSettingOn = '';
+  foreach ($students as $student){
+    $checkSettingOn = '';
+    $queryPracticesOn=db_query ("SELECT `member_key` FROM user_setting WHERE `member_key` = '$student' AND `setting_key` = '9'");
+    while ($rowOfPracticesOn = $queryPracticesOn->fetch_assoc()) $checkSettingOn=$rowOfPracticesOn['member_key'];
+
+    if (!$checkSettingOn) {
+      $resultFoUser = $resultFoUser.' '.$student;
+      db_query("INSERT INTO user_setting (`member_key`, `setting_key`) VALUES ('$student', '9')");
+      $queryExistString=db_query ("SELECT `member_id` FROM practices WHERE `member_id` = '$student' AND `date_practic` = '$currentDate'");
+      $rowExistString = $queryExistString->fetch_assoc();
+      if (!$rowExistString['member_id']) {
+        db_query("INSERT INTO practices (`date_create`, `member_id`, `date_practic`) VALUES (NOW(), '$student', '$currentDate')");
+      }
+
+      logFileWriter($student, 'ПРАКТИКИ. Пакетное подключение учёта практик для данного пользователя.', 'DEBUG');
+    } else {
+      logFileWriter($student, 'ПРАКТИКИ. Опция учёта практик для данного пользователя была подключена ранее.', 'DEBUG');
+    }
+  }
+
+  if ($resultFoUser === ':') {
+    $resultFoUser = 'У всех обучающихся ПВОМ включен учёт ежедневных практик.';
+  } else {
+    $resultFoUser = 'Опции включены для пользователей c ключами'.$resultFoUser;
+  }
+  return $resultFoUser;
+}
+
 ?>

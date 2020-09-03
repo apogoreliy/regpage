@@ -32,4 +32,13 @@ $(document).ready(function(){
     });
   }
   */
+  $('#onPracticesForStudentsPVOM').click(function() {
+    if (window.confirm("Включить практики всем обучающимся?")) {
+      $.get('panelsource/panelAjax.php?set_practices_pvom', {})
+      .done(function(data){
+        $('#noticeForAddPractices').text(data.result);
+      })
+    }
+  });
+
 });

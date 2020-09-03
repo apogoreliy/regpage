@@ -1,7 +1,7 @@
 <?php
 // DATA BASE QUERY
 // CONTACTS
-
+//include_once 'logWriter.php';
 function db_getNewContactId ()
 {
     $res=db_query ("SELECT `id` FROM contacts ORDER BY `id` DESC LIMIT 1");

@@ -705,7 +705,7 @@ if (statisticLine[x[i].member_id] === undefined) {
       });
   });
 
-    function practicesListServiceonesUpdate(periodValue) {
+    function practicesListServiceonesUpdate(periodValue, sorting) {
       var adminLocalitiiesForSQL = '';
 // LOGJS.JS Нужно создать лог js и подключать к нужным файлам. Проверка объектов и ассоциативных массивов с помощью какогото кода.
 // counter=0; for (var i in arr) {if (arr[i]=="" && counter === 0) console.log('ERROR variable = ', data_page.admin_localities, ' counter should be "0" = ', counter);}
@@ -725,9 +725,11 @@ if (statisticLine[x[i].member_id] === undefined) {
         adminLocalitiiesForSQL = adminLocalitiiesForSQL + ' OR m.locality_key = 001192';
       }
 // var localityAdmin = data_page.admin_locality === '001214' ? adminLocalitiiesForSQL + " OR m.locality_key = 001192": adminLocalitiiesForSQL;
+    sorting ? '': sorting = 'name_down';
     var dataObj = {};
     dataObj.localities = adminLocalitiiesForSQL;
     dataObj.period = periodValue || $('#periodPractices').val();
+    dataObj.sort = sorting;
     $.get('/ajax/practices.php?get_practices_for_admin', {data: dataObj})
       .done (function(data) {
         practicesListServiceones(data.practices);
@@ -785,8 +787,28 @@ if (statisticLine[x[i].member_id] === undefined) {
       setTimeout(function () {
         filterAminLocality();
         filterAminLocalityMbl();
-      }, 500);      
+      }, 500);
   });
+// SORTING START
+  $('#sort-fio').click(function (e) {
+    var sorting;
+    if ($(this).next().hasClass('icon-chevron-down')) {
+      $(this).next().removeClass('icon-chevron-down');
+      $(this).next().addClass('icon-chevron-up');
+      sorting = 'name_down';
+    } else {
+      $(this).next().removeClass('icon-chevron-up');
+      $(this).next().addClass('icon-chevron-down');
+      sorting = 'name_up';
+    }
+
+      practicesListServiceonesUpdate($('#periodPractices').val(), sorting);
+      setTimeout(function () {
+        filterAminLocality();
+        filterAminLocalityMbl();
+      }, 500);
+  });
+// SORTING STOP
 /*  $('#adminlocalitiesCombo').change(function () {
 
     //DAILY STRINGS
