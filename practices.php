@@ -101,7 +101,7 @@
             <table id="listPracticesForObserve" class="table table-hover">
               <thead>
                 <tr>
-                <th style="text-align: left; min-width:70px"><a id="sort-id" href="#" title="сортировать">ФИО</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left; min-width:70px"><a id="sort-fio" href="#" title="сортировать">ФИО</a>&nbsp;<i class="icon-chevron-up"></i></th>
                 <th style="">Период</th>
                 <th style="">УО</th>
                 <th style="text-align: left;">ЛМ</th>
@@ -164,18 +164,18 @@
             <table id="practicesListPersonal" class="table table-hover">
               <thead>
                 <tr>
-                <th style="text-align: left;"><a id="sort-id" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left;"><a id="" href="#" title="сортировать">Дата</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                 <th style="<?php echo in_array('10', db_getUserSettings($memberId)) ? '':'display:none' ?>"><a id="" href="#" title="сортировать">Подъём</a>&nbsp;</th>
-                <th style=""><a id="sort-city" href="#" title="сортировать">УО</a>&nbsp;<i class="<?php echo $sort_field=='city' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-status" href="#" title="сортировать">ЛМ</a>&nbsp;<i class="<?php echo $sort_field=='status' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-bptz_half_year" href="#" title="сортировать">МТ</a>&nbsp;<i class="<?php echo $sort_field=='half_year' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-attended" href="#" title="сортировать">ЧБ</a>&nbsp;<i class="<?php echo $sort_field=='attended' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="text-align: left;"><a id="sort-count_ltmeeting" href="#" title="сортировать">ЧС</a>&nbsp;<i class="<?php echo $sort_field=='count_ltmeeting' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="sort-completed" href="#" title="сортировать">БЛ</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="sort-completed" href="#" title="сортировать">Л</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="sort-completed" href="#" title="сортировать">К</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="sort-completed" href="#" title="сортировать">С</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
-                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="sort-completed" href="#" title="сортировать">В</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style=""><a id="" href="#" title="сортировать">УО</a>&nbsp;<i class="<?php echo $sort_field=='city' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left;"><a id="" href="#" title="сортировать">ЛМ</a>&nbsp;<i class="<?php echo $sort_field=='status' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left;"><a id="" href="#" title="сортировать">МТ</a>&nbsp;<i class="<?php echo $sort_field=='half_year' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left;"><a id="" href="#" title="сортировать">ЧБ</a>&nbsp;<i class="<?php echo $sort_field=='attended' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left;"><a id="" href="#" title="сортировать">ЧС</a>&nbsp;<i class="<?php echo $sort_field=='count_ltmeeting' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="" href="#" title="сортировать">БЛ</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="" href="#" title="сортировать">Л</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="" href="#" title="сортировать">К</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="" href="#" title="сортировать">С</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="<?php echo in_array('11', db_getUserSettings($memberId)) ? 'text-align: left;':'display:none; text-align: left;' ?>"><a id="" href="#" title="сортировать">В</a>&nbsp;<i class="<?php echo $sort_field=='completed' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                 <th style="<?php echo in_array('10', db_getUserSettings($memberId)) ? '':'display:none' ?>"><a id="" href="#" title="сортировать">Отбой</a>&nbsp;</th>
                 </tr>
               </thead>
@@ -243,7 +243,7 @@
             <table id="listPracticesForObserveMbl" class="table table-hover">
               <thead>
                 <tr>
-                <th style="text-align: left; width:100px"><a id="sort-id" href="#" title="сортировать">ФИО</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
+                <th style="text-align: left; width:100px"><a id="sort-id_mbl" href="#" title="сортировать">ФИО</a>&nbsp;<i class="<?php echo $sort_field=='id' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
                 <th style="width: 25px;">УО</th>
                 <th style="text-align: left; width: 25px;">ЛМ</th>
                 <th style="text-align: left; width: 25px;">МТ</th>
