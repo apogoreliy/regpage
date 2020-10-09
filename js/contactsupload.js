@@ -107,14 +107,17 @@ function prepareArrayUpload(array) {
 };
 //START SAFE FUNCTION NEW UPLOAD BUTTON
 $('.saveUploadItemsNew').click(function () {
-  if ($('#nameGlobalUploadVal').val() === '_none_') {
+  if ($('#nameGlobalUploadVal').val() === '_none_' || $('#nameGlobalUploadVal').val() === '') {
     showError('Заполните поле ФИО');
     $('#nameGlobalUploadVal').css('border-color', 'red');
     return
-  } else if ($('#uploadCountry').val() === '_none_' && $('#citizenshipGlobalUploadVal').val() === '_none_') {
+  } else if (($('#uploadCountry').val() === '_none_' && $('#citizenshipGlobalUploadVal').val() === '_none_') || $('#citizenshipGlobalUploadVal').val() === '') {
     showError('Выберите страну из списка или соответствующее поле из файла.');
     $('#citizenshipGlobalUploadVal').css('border-color', 'red');
     $('#uploadCountry').css('border-color', 'red');
+    return
+  } else if (!$('#periodOfContacts').val()) {
+    showError('Заполните поле ПЕРИОД');
     return
   }
   $('#saveSpinner').show();
@@ -180,6 +183,7 @@ console.log(columnsNo);
     var r = fieldsSelected['other2'] !== '_none_' ? fieldsSelected['other2'] : '';
     var s = fieldsSelected['other3'] !== '_none_' ? fieldsSelected['other3'] : '';
     var t = fieldsSelected['other4'] !== '_none_' ? fieldsSelected['other4'] : ''; // ???
+    var mainPeriod = $('#periodOfContacts').val(); // project
 
 var fildsNamesAre = {aa:aa,b:b,c:c,bb:bb,d:d,e:e,f:f,g:g,h:h,j:j,k:k,l:l,m:m,n:n,o:o,p:p,q:q,r:r,s:s,t:t}
 // START Custom stream
@@ -370,7 +374,13 @@ var fildsNamesAre = {aa:aa,b:b,c:c,bb:bb,d:d,e:e,f:f,g:g,h:h,j:j,k:k,l:l,m:m,n:n
         //dateOrd = new Date(dateOrdReady);
       }
 */
-      tmpArr.push(xlsxDataGlobal[i][c]); // order date
+      if (xlsxDataGlobal[i][c] && xlsxDataGlobal[i][c][2] === '.') {
+        //var rplsDate = xlsxDataGlobal[i][c].replace(/\./g,'-');
+        tmpArr.push(dateStrToddmmyyyyToyyyymmdd(xlsxDataGlobal[i][c])); // order date
+      } else {
+        tmpArr.push(xlsxDataGlobal[i][c]); // order date
+      }
+
 // STOP date parsing
 
 // START Status
@@ -419,12 +429,14 @@ switch (toTrimAndToLower(xlsxDataGlobal[i][d])) {
       tmpArr.push(xlsxDataGlobal[i][n]); // area
       tmpArr.push(xlsxDataGlobal[i][o]); // region of the work
       tmpArr.push(xlsxDataGlobal[i][p]); // region
+      tmpArr.push(mainPeriod); // project
 
 
 // Доделать добавление строк только отмеченных строк
       if (arrStr01.indexOf(i) !== -1 && $('#uploadStringsChkbx').prop('checked') || (!$('#uploadStringsChkbx').prop('checked'))) {
           newArrForServer.push(tmpArr);
       }
+
 /*
 // REG TABLE START
       tmpArrReg.push(xlsxDataGlobal[i][aa]); // other
@@ -502,7 +514,6 @@ switch (toTrimAndToLower(xlsxDataGlobal[i][d])) {
 // STOP SAFE FUNCTION NEW UPLOAD BUTTON
 // START UPLOAD FILE
 $('#upload_file').change(function() {
-  // ВЫКЛЮЧИТЬ БЛОКИРОВКУ С ПРОШЛЫХ НАСТРОЕК, НО, ВОЗМОЖНО ЛУЧШЕ ОСТАВИТЬ ГЛОБАЛЬНЫЕ НАСТРОЙКИ. УТОЧНИТЬ.
 
   $('#globalValueForFields').find('select').each(function () {
     $(this).attr('disabled', false);

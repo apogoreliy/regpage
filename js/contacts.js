@@ -5,9 +5,9 @@ $(document).ready(function(){
   console.log(data_page);
 
   if (data_page.admin_role === '0') {
-    $('#responsibleContact').html('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
+    $('#responsibleContact').html('<option value="'+window.adminId+'">'+fullNameToNoMiddleName(data_page.admin_name)+'');
   } else {
-    var checkOption;
+    /*var checkOption;
     $('#responsibleContact option').each(function() {
       if ($(this).val() === window.adminId) {
         checkOption = 1;
@@ -15,10 +15,10 @@ $(document).ready(function(){
       }
     });
     if (!checkOption) {
-      $('#responsibleContact').append('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
-      $('#respShow').append('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
-      $('#responsibleList').append('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
-    }
+      $('#responsibleContact').append('<option value="'+window.adminId+'">'+fullNameToNoMiddleName(data_page.admin_name)+'');
+      $('#respShow').append('<option value="'+window.adminId+'">'+fullNameToNoMiddleName(data_page.admin_name)+'');
+      $('#responsibleList').append('<option value="'+window.adminId+'">'+fullNameToNoMiddleName(data_page.admin_name)+'');
+    }*/
   }
 
 function contactsStringsLoad(x, idStr, sort) {
@@ -64,25 +64,35 @@ function contactsStringsLoad(x, idStr, sort) {
       idStrMbl = idStr;
     }
     if (data_page.admin_role > 0) {
-      prevAdm = data_page.full_admin_list[x[i].responsible_previous];
+      !data_page.full_admin_list[x[i].responsible_previous] ? prevAdm = data_page.full_admin_list[x[i].responsible_previous] : prevAdm = data_page.full_admin_list[x[i].responsible_previous][0];
     } else {
-      prevAdm = data_page.full_admin_list[x[i].responsible_previous];
+      !data_page.full_admin_list[x[i].responsible_previous] ? prevAdm = data_page.full_admin_list[x[i].responsible_previous] : prevAdm = data_page.full_admin_list[x[i].responsible_previous][0];
     }
 // ADD new responsibles in the list
 
     if (!data_page.members_responsibles[x[i].responsible_previous] && x[i].responsible_previous) {
-      data_page.members_responsibles[x[i].responsible_previous] = data_page.full_admin_list[x[i].responsible_previous];
-      respChange = true;
+      if (!data_page.full_admin_list[x[i].responsible]) {
+        console.log('Error. Responsible is undefined');
+        data_page.members_responsibles[x[i].responsible_previous] = data_page.full_admin_list[x[i].responsible_previous];
+      } else {
+        data_page.members_responsibles[x[i].responsible_previous] = data_page.full_admin_list[x[i].responsible_previous][0];
+        respChange = true;
+      }
     }
 
     if (!data_page.members_responsibles[x[i].responsible] && x[i].responsible) {
-      data_page.members_responsibles[x[i].responsible] = data_page.full_admin_list[x[i].responsible];
-      respChange = true;
+      if (!data_page.full_admin_list[x[i].responsible]) {
+          console.log('Error. Responsible is undefined');
+          data_page.members_responsibles[x[i].responsible] = data_page.full_admin_list[x[i].responsible];
+      } else {
+        data_page.members_responsibles[x[i].responsible] = data_page.full_admin_list[x[i].responsible][0];
+        respChange = true;
+      }
     }
 
 // STOP ADD new responsibles in the list
 
-    prevAdm ? prevAdm = twoNames2(prevAdm) : prevAdm = '';
+    prevAdm ? prevAdm = fullNameToNoMiddleName(prevAdm) : prevAdm = '';
     statusSwitch(x[i].status);
     tempCom = x[i].comment;
     var comSlice = '';
@@ -106,16 +116,22 @@ function contactsStringsLoad(x, idStr, sort) {
     }
     x[i].notice === '1' && x[i].responsible === window.adminId ? newString = 'bg-notice-string ' : newString = '';
 
-    tableData.push('<tr class="'+newString+'contacts_str '+(idStrDsk === x[i].id ? 'active_string' : '')+' cursor-pointer" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+x[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+comSlice+'</span></td><td><span  class="data_locality">'+(x[i].locality === ' ' ? '' : x[i].locality)+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+x[i].region+'</span></td><td class="data_phone">'+x[i].phone+'</td><td class="data_status">'+statusSwitch(x[i].status)+'</td><td><span class="data_responsible_sort_name">'+twoNames2(x[i].member_name)+'</span><br><span class="data_responsible_previous grey_text">'+prevAdm+'</span></td></tr>');
+    tableData.push('<tr class="'+newString+'contacts_str '+(idStrDsk === x[i].id ? 'active_string' : '')+' cursor-pointer" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'" data-period="'+x[i].project+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+x[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+comSlice+'</span></td><td><span  class="data_locality">'+(x[i].locality === ' ' ? '' : x[i].locality)+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+x[i].region+'</span></td><td class="data_phone">'+x[i].phone+'</td><td><span class="data_status">'+statusSwitch(x[i].status)+'</span><br><span class="grey_text" style="margin-left: 0">'+x[i].project+'</span></td><td><span class="data_responsible_sort_name">'+fullNameToNoMiddleName(x[i].member_name)+'</span><br><span class="data_responsible_previous grey_text">'+prevAdm+'</span></td></tr>');
 
-    tableDataMbl.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+newString+'contacts_str cursor-pointer '+(idStrMbl === x[i].id ? 'active_string' : '')+'" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+x[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;">'+(x[i].locality === ' ' ? '' : x[i].locality)+'</span><span>, </span><span class="" style="margin-left: 0"> '+x[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+x[i].phone+'">'+x[i].phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+statusSwitch(x[i].status)+'</div></div>');
+    tableDataMbl.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+newString+'contacts_str cursor-pointer '+(idStrMbl === x[i].id ? 'active_string' : '')+'" data-id="'+x[i].id+'" data-crm_id="'+x[i].crm_id+'" data-responsible_name ="'+x[i].member_name+'" data-other="'+(x[i].comment === ' '? '' : x[i].comment)+'"  data-date="'+x[i].time_stamp+'" data-index_post="'+x[i].index_post+'" data-address="'+(x[i].address === ' ' ? '' : x[i].address)+'" data-area="'+(x[i].area === ' ' ? '' : x[i].area)+'" data-country_key="'+x[i].country_key+'" data-email="'+x[i].email+'" data-male="'+x[i].male+'" data-order_date="'+dateorder+'" data-region="'+(x[i].region === ' ' ? '' : x[i].region)+'" data-region_work="'+(x[i].region_work === ' ' ? '': x[i].region_work)+'" data-responsible="'+x[i].responsible+'" data-responsible_previous="'+x[i].responsible_previous+'" data-responsible_previous_name="'+prevAdm+'" data-sending_date="'+datesending+'" data-status_key="'+x[i].status+'" data-period="'+x[i].project+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+x[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;">'+(x[i].locality === ' ' ? '' : x[i].locality)+'</span><span>, </span><span class="" style="margin-left: 0"> '+x[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:+'+x[i].phone+'">'+x[i].phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+statusSwitch(x[i].status)+'</div></div>');
   }
 
+
+// Фильтрация и добавление контактов не указанных у ответственного но имеющиеся в списке отключены
+// THIS CODE SHOULD BE CHANCHED
+// Проверить и убрать лишнюю фильтрацию, если динамично не добавляются ответственные из карточек
   if (respChange) {
     var sortable = [];
+
     for (var vehicle in data_page.members_responsibles) {
         sortable.push([vehicle, data_page.members_responsibles[vehicle]]);
     }
+
     sortable.sort(function(a, b) {
       if (a[1] > b[1]) {
         return 1;
@@ -128,12 +144,15 @@ function contactsStringsLoad(x, idStr, sort) {
 
     var options = [];
     options.push('<option selected value="_all_">Все ответственные');
-    for (var i = 0; i < sortable.length; i++) {
-      options.push('<option value="'+sortable[i][0]+'">'+twoNames2(sortable[i][1])+'');
+    for (var variable17 = 0; variable17 < sortable.length; variable17++) {
+        options.push('<option value="'+sortable[variable17][0]+'">'+fullNameToNoMiddleName(sortable[variable17][1])+'');
     }
-    $('#responsibleContact').html(options);
+
     $('#respShow').html(options);
+    options[0] = '<option selected value="_all_">';
     $('#responsibleList').html(options);
+    options.shift();
+    $('#responsibleContact').html(options);
   }
 
    $('#listContacts tbody').html(tableData);
@@ -176,7 +195,8 @@ function contactsStringsLoad(x, idStr, sort) {
      responsible_sort_name: $(this).find('.data_responsible_sort_name').text(),
      responsible_previous_short_name: $(this).find('.data_responsible_previous').text(),
      active_string: $(this).hasClass('active_string'),
-     notice: $(this).hasClass('bg-notice-string')
+     notice: $(this).hasClass('bg-notice-string'),
+     project: $(this).attr('data-period')
    });
  });
 
@@ -223,9 +243,9 @@ function contactsStringsLoad(x, idStr, sort) {
    }
    for (var i = 0; i < stringsArr.length; i++) {
 
-   tableDataSort.push('<tr class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str '+(stringsArr[i].active_string && isDsk ? 'active_string' : '')+' cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+ stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+stringsArr[i].address+'" data-area="'+stringsArr[i].area+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+stringsArr[i].region+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+stringsArr[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+stringsArr[i].shortComment+'</span></td><td><span  class="data_locality">'+stringsArr[i].locality+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+stringsArr[i].region+'</span></td><td class="data_phone">'+stringsArr[i].data_phone+'</td><td class="data_status">'+stringsArr[i].data_status+'</td><td><span class="data_responsible_sort_name">'+stringsArr[i].responsible_sort_name+'</span><br><span class="data_responsible_previous grey_text">'+stringsArr[i].responsible_previous_short_name+'</span></td></tr>');
+   tableDataSort.push('<tr class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str '+(stringsArr[i].active_string && isDsk ? 'active_string' : '')+' cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+ stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+stringsArr[i].address+'" data-area="'+stringsArr[i].area+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+stringsArr[i].region+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'" data-period="'+stringsArr[i].project+'"><td><input class="checkboxString" type="checkbox"></td><td><span class="data_name">'+stringsArr[i].name+'</span><br><span class="grey_text short_comment" style="margin-left: 0">'+stringsArr[i].shortComment+'</span></td><td><span  class="data_locality">'+stringsArr[i].locality+'</span><br><span class="grey_text region_text" style="margin-left: 0">'+stringsArr[i].region+'</span></td><td class="data_phone">'+stringsArr[i].data_phone+'</td><td><span class="data_status">'+stringsArr[i].data_status+'</span><br><span class="grey_text" style="margin-left: 0">'+stringsArr[i].project+'</span></td><td><span class="data_responsible_sort_name">'+stringsArr[i].responsible_sort_name+'</span><br><span class="data_responsible_previous grey_text">'+stringsArr[i].responsible_previous_short_name+'</span></td></tr>');
 
-   tableDataMblSort.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+(stringsArr[i].address === ' ' ? '' : stringsArr[i].address)+'" data-area="'+(stringsArr[i].area === ' ' ? '' : stringsArr[i].area)+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+(stringsArr[i].region === ' ' ? '' : stringsArr[i].region)+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+stringsArr[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;"> '+stringsArr[i].locality+'</span><span>, </span></span><span class="" style="margin-left: 0"> '+stringsArr[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+stringsArr[i].data_phone+'">'+stringsArr[i].data_phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+stringsArr[i].data_status+'</div></div>');
+   tableDataMblSort.push('<div style="border-bottom: 1px solid lightgrey; padding-bottom: 5px; padding-top: 5px;" class="'+(stringsArr[i].notice ? 'bg-notice-string ' : '')+'contacts_str cursor-pointer" data-id="'+stringsArr[i].id+'" data-crm_id="'+stringsArr[i].crm_id+'" data-responsible_name ="'+stringsArr[i].responsible_name+'" data-other="'+stringsArr[i].other+'"  data-date="'+stringsArr[i].time_stamp+'" data-index_post="'+stringsArr[i].index_post+'" data-address="'+(stringsArr[i].address === ' ' ? '' : stringsArr[i].address)+'" data-area="'+(stringsArr[i].area === ' ' ? '' : stringsArr[i].area)+'" data-country_key="'+stringsArr[i].country_key+'" data-email="'+stringsArr[i].email+'" data-male="'+stringsArr[i].male+'" data-order_date="'+stringsArr[i].order_date+'" data-region="'+(stringsArr[i].region === ' ' ? '' : stringsArr[i].region)+'" data-region_work="'+stringsArr[i].region_work+'" data-responsible="'+stringsArr[i].responsible+'" data-responsible_previous="'+stringsArr[i].responsible_previous+'" data-responsible_previous_name="'+stringsArr[i].responsible_previous_name+'" data-sending_date="'+stringsArr[i].sending_date+'" data-status_key="'+stringsArr[i].status_key+'" data-period="'+stringsArr[i].project+'"><div><input class="checkboxString" type="checkbox"><span> <b class="data_name">'+stringsArr[i].name+'</b> </span><br><span  class="data_locality" style="padding-left: 20px;"> '+stringsArr[i].locality+'</span><span>, </span></span><span class="" style="margin-left: 0"> '+stringsArr[i].region+' </span></div><div class="data_phone" style="padding-left: 17px;"> <a href="tel:'+stringsArr[i].data_phone+'">'+stringsArr[i].data_phone+'</a></div><div class="data_status" style="padding-left: 17px;">'+stringsArr[i].data_status+'</div></div>');
 
  }
   $('#listContacts tbody').html(tableDataSort);
@@ -301,9 +321,9 @@ function contactsStringsLoad(x, idStr, sort) {
 
      if (data_page.admin_role === '0') {
        var first = '', second = '';
-       first = '<option value="'+$(this).attr('data-responsible')+'">'+twoNames2($(this).attr('data-responsible_name'))+'';
+       first = '<option value="'+$(this).attr('data-responsible')+'">'+fullNameToNoMiddleName($(this).attr('data-responsible_name'))+'';
        if ($(this).attr('data-responsible_previous')) {
-        second = '<option value="'+$(this).attr('data-responsible_previous')+'">'+twoNames2($(this).attr('data-responsible_previous_name'))+'';
+        second = '<option value="'+$(this).attr('data-responsible_previous')+'">'+fullNameToNoMiddleName($(this).attr('data-responsible_previous_name'))+'';
        }
        $('#responsibleContact').html(first+second);
      }
@@ -311,6 +331,17 @@ function contactsStringsLoad(x, idStr, sort) {
      $(this).attr('data-country_key') ? countryName = data_page.country_list[$(this).attr('data-country_key')] : '';
      $('#nameContact').val($(this).find('.data_name').text());
      $('#phoneContact').val($(this).find('.data_phone').text());
+     if ($(this).find('.data_phone').text()) {
+       var phoneNumberTmp = $(this).find('.data_phone').text().trim();
+       if (phoneNumberTmp[0] === '+' || phoneNumberTmp[0] === '8') {
+        phoneNumberTmp = 'tel:' + phoneNumberTmp;
+      } else {
+        phoneNumberTmp = 'tel:+' + phoneNumberTmp;
+      }
+      $('#phoneContactCalling').attr('href', phoneNumberTmp);
+    } else {
+      $('#phoneContactCalling').attr('href', '#');
+    }
      $('#emailContact').val($(this).attr('data-email'));
      $('#countryContact').val($(this).attr('data-country_key'));
      $('#maleContact').val($(this).attr('data-male'));
@@ -344,6 +375,7 @@ function contactsStringsLoad(x, idStr, sort) {
      $('#saveContact').attr('data-id', $(this).attr('data-id'));
      $('#saveContact').attr('data-id_admin', window.adminId);
      $('#statusContact').val($(this).attr('data-status_key'));
+     $('#periodLabel').text($(this).attr('data-period'));
 
      // Check a send function
      if ($(this).attr('data-order_date') === '' || $(this).attr('data-order_date') === 'null' || $(this).attr('data-order_date') === 'undefined' || $(this).attr('data-order_date') === '00.00.0000') {
@@ -643,12 +675,14 @@ function historyBuilder(data) {
 
 // ADD NEW CONTACT
   function clearingBlankOfContact() {
+    $('#periodLabel').text('');
     $('.active_string').removeClass('active_string');
     $('#orderDateEditIco').show();
     $('#orderDateEdit').parent().hide();
     $('#sideBarBlankContact').find('input').each(function () {
       $(this).attr('type') !== 'button' ? $(this).val('') : '';
     });
+    $('#phoneContactCalling').attr('href','#');
     $('#maleContact').val('_none_');
     $('#countryContact').val('');
     $('#commentContact').val('');
@@ -677,8 +711,9 @@ function historyBuilder(data) {
   var currentResponsible = '', prevResponsible = '';
   if (($('#responsibleContact').val() && ($('#responsibleContact').val() === $('#responsibleContact').attr('data-responsible'))) || (!$('#responsibleContact').val() && $('#responsibleContact').attr('data-responsible'))) {
     // responsible has not been changed OR responsible has not been choisen
-    currentResponsible = $('#responsibleContact').attr('data-responsible');
-    prevResponsible = $('#responsibleContact').attr('data-responsible_previous');
+      currentResponsible = $('#responsibleContact').attr('data-responsible');
+      prevResponsible = $('#responsibleContact').attr('data-responsible_previous');
+
   } else if (!$('#responsibleContact').val() && !$('#responsibleContact').attr('data-responsible')) {
     // create new contact AND no responsible choise
   currentResponsible = window.adminId;
@@ -693,8 +728,13 @@ function historyBuilder(data) {
     }
   } else if ($('#responsibleContact').val() && ($('#responsibleContact').val() !== $('#responsibleContact').attr('data-responsible'))) {
     // responsible has been changed
-    currentResponsible = $('#responsibleContact').val();
-    prevResponsible = $('#responsibleContact').attr('data-responsible');
+    if ($('#responsibleContact').attr('data-responsible_previous') && window.adminId === $('#responsibleContact').attr('data-responsible_previous')) {
+      currentResponsible = $('#responsibleContact').val();
+      prevResponsible = $('#responsibleContact').attr('data-responsible_previous');
+    } else {
+      currentResponsible = $('#responsibleContact').val();
+      prevResponsible = $('#responsibleContact').attr('data-responsible');
+    }
     setTimeout(function () {
       // add notice
       if (currentResponsible !== window.adminId) {
@@ -740,7 +780,7 @@ function historyBuilder(data) {
 
     $('#saveContact').attr('data-id_admin') ? data.admin = $('#saveContact').attr('data-id_admin') : data.admin = window.adminId;
 
-    $.get('/ajax/contacts.php?new_update_contact', {data: data})
+    $.post('/ajax/contacts.php', {type: 'save', blank_data: data})
       .done (function(data) {
         if (data.id && data.id !== 'update') {
           $('#saveContact').attr('data-id', data.id);
@@ -771,7 +811,7 @@ function historyBuilder(data) {
 
         } else if (data.id === 'update') {
           if ($('#responsibleContact').val() !== $('#responsibleContact').attr('data-responsible') && $('#responsibleContact').val()) {
-            messageFunction('responsible', $('#saveContact').attr('data-id'), shortNames3($('#responsibleContact option:selected').text()));
+            messageFunction('responsible', $('#saveContact').attr('data-id'), fullNameToShortFirstMiddleNames($('#responsibleContact option:selected').text()));
             setTimeout(function () {
               getMessages($('#saveContact').attr('data-id'));
             }, 200);
@@ -926,9 +966,15 @@ function historyBuilder(data) {
       var data = [];
       $('.contacts_str').each(function () {
         if ($(this).is(':visible') && $(this).find('.checkboxString').prop('checked') && ($('#responsibleList').val() !== $(this).attr('data-responsible'))) {
-          data.push([$(this).attr('data-id'), $(this).attr('data-responsible')]);
-          if ($(this).attr('data-id')=== $('#saveContact').attr('data-id')) {
-            $('#responsibleContact').attr('data-responsible_previous', $('#responsibleContact').attr('data-responsible'));
+          if ($(this).attr('data-responsible_previous') === window.adminId && $('#responsibleList').val() !== window.adminId) {
+            data.push([$(this).attr('data-id'), $(this).attr('data-responsible_previous')]);
+          } else {
+            data.push([$(this).attr('data-id'), $(this).attr('data-responsible')]);
+          }
+          if ($(this).attr('data-id') === $('#saveContact').attr('data-id')) {
+            if ($(this).attr('data-responsible_previous') !== window.adminId) {
+              $('#responsibleContact').attr('data-responsible_previous', $('#responsibleContact').attr('data-responsible'));
+            }
             $('#responsibleContact').attr('data-responsible', $('#responsibleList').val());
             $('#responsibleContact').val($('#responsibleList').val());
           }
@@ -938,7 +984,7 @@ function historyBuilder(data) {
         showHint('Назначаемый ответственный не должен совпадать с текущим ответственным');
         return
       }
-      var responsibleArr = [$('#responsibleList').val(), shortNames3($('#responsibleList option:selected').text(), true)];
+      var responsibleArr = [$('#responsibleList').val(), fullNameToShortFirstMiddleNames($('#responsibleList option:selected').text(), true)];
 
     // ПРОВЕРИТЬ на больших объёмах, возможно лучше действовать синхронно, что бы запрос не выполнился прежде формирования   массива содержащего данные для запроса
       $.post('/ajax/contacts.php', {type: 'responsible_set', responsible: responsibleArr, id: data})
@@ -948,6 +994,11 @@ function historyBuilder(data) {
       setTimeout(function () {
         contactsListUpdate();
         showHint('Заказы переданы');
+        $.get('/ajax/contacts.php?get_contacts_prev', {cont_role: data_page.admin_contacts_role})
+              .done (function(data) {
+                blankCounter.blank_count_their = data.contacts;
+                blankCounter.counter;
+              })
       }, 300);
     }
   }
@@ -1002,9 +1053,9 @@ function historyBuilder(data) {
 
       if (data_page.admin_role === '0') {
         var first = '', second = '';
-        first = '<option value="'+$('.active_string').attr('data-responsible')+'">'+twoNames2($('.active_string').attr('data-responsible_name'))+'';
+        first = '<option value="'+$('.active_string').attr('data-responsible')+'">'+fullNameToNoMiddleName($('.active_string').attr('data-responsible_name'))+'';
         if ($('.active_string').attr('data-responsible_previous')) {
-         second = '<option value="'+$('.active_string').attr('data-responsible_previous')+'">'+twoNames2($('.active_string').attr('data-responsible_previous_name'))+'';
+         second = '<option value="'+$('.active_string').attr('data-responsible_previous')+'">'+fullNameToNoMiddleName($('.active_string').attr('data-responsible_previous_name'))+'';
         }
         $('#responsibleContact').html(first+second);
       }
@@ -1053,8 +1104,8 @@ function historyBuilder(data) {
         $('.active_string').attr('data-id', data.id);
         $('.active_string').attr('data-status_key',data.status);
         $('.active_string').find('.data_status').text($('#statusContact option:selected').text());
-        $('.active_string').find('.data_responsible_sort_name').text(twoNames2(data.member_name));
-        $('.active_string').find('.data_responsible_previous').text(twoNames2(data_page.members_responsibles[data.responsible_previous]));
+        $('.active_string').find('.data_responsible_sort_name').text(fullNameToNoMiddleName(data.member_name));
+        $('.active_string').find('.data_responsible_previous').text(fullNameToNoMiddleName(data_page.members_responsibles[data.responsible_previous]));
 
         if (data.order_date && data.order_date !== '0000-00-00') {
           dateOrd = dateStrToddmmyyyyToyyyymmdd(data.order_date, true);
@@ -1073,7 +1124,8 @@ function historyBuilder(data) {
       });
     }
 
-  $('.cd-panel__close-watch').click(function() {
+  $('.cd-panel__close-watch').click(function(e) {
+    e.preventDefault();
     if (checkChangedForSave()) {
       if (!confirm('Изменения не сохранены, закрыть карточку?')) {
         return
@@ -1102,7 +1154,9 @@ function historyBuilder(data) {
   $('#addContact').click(function() {
     $('.active_string') ? $('.active_string').removeClass('active_string') : '';
     if (data_page.admin_role === '0') {
-      $('#responsibleContact').html('<option value="'+window.adminId+'">'+twoNames2(data_page.admin_name)+'');
+      $('#responsibleContact').html('<option value="'+window.adminId+'">'+fullNameToNoMiddleName(data_page.admin_name)+'');
+    } else {
+      $('#responsibleContact').val(window.adminId);
     }
     clearingBlankOfContact();
     $('#orderSentToContact').attr('disabled', false);
@@ -1181,7 +1235,7 @@ function sendTheOrder(ua) {
   notesOfAdmin = $('#adminNotes').val(),
   commentNotForCrm = '',
   isFirstOrder = false,
-  comment = 'Заказ отправил(а) ' + twoNames2(data_page.admin_name)+'.',
+  comment = 'Заказ отправил(а) ' + fullNameToNoMiddleName(data_page.admin_name)+'.',
   dateNow = new Date().toISOString().slice(0,10);
   dateNow = dateStrToddmmyyyyToyyyymmdd(dateNow, true);
 
@@ -1210,8 +1264,8 @@ function sendTheOrder(ua) {
   }
 
     if (ua === 'UA') {
-      var textMessage = 'ФИО: '+ name +'<br>Страна: '+ country +'<br>Область: '+ region +'<br>Район: '+ area +'<br>Местность: '+ locality +'<br>Адрес: '+ address +'<br>Индекс:'+ index  +'<br>Количество: '+ howMuch +'<br>Телефон: '+ phone +'<br>Емайл: '+ email +'<br>Комментарий: '+ commentNotForCrm + '. ' + notesOfAdmin +'<br>Отправлено с сайта: '+ dateNow + '<br>Отправил: '+ twoNames2(data_page.admin_name);
-      $.post('ajax/contacts.php', {type: 'message_ua',text_message: textMessage, name: twoNames2(data_page.admin_name)})
+      var textMessage = 'ФИО: '+ name +'<br>Страна: '+ country +'<br>Область: '+ region +'<br>Район: '+ area +'<br>Местность: '+ locality +'<br>Адрес: '+ address +'<br>Индекс:'+ index  +'<br>Количество: '+ howMuch +'<br>Телефон: '+ phone +'<br>Емайл: '+ email +'<br>Комментарий: '+ commentNotForCrm + '. ' + notesOfAdmin +'<br>Отправлено с сайта: '+ dateNow + '<br>Отправил: '+ fullNameToNoMiddleName(data_page.admin_name);
+      $.post('ajax/contacts.php', {type: 'message_ua',text_message: textMessage, name: fullNameToNoMiddleName(data_page.admin_name)})
       .done (function(data) {
           if (data) {
             addCrmId(data);
@@ -1339,11 +1393,9 @@ function sendTheOrder(ua) {
   $('#sendingDate').parent().hide();
 
   function filtersOfString() {
-    var filterBlank, text, fio, loc, region, searchResult;
+    var filterBlank, text, fio, loc, region, searchResult, periods;
     text = $('#search-text').val().trim();
-
     $('.contacts_str').each(function() {
-
       // Search text
       if (text.length > 2) {
         fio = $(this).find('.data_name').text().trim();
@@ -1370,7 +1422,7 @@ function sendTheOrder(ua) {
           $('#addContact').attr('disabled', false);
         }
 
-        if (($('#maleShow').val() === '_all_' || $('#maleShow').val() === $(this).attr('data-male')) && ($('#statusShow').val() === '_all_' || $('#statusShow').val() === $(this).attr('data-status_key')) && ($('#respShow').val() === '_all_' || ($('#respShow').val() === $(this).attr('data-responsible') || $('#respShow').val() === $(this).attr('data-responsible_previous'))) && filterBlank && searchResult) {
+        if (($('#periodsCombobox').val() === '_all_' || $('#periodsCombobox').val() === $(this).attr('data-period')) && ($('#maleShow').val() === '_all_' || $('#maleShow').val() === $(this).attr('data-male')) && ($('#statusShow').val() === '_all_' || $('#statusShow').val() === $(this).attr('data-status_key')) && ($('#respShow').val() === '_all_' || ($('#respShow').val() === $(this).attr('data-responsible') || $('#respShow').val() === $(this).attr('data-responsible_previous'))) && ($('#leftPanelCountryFilter').val() === '_all_' || $('#leftPanelCountryFilter').val() === $(this).attr('data-country_key')) && ($('#leftPanelRegionFilter').val() === '_all_' || $('#leftPanelRegionFilter').val() === $(this).attr('data-region_work')) && filterBlank && searchResult) {
           $(this).show();
           if ($('#myBlanks').val() === '0' &&  data_page.admin_role === '0') {
             $(this).find('.checkboxString').attr('disabled', true);
@@ -1388,7 +1440,7 @@ function sendTheOrder(ua) {
     });
   }
 
-  $('#maleShow, #statusShow, #respShow, #myBlanks').change(function (event) {
+  $('#maleShow, #statusShow, #respShow, #myBlanks, #periodsCombobox, #leftPanelCountryFilter, #leftPanelRegionFilter').change(function (event) {
     event.stopPropagation();
     if (event.target.id === 'myBlanks' && event.target.value === '1' && $('#respShow').val() !== '_all_') {
       $('#respShow').val('_all_');
@@ -1543,4 +1595,543 @@ function sendTheOrder(ua) {
 
   //$('#listContacts').html();
 
+// START blank counter for statistics
+// dinamic update data of statistics
+// ДОбавить свойство при котором будут запускаться запросы и обновления статистики. Проверить связи.
+  if (data_page.admin_role !== '0') {
+    blankCounter.counter = setTimeout (function () {
+      if (!blankCounter.blank_count_their[0]) {
+        console.log(blankCounter.blank_count_their);
+        return
+      }
+      var xex = [], arr = blankCounter.blank_count_their;
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i]['responsible'] in xex) {
+              xex[arr[i]['responsible']] += 1;
+            } else {
+              xex[arr[i]['responsible']] = 1;
+            }
+        }
+      blankCounter.blank_count_their_short  = xex;
+    },2000);
+
+    blankCounter.status_stat = setTimeout (function () {
+      if (!blankCounter.blank_count_their[0]) {
+        console.log(blankCounter.blank_count_their);
+        return
+      }
+      var xey = [];
+      arr2 = blankCounter.blank_count_their;
+      for (var ii = 0; ii < arr2.length; ii++) {
+          if (arr2[ii]['responsible'] in xey) {
+            xey[arr2[ii]['responsible']][0] += 1;
+            if (Number(arr2[ii]['status'])) {
+              xey[arr2[ii]['responsible']][Number(arr2[ii]['status'])] += 1;
+            } else {
+              xey[arr2[ii]['responsible']][8] += 1;
+            }
+          } else {
+            xey[arr2[ii]['responsible']] = [0,0,0,0,0,0,0,0,0,'0']
+            xey[arr2[ii]['responsible']][0] = 1;
+            xey[arr2[ii]['responsible']][9] = arr2[ii]['member_name'];
+            if (Number(arr2[ii]['status'])) {
+              xey[arr2[ii]['responsible']][Number(arr2[ii]['status'])] = 1;
+            } else {
+              xey[arr2[ii]['responsible']][8] = 1;
+            }
+          }
+        }
+        blankCounter.blank_count_status = xey;
+    },3000);
+/*
+// now the object announced in contacts.php
+    var blankCounter = {
+      blank_count_their: [],
+      blank_count_their_short: [],
+      blank_count_status: [],
+      get_contacts: $.get('/ajax/contacts.php?get_contacts_prev', {cont_role: data_page.admin_contacts_role})
+            .done (function(data) {
+              blankCounter.blank_count_their = data.contacts;
+            }),
+      counter: setTimeout (function () {
+        if (!blankCounter.blank_count_their[0]) {
+          console.log(blankCounter.blank_count_their);
+          return
+        }
+        var xex = [], arr = blankCounter.blank_count_their;
+          for (var i = 0; i < arr.length; i++) {
+              if (arr[i]['responsible'] in xex) {
+                xex[arr[i]['responsible']] += 1;
+              } else {
+                xex[arr[i]['responsible']] = 1;
+              }
+          }
+        blankCounter.blank_count_their_short  = xex;
+      }, 5000),
+      status_stat: setTimeout (function () {
+        if (!blankCounter.blank_count_their[0]) {
+          console.log(blankCounter.blank_count_their);
+          return
+        }
+        var xey = [];
+        arr2 = blankCounter.blank_count_their;
+        for (var ii = 0; ii < arr2.length; ii++) {
+            if (arr2[ii]['responsible'] in xey) {
+              xey[arr2[ii]['responsible']][0] += 1;
+              if (Number(arr2[ii]['status'])) {
+                xey[arr2[ii]['responsible']][Number(arr2[ii]['status'])] += 1;
+              } else {
+                xey[arr2[ii]['responsible']][8] += 1;
+              }
+            } else {
+              xey[arr2[ii]['responsible']] = [0,0,0,0,0,0,0,0,0,'0']
+              xey[arr2[ii]['responsible']][0] = 1;
+              xey[arr2[ii]['responsible']][9] = arr2[ii]['member_name'];
+              if (Number(arr2[ii]['status'])) {
+                xey[arr2[ii]['responsible']][Number(arr2[ii]['status'])] = 1;
+              } else {
+                xey[arr2[ii]['responsible']][8] = 1;
+              }
+            }
+          }
+          blankCounter.blank_count_status = xey;
+      },7000)
+    };
+*/
+    function addNumberToComboboxes(data) {
+      if (!data || Object.keys(data).length < 1) {
+        return
+        //console.log(data);
+      }
+      $('#respShow option').each(function () {
+        if ($(this).val() in data) {
+          $(this).text($(this).text() + ' - ' + data[$(this).val()]);
+        }
+      });
+
+      $('#responsibleContact option').each(function () {
+        if ($(this).val() in data) {
+          $(this).text($(this).text() + ' - ' + data[$(this).val()]);
+        }
+      });
+
+      $('#responsibleList option').each(function () {
+        if ($(this).val() in data) {
+          $(this).text($(this).text() + ' - ' + data[$(this).val()]);
+        }
+      });
+    }
+
+    function fillInStatusStatistic(data) {
+      var html = [];
+      for (i in data) {
+        html.push('<tr><td style="text-align: left;">'+fullNameToNoMiddleName(data[i][9])+'</td><td class="bg-light"><b>'+(data[i][0] == '0' ? '-' : data[i][0])+'</b></td><td>'+(data[i][7] == '0' ? '-' : data[i][7]) +'</td><td> '+(data[i][1] == '0' ? '-' : data[i][1])+'</td><td>'+(data[i][2] == '0' ? '-' : data[i][2])+'</td><td>'+(data[i][3] == '0' ? '-' : data[i][3])+'</td><td>'+(data[i][4]  == '0' ? '-' : data[i][4])+'</td><td>'+(data[i][5]  == '0' ? '-' : data[i][5])+'</td><td> '+(data[i][6]  == '0' ? '-' : data[i][6])+'</td><td>'+(data[i][8] == '0' ? '-' : data[i][8]) +'</td></tr>');
+      }
+      $('#listMyResp').html(html);
+    }
+
+    $('#respStatistic').click(function () {
+      $('#respWindowStatistic').show();
+    });
+
+    setTimeout(function () {
+      addNumberToComboboxes(blankCounter.blank_count_their_short);
+      fillInStatusStatistic(blankCounter.blank_count_status);
+      //console.log(blankCounter.blank_count_status);
+
+    }, 4000);
+  // STOP blank counter for statistics
+  }
+
+  $('#phoneContact').focusout(function () {
+    if ($('#phoneContact').val()) {
+      var phoneNumberTmp = $('#phoneContact').val().trim();
+      if (phoneNumberTmp[0] === '+' || phoneNumberTmp[0] === '8') {
+       phoneNumberTmp = 'tel:' + phoneNumberTmp;
+     } else {
+       phoneNumberTmp = 'tel:+' + phoneNumberTmp;
+     }
+     $('#phoneContactCalling').attr('href', phoneNumberTmp);
+   } else {
+     $('#phoneContactCalling').attr('href', '#');
+   }
+  });
+//START Responsibles choise
+  $('#respAdmin').show(function () {
+    var htmlAdminsList =['<span class=""><label><input id="selectAllAdminsStrs" type="checkbox"> Отметить все</label><br></span>'];
+    var visibility, attr;
+    if (data_page.admin_contacts_role === '2') {
+      for (var va500 in data_page.full_admin_list) {
+        if (data_page.full_admin_list.hasOwnProperty(va500)) {
+          if (data_page.my_responsibles.indexOf(va500) !== -1) {
+            visibility = 'style="display: none"';
+            attr = 'data-added="1"';
+          } else {
+            visibility = '';
+            attr = '';
+          }
+            htmlAdminsList.push('<span class="list_admins_str" '+visibility+'><label class="font-weight-normal"><input type="checkbox" data-admin_key="'+va500+'" data-locality="'+data_page.full_admin_list[va500][1]+'" '+attr+'> '+fullNameToNoMiddleName(data_page.full_admin_list[va500][0])+'</label><br></span>');
+        }
+      }
+    } else {
+      for (var va in data_page.my_localities_admins) {
+        if (data_page.my_localities_admins.hasOwnProperty(va)) {
+          if (data_page.my_responsibles.indexOf(va) !== -1) {
+            visibility = 'style="display: none"';
+            attr = 'data-added="1"';
+          } else {
+            visibility = '';
+            attr = '';
+          }
+            htmlAdminsList.push('<span class="list_admins_str" '+visibility+'><label class="font-weight-normal"><input type="checkbox" data-admin_key="'+va+'" data-locality="'+data_page.my_localities_admins[va][1]+'" '+attr+'> '+fullNameToNoMiddleName(data_page.my_localities_admins[va][0])+'</label><br></span>');
+        }
+      }
+    }
+    $('#fullListOfAdmins').html(htmlAdminsList);
+
+    // my admins
+    var htmlMyAdminsList =['<span class=""><label><input id="selectAllMyAdminsStrs" type="checkbox"> Отметить все</label><br></span>'];
+    var myResponsibles;
+
+    if (data_page.my_responsibles) {
+      myResponsibles = data_page.my_responsibles.split(',');
+      for (var i = 0; i < myResponsibles.length; i++) {
+        if (data_page.full_admin_list[myResponsibles[i]]) {
+          htmlMyAdminsList.push('<span class="list_my_admins_str"><label class="font-weight-normal"><input data-admin_key="'+myResponsibles[i]+'" data-locality="'+data_page.full_admin_list[myResponsibles[i]][1]+'" type="checkbox"> '+fullNameToNoMiddleName(data_page.full_admin_list[myResponsibles[i]][0])+'</label><br></span>');
+        }
+      }
+    }
+
+    $('#myListOfAdmins').html(htmlMyAdminsList);
+
+// for admin 2 Localities
+// deny for contacts admin 0
+      var htmlLocalitiesListCombo = ['<option value="_all_">Все местности</option>'];
+      var htmlLocalitiesMyListCombo = ['<option value="_all_">Все местности</option>'];
+
+      if (data_page.admin_contacts_role === '2') {
+        for (var vari4 in data_page.locality) {
+          if (data_page.locality.hasOwnProperty(vari4)) {
+              htmlLocalitiesListCombo.push('<option value="'+vari4+'">'+data_page.locality[vari4]+'</option>');
+          }
+        }
+        for (var vari2 in data_page.admin_localities) {
+          if (data_page.admin_localities.hasOwnProperty(vari2)) {
+              htmlLocalitiesMyListCombo.push('<option value="'+vari2+'">'+data_page.admin_localities[vari2]+'</option>');
+          }
+        }
+      } else {
+        for (var vari2 in data_page.admin_localities) {
+          if (data_page.admin_localities.hasOwnProperty(vari2)) {
+              htmlLocalitiesListCombo.push('<option value="'+vari2+'">'+data_page.admin_localities[vari2]+'</option>');
+          }
+        }
+        for (var vari2 in data_page.admin_localities) {
+          if (data_page.admin_localities.hasOwnProperty(vari2)) {
+              htmlLocalitiesMyListCombo.push('<option value="'+vari2+'">'+data_page.admin_localities[vari2]+'</option>');
+          }
+        }
+      }
+// добавить местности админа вверху
+      $('#filterRespFullList').html(htmlLocalitiesListCombo);
+      $('#filterRespMyList').html(htmlLocalitiesMyListCombo);
+
+// for supervisor, contacts admin 2 admins
+    if (data_page.admin_contacts_role === '2') {
+      var htmlAllAdminsListCombo =['<option value="_all_">Все ответственные</option>'];
+      for (var vari in data_page.full_admin_list) {
+        if (data_page.full_admin_list.hasOwnProperty(vari)) {
+          if (vari === window.adminId) {
+            htmlAllAdminsListCombo.push('<option value="'+vari+'" selected>'+fullNameToNoMiddleName(data_page.full_admin_list[vari][0])+'</option>');
+          } else {
+            htmlAllAdminsListCombo.push('<option value="'+vari+'">'+fullNameToNoMiddleName(data_page.full_admin_list[vari][0])+'</option>');
+          }
+        }
+      }
+      $('#fullAdminsListCombo').html(htmlAllAdminsListCombo);
+
+      var htmlAllLocalitiesListCombo =['<option value="_all_">Все местности</option>'];
+      for (var vari3 in data_page.locality) {
+        if (data_page.locality.hasOwnProperty(vari3)) {
+          if (vari3 == data_page.admin_locality) {
+            htmlAllLocalitiesListCombo.push('<option value="'+vari3+'" selected>'+data_page.locality[vari3]+'</option>');
+          } else {
+            htmlAllLocalitiesListCombo.push('<option value="'+vari3+'">'+data_page.locality[vari3]+'</option>');
+          }
+        }
+      }
+      $('#allLocalitisesListCombo').html(htmlAllLocalitiesListCombo);
+
+      $.get('/ajax/contacts.php?get_admin_role', {id: $('#fullAdminsListCombo').val()})
+        .done (function(data) {
+          $('#roleListCombo').val(data.result[0])
+      });
+    }
+    if (data_page.admin_contacts_role === '2') {
+      setTimeout(function () {
+        addOptionsToCommboRole2();
+      }, 300);
+    }
+/*
+// for supervisor, contacts admin 2 Localities
+    if (true) {
+      var htmlAllLocalitiesListCombo =[];
+      for (var vari in data_page.full_admin_list) {
+        if (data_page.full_admin_list.hasOwnProperty(vari)) {
+          if (vari === window.adminId) {
+            htmlAllAdminsListCombo.push('<option value="'+vari+'" selected>'+fullNameToNoMiddleName(data_page.full_admin_list[vari][0])+'</option>');
+          } else {
+            htmlAllAdminsListCombo.push('<option value="'+vari+'">'+fullNameToNoMiddleName(data_page.full_admin_list[vari][0])+'</option>');
+          }
+
+        }
+      }
+      $('#fullAdminsListCombo').html(htmlAllAdminsListCombo);
+    }
+*/
+  });
+
+  function selectAllRespAdmins(id, strClass, parent) {
+    if (id && strClass) {
+      if ($('#'+id).prop('checked')) {
+        $('#'+parent +' .'+strClass+':visible').each(function() {
+          $(this).find('input').prop('checked', true);
+        });
+      } else {
+        $('#'+parent +' .'+strClass).each(function() {
+          $(this).find('input').prop('checked', false);
+        });
+      }
+    }
+  }
+
+  $('#selectAllAdminsStrs, #selectAllMyAdminsStrs').click(function () {
+    selectAllRespAdmins($(this).attr('id'), $(this).parent().parent().next().attr('class'), $(this).parent().parent().parent().attr('id'));
+  });
+
+  $('#addRespToMyList').click(function() {
+    $('#fullListOfAdmins .list_admins_str:visible').each(function() {
+      if ($(this).find('input').prop('checked')) {
+        $(this).find('input').prop('checked',false);
+        $(this).hide();
+        $(this).attr('added', '1');
+        $('#myListOfAdmins').append('<span class="list_my_admins_str"><label class="font-weight-normal"><input data-admin_key="'+$(this).find('input').attr('data-admin_key')+'" data-locality="'+$(this).find('input').attr('data-locality')+'" type="checkbox"> '+$(this).find('label').text()+'</label><br></span>');
+      }
+    });
+    $('#selectAllAdminsStrs').prop('checked',false);
+  });
+
+  $('#removeRespFromMyList').click(function() {
+    $('#myListOfAdmins .list_my_admins_str:visible').each(function() {
+      if ($(this).find('input').prop('checked')) {
+        $(this).find('input').prop('checked',false);
+        $('#fullListOfAdmins [data-admin_key='+$(this).find('input').attr('data-admin_key')+']').parent().parent().show();
+        $('#fullListOfAdmins [data-admin_key='+$(this).find('input').attr('data-admin_key')+']').attr('added', '');
+        $(this).remove();
+      }
+    });
+
+    $('#selectAllMyAdminsStrs').prop('checked',false);
+  });
+
+  $('#filterRespFullList, #filterRespMyList').click(function(e) {
+    if (e.target.id === 'filterRespFullList') {
+
+    }
+    if (!$(this).next().find('span:nth-child(2)').attr('class')) {
+        console.log('No any element');
+        return
+    }
+
+    $('#'+$(this).next().attr('id')+' .'+$(this).next().find('span:nth-child(2)').attr('class')).each(function() {
+        if (($(this).find('input').attr('data-locality') === $('#'+e.target.id).val() || $('#'+e.target.id).val() === '_all_') && $(this).find('input').attr('data-added') !== '1') {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+    });
+  });
+
+  $('#applyRespCoisen').click(function() {
+    var admin_id, arrKeys, dblCheck, roleSet = '';
+    if (data_page.admin_contacts_role === '2') {
+      // GET ID MEMBER FROM COMBO BOX #fullAdminsListCombo
+      admin_id = $('#fullAdminsListCombo').val();
+      arrKeys = $('#fullAdminsListCombo').val();
+      roleSet = $('#roleListCombo').val();
+    } else if (data_page.admin_contacts_role === '1') {
+      // GET ID MEMBER FROM COMBO BOX window.adminIdo
+      admin_id = window.adminId;
+      arrKeys = window.adminId;
+    }
+    dblCheck = arrKeys;
+    $('#myListOfAdmins .list_my_admins_str').each(function() {
+      if ($(this).find('input').attr('data-admin_key') && $(this).find('input').attr('data-admin_key') !== dblCheck) {
+        arrKeys = arrKeys + ',' + $(this).find('input').attr('data-admin_key');
+      }
+    });
+
+    $.post('/ajax/contacts.php', {type: 'set_resp_for_admin', id: admin_id, keys: arrKeys, role: roleSet})
+      .done (function(data) {
+    });setTimeout(function () {
+      $.get('/ajax/contacts.php?get_resp_group', {id: admin_id})
+        .done (function(data) {
+        data_page.my_responsibles = data.result;
+        if (data_page.admin_contacts_role === '1' || (data_page.admin_contacts_role === '2' && admin_id === window.adminId)) {
+          var arr;
+          var arrRespOptionsForCombo = ['<option value="_all_">Все ответственные</option>'];
+          if (data_page.my_responsibles && data_page.my_responsibles !== window.adminId) {
+            arr = data_page.my_responsibles.split(',');
+          } else if (data_page.my_responsibles === window.adminId) {
+            arr = [window.adminId];
+          }
+          for (var i = 0; i < arr.length; i++) {
+            arrRespOptionsForCombo.push('<option value="'+arr[i]+'">'+fullNameToNoMiddleName(data_page.full_admin_list[arr[i]][0])+'</option>');
+          }
+          $('#respShow').html(arrRespOptionsForCombo);
+          arrRespOptionsForCombo[0] = '<option value="_all_"></option>';
+          $('#responsibleList').html(arrRespOptionsForCombo);
+          arrRespOptionsForCombo.splice(0,1);
+          $('#responsibleContact').html(arrRespOptionsForCombo);
+          /*$('#respShow option').each(function () {
+            if (data_page.my_responsibles.indexOf($(this).val()) === -1 && $(this).val() !== '_all_') {
+              $(this).hide();
+            } else {
+              $(this).show();
+            }
+          });*/
+        }
+      });
+    }, 300);
+     showHint('Изменения сохранены.')
+  });
+
+  $('#saveUpdateGroupAdmin').click(function() {
+    var check = 0;
+    $('#myListOfAdmins .list_my_admins_str').each(function() {
+      check++;
+    });
+
+    if ((($('#roleListCombo').val() === 'none' || $('#roleListCombo').val() === '0') && (data_page.my_responsibles !== $('#fullAdminsListCombo').val() && data_page.my_responsibles)) && check > 1) {
+      showError('Что бы убрать пользователя, сперва уберите его ответственных.');
+      return
+      }
+    $.get('/ajax/contacts.php?set_resp_group_role', {id: $('#fullAdminsListCombo').val(), role: $('#roleListCombo').val()})
+      .done (function(data) {
+    });
+    //
+  });
+
+  function addOptionsToCommboRole2() {
+    $.get('/ajax/contacts.php?get_localities_by_admin', {id: $('#fullAdminsListCombo').val()})
+      .done (function(data) {
+        console.log(data.result);
+        var localitiesOptions = [];
+        localitiesOptions[0] = '<option class="extra-option" value="_line_" disabled>---- Местность администратора ---- <option class="extra-option" value="'+$('#allLocalitisesListCombo').val()+'">'+data_page.locality[$('#allLocalitisesListCombo').val()]+'<option class="extra-option" value="_line_" disabled>-----------------------------------';
+
+        if (Object.keys(data.result).length > 0) {
+          localitiesOptions.push('<option class="extra-option" value="_line_" disabled>---- Зоны доступа администратора ----');
+
+          for (var variable100 in data.result) {
+            if (data.result.hasOwnProperty(variable100)) {
+              localitiesOptions.push('<option class="extra-option" value="'+variable100+'">'+data.result[variable100]+'');
+            }
+          }
+          localitiesOptions.push('<option class="extra-option" value="_line_" disabled>-----------------------------------');
+        }
+
+        $('#filterRespFullList option[value="_all_"]').after(localitiesOptions);
+      });
+  }
+
+  $('#fullAdminsListCombo').change(function() {
+    if ($(this).val() === '_all_') {
+      $('#allLocalitisesListCombo').val('_all_');
+      $('#roleListCombo').val('none');
+      $('#applyRespCoisen').attr('disabled', 'disabled');
+    } else {
+      $('#allLocalitisesListCombo').val(data_page.full_admin_list[$(this).val()][1]);
+      $.get('/ajax/contacts.php?get_admin_role', {id: $(this).val()})
+        .done (function(data) {
+          var listOfResp = ['<label><input id="selectAllMyAdminsStrs" type="checkbox"> Отметить все</label><br>'];
+          if (data.result[0]) {
+            $('#roleListCombo').val(data.result[0]);
+            var arrayTmp100;
+            if (data.result[1] && data.result[1] !== window.adminId) {
+              console.log('Im here!');
+              arrayTmp100 = data.result[1].split(',');
+            } else if (data.result[1] === window.adminId) {
+              arrayTmp100 = [window.adminId];
+            } else if (!data.result[1]){
+              arrayTmp100 = false;
+            }
+            if (arrayTmp100) {
+              var a, b;
+              for (var i = 0; i < arrayTmp100.length; i++) {
+                a = data_page.full_admin_list[arrayTmp100[i]][0];
+                b = data_page.full_admin_list[arrayTmp100[i]][1];
+                listOfResp.push('<span class="list_my_admins_str"><label class="font-weight-normal"><input data-admin_key="'+arrayTmp100[i]+'" data-locality="'+b+'" type="checkbox"> '+fullNameToNoMiddleName(a)+'</label><br></span>');
+              }
+            }
+            $('#myListOfAdmins').html(listOfResp);
+          } else {
+            $('#roleListCombo').val('none');
+            $('#myListOfAdmins').html(listOfResp);
+          }
+      });
+
+      $('#filterRespFullList option').each(function() {
+        if ($(this).hasClass('extra-option')) {
+          $(this).remove();
+        }
+      });
+      addOptionsToCommboRole2();
+
+      //$('#allLocalitisesListCombo').val('_all_');
+      //$('#roleListCombo').val('none');
+      $('#applyRespCoisen').attr('disabled', false);
+
+// FOR ROLE 2 SHOLD BE NEXT ACTIONS
+//$('#filterRespFullList').html(val);
+//$('#filterRespMyList').html(val);
+//$('#fullListOfAdmins').html(val2);
+//$('#myListOfAdmins').html(val3);
+
+    }
+/*
+// GET ADMIN LOCALITIES GET ADMINS FROM THIS LOCALITIES GET PARTISIANTS CONTACTS ADD TO COMBOBOX ADD TO LIST HERE AND THERE
+    var htmlAdminsList =['<span class=""><label><input id="selectAllAdminsStrs" type="checkbox"> Отметить все</label><br></span>'];
+    var visibility, attr, adminArr[];
+
+    for (var va in adminArr) {
+      if (adminArr.hasOwnProperty(va)) {
+        if (data_page.my_responsibles.indexOf(va) !== -1) {
+          visibility = 'style="display: none"';
+          attr = 'data-added="1"';
+        } else {
+          visibility = '';
+          attr = '';
+        }
+          htmlAdminsList.push('<span class="list_admins_str" '+visibility+'><label class="font-weight-normal"><input type="checkbox" data-admin_key="'+va+'" data-locality="'+adminArr[va][1]+'" '+attr+'> '+fullNameToNoMiddleName(adminArr[va][0])+'</label><br></span>');
+      }
+    }
+    $('#fullListOfAdmins').html(htmlAdminsList);
+*/
+    /*$.get('/ajax/contacts.php?set_resp_group_role', {id: $('#fullAdminsListCombo').val(), role: $('#roleListCombo').val()})
+      .done (function(data) {
+    });*/
+  });
+
+  $('#openLeftPanelBtn').click(function() {
+    if ($('#leftSidepanel').css('width') === '200px') {
+      $('#leftSidepanel').css('width', '0px');
+    } else {
+      $('#leftSidepanel').css('width', '200px');
+    }
+  });
+  $('#leftPanelCloseBtn').click(function() {
+    $('#leftSidepanel').css('width', '0px');
+  });
+
+//STOP Responsibles choise
 });

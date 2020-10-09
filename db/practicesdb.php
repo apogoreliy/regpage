@@ -92,20 +92,30 @@ function db_getPracticesToday($memberId){
     return $practices;
 }
 
-function db_getPracticesForAdmin($userData){
+function db_getPracticesForAdmin($userData, $periods = false){
+
   global $db;
-    $localities = $db->real_escape_string($userData['localities']);
+
+  $localities = $db->real_escape_string($userData['localities']);
+  $sortType = $db->real_escape_string($userData['sort']);
+
+  if (!$periods) {
     $period = $db->real_escape_string($userData['period']);
-    $sortType = $db->real_escape_string($userData['sort']);
     if ($period === '7' ) {
       $currentDate = date("Y-m-d", strtotime("-7 days"));
     } else {
       $currentDate = date("Y-m-d", strtotime("-30 days"));
     }
+  } else {
+    $periodFrom = date("Y-m-d", strtotime($userData['periodFrom']));
+    $periodTo = date("Y-m-d", strtotime($userData['periodTo']));
+    //$periodFrom = $userData['periodFrom'];
+    //$periodTo = $userData['periodTo'];
+  }
 
   //$memberId = $db->real_escape_string($memberId);
   $practices = array ();
-  if ($sortType == 'name_down') {
+  if ($sortType == 'name_down' && !$periods) {
     $res=db_query ("SELECT p.id, p.date_practic, p.member_id, p.m_revival, p.p_pray, p.co_pray, p.r_bible,
       p.r_ministry, p.evangel, p.flyers, p.contacts, p.saved, p.meetings, p.wakeup, p.hangup, p.other, m.name, m.serving, m.locality_key, l.name AS loc_name
       FROM practices AS p
@@ -116,7 +126,7 @@ function db_getPracticesForAdmin($userData){
 
     while ($row = $res->fetch_assoc()) $practices[]=$row;
 
-  } elseif ($sortType == 'name_up') {
+  } elseif ($sortType == 'name_up' && !$periods) {
     $res=db_query ("SELECT p.id, p.date_practic, p.member_id, p.m_revival, p.p_pray, p.co_pray, p.r_bible,
       p.r_ministry, p.evangel, p.flyers, p.contacts, p.saved, p.meetings, p.wakeup, p.hangup, p.other, m.name, m.serving, m.locality_key, l.name AS loc_name
       FROM practices AS p
@@ -127,18 +137,31 @@ function db_getPracticesForAdmin($userData){
 
     while ($row = $res->fetch_assoc()) $practices[]=$row;
 
-  } /*elseif ($sortType == 'serviceones_up') {
+  } elseif ($sortType == 'name_down' && $periods) {
+
     $res=db_query ("SELECT p.id, p.date_practic, p.member_id, p.m_revival, p.p_pray, p.co_pray, p.r_bible,
       p.r_ministry, p.evangel, p.flyers, p.contacts, p.saved, p.meetings, p.wakeup, p.hangup, p.other, m.name, m.serving, m.locality_key, l.name AS loc_name
       FROM practices AS p
       INNER JOIN member m ON m.key = p.member_id
       INNER JOIN locality l ON l.key = m.locality_key
-      WHERE `date_practic` > '$currentDate' AND `serving` <> '' AND (m.locality_key = ".$localities.")
-      ORDER BY m.name ASC, p.date_practic ASC");
+      WHERE `date_practic` >= '$periodFrom' AND `date_practic` <= '$periodTo' AND `serving` <> '' AND (m.locality_key = ".$localities.")
+      ORDER BY m.name DESC, p.date_practic ASC");
 
     while ($row = $res->fetch_assoc()) $practices[]=$row;
 
-  }*/
+  } elseif ($sortType == 'name_up' && $periods) {
+
+    $res=db_query ("SELECT p.id, p.date_practic, p.member_id, p.m_revival, p.p_pray, p.co_pray, p.r_bible,
+      p.r_ministry, p.evangel, p.flyers, p.contacts, p.saved, p.meetings, p.wakeup, p.hangup, p.other, m.name, m.serving, m.locality_key, l.name AS loc_name
+      FROM practices AS p
+      INNER JOIN member m ON m.key = p.member_id
+      INNER JOIN locality l ON l.key = m.locality_key
+      WHERE `date_practic` >= '$periodFrom' AND `date_practic` <= '$periodTo' AND `serving` <> '' AND (m.locality_key = ".$localities.")
+      ORDER BY m.name ASC, p.date_practic ASC");
+
+    while ($row = $res->fetch_assoc()) $practices[]=$row;
+  }
+
     return $practices;
 }
 

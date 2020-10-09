@@ -35,7 +35,7 @@ function db_getCustomPagesPanel(){
 
 function db_setPracticesForStudentsPVOM() {
   logFileWriter(db_getMemberIdBySessionId (session_id()), 'ПРАКТИКИ. Пакетное добавление учёта практик для обучающихся ПВОМ администратором.', 'WARNING');
-  
+
   $currentDate = date("Y-m-d");
   $resultFoUser = ':';
   $students = array();
@@ -70,5 +70,38 @@ function db_setPracticesForStudentsPVOM() {
   }
   return $resultFoUser;
 }
+// Roles of responsibles in contacts
+function db_getResponsibleContacts1And2() {
+    $res=db_query ("SELECT c.member_key, c.role, c.group_of_admin, m.name
+      FROM contacts_resp AS c
+      INNER JOIN member m ON m.key = c.member_key");
 
+		$responsibles = array ();
+		while ($row = $res->fetch_assoc()) $responsibles[]=$row;
+		return $responsibles;
+}
+
+function db_getResponsibleContactsZero() {
+    $res=db_query ("SELECT c.member_key, c.role, c.group_of_admin, m.name
+    FROM contacts_resp AS c
+    INNER JOIN member m ON m.key = c.member_key");
+
+    $responsibles = [];
+    while ($row = $res->fetch_assoc()) $responsibles[]=$row;
+
+    $responsiblesZero = [];
+    $responsiblesTemp = [];
+    for ($i=0; $i < count($responsibles); $i++) {
+      $temp = explode(',', $responsibles[$i]['group_of_admin']);
+      for ($ii=0; $ii < count($temp); $ii++) {
+        $tempKey = $temp[$ii];
+        $res2=db_query ("SELECT `key`, `name` FROM member WHERE `key` = '$tempKey'");
+        while ($row2 = $res2->fetch_assoc()) $responsiblesTemp[$row2['key']]=$row2['name'];
+      }
+      $responsiblesZero[$responsibles[$i]['name'].', роль '.$responsibles[$i]['role']] = $responsiblesTemp;
+      $responsiblesTemp = [];
+    }
+
+		return $responsiblesZero;
+}
 ?>

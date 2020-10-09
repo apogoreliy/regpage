@@ -32,10 +32,11 @@ $newId = db_getNewContactIdPackage();
     $counter = 0;
     if ($i!=0) {
       foreach($arrTemp as $value) {
-        if ($counter < 16) {
+        $value = addcslashes($value, "'");        
+        if ($counter < 17) {
 // value
           if (empty($value)) {
-            $value = ' ';
+            $value = " " ;
           }
         $val = "'$value'";
 // prepare array
@@ -43,13 +44,13 @@ if (($counter == 0)) {
           $newId = (string)($newId + 1);
           $newIdVal = "'$newId'";
           $val = "(".$newIdVal.','.$val;
-        } elseif ($counter == 15) {
+        } elseif ($counter == 16) {
           $val = $val.")";
         }
 // add element to the temp array
         $sqltemp[$counter-1] = $val;
       }
-      if ($counter == 15) {
+      if ($counter == 16) {
           $counter = 0;
           $counterArr++;
           $sql[] = implode(',',$sqltemp);
@@ -68,6 +69,7 @@ if (($counter == 0)) {
           unset($sqltemp[12]);
           unset($sqltemp[13]);
           unset($sqltemp[14]);
+          unset($sqltemp[15]);
           break;
       }
         $counter++;
@@ -75,7 +77,7 @@ if (($counter == 0)) {
     }
   }
   $sqlMem = implode(',',$sql);
-  db_query("INSERT INTO contacts (`id`, `comment`, `name`, `male`, `country_key`, `locality`, `email`, `phone`, `order_date`,`status`,`index_post`,`responsible`, `sending_date`, `address`, `area`, `region_work`, `region`) VALUES ".$sqlMem."");
+  db_query("INSERT INTO contacts (`id`, `comment`, `name`, `male`, `country_key`, `locality`, `email`, `phone`, `order_date`,`status`,`index_post`,`responsible`, `sending_date`, `address`, `area`, `region_work`, `region`, `project`) VALUES ".$sqlMem."");
 };
 
 if (isset($_POST['xlsx_array'])) {

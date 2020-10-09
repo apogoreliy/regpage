@@ -25,22 +25,22 @@ function showError(html, autohide) {
 }
 // STOP Message for user
 
-// SHORT NAMES
-// Lastname Firstname (without third name)
-  function twoNames2(fullName) {
+// ФИО SHORT NAMES
+// Lastname Firstname (without Middle name)
+  function fullNameToNoMiddleName(fullName) {
     var shortName;
     fullName ? fullName = fullName.split(' ') : '';
     if (fullName) shortName = fullName[0] + ' ' + fullName[1];
     return shortName;
   }
-// Lastname F.T.
-	function shortNames3(fullName, nameOnly) {
+// Lastname F.M. OR Lastname F.
+	function fullNameToShortFirstMiddleNames(fullName, nameOnly) {
 		var shortName;
 		fullName ? fullName = fullName.split(' ') : '';
 		if (fullName) {
 			shortName = fullName[0] + ' ' + fullName[1][0] + '. ';
 		}
-		if (fullName[2] && !nameOnly) {
+		if (fullName[2] && !nameOnly && fullName[2] !== '-') {
 			shortName = shortName + fullName[2][0] + '. ';
 		}
 		return shortName;
@@ -48,9 +48,15 @@ function showError(html, autohide) {
 // STOP SHORT NAMES
 
 // DATES
-// get Name Day Of Week By Day Number true = short name / false = full name
-	function getNameDayOfWeekByDayNumber() {
-		var day = new Date(date);
+// get (today or from date parameter) Name Day Of Week By Day Number true = short name / false = full name
+	function getNameDayOfWeekByDayNumber(date, short) {
+		var day;
+		if (date) {
+			day = new Date(date);
+		} else {
+			day = new Date();
+		}
+
 	  var dayNumber = day.getDay();
 	  var weekday = new Array(7);
 	  if (short) {

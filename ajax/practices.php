@@ -40,6 +40,11 @@ if(isset($_GET['get_practices_for_admin'])){
     exit();
 }
 
+if(isset($_GET['get_practices_for_admin_periods'])){
+    echo json_encode(["practices"=>db_getPracticesForAdmin($_GET['data'], true)]);
+    exit();
+}
+
 if(isset($_GET['get_practices_today'])){
     echo json_encode(["practices"=>db_getPracticesToday($adminId)]);
     exit();
