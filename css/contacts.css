@@ -16,7 +16,7 @@
 .navbar-dark{
     z-index: 3;
 }
-/*SIDE PANEL START*/
+/*RIGHT SIDE PANEL START*/
 
 .cd-panel-watch {
   /*...*/
@@ -182,7 +182,41 @@
 }
 /*Close btn STOP*/
 
-/*SIDE PANEL STOP*/
+/*RIGHT SIDE PANEL STOP*/
+/*LEFT SIDE PANEL START*/
+.leftsidepanel  {
+  margin-top: 44px;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  height: 250px;
+  top: 0;
+  left: 0;
+  background-color: white;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 20px;
+  border-right: 1px solid grey;
+  border-top: 1px solid grey;
+  border-bottom: 1px solid grey;
+  border-radius: 5px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.leftsidepanel .leftclosebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  color: grey;
+}
+
+.left_panel-select {
+  padding: 7px;
+}
+/*LEFT SIDE PANEL STOP*/
+
 .float-right.upload_fields {
   margin-bottom: 10px;
 }
@@ -224,3 +258,19 @@
   background-color: #a1e4ef;
 }
 /*NOTICE*/
+/* Modal statistic of statuses*/
+.tbl-statistics-header > th {
+  position: sticky; top: 0;
+  background-color: white;
+}
+
+#respWindowStatistic th {
+  text-align: right;
+  padding-right: 5px;
+}
+
+#listMyResp td {
+  text-align: right;
+  padding-right: 5px;
+}
+/* Modal statistic of statuses*/

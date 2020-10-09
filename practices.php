@@ -19,6 +19,15 @@
     //$sort_type = isset ($_COOKIE['sort_type_statistic']) ? $_COOKIE['sort_type_statistic'] : 'desc';
     $sort_field = 'id';
     $sort_type = 'desc';
+// this fun is dublicat from comtacts page
+    function shortNameMember ($fullName='')
+      {
+        if ($fullName) {
+          $pieces = explode(" ", $fullName);
+          $shortName = $pieces[0].' '.$pieces[1];
+          return $shortName;
+        }
+      }
 ?>
 <div class="container">
   <div id="eventTabs" class="meetings-list">
@@ -95,8 +104,10 @@
               </select>
               <select id="servingCombo" class="" name="">
                 <option value="_all_">Все служащие</option>
-                  <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'" .($id === $memberId ? 'selected' : '').">".htmlspecialchars ($name)."</option>"; ?>
+                  <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'" .($id === $memberId ? 'selected' : '').">".htmlspecialchars (shortNameMember($name))."</option>"; ?>
               </select>
+              <span> с </span><input type="date" id="periodFrom" value="" class="span2" min="2020-04-01">
+              <span> по </span><input type="date" id="periodTo" value="" class="span2" min="2020-04-01">
             </div>
             <table id="listPracticesForObserve" class="table table-hover">
               <thead>
@@ -237,8 +248,10 @@
             </select>
             <select id="servingComboMbl" class="" name="">
               <option value="_all_">Все служащие</option>
-                <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+                <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name))."</option>"; ?>
             </select>
+            <span>с</span><input type="date" name="" value="">
+            <span>по</span><input type="date" name="" value="">
           </div>
             <table id="listPracticesForObserveMbl" class="table table-hover">
               <thead>

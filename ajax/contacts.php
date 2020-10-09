@@ -16,13 +16,23 @@ if(isset($_GET['get_contacts'])){
     exit();
 }
 
+if(isset($_GET['get_contacts_prev'])){
+    echo json_encode(["contacts"=>db_getContactsStringsPrev($adminId, $_GET['cont_role'])]);
+    exit();
+}
+
 if(isset($_GET['get_contact'])){
     echo json_encode(["contact"=>db_getContactString($_GET['id'])]);
     exit();
 }
-
+/*
 if(isset($_GET['new_update_contact'])){
     echo json_encode(["id"=>db_newOrUpdateContactString($adminId, $_GET['data'])]);
+    exit();
+}
+*/
+if(isset($_POST['type']) && $_POST['type'] === 'save'){
+    echo json_encode(["id"=>db_newOrUpdateContactString($adminId, $_POST['blank_data'])]);
     exit();
 }
 
@@ -109,6 +119,31 @@ if(isset($_GET['delete_notices'])){
 // set status multiple
 if(isset($_POST['type']) && $_POST['type'] === 'set_status_multiple'){
     db_statusMultipleSet($_POST['contact_id'], $_POST['new_status']);
+    exit();
+}
+
+if (isset($_POST['type']) && $_POST['type'] === 'set_resp_for_admin'){
+    db_setRespForAdmin($_POST['id'], $_POST['keys'], $_POST['role']);
+    exit();
+}
+
+if(isset($_GET['get_resp_group'])){
+    echo json_encode(["result" => db_getAdminResponsiblesGroup($_GET['id'])]);
+    exit();
+}
+
+if(isset($_GET['set_resp_group_role'])){
+    db_setUpdadteContactsRoleAdmin($_GET['id'], $_GET['role']);
+    exit();
+}
+
+if(isset($_GET['get_admin_role'])){
+    echo json_encode(["result" => db_getContactsRoleAdmin($_GET['id'])]);
+    exit();
+}
+
+if(isset($_GET['get_localities_by_admin'])){
+    echo json_encode(["result" => db_getAdminMeetingLocalities($_GET['id'])]);
     exit();
 }
 

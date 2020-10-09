@@ -14,8 +14,13 @@
     $adminLocality = db_getAdminLocality($memberId);
     $adminRole = db_getAdminRole($memberId);
     $adminRole === 0 ? $isAdminZero = 'style="display: none;' : '';
-    $membersForCombobox = db_getAdminMembersAdmins($memberId);
+    $membersForCombobox = db_getRespCombobox($memberId);
     $listAdmins = db_getMemberListAdminsForContacts();
+    $projects = db_getUniqueProjects ();
+    $allLocalities = db_getLocalities();
+    $listMyAdmins = db_getAdminResponsiblesGroup($memberId);
+    $contactsAdminData = db_getContactsRoleAdmin($memberId);
+    $contactsRoleAdmin = $contactsAdminData[0];
 
     function shortNameMember ($fullName='')
       {
@@ -37,23 +42,52 @@
 ?>
 <div style="background-color: white; margin-left: auto; margin-right: auto; max-width: 1170px; padding-bottom: 20px">
   <div class="" style="background-color: #eee; margin-left: auto; margin-right: auto; height: 60px; max-width: 1170px">
-
+    <div id="leftSidepanel" class="leftsidepanel">
+      <a href="#" id="leftPanelCloseBtn" class="leftclosebtn">×</a>
+      <h5 style="padding-left: 10px;">Фильтры</h5>
+      <div class="left_panel-select" style="display: <?php if($adminRole === 0) echo 'none'?>">
+        <select id="respShow" class="form-control form-control-sm" name="">
+          <option value="_all_">Все ответственные</option>
+          <?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name))."</option>"; ?>
+        </select>
+      </div>
+      <div class="left_panel-select">
+        <select id="leftPanelCountryFilter" class="form-control form-control-sm" name="">
+          <option value="_all_">Все страны</option>
+          <option value="AM">Армения</option>
+          <option value="BY">Беларусь</option>
+          <option value="KZ">Казахстан</option>
+          <option value="LV">Латвия</option>
+          <option value="LT">Литва</option>
+          <option value="RU">Россия</option>
+          <option value="UA">Украина</option>
+          <option value="EE">Эстония</option>
+        </select>
+      </div>
+      <div class="left_panel-select">
+        <select id="leftPanelRegionFilter" class="form-control form-control-sm" name="">
+          <option value="_all_">Все регионы</option>
+          <?php foreach (db_getregionOfWork () as $id => $name) echo "<option value='$name'>".htmlspecialchars ($name)."</option>"; ?>
+        </select>
+      </div>
+    </div>
   </div>
 <div class="container">
 <!-- Botton bar Statistic START -->
   <div class="row contactsBtnsBar" style="" id="contactsBtnsBar">
-    <div class="" style="max-width:625px; min-width:300px; padding-right: 5px; padding-left: 0;">
-        <button id="addContact" class="btn btn-success btn-sm" type="button" title="Добавить новый контакт"><i class="fa fa-plus"></i></button>
-        <button id="openUploadModal" class="btn btn-primary btn-sm" title="Загрузить контакты из файла" type="button" data-toggle="modal" data-target="#modalUploadItems"><i class="fa fa-upload"></i></button>
-        <button id="deleteContactsShowModal" class="btn btn-danger btn-sm" title="Удалить выбранные контакты" type="button" data-toggle="modal" data-target="#deleteContactsModal" disabled ><i class="fa fa-trash"></i></button>
+    <div class="" style="max-width:925px; min-width:900px; padding-right: 5px; padding-left: 0; margin-bottom: 10px;">
+        <button id="addContact" class="btn btn-success btn-sm" type="button" title="Добавить новый контакт"><i class="fa fa-plus"> </i> Добавить</button>
+        <button id="openUploadModal" class="btn btn-primary btn-sm" title="Загрузить контакты из файла" type="button" data-toggle="modal" data-target="#modalUploadItems"><i class="fa fa-upload"></i> Загрузить</button>
+        <button id="deleteContactsShowModal" class="btn btn-danger btn-sm" title="Удалить выбранные контакты" type="button" data-toggle="modal" data-target="#deleteContactsModal" disabled ><i class="fa fa-trash"></i> Удалить</button>
         <button id="appointResponsibleShow" style="background-color: #ff8c00; color: #fff" class="btn btn-warning btn-sm" type="button" title="Передать выбранные контакты" disabled><i class="fa fa-exchange" aria-hidden="true"></i> Передать</button>
-        <button id="appointStatusShow" class="btn btn-secondary btn-sm" type="button" title="Задать статус выбранным контакты" data-toggle="modal" data-target="#statusContactsModal" disabled>Статус</button>
+        <button id="appointStatusShow" class="btn btn-secondary btn-sm" type="button" title="Задать статус выбранным контакты" data-toggle="modal" data-target="#statusContactsModal" disabled><i class="fa fa-flag"></i> Изменить статус</button>
+        <?php if($contactsRoleAdmin === '1' || $contactsRoleAdmin === '2') {?>
+          <button id="respStatistic" class="btn btn-info btn-sm" type="button" title="" data-toggle="modal" data-target="#respWindowStatistic"><i class="fa fa-list"></i> Распределение</button>
+          <button id="respAdmin" class="btn btn-info btn-sm" type="button" title="" data-toggle="modal" data-target="#respWindowAdminUsers"><i class="fa fa-users"></i></button>
+        <?php }?>
     </div>
-    <div class="" style="padding-left: 0; padding-right: 10px; display: <?php if($adminRole === 0) echo 'none'?>">
-            <select id="respShow" class="form-control form-control-sm" name="" style="width:180px;">
-              <option value="_all_">Все ответственные</option>
-              <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name['name']))."</option>"; ?>
-            </select>
+    <div class="">
+      <button id="openLeftPanelBtn" class="btn btn-secondary btn-sm" type="button" name="button">Больше фильтров</button>
     </div>
     <div class="" style="padding-left: 0; padding-right: 10px;">
             <select id="statusShow" class="form-control form-control-sm" name="">
@@ -74,7 +108,6 @@
               <option value="0">жен.</option>
             </select>
     </div>
-
     <div class="" style="padding-left: 0; padding-right: 10px;">
             <select id="myBlanks" class="form-control form-control-sm" name="">
               <?php if($adminRole !== 0) {?>
@@ -85,6 +118,20 @@
             </select>
     </div>
 
+    <div class="" style="padding-left: 0; padding-right: 10px;">
+            <select id="periodsCombobox" class="form-control form-control-sm" name="" style="width:180px;">
+                <option value="_all_">Все периоды</option>
+                <!--<option value="" style="">Не указан</option> Если регулярно появляются контакты без проекта то сделать вторым в списке -->
+                <?php foreach ($projects as $project) {
+                  if (!$project) {
+                    $project = 'Не указан';
+                    echo "<option value=''>".htmlspecialchars ($project)."</option>";
+                  } else {
+                    echo "<option value='$project'>".htmlspecialchars ($project)."</option>";
+                  };
+                }; ?>
+            </select>
+    </div>
     <div class="" style="padding-left: 0; padding-right: 10px;">
       <div class="input-group mb-3" style="margin-bottom: 0px!important;">
           <input type="search" id="search-text" class="form-control form-control-sm" name="search-text"  style="width:100px;" placeholder="Поиск">
@@ -109,7 +156,7 @@
 <!-- Botton bar Statistic STOP -->
 <!-- List Statistic BEGIN -->
       <div class="" id="desctop_visible" style="margin-top: 60px;">
-        <div id="" class="">
+        <div id="" class="" style="padding-top: 30px;">
           <div class="tab-pane">
             <a href="#0" class="cd-panel__close-watch js-cd-close-watch">Закрыть</a>
             <div class="cd-panel-watch cd-panel--from-right-watch js-cd-panel-main-watch">
@@ -122,7 +169,7 @@
             </header>
               <div class="row">
                 <div class="col-12" style="padding-left: 9px;">
-                  <label for="" class="required-for-label">ФИО</label>
+                  <label for="" class="required-for-label">ФИО</label><strong id="periodLabel" style="margin-left: 160px"></strong>
                   <input type="text" class="form-control form-control-sm" id="nameContact" placeholder="">
                 </div>
               </div>
@@ -131,6 +178,7 @@
                   <label for="">Телефон</label>
                   <input type="text" class="form-control form-control-sm" id="phoneContact" placeholder="">
                 </div>
+                <a id="phoneContactCalling" href="#" style="display: none; padding-top: 20px; font-size: 22px; padding-left: 3px;"><i class="fa fa-phone"></i></a>
                 <div class="col-6" style="padding-left: 5px;">
                   <label for="">Email</label>
                   <input type="email" class="form-control form-control-sm" id="emailContact" placeholder="">
@@ -222,7 +270,7 @@
                   <div class="col-6" style="padding-left: 5px;">
                     <label for="">Ответственный</label>
                     <select id="responsibleContact" class="form-control form-control-sm" name="" data-responsible_previous="" data-responsible="" title="Ответственный">
-                      <?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name['name']))."</option>"; ?>
+                      <?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name))."</option>"; ?>
                     </select>
                     <!--<input type="text" class="form-control" id="responsibleContact" placeholder="Ответственный" data-responsible_previous="" data-responsible="">-->
                   </div>
@@ -332,12 +380,16 @@
               <label for="uploadLocality">Местность</label>
               <input type="text" class="form-control form-control-sm" id="uploadLocality">
             </div>
+            <div class="col-12" title="Обязательное поле">
+              <label for="periodOfContacts">Проект*</label>
+              <input type="text" class="form-control form-control-sm" id="periodOfContacts" maxlength="20" required>
+            </div>
           </div>
           <hr>
           <h5>Настроить поля</h5>
           <div id="newuploadBoard" class="row">
             <div class="col-6">
-              <select class="float-left form-control form-control-sm" id="nameGlobalUpload" title="Это обязательное поле и оно должно содержать ФИО полностью или фамилию">
+              <select class="float-left form-control form-control-sm" id="nameGlobalUpload" title="Это обязательное поле и оно должно содержать или ФИО полностью или только фамилию">
                   <option value="name">ФИО или Фамилия</option>
               </select>
             </div>
@@ -347,12 +399,12 @@
               </select>
             </div>
             <div class="col-6">
-              <select class="float-left form-control form-control-sm" id="name1GlobalUpload" title="Это дополнительное поле, оно должно содержать имя, если в поле выше содержится только фамилия">
+              <select class="float-left form-control form-control-sm" id="name1GlobalUpload" title="Это дополнительное поле, оно может содержать имя или имя и отчество, если в поле выше содержится только фамилия">
                   <option value="name1">Имя (опционально)</option>
               </select>
             </div>
             <div class="col-6">
-              <select class="float-right upload_fields form-control form-control-sm" id="" title="Это дополнительное поле, оно должно содержать имя, если в поле выше содержится только фамилия">
+              <select class="float-right upload_fields form-control form-control-sm" id="" title="Это дополнительное поле, оно может содержать имя или имя и отчество, если в поле выше содержится только фамилия">
                   <option value=""></option>
               </select>
             </div>
@@ -450,7 +502,7 @@
             <div class="col-md-12" style="padding-left: 0;">
                 <select id="responsibleList" class="form-control form-control-sm" name="">
                   <option value="_all_"></option>
-                  <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name['name'])."</option>"; ?>
+                  <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
                 </select>
               </div>
             </div>
@@ -561,6 +613,109 @@
     </div>
 <!-- STOP Modal status contact -->
 
+<!-- START Modal status statistics contact -->
+  <div id="respWindowStatistic" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Распределение ответственных</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        </div>
+        <div class="modal-body">
+          <div class="row" style="max-height:400px; overflow-y: auto; padding-left: 7px;">
+            <table style="width:760px;">
+              <thead>
+                <tr class="tbl-statistics-header"><th style="text-align: left;">Имя</th><th class="bg-light" style="width:67px;">Все</th><th style="width:72px!important;">В работе</th><th style="width:67px;">Недозвон</th><th style="width:67px;">Ошибка</th>
+                  <th style="width:67px;">Отказ</th><th style="width:67px;">Заказ</th><th style="width:67px;">Продолж.</th>
+                  <th style="width:67px;">Заверш.</th><th style="width:67px; padding-left: 6px; padding-right: 0px; text-align: center;">Без статуса</th></tr>
+              </thead>
+              <tbody id="listMyResp">
+              </tbody>
+            </table>
+          </div>
+        </div>
+          <div class="modal-footer">
+            <button class="btn  btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- STOP Modal status statistics contact -->
+
+<!-- START Modal admin contact -->
+  <div id="respWindowAdminUsers" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <?php if ($contactsRoleAdmin === '2'){ ?>
+          <h5>Управление ответственными и ролями</h5>
+        <?php } else { ?>
+          <h5>Управление ответственными</h5>
+        <?php } ?>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        </div>
+        <div class="modal-body" style="padding-top: 0px; padding-bottom: 0px;">
+          <?php if ($contactsRoleAdmin === '2'){ ?>
+          <h6 style="padding-top: 10px;">Добавление ответственных</h6>
+          <?php } ?>
+          <div class="row">
+          <?php if ($contactsRoleAdmin === '2'){ ?>
+            <div class="col-md-5">
+              <label for="">Текущий администратор</label>
+              <select id="fullAdminsListCombo" class="form-control form-control-sm" style="margin-top: 3px; margin-bottom: 15px;">
+              </select>
+              </div>
+              <div class="col-md-5">
+                <label for="">Местность</label>
+                <select id="allLocalitisesListCombo" class="form-control form-control-sm" style="margin-top: 3px; margin-bottom: 15px;">
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label for="">Роль</label>
+                <div class="input-group">
+                  <select id="roleListCombo" class="form-control form-control-sm" style="margin-top: 3px;">
+                    <option value="none">Нет</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button id="saveUpdateGroupAdmin" class="btn btn-success btn-sm" type="button" style="margin-top: 3px;"><i class="fa fa-save"></i></button>
+                  </div>
+                </div>
+              </div>
+          <?php } ?>
+          </div>
+          <div class="row">
+            <div class="col-md-5 border" style="padding-top: 15px;">
+              <h6>Администраторы сайта</h6>
+              <select id="filterRespFullList" class="form-control form-control-sm" name="" style="margin-bottom: 15px;">
+              </select>
+              <div class="" id="fullListOfAdmins" style="max-height:400px; overflow-y: auto; padding-left: 7px;">
+              </div>
+            </div>
+            <div class="col-md-2 border text-center">
+              <br><input type="button" id="addRespToMyList" class="btn btn-info btn-sm" name="" value="Внести >>>"><br><br>
+              <input type="button" id="removeRespFromMyList" class="btn btn-warning btn-sm" name="" value="<<< Убрать">
+            </div>
+            <div class="col-md-5 border" style="padding-top: 15px;">
+              <h6>Список ответственных</h6>
+              <select id="filterRespMyList" class="form-control form-control-sm" name="" style="margin-bottom: 15px;">
+              </select>
+              <div class="" id="myListOfAdmins" style="max-height:400px; overflow-y: auto; padding-right: 7px;">
+              </div>
+            </div>
+          </div>
+        </div>
+          <div class="modal-footer">
+            <button id="applyRespCoisen" class="btn btn-sm btn-success" aria-hidden="true">Применить</button>
+            <button class="btn btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- STOP Modal admin contact -->
+
 <!-- START Modal SPINNER -->
 <div id="modalSpinner" class="modal" style="background-color: rgba(255, 255, 255, 0.3);" >
   <div class="modal-dialog">
@@ -589,7 +744,7 @@
       respAdmTmp=[];
 
       data_page.members_responsibles = [];
-      var respMemTmp = '<?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo $id.'_'.$name['name'].'_'; ?>';
+      var respMemTmp = '<?php if ($adminRole !== 0 && count($membersForCombobox) !== 0) foreach ($membersForCombobox as $id => $name) echo $id.'_'.$name.'_'; ?>';
       respMemTmp ? respMemTmp = respMemTmp.split('_') : respMemTmp=[];
       for (var iv = 0; iv < respMemTmp.length; iv = iv + 2) {
         if (respMemTmp[iv+1]) {
@@ -625,7 +780,7 @@
       var wakeupOn = '<?php echo in_array('10', db_getUserSettings($memberId));?>';
       var gospelOn = '<?php echo in_array('11', db_getUserSettings($memberId));?>';
       var globalLocalityOn = '<?php echo in_array('13', db_getUserSettings($memberId));?>';
-      var localityListGlb = '<?php foreach (db_getLocalities() as $id => $name) echo $id.'_'.$name.'_'; ?>';
+      var localityListGlb = '<?php foreach ($allLocalities as $id => $name) echo $id.'_'.$name.'_'; ?>';
       var localityListTmp = localityListGlb ? localityListGlb.split('_') : [];
       localityListGlb =[];
       data_page.locality = [];
@@ -661,17 +816,54 @@
       data_page.full_admin_list =[];
       var admins_list = '<?php foreach ($listAdmins as $id => $name) echo $id.'_'.$name.'_'; ?>';
       var admin_list_tmp = admins_list ? admins_list.split('_') : [];
-      for (var i = 0; i < admin_list_tmp.length; i = i + 2) {
+      for (var i = 0; i < admin_list_tmp.length; i = i + 3) {
         if (admin_list_tmp[i+1]) {
-          data_page.full_admin_list[String(admin_list_tmp[i])] = admin_list_tmp[i+1];
+          data_page.full_admin_list[String(admin_list_tmp[i])] = [admin_list_tmp[i+1], admin_list_tmp[i+2]];
         }
       }
       admins_list = [], admin_list_tmp = [];
 
       data_page.sort_new = '<?php echo $bellOn; ?>';
+
+      data_page.my_responsibles = '<?php echo $listMyAdmins; ?>';
+
+      data_page.admin_contacts_role = '<?php echo $contactsRoleAdmin; ?>';
+
+      data_page.my_localities_admins = [];
+
+        function adminsFromMyLocalities() {
+          var htmlAdminsListComboMain = ['<option value="_all_">Все ответственные</option>'];
+          for (var va500 in data_page.full_admin_list) {
+            if (data_page.full_admin_list.hasOwnProperty(va500)) {
+              if (data_page.admin_localities[data_page.full_admin_list[va500][1]]) {
+                data_page.my_localities_admins[va500] = [data_page.full_admin_list[va500][0], data_page.full_admin_list[va500][1]];
+                /*if (data_page.my_responsibles.indexOf(va500) !== -1) {
+                  htmlAdminsListComboMain.push('<option value="'+va500+'">'+fullNameToNoMiddleName(data_page.full_admin_list[va500][0])+'</option>');
+                }*/
+              }
+            }
+          }
+          //$('#respShow').html(htmlAdminsListComboMain);
+        }
+
+        adminsFromMyLocalities();
+
+        if (data_page.admin_role !== '0') {
+          var blankCounter = {
+            blank_count_their: [],
+            blank_count_their_short: [],
+            blank_count_status: [],
+            get_contacts: $.get('/ajax/contacts.php?get_contacts_prev', {cont_role: data_page.admin_contacts_role})
+                  .done (function(data) {
+                    blankCounter.blank_count_their = data.contacts;
+                  }),
+            counter: 0,
+            status_stat: 0
+          };
+        }
     </script>
-    <script src="/js/contacts.js?v21"></script>
-    <script src="/js/contactsupload.js?v3"></script>
+    <script src="/js/contacts.js?v33"></script>
+    <script src="/js/contactsupload.js?v4"></script>
 <?php
     include_once "footer2.php";
 ?>

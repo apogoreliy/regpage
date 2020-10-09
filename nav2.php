@@ -197,8 +197,8 @@ switch ($h) {
             ?>
             <i class="fa fa-bell bell-alarm cursor-pointer" style="<?php echo db_checkNotice($memberId); ?>" title="У вас есть новые карточки"></i>
             <?php
-            //$memberId === '000001679' ||
-            if ($memberId === '000005716') {
+            //
+            if ($memberId === '000001679' || $memberId === '000005716') {
               echo '<i class="fa fa-wrench cursor-pointer" style="color: silver; font-size: 20px; margin-top: 5px; margin-left: 10px;" title="Дополнительные опции"></i>';
             }
             ?>

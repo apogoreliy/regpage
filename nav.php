@@ -246,8 +246,8 @@ switch ($h) {
             <i class="fa fa-bell bell-alarm cursor-pointer" style="color: gold; font-size: 18px; margin-top: 12px; margin-left: 10px; <?php echo db_checkNotice($memberId); ?>" aria-hidden="true" title="У вас есть новые карточки"></i>
             <!--<i class="fa fa-envelope cursor-pointer" title="Обратится в службу поддержки" aria-hidden="true" style="color: white; font-size: 18px; margin-top: 13px;"></i>-->
             <?php
-            //$memberId == '000001679' ||
-            if ($memberId == '000005716') {
+
+            if ($memberId == '000001679' || $memberId == '000005716') {
             echo '<i class="fa fa-wrench cursor-pointer" style="color: silver; font-size: 20px; margin-top: 10px;"></i>';
             }
             ?>

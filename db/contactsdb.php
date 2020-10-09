@@ -65,7 +65,7 @@ function db_getContactString ($id){
 function db_deleteContactString($id, $adminId){
   foreach ($id as $value) {
     db_query ("UPDATE contacts SET `notice` = 2 WHERE `id`='$value'");
-    logFileWriter($adminId, 'Перемещён в корзину контакт '.$value);
+    logFileWriter($adminId, 'КОНТАКТЫ. Перемещён в корзину контакт '.$value);
   }
 }
 // Delete contacts strings from DATABASE
@@ -73,7 +73,7 @@ function db_deleteContactStringTotal($id, $adminId){
   foreach ($id as $value) {
     db_query ("DELETE FROM contacts WHERE `id`='$value'");
     db_query ("DELETE FROM chat WHERE `group_id`='$value'");
-    logFileWriter($adminId, 'Удалён из базы контакт '.$value);
+    logFileWriter($adminId, 'КОНТАКТЫ. Удалён из базы контакт '.$value);
   }
 }
 // responsible set
@@ -87,7 +87,7 @@ function db_responsibleSet($id, $responsibleNew, $adminId){
     db_query ("UPDATE contacts SET `responsible` = '$responsibleKey', `responsible_previous` = '$value[1]' WHERE `id`='$value[0]'");
     db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$value[0]', '$adminId', '$text')");
     db_newNotification($responsibleKey, $value[0]);
-    $textLog = 'Контакт ID - '.$value[0].'. '.$text.'. Предыдущий '.$value[1].'.';
+    $textLog = 'КОНТАКТЫ. Контакт ID - '.$value[0].'. '.$text.'. Предыдущий '.$value[1].'.';
     logFileWriter($adminId, $textLog);
   }
 }
@@ -101,7 +101,7 @@ function db_responsibleSetZero($data, $adminId){
     db_query ("UPDATE contacts SET `responsible` = '$value[1]', `responsible_previous` = '$adminId' WHERE `id`='$value[0]'");
     db_query("INSERT INTO chat (`group_id`, `member_key`, `message`) VALUES ('$value[0]', '$adminId', '$text')");
     db_newNotification($value[1], $value[0]);
-    $textLog = 'Контакт ID - '.$value[0].'. '.$text.'. Предыдущий '.$adminId.'.';
+    $textLog = 'КОНТАКТЫ. Контакт ID - '.$value[0].'. '.$text.'. Предыдущий '.$adminId.'.';
     logFileWriter($adminId, $textLog);
   }
 }
@@ -114,14 +114,14 @@ function db_getContactsStrings($memberId, $role){
   $result = [];
   if ($role > 0) {
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name, c.notice
+    c.sending_date, c.crm_id, c.project, m.name AS member_name, c.notice
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
     WHERE (c.responsible_previous = '$memberId' OR c.responsible = '$memberId') AND c.notice <> 2 ORDER BY c.name");
     while ($row = $res->fetch_assoc()) $result[]=$row;
   } else {
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name, c.notice
+    c.sending_date, c.crm_id, c.project, m.name AS member_name, c.notice
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
     WHERE (c.responsible_previous = '$memberId' OR c.responsible = '$memberId') AND c.notice <> 2 ORDER BY c.name");
@@ -129,6 +129,33 @@ function db_getContactsStrings($memberId, $role){
   }
   return $result;
 }
+
+function db_getContactsStringsPrev($memberId, $contRole){
+//WHERE c.responsible_previous = '$memberId'  AND c.notice <> 2 ORDER BY c.responsible");
+  global $db;
+  $memberId = $db->real_escape_string($memberId);
+  $contRole = $db->real_escape_string($contRole);
+  $previousAdmin = ' c.responsible_previous = '.$memberId;
+  if ($contRole === '2') {
+    $resultCheck = [];
+    $resCheck=db_query ("SELECT `member_key` FROM contacts_resp WHERE `role` = '1'");
+    while ($rowCheck = $resCheck->fetch_assoc()) $resultCheck[]=$rowCheck['member_key'];
+
+    for ($i=0; $i < count($resultCheck); $i++) {
+      $previousAdmin = $previousAdmin.' OR c.responsible_previous = '.$resultCheck[$i];
+    }
+  }
+  //c.responsible_previous = '000005944' OR c.responsible_previous = '000001679'
+  $result = [];
+    $res=db_query ("SELECT c.id, c.status,c.responsible, m.name AS member_name
+    FROM contacts AS c
+    INNER JOIN member m ON m.key = c.responsible
+    WHERE $previousAdmin AND c.notice <> 2 ORDER BY member_name");
+    while ($row = $res->fetch_assoc()) $result[]=$row;
+
+  return $result;
+}
+
 // set CRM ID
 function  db_crmIdSet($idCRM, $id, $memberId, $text, $comment, $notes){
   global $db;
@@ -293,13 +320,14 @@ function db_addStatusHistoryStr($status)
 
 function db_getMemberListAdminsForContacts ()
 {
-    $res=db_query ("SELECT a.member_key as id, m.name as name
+    $res=db_query ("SELECT a.member_key as id, m.name as name, m.locality_key as locality
         FROM admin as a
         INNER JOIN member m ON m.key = a.member_key
+        ORDER BY m.name
         ");
 
     $members = array ();
-    while ($row = $res->fetch_assoc()) $members[$row['id']]=$row['name'];
+    while ($row = $res->fetch_assoc()) $members[$row['id']]=$row['name'].'_'.$row['locality'];
     return $members;
 }
 
@@ -331,6 +359,113 @@ function db_statusMultipleSet($id, $statusNew){
     db_addStatusHistoryStr($statusNew);
   }
 }
+
+function db_getUniqueProjects ()
+{
+    $res=db_query ("SELECT DISTINCT project FROM contacts");
+
+    $projects = array ();
+    while ($row = $res->fetch_assoc()) $projects[]=$row['project'];
+    return $projects;
+}
+
+function db_getRespCombobox ($memberId)
+{
+  global $db;
+  $memberId = $db->real_escape_string($memberId);
+  $res=db_query ("SELECT `group_of_admin` FROM contacts_resp WHERE `member_key` = '$memberId'");
+
+  $resp='1';
+  while ($row = $res->fetch_assoc()) $resp=$row['group_of_admin'];
+
+  $resp2 = [];
+  if ($resp !== '1') {
+    $resp_arr = explode(',', $resp);
+
+    for ($x = 0; $x <= count($resp_arr); $x++) {
+
+      $xx = $resp_arr[$x];
+
+      $res2=db_query ("SELECT `key`, `name` FROM member WHERE `key` = '$xx'");
+      while ($row2 = $res2->fetch_assoc()) $resp2[$row2['key']]=$row2['name'];
+    }
+    return $resp2;
+  }
+  return $resp2;
+}
+
+// START responsibles group
+function db_getAdminResponsiblesGroup ($adminId)
+{
+    $res=db_query ("SELECT `group_of_admin` FROM contacts_resp WHERE `member_key` = '$adminId'");
+
+    $resp = '';
+    //$resp_arr = [];
+    while ($row = $res->fetch_assoc()) $resp=$row['group_of_admin'];
+/*
+    if ($resp) {
+      $resp_arr = explode(',', $resp);
+    }
+*/
+    return $resp;
+}
+
+function db_setRespForAdmin($adminId, $keys, $role){
+  global $db;
+  $adminId = $db->real_escape_string($adminId);
+  $keys = $db->real_escape_string($keys);
+  $role = $db->real_escape_string($role);
+  $check = '0';
+  $msg = '';
+  $res=db_query ("SELECT `member_key` FROM contacts_resp WHERE `member_key` = '$adminId'");
+  while ($row = $res->fetch_assoc()) $check=$row['member_key'];
+
+  if ($check !== '0') {
+    db_query ("UPDATE contacts_resp SET `group_of_admin` = '$keys' WHERE `member_key`='$adminId'");
+// Добавить админа который управляет если это не сам пользователь делает
+    $msg = 'Обновлён список ответственных у администратора - '.$keys;
+  } else {
+    db_query ("INSERT INTO contacts_resp (`member_key`, `role`, `group_of_admin`) VALUES ('$adminId', $role, '$keys')");
+// Добавить админа который делает это
+    $msg = 'Админом с ролью 2 добавлен новый администратор с ролью - '.$role.'. И списоком ответственных - '.$keys;
+  }
+  logFileWriter($adminId, 'КОНТАКТЫ. '.$msg);
+}
+
+function db_getContactsRoleAdmin($adminId){
+  global $db;
+  $adminId = $db->real_escape_string($adminId);
+  $role = [];
+
+  $res=db_query ("SELECT `role`, `group_of_admin` FROM contacts_resp WHERE `member_key` = '$adminId'");
+  while ($row = $res->fetch_assoc()) $role=[$row['role'], $row['group_of_admin']];
+  return $role;
+}
+
+function db_setUpdadteContactsRoleAdmin($adminId, $role){
+  global $db;
+  $adminId = $db->real_escape_string($adminId);
+  $role = $db->real_escape_string($role);
+  $check = '0';
+  $msg = 'Администору ';
+
+  $res=db_query ("SELECT `member_key` FROM contacts_resp WHERE `member_key` = '$adminId'");
+  while ($row = $res->fetch_assoc()) $check=$row['member_key'];
+
+if ($role === 'none' && $check !== '0') {
+    db_query("DELETE FROM contacts_resp WHERE `member_key`='$adminId'");
+    $msg = 'Администор удалён из таблицы ответственных за контакты, ';
+} elseif ($check !== '0' && $role !== 'none') {
+    db_query ("UPDATE contacts_resp SET `role` = '$role' WHERE `member_key`='$adminId'");
+  } elseif ($check === '0' && $role !== 'none') {
+    db_query ("INSERT INTO contacts_resp (`member_key`,`role`) VALUES ('$adminId','$role')");
+  }
+  logFileWriter($adminId, 'КОНТАКТЫ. '.$msg.'назначена роль '.$role);
+}
+
+// STOP responsibles group
+
+
 /*
 function logFileWriter2($logMemberId, $info)
 {

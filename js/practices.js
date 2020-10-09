@@ -717,7 +717,7 @@ if (statisticLine[x[i].member_id] === undefined) {
           adminLocalitiiesForSQL = adminLocalitiiesForSQL + 'm.locality_key = ' + String(variable);
         }
       }
-      console.log(data_page.admin_localities, ', ', data_page.admin_locality);
+      //console.log(data_page.admin_localities, ', ', data_page.admin_locality);
       if (!adminLocalitiiesForSQL) {
         return
       }
@@ -728,12 +728,22 @@ if (statisticLine[x[i].member_id] === undefined) {
     sorting ? '': sorting = 'name_down';
     var dataObj = {};
     dataObj.localities = adminLocalitiiesForSQL;
-    dataObj.period = periodValue || $('#periodPractices').val();
     dataObj.sort = sorting;
-    $.get('/ajax/practices.php?get_practices_for_admin', {data: dataObj})
-      .done (function(data) {
-        practicesListServiceones(data.practices);
-      });
+    if (periodValue === 'period') {
+      dataObj.periodFrom = $('#periodFrom').val();
+      dataObj.periodTo = $('#periodTo').val();      
+      $.get('/ajax/practices.php?get_practices_for_admin_periods', {data: dataObj})
+        .done (function(data) {
+          practicesListServiceones(data.practices);
+        });
+    } else {
+      dataObj.period = periodValue || $('#periodPractices').val();
+      $.get('/ajax/practices.php?get_practices_for_admin', {data: dataObj})
+        .done (function(data) {
+          practicesListServiceones(data.practices);
+        });
+    }
+
   }
   practicesListServiceonesUpdate();
 // DUBLICATE FUNCTION VISITS.JS
@@ -789,6 +799,33 @@ if (statisticLine[x[i].member_id] === undefined) {
         filterAminLocalityMbl();
       }, 500);
   });
+  $('#periodFrom, #periodTo').change(function (e) {
+
+    if (!$('#periodFrom').val() || !$('#periodTo').val()) {
+      return
+    }
+
+    if ($('#periodFrom').val() > $('#periodTo').val()) {
+      if (e.target.id === 'periodFrom') {
+        $('#periodFrom').val($('#periodTo').val());
+      } else {
+        $('#periodTo').val($('#periodFrom').val());
+      }
+      return
+    }
+
+    var sorting = 'name_up';
+    if ($('#sort-fio').next().hasClass('icon-chevron-down')) {
+      sorting = 'name_down';
+    }
+
+      practicesListServiceonesUpdate('period', sorting);
+      setTimeout(function () {
+        filterAminLocality();
+        filterAminLocalityMbl();
+      }, 1500);
+  });
+
 // SORTING START
   $('#sort-fio').click(function (e) {
     var sorting;
@@ -809,6 +846,31 @@ if (statisticLine[x[i].member_id] === undefined) {
       }, 500);
   });
 // SORTING STOP
+
+// date convert mmyyyy to yyyymmdd & yyyymmdd to mmyyyy DUBLICATE FROM SCRIPT2.JS
+function dateStrToddmmyyyyToyyyymmdd2(date, toRus, separator) {
+  var yyyy, mm, dd;
+
+  if (!date) {
+    console.log('function should receive the next parameter: DATE');
+    return
+  }
+
+  if (toRus) {
+    separator ? '' : separator = '.';
+    yyyy = date.slice(0,4),
+    mm = date.slice(5,7),
+    dd = date.slice(8,10);
+    date = dd + separator + mm + separator + yyyy;
+  } else if (!toRus || toRus == 0){
+    separator ? '' : separator = '-';
+    yyyy = date.slice(6,10),
+    mm = date.slice(3,5),
+    dd = date.slice(0,2);
+    date = yyyy + '-' + mm + '-' + dd;
+  }
+  return date
+}
 /*  $('#adminlocalitiesCombo').change(function () {
 
     //DAILY STRINGS

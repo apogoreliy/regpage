@@ -5,8 +5,9 @@ include_once 'panelsource/panelDB.php';
 include_once 'panelsource/adminpaneldb.php';
 $pages = db_getPages();
 $customPages = db_getCustomPagesPanel();
-
+$ResponsibleContacts = db_getResponsibleContacts1And2();
 $memberId = db_getMemberIdBySessionId (session_id());
+$ResponsibleZero = db_getResponsibleContactsZero();
 if ($memberId !== '000001679'){
   if ($memberId !== '000005716') {
     return;
@@ -19,7 +20,6 @@ if ($memberId !== '000001679'){
   <div class="" style="display: flex">
     <div class="col-md-12" style="margin-top: 50px;">
       <h4>Options panel</h4>
-      <br>
       <div class="container">
         <br>
         <!-- Nav tabs -->
@@ -34,6 +34,9 @@ if ($memberId !== '000001679'){
             <a class="nav-link" data-toggle="tab" href="#menu2">Practices</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#menu4">Contacts</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#menu3">Other</a>
           </li>
         </ul>
@@ -45,10 +48,16 @@ if ($memberId !== '000001679'){
             <hr>
             <h5>Download log files</h5>
             <div class="">
-              <?php // /var/www/vhosts/u0654376.plsk.regruhosting.ru/test.new-constellation.ru/ajax/
-              $extraPath = 'domains/reg-page.ru/public_html/ajax/';
-              //$extraPath = 'ajax/';
-              if ($handle = opendir('/home/regpager/domains/reg-page.ru/public_html/ajax/')) {
+              <?php
+              if ($_SERVER['HTTP_HOST'] === 'reg-page.ru') {
+                $dirPatch = '/home/regpager/domains/reg-page.ru/public_html/ajax/';
+                $extraPath = 'domains/reg-page.ru/public_html/ajax/';
+              } else {
+                $dirPatch = '/var/www/vhosts/u0654376.plsk.regruhosting.ru/test.new-constellation.ru/ajax/';
+                $extraPath = 'ajax/';
+              }
+
+              if ($handle = opendir($dirPatch)) {
                 while (false !== ($entry = readdir($handle))) {
                   if ($entry != "." && $entry != ".." && strpos($entry, 'logFile') !== false) {
                     echo "<a href='download.php?file=".$entry."&path=".$extraPath."'>".$entry."</a>\n";
@@ -60,26 +69,61 @@ if ($memberId !== '000001679'){
             <hr>
             <h5>Download log files of system</h5>
             <div class="">
-              <?php //   /var/www/vhosts/u0654376.plsk.regruhosting.ru/test.new-constellation.ru/
-              if ($handle2 = opendir('/home/regpager/')) {
+              <?php
+              if ($_SERVER['HTTP_HOST'] === 'reg-page.ru') {
+                $dirPatch2 = '/home/regpager/';
+                $extraPath4 = '';
+              } else {
+                $dirPatch2 = '/var/www/vhosts/u0654376.plsk.regruhosting.ru/';
+                $extraPath4 = '/../';
+              }
+
+              if ($handle2 = opendir($dirPatch2)) {
                 while (false !== ($entry2 = readdir($handle2))) {
                   if ($entry2 != "." && $entry2 != ".." && strpos($entry2, 'logFile') !== false) {
-                    echo "<a href='download.php?file=".$entry2."'>".$entry2."</a>\n";
+                    echo "<a href='download.php?file=".$entry2."&path=".$extraPath4."'>".$entry2."</a>\n";
                   }
                 }
                 closedir($handle2);
               }?>;
             </div>
             <hr>
-            <h5>Download log files of administrator</h5>
+            <h5>Download log files of System II</h5>
             <div class="">
-              <?php // /home/regpager/  /var/www/vhosts/u0654376.plsk.regruhosting.ru/test.new-constellation.ru/panelsource/
-              //$extraPath2 = 'panelsource/';
-              $extraPath2 = 'domains/reg-page.ru/public_html/panelsource/';
-              if ($handle3 = opendir('/home/regpager/domains/reg-page.ru/public_html/panelsource/')) {
+              <?php
+              if ($_SERVER['HTTP_HOST'] === 'reg-page.ru') {
+                $dirPatch3 = '/home/regpager/domains/reg-page.ru/public_html/';
+                $extraPath2 = 'domains/reg-page.ru/public_html/';
+              } else {
+                $dirPatch3 = '/var/www/vhosts/u0654376.plsk.regruhosting.ru/test.new-constellation.ru';
+                $extraPath2 = '/';
+              }
+
+              if ($handle3 = opendir($dirPatch3)) {
                 while (false !== ($entry3 = readdir($handle3))) {
                   if ($entry3 != "." && $entry3 != ".." && strpos($entry3, 'logFile') !== false) {
                     echo "<a href='download.php?file=".$entry3."&path=".$extraPath2."'>".$entry3."</a>\n";
+                  }
+                }
+                closedir($handle3);
+              }?>;
+            </div>
+            <hr>
+            <h5>Download log files of administrator</h5>
+            <div class="">
+              <?php
+              if ($_SERVER['HTTP_HOST'] === 'reg-page.ru') {
+                $dirPatch4 = '/home/regpager/domains/reg-page.ru/public_html/panelsource/';
+                $extraPath3 = 'domains/reg-page.ru/public_html/panelsource/';
+              } else {
+                $dirPatch4 = '/var/www/vhosts/u0654376.plsk.regruhosting.ru/test.new-constellation.ru/panelsource/';
+                $extraPath3 = 'panelsource/';
+              }
+
+              if ($handle3 = opendir($dirPatch4)) {
+                while (false !== ($entry3 = readdir($handle3))) {
+                  if ($entry3 != "." && $entry3 != ".." && strpos($entry3, 'logFile') !== false) {
+                    echo "<a href='download.php?file=".$entry3."&path=".$extraPath3."'>".$entry3."</a>\n";
                   }
                 }
                 closedir($handle3);
@@ -146,14 +190,38 @@ if ($memberId !== '000001679'){
             <div class="" style="margin: 7px;" id="noticeForAddPractices">
             </div>
           </div>
+          <div id="menu4" class="container tab-pane fade"><br>
+            <h3>Contacts</h3>
+            <hr>
+            <h4>Responibles 1 & 2</h4>
+            <div class="" style="margin: 7px;">
+              <?php
+              for ($i=0; $i < count($ResponsibleContacts); $i++) {
+                 $text = $ResponsibleContacts[$i]['name'].', роль - '.$ResponsibleContacts[$i]['role'].', key - '.$ResponsibleContacts[$i]['member_key'].'<br>';
+                 echo $text;
+              }
+              ?>
+            </div>
+            <hr>
+            <h4>Responibles 0</h4>
+            <div class="">
+              <?php
+              foreach ($ResponsibleZero as $name => $names) {
+                  echo '<b>'.$name.':</b><br>';
+                  foreach ($names as $key2 => $name2) {
+                      echo $name2.', '.$key2.'<br>';
+                  }
+              }?>
+            </div>
+          </div>
           <div id="menu3" class="container tab-pane fade"><br>
             <h3>Other</h3>
-            <div class="" style="margin: 7px;">
+            <!--<div class="" style="margin: 7px;">
               <input type="button" class="btn btn-danger btn-sm" id="" name="" value="button">
             </div>
             <div class="" style="margin: 7px;">
               <input type="button" class="btn btn-danger btn-sm" id="clearOldSessions" name="" value="Delete old session from admin session">
-            </div>
+            </div>-->
             <div class=""style="border: 1px solid black; margin: 7px; padding: 7px;">
               <a href="panel">ADMIN PANEL</a>
             </div>
