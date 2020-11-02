@@ -1347,7 +1347,7 @@ function db_setEventMember ($adminId, $get, $post){
                 ($_name !== DONT_CHANGE && $_name != $m["name"]) ||
                 ($_address !== DONT_CHANGE && $_address != $m["address"]) ||
                 ($_birth_date !== DONT_CHANGE && $_birth_date != $m["birth_date"]) ||
-                ($_cell_phone !== DONT_CHANGE && $_cell_phone != $m["cell_phone"]) ||
+                ($_cell_phone !== DONT_CHANGE && $_cell_phone !== $m["cell_phone"]) ||
                 ($_email !== DONT_CHANGE && $_email != $m["email"]) ||
                 ($_locality_key !== DONT_CHANGE && $_locality_key != $m["locality_key"]) ||
                 ($_new_locality !== DONT_CHANGE && $_new_locality != $m["new_locality"]) ||

@@ -195,7 +195,6 @@ $(document).ready(function(){
     }
   });
 
-
 // Data for the daily practices blank
   function practicesBlankToday(dataForBlank) {
 // DeskTop
@@ -731,7 +730,7 @@ if (statisticLine[x[i].member_id] === undefined) {
     dataObj.sort = sorting;
     if (periodValue === 'period') {
       dataObj.periodFrom = $('#periodFrom').val();
-      dataObj.periodTo = $('#periodTo').val();      
+      dataObj.periodTo = $('#periodTo').val();
       $.get('/ajax/practices.php?get_practices_for_admin_periods', {data: dataObj})
         .done (function(data) {
           practicesListServiceones(data.practices);

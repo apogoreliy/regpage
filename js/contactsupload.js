@@ -107,7 +107,12 @@ function prepareArrayUpload(array) {
 };
 //START SAFE FUNCTION NEW UPLOAD BUTTON
 $('.saveUploadItemsNew').click(function () {
-  if ($('#nameGlobalUploadVal').val() === '_none_' || $('#nameGlobalUploadVal').val() === '') {
+
+  if (!$('#upload_file').val()) {
+    showError('Выберите файл для загрузки');
+    $('#upload_file').css('border-color', 'red');
+    return
+  } else if ($('#nameGlobalUploadVal').val() === '_none_' || $('#nameGlobalUploadVal').val() === '') {
     showError('Заполните поле ФИО');
     $('#nameGlobalUploadVal').css('border-color', 'red');
     return

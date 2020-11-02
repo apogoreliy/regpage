@@ -274,3 +274,8 @@
   padding-right: 5px;
 }
 /* Modal statistic of statuses*/
+
+.textLineFilters {
+  font-weight: bold;
+  color: red;
+}

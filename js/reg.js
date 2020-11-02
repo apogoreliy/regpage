@@ -14,6 +14,35 @@
   $('.emBirthdate').attr('valid', 'required');
 // check date fields
   $('#modalEditMember').on('show', function() {
+
+    // events for schoolers
+    if ($('.tab-pane.active').attr('data-event_type') === 'SCC' || $('.tab-pane.active').attr('data-event_type') === 'RYC' || $('.tab-pane.active').attr('data-event_type') === 'TSC' || $('.tab-pane.active').attr('data-event_type') === 'RTS') {
+
+      if ($('.tab-pane.active').attr('id') === 'eventTab-20190018') {
+          $('.emAccom').val('1');
+          $('.emAccom').attr('disabled', true);
+          $('.emAccom').prev().text('Группа');
+          $('.emAccom').parent().removeClass('error');
+          $('.emMateLbl').text('Служащий');
+      } else {        
+        $('.emAccom').prev().text('Группа');
+        $('.emMateLbl').text('Служащий');
+      }
+    } else {
+      if ($('.emAccom').prev().text() === 'Группа') {
+        $('.emAccom').prev().text('Размещение*');
+        $('.emMateLbl').text('Разместить с');
+        // убрать
+        if ($('.emAccom').attr('disabled')) {
+          $('.emAccom').attr('disabled', false);
+        }
+        // убрать
+        if (!$('.emAccom').val() && !$('.emAccom').parent().hasClass('error')) {
+          $('.emAccom').parent().addClass('error');
+        }
+      }
+    }
+
     setTimeout(function () {
       var form = $('#modalEditMember');
       var a = parseDDMM (form.find(".emArrDate").val());

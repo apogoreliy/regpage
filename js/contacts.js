@@ -2,7 +2,7 @@
 // Contacts
 
 $(document).ready(function(){
-  console.log(data_page);
+  //console.log(data_page);
 
   if (data_page.admin_role === '0') {
     $('#responsibleContact').html('<option value="'+window.adminId+'">'+fullNameToNoMiddleName(data_page.admin_name)+'');
@@ -789,7 +789,7 @@ function historyBuilder(data) {
           if ($('#responsibleContact').val()) {
             if ($('#responsibleContact').val() !== window.adminId) {
               // Проблема айакс внутри аякса, надо внешний переделать на пост.
-              console.log('Im here mushkela!');
+              //console.log('Im here mushkela!');
               addNoticeAboutContact($('#responsibleContact').val(), data.id);
             }
             $('#responsibleContact').attr('data-responsible', $('#responsibleContact').val());
@@ -878,8 +878,8 @@ function historyBuilder(data) {
           $('.cd-panel__close-watch').removeClass('cd-panel__close-watch-visible');
         }
         $(this).hide();
-        $(this).removeClass('.contacts_str');
-        $(this).addClass('.contacts_str_trash');
+        $(this).removeClass('contacts_str');
+        $(this).addClass('contacts_str_trash');
       }
     });
 
@@ -986,7 +986,7 @@ function historyBuilder(data) {
       }
       var responsibleArr = [$('#responsibleList').val(), fullNameToShortFirstMiddleNames($('#responsibleList option:selected').text(), true)];
 
-    // ПРОВЕРИТЬ на больших объёмах, возможно лучше действовать синхронно, что бы запрос не выполнился прежде формирования   массива содержащего данные для запроса
+    // ПРОВЕРИТЬ на больших объёмах, возможно лучше действовать синхронно, что бы запрос не выполнился прежде формирования массива содержащего данные для запроса
       $.post('/ajax/contacts.php', {type: 'responsible_set', responsible: responsibleArr, id: data})
         .done (function(data) {
         });
@@ -1043,7 +1043,7 @@ function historyBuilder(data) {
     contactsListUpdate();
 
     function contactStringLoader(data) {
-      console.log(data);
+      //console.log(data);
       // Доделать для новых карточек добавление строк
       if (!data) {
         return
@@ -1270,6 +1270,8 @@ function sendTheOrder(ua) {
           if (data) {
             addCrmId(data);
             showHint('Заказ отправлен команде проекта BFA');
+            $('#orderDateEdit').val(dateNow);
+            $('#orderDate').text(dateNow);
           } else {
             showError('Что то пошло не так, обратитесь в тех. поддержку');
             console.log(data);
@@ -1283,6 +1285,8 @@ function sendTheOrder(ua) {
         } else {
           addCrmId(data);
           showHint('Заказ отправлен команде проекта BFA');
+          $('#orderDateEdit').val(dateNow);
+          $('#orderDate').text(dateNow);
         }
       });
     }
@@ -1319,6 +1323,16 @@ function sendTheOrder(ua) {
       $('#addressContact').css('border-color', 'red');
       e.stopPropagation();
       return
+    } else if (!$('#countryContact').val()) {
+      showError('Заполните поле Страна');
+      $('#countryContact').css('border-color', 'red');
+      e.stopPropagation();
+      return
+    } else if ($('#maleContact').val() === '_none_') {
+      showError('Заполните поле Пол');
+      $('#maleContact').css('border-color', 'red');
+      e.stopPropagation();
+      return
     } else {
       $('#addressContact').css('border-color', '#ced4da');
       $('#indexContact').css('border-color', '#ced4da');
@@ -1340,29 +1354,29 @@ function sendTheOrder(ua) {
     $('#blankHistory').show();
     $('#orderSentToContact').attr('disabled', true);
     $('#orderSentToContact').val('Заказ отправлен');
-    saveEditContact();
 
     if ($('#countryContact').val() === 'UA') {
-      setTimeout(function () {
         sendTheOrder('UA');
         $('#saveConfirm').hide();
-      }, 500);
     } else {
-      setTimeout(function () {
         sendTheOrder();
         $('#saveConfirm').hide();
-      }, 500);
     }
+    setTimeout(function () {
+      saveEditContact();
+    }, 1200);
+
     $('#modalSpinner').show();
     $('#saveSpinner').show();
     setTimeout(function () {
       $('#modalSpinner').hide();
-
     }, 2500);
   });
 
   $('#appointResponsibleShow').click(function() {
     if (data_page.admin_role !== '0') {
+      $('#responsibleList').val('_all_');
+      $('#listForSetRespAdminNoZero').html('');
       $('#setResponsibleModal').modal().show();
     } else {
       var lists = [];
@@ -1374,6 +1388,19 @@ function sendTheOrder(ua) {
       $('#listForSetRespAdminZero').html(lists);
       $('#setResponsibleModalAdminZero').modal().show();
     }
+  });
+
+  $('#responsibleList').change(function() {
+    var listsResponsibles = [];
+    var nameTmp = $('#responsibleList option:selected').text();
+    nameTmp = nameTmp.split(' ');
+    nameTmp = nameTmp[0] +' '+ nameTmp[1];
+    $('.contacts_str').each(function () {
+      if ($(this).find('.checkboxString').prop('checked')) {
+        listsResponsibles.push($(this).find('.data_name').text() + ' 	&#8658; ' + nameTmp + '<br>');
+      }
+    });
+    $('#listForSetRespAdminNoZero').html(listsResponsibles);
   });
 
 // checking changed any fields in the blank
@@ -1439,14 +1466,6 @@ function sendTheOrder(ua) {
         }
     });
   }
-
-  $('#maleShow, #statusShow, #respShow, #myBlanks, #periodsCombobox, #leftPanelCountryFilter, #leftPanelRegionFilter').change(function (event) {
-    event.stopPropagation();
-    if (event.target.id === 'myBlanks' && event.target.value === '1' && $('#respShow').val() !== '_all_') {
-      $('#respShow').val('_all_');
-    }
-    filtersOfString();
-  });
 
 /*
   $('#search-text').bind("paste keyup", function(event){
@@ -1547,6 +1566,22 @@ function sendTheOrder(ua) {
       }
     });
 
+    $('#deleteContactsShowModal').find('.fa-trash').click(function () {
+      if ($('#deleteContactsShowModal').attr('disabled')) {
+        showError('Выделите контакты для удаления');
+      }
+    });
+    $('#appointResponsibleShow').find('.fa-exchange').click(function () {
+      if ($('#deleteContactsShowModal').attr('disabled')) {
+        showError('Выделите контакты, которые следует передать');
+      }
+    });
+    $('#appointStatusShow').find('.fa-flag').click(function () {
+      if ($('#deleteContactsShowModal').attr('disabled')) {
+        showError('Выделите контакты для смены статуса');
+      }
+    });
+
     $('#deleteContactsShowModal').click(function () {
       var list =[];
       $('.contacts_str').each(function () {
@@ -1601,7 +1636,7 @@ function sendTheOrder(ua) {
   if (data_page.admin_role !== '0') {
     blankCounter.counter = setTimeout (function () {
       if (!blankCounter.blank_count_their[0]) {
-        console.log(blankCounter.blank_count_their);
+        //console.log(blankCounter.blank_count_their);
         return
       }
       var xex = [], arr = blankCounter.blank_count_their;
@@ -1617,7 +1652,7 @@ function sendTheOrder(ua) {
 
     blankCounter.status_stat = setTimeout (function () {
       if (!blankCounter.blank_count_their[0]) {
-        console.log(blankCounter.blank_count_their);
+        //console.log(blankCounter.blank_count_their);
         return
       }
       var xey = [];
@@ -1770,7 +1805,9 @@ function sendTheOrder(ua) {
             visibility = '';
             attr = '';
           }
-            htmlAdminsList.push('<span class="list_admins_str" '+visibility+'><label class="font-weight-normal"><input type="checkbox" data-admin_key="'+va500+'" data-locality="'+data_page.full_admin_list[va500][1]+'" '+attr+'> '+fullNameToNoMiddleName(data_page.full_admin_list[va500][0])+'</label><br></span>');
+            if (va500[0] === '0') {
+              htmlAdminsList.push('<span class="list_admins_str" '+visibility+'><label class="font-weight-normal"><input type="checkbox" data-admin_key="'+va500+'" data-locality="'+data_page.full_admin_list[va500][1]+'" '+attr+'> '+fullNameToNoMiddleName(data_page.full_admin_list[va500][0])+'</label><br></span>');
+            }
         }
       }
     } else {
@@ -1844,7 +1881,9 @@ function sendTheOrder(ua) {
           if (vari === window.adminId) {
             htmlAllAdminsListCombo.push('<option value="'+vari+'" selected>'+fullNameToNoMiddleName(data_page.full_admin_list[vari][0])+'</option>');
           } else {
-            htmlAllAdminsListCombo.push('<option value="'+vari+'">'+fullNameToNoMiddleName(data_page.full_admin_list[vari][0])+'</option>');
+            if (vari[0] !== '9') {
+              htmlAllAdminsListCombo.push('<option value="'+vari+'">'+fullNameToNoMiddleName(data_page.full_admin_list[vari][0])+'</option>');
+            }
           }
         }
       }
@@ -2025,7 +2064,7 @@ function sendTheOrder(ua) {
   function addOptionsToCommboRole2() {
     $.get('/ajax/contacts.php?get_localities_by_admin', {id: $('#fullAdminsListCombo').val()})
       .done (function(data) {
-        console.log(data.result);
+        //console.log(data.result);
         var localitiesOptions = [];
         localitiesOptions[0] = '<option class="extra-option" value="_line_" disabled>---- Местность администратора ---- <option class="extra-option" value="'+$('#allLocalitisesListCombo').val()+'">'+data_page.locality[$('#allLocalitisesListCombo').val()]+'<option class="extra-option" value="_line_" disabled>-----------------------------------';
 
@@ -2058,7 +2097,6 @@ function sendTheOrder(ua) {
             $('#roleListCombo').val(data.result[0]);
             var arrayTmp100;
             if (data.result[1] && data.result[1] !== window.adminId) {
-              console.log('Im here!');
               arrayTmp100 = data.result[1].split(',');
             } else if (data.result[1] === window.adminId) {
               arrayTmp100 = [window.adminId];
@@ -2129,9 +2167,192 @@ function sendTheOrder(ua) {
       $('#leftSidepanel').css('width', '200px');
     }
   });
+
   $('#leftPanelCloseBtn').click(function() {
     $('#leftSidepanel').css('width', '0px');
   });
 
+  var currentsSelectValues = [];
+
+  $('#openFiltersPanelBtn').click(function() {
+    currentsSelectValues = [];
+    $('#modalFiltersPanel select').each(function() {
+      currentsSelectValues[$(this).attr('id')] = $(this).val();
+    });
+  });
+/*
+  $('#cancelFilters, #cancelFiltersX').click(function() {
+    for (var variable in currentsSelectValues) {
+      if (currentsSelectValues.hasOwnProperty(variable)) {
+          $('#'+variable).val(currentsSelectValues[variable]);
+      }
+    }
+    currentsSelectValues = [];
+    filtersOfString();
+  });
+
+
+    $('#modalFiltersPanel').click(function(e) {
+      if (e.target.ariaModal === 'true') {
+        if (currentsSelectValues.length !== '0') {
+          for (var variable in currentsSelectValues) {
+            if (currentsSelectValues.hasOwnProperty(variable)) {
+              $('#'+variable).val(currentsSelectValues[variable]);
+            }
+          }
+          currentsSelectValues = [];
+        filtersOfString();
+        }
+      }
+    });
+*/
+  $('#applyFilters').click(function(e) {
+    $('#saveSpinner').show();
+    $('#modalSpinner').show();
+/*
+
+$('#applyFilters').html('<span class="spinner-border spinner-border-sm"></span>');
+
+    setTimeout(function () {
+      $('#applyFilters').html('Применить');
+      //$(this).attr('disabled', false);
+    }, 1500);
+
+    //$(this).attr('disabled', true);
+      */
+      setTimeout(function () {
+    var filtersText = 'Фильтры: ', textOfOption, tempText;
+    $('#modalFiltersPanel select').each(function() {
+
+      if ($(this).attr('id') === 'myBlanks' && ($(this).val() === '_all_' || $(this).val() === '0')) {
+        if (filtersText !== 'Фильтры: ') {
+          filtersText = filtersText + ', ';
+        }
+        if ($(this).val() === '_all_') {
+          filtersText = filtersText + 'Все контакты';
+        } else {
+          filtersText = filtersText + 'Переданные контакты';
+        }
+      } else if ($(this).val() !== '_all_' && $(this).attr('id') !== 'myBlanks') {
+        if (filtersText !== 'Фильтры: ') {
+          filtersText = filtersText + ', ';
+        }
+        if ($(this).attr('id') === 'respShow') {
+          textOfOption = $(this).find('option:selected').text();
+          tempText = textOfOption.split('-');
+          textOfOption = tempText[0];
+        } else {
+          textOfOption = $(this).find('option:selected').text();
+        }
+        filtersText = filtersText + textOfOption;
+      }
+
+    });
+    if (filtersText.length > 40 && $(window).width()<=500) {
+      var text = filtersText.slice(0,36);
+      text = text+'...  <i id="clearTextFilters" class="fa fa-close h5 cursor-pointer"></i>';
+      $('#textFiltersForUsers').html(text);
+    } else {
+      if (filtersText !== 'Фильтры: ') {
+        filtersText = filtersText + '  <i id="clearTextFilters" class="fa fa-close h5 cursor-pointer"></i>';
+        $('#textFiltersForUsers').html(filtersText);
+      } else {
+        $('#textFiltersForUsers').html('');
+      }
+    }
+
+    var xslice = $('#listContactsMbl').css('padding-top');
+    xslice = xslice.slice(0, (xslice.length-2));
+    if (filtersText !== 'Фильтры: ' && $('#desctop_visible').css('padding-top') !== '30px') {
+      xslice = Number(xslice) + 10;
+      xslice = xslice + 'px';
+      var xdesk = '30px';
+    } else if (filtersText === 'Фильтры: ' && $('#desctop_visible').css('padding-top') === '30px') {
+      xslice = Number(xslice) - 10;
+      xslice = xslice + 'px';
+      var xdesk = '0px';
+    }
+
+    $('#listContactsMbl').css('padding-top', xslice);
+
+    $('#desctop_visible').css('padding-top', xdesk);
+    filtersOfString();
+
+/*
+$('#maleShow, #statusShow, #respShow, #myBlanks, #periodsCombobox, #leftPanelCountryFilter, #leftPanelRegionFilter').change(function (event) {
+  event.stopPropagation();
+  if (event.target.id === 'myBlanks' && event.target.value === '1' && $('#respShow').val() !== '_all_') {
+    $('#respShow').val('_all_');
+  }
+  filtersOfString();
+});
+*/
+
+    $('#clearTextFilters').click(function() {
+      $('#saveSpinner').show();
+      $('#modalSpinner').show();
+      setTimeout(function () {
+      $('#textFiltersForUsers').html('');
+      var xslice = $('#listContactsMbl').css('padding-top');
+      xslice = xslice.slice(0, (xslice.length-2));
+      xslice = Number(xslice)- 10;
+      xslice = xslice + 'px';
+      $('#listContactsMbl').css('padding-top', xslice);
+      $('#modalFiltersPanel select').each(function() {
+        if ($(this).attr('id') === 'myBlanks') {
+          $(this).val(1);
+        } else {
+          $(this).val('_all_');
+        }
+      });
+        filtersOfString();
+        $('#saveSpinner').hide();
+        $('#modalSpinner').hide();
+      }, 50);
+      $('#desctop_visible').css('padding-top', '0px');
+    });
+    $('#saveSpinner').hide();
+    $('#modalSpinner').hide();
+    }, 30);
+  });
+
+  $('#openSearchFieldBtn').click(function() {
+    if ($('#search-text').parent().is(':visible')) {
+      if ($(window).width()<=381) {
+        $('#listContactsMbl').css('padding-top', '80px');
+      } else {
+        $('#listContactsMbl').css('padding-top', '40px');
+      }
+      $('#search-text').parent().hide();
+    } else {
+      if ($(window).width()<=381) {
+        $('#listContactsMbl').css('padding-top', '120px');
+      } else {
+        $('#listContactsMbl').css('padding-top', '90px');
+      }
+      $('#search-text').parent().show();
+    }
+  });
 //STOP Responsibles choise
+
+//Print element
+  $('#printStatistics').click(function () {
+    function printElem(elem){
+      popup($(elem).html());
+    }
+
+    function popup(data){
+      var mywindow = window.open('', 'Распределение', 'height=400,width=600');
+      mywindow.document.write('<html><head><title>Распределение</title>');
+      mywindow.document.write('</head><body > <style>th {border-bottom: 1px solid black; text-align: center; border-collapse: collapse;} table, td {border-bottom: 1px solid black; text-align: right; border-collapse: collapse;}</style>');
+      mywindow.document.write(data);
+      mywindow.document.write('</body></html>');
+      //mywindow.print();
+      //mywindow.close();
+      //return true;
+    }
+    printElem('#tableStatPrint');
+  });
+//Print element
+
 });

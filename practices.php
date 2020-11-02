@@ -102,12 +102,12 @@
                 <option value="_all_">Все</option>
                 <?php foreach ($localities as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
               </select>
-              <select id="servingCombo" class="" name="">
+              <select id="servingCombo" class="" name="" style="margin-right: 10px;">
                 <option value="_all_">Все служащие</option>
                   <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'" .($id === $memberId ? 'selected' : '').">".htmlspecialchars (shortNameMember($name))."</option>"; ?>
               </select>
-              <span> с </span><input type="date" id="periodFrom" value="" class="span2" min="2020-04-01">
-              <span> по </span><input type="date" id="periodTo" value="" class="span2" min="2020-04-01">
+              <span> с </span><input type="date" id="periodFrom" value="" class="span2" min="2020-04-01" style="margin-bottom: 10px; margin-right: 10px;">
+              <span> по </span><input type="date" id="periodTo" value="" class="span2" min="2020-04-01" style="margin-bottom: 10px;">
             </div>
             <table id="listPracticesForObserve" class="table table-hover">
               <thead>
@@ -250,8 +250,8 @@
               <option value="_all_">Все служащие</option>
                 <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name))."</option>"; ?>
             </select>
-            <span>с</span><input type="date" name="" value="">
-            <span>по</span><input type="date" name="" value="">
+            <!--<span>с</span><input type="date" name="" value="">
+            <span>по</span><input type="date" name="" value="">-->
           </div>
             <table id="listPracticesForObserveMbl" class="table table-hover">
               <thead>

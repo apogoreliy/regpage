@@ -8,6 +8,7 @@ $customPages = db_getCustomPagesPanel();
 $ResponsibleContacts = db_getResponsibleContacts1And2();
 $memberId = db_getMemberIdBySessionId (session_id());
 $ResponsibleZero = db_getResponsibleContactsZero();
+$checkLostContactsList = db_checkLostContacts();
 if ($memberId !== '000001679'){
   if ($memberId !== '000005716') {
     return;
@@ -191,27 +192,40 @@ if ($memberId !== '000001679'){
             </div>
           </div>
           <div id="menu4" class="container tab-pane fade"><br>
-            <h3>Contacts</h3>
-            <hr>
-            <h4>Responibles 1 & 2</h4>
-            <div class="" style="margin: 7px;">
-              <?php
-              for ($i=0; $i < count($ResponsibleContacts); $i++) {
-                 $text = $ResponsibleContacts[$i]['name'].', роль - '.$ResponsibleContacts[$i]['role'].', key - '.$ResponsibleContacts[$i]['member_key'].'<br>';
-                 echo $text;
-              }
-              ?>
-            </div>
-            <hr>
-            <h4>Responibles 0</h4>
-            <div class="">
-              <?php
-              foreach ($ResponsibleZero as $name => $names) {
-                  echo '<b>'.$name.':</b><br>';
-                  foreach ($names as $key2 => $name2) {
-                      echo $name2.', '.$key2.'<br>';
+            <div class="row">
+              <div class="col-sm-8">
+                <h3>Contacts</h3>
+                <hr>
+                <h4>Responibles 1 & 2</h4>
+                <div class="" style="margin: 7px;">
+                  <?php
+                  for ($i=0; $i < count($ResponsibleContacts); $i++) {
+                     $text = $ResponsibleContacts[$i]['name'].', роль - '.$ResponsibleContacts[$i]['role'].', key - '.$ResponsibleContacts[$i]['member_key'].'<br>';
+                     echo $text;
                   }
-              }?>
+                  ?>
+                </div>
+                <hr>
+                <h4>Responibles 0</h4>
+                <div class="">
+                  <?php
+                  foreach ($ResponsibleZero as $name => $names) {
+                      echo '<b>'.$name.':</b><br>';
+                      foreach ($names as $key2 => $name2) {
+                          echo $name2.', '.$key2.'<br>';
+                      }
+                  }?>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <h3>Lost contacts</h3>
+                <hr>
+                <?php
+                for ($i=0; $i < count($checkLostContactsList); $i++) {
+                   echo $checkLostContactsList[$i].'<br>';
+                }
+                ?>
+              </div>
             </div>
           </div>
           <div id="menu3" class="container tab-pane fade"><br>
