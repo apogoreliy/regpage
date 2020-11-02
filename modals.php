@@ -300,7 +300,9 @@
                 <input type="text" placeholder="Введите название местности" valid="required" class="controls span12 search-locality-to-add-college">
                 <!-- <i class="icon-remove"></i> -->
                 <ul class="locality-list span12">
-                    <?php foreach ($allLocalities as $id => $name) echo "<li data-value='$id' title='Выбрать ".htmlspecialchars ($name)."'>".htmlspecialchars ($name)."</li>"; ?>
+                    <?php if ($allLocalities) {
+                      foreach ($allLocalities as $id => $name) echo "<li data-value='$id' title='Выбрать ".htmlspecialchars ($name)."'>".htmlspecialchars ($name)."</li>";
+                    } ?>
                 </ul>
             </div>
         </div>
@@ -344,6 +346,10 @@
                     <label for="download-city">Город</label>
                 </div>
                 <div>
+                    <input type="checkbox" data-download="region" id="download-region">
+                    <label for="download-region">Область</label>
+                </div>
+                <div>
                     <input type="checkbox" data-download="cell_phone" id="download-phone">
                     <label for="download-phone">Телефон</label>
                 </div>
@@ -370,10 +376,6 @@
                 <div>
                     <input type="checkbox" data-download="comment" id="download-comment">
                     <label for="download-comment">Комментарий</label>
-                </div>
-                <div>
-                    <input type="checkbox" data-download="region" id="download-region">
-                    <label for="download-region">Область</label>
                 </div>
             </div>
             <div style="display: inline-block;">

@@ -97,20 +97,26 @@ if ($(window).width()>=1200) {
     $('#navbarNav ul').css('padding', '10px');
     $('#addContact').html('<i class="fa fa-plus"></i>');
     $('#openUploadModal').html('<i class="fa fa-upload"></i>');
-    $('#addContact').parent().css('padding-left', '10px');
-    $('#respShow').parent().css('padding-left', '8px');
-    $('#statusShow').parent().css('padding-left', '8px');
-    $('#maleShow').parent().css('padding-left', '8px');
-    $('#respShow').parent().css('margin-right', '8px');
-    $('#statusShow').parent().css('margin-right', '8px');
-    $('#maleShow').parent().css('margin-right', '8px');
-    $('#respShow').parent().css('margin-top', '8px');
-    $('#statusShow').parent().css('margin-top', '4px');
-    $('#maleShow').parent().css('margin-top', '4px');
-    $('#contactsBtnsBar').css('min-width', '100px');
-		$('#contactsBtnsBar').css('width', '100%');
-		$('.contactsBtnsBar').css('padding-right', '20px');
-    $('.fa-question').parent().parent().css('margin-left', '0px');
+		$('#deleteContactsShowModal').html('<i class="fa fa-trash"></i>');
+		$('#appointResponsibleShow').html('<i class="fa fa-exchange"></i>');
+		$('#appointStatusShow').html('<i class="fa fa-flag"></i>');
+		$('#respStatistic').html('<i class="fa fa-list"></i>');
+		$('#openFiltersPanelBtn').html('<i class="fa fa-filter"></i>');
+// panel
+		$('#addContact').parent().parent().css('min-width', '250px');
+		$('#addContact').parent().parent().css('padding-left', '10px');
+		$('#addContact').parent().parent().css('margin-bottom', '0px');
+		$('#addContact').parent().css('padding-right', '5px');
+
+
+		$('#contactsBtnsBar').css('width', (($(window).width()+15)+'px'));
+		$('#contactsBtnsBar button').css('margin-bottom', '8px');
+		$('#contactsBtnsBar').css('padding-right', '2px');
+//
+		$('#textFiltersForUsers').css('width', $('#textFiltersForUsers').parent().css('width'));
+		$('#textFiltersForUsers').css('padding-left', '5px');
+
+		$('.fa-question').parent().parent().css('margin-left', '0px');
     $('.divider-vertical').css('height', '0px');
     $('.divider-vertical').css('width', '120px');
     $('.divider-vertical').css('border-top', '1px solid  #716f6f');
@@ -118,83 +124,151 @@ if ($(window).width()>=1200) {
     $('.nav-sub-container').css('min-width', '100%');
     $('#helpButton').hide();
     $('#helpButtonMbl').show();
+		$('#phoneContact').parent().removeClass('col-6');
+		$('#phoneContact').parent().addClass('col-5');
+		$('#phoneContactCalling').addClass('col-1');
+		$('#phoneContactCalling').show();
 		//mobile
 		if (data_page.admin_role === '0') {
-			$('#listContactsMbl').css('padding-top', '130px');
+			$('#listContactsMbl').css('padding-top', '50px');
 		} else {
-			$('#listContactsMbl').css('padding-top', '170px');
+			if ($(window).width()<=381 && $('#respStatistic').is(':visible')) {
+				$('#periodLabel').css('margin-left', '120px');
+				$('#listContactsMbl').css('padding-top', '80px');
+			} else {
+				$('#listContactsMbl').css('padding-top', '40px');
+			}
 		}
+
 		$('.cd-panel__header-watch').css('width', '100%');
 		$('.cd-panel__container-watch').css('width', '100%');
 		$('#orderSentToContact').css('margin-right', '40px');
-		$('#myBlanks').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px;');
-		$('#search-text').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px;');
+		$('#myBlanks').parent().attr('style', 'padding-right: 10px; margin-right: 8px; margin-top: 4px;');
+		$('#periodsCombobox').parent().attr('style', 'padding-right: 10px; margin-right: 8px; margin-top: 4px;');
+
+		$('#search-text').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px; margin-bottom: 0px !important;');
+		var searchWidth = $(window).width()-50;
+		searchWidth = String(searchWidth) + 'px';
+		$('#search-text').attr('style', 'max-width: '+searchWidth+' !important;')
+		$('#search-text').parent().hide();
+		$('#openSearchFieldBtn').show();
+		if ($(window).width()<525 && $(window).width()>380) {
+			$('#adminNotes').attr('cols', '38');
+		} else if ($(window).width()<=380 && $(window).width()>314) {
+			$('#adminNotes').attr('cols', '30');
+		} else if ($(window).width()<=314) {
+			$('#adminNotes').attr('cols', '26');
+		}
   }
 
 // resize
+
   $(window).resize(function(){
     if ($(window).width()>=769) {
+			// menu
+			$('#helpButton').show();
+      $('#helpButtonMbl').hide();
 			$('.show-name-list').hide();
-      $('#listContactsMbl').hide();
-      $('#listContacts').show();
-      $('#selectAllChekboxMblShow').hide();
-      $('#navbarNav ul').css('font-weight', 'normal');
-      $('#navbarNav ul').css('padding', '0');
-      $('#addContact').parent().css('padding-left', '0px');
-      $('#respShow').parent().css('padding-left', '0px');
-      $('#statusShow').parent().css('padding-left', '0px');
-      $('#maleShow').parent().css('padding-left', '0px');
-      $('#respShow').parent().css('margin-right', '0px');
-      $('#statusShow').parent().css('margin-right', '0px');
-      $('#maleShow').parent().css('margin-right', '0px');
-      $('#respShow').parent().css('margin-top', '0px');
-      $('#statusShow').parent().css('margin-top', '0px');
-      $('#maleShow').parent().css('margin-top', '0px');
-      $('#contactsBtnsBar').css('width', '1170px');
-      $('.divider-vertical').css('height', '34px');
+			$('.divider-vertical').css('height', '34px');
       $('.divider-vertical').css('width', '0px');
       $('.divider-vertical').css('border-left', '1px solid  #716f6f');
       $('.divider-vertical').css('margin', '0px 9px');
-      $('.nav-sub-container').css('min-width', '1170px');
-      $('#helpButton').show();
-      $('#helpButtonMbl').hide();
-			//Desktop
+			$('#navbarNav ul').css('font-weight', 'normal');
+      $('#navbarNav ul').css('padding', '0');
+
+			// Buttons bar & buttons
+			$('#contactsBtnsBar').css('width', '1170px');
+			$('#addContact').html('<i class="fa fa-plus"></i> Добавить');
+	    $('#openUploadModal').html('<i class="fa fa-upload"></i> Загрузить');
+			$('#deleteContactsShowModal').html('<i class="fa fa-trash"></i> Удалить');
+			$('#appointResponsibleShow').html('<i class="fa fa-exchange"></i> Передать');
+			$('#appointStatusShow').html('<i class="fa fa-flag"></i> Изменить статус');
+			$('#respStatistic').html('<i class="fa fa-list"></i> Распределение');
+			$('#openFiltersPanelBtn').html('Фильтры');
+			$('#search-text').attr('style', 'max-width: 100px !important;');
+			$('#search-text').parent().attr('style', 'padding-left: 0px; padding-right: 0px; margin-right: 0px; margin-top: 0px; margin-bottom: 0px !important;');
+			$('#search-text').parent().show();
+			$('#openSearchFieldBtn').hide();
+
+			// List
+			$('#listContactsMbl').hide();
+			$('#listContacts').show();
+			$('#selectAllChekboxMblShow').hide();
+
+			// Blank
+			$('#periodLabel').css('margin-left', '160px');
 			$('.cd-panel__header-watch').css('width', '420px');
 			$('.cd-panel__container-watch').css('width', '420px');
 			$('#orderSentToContact').css('margin-right', '90px');
-			$('#myBlanks').parent().attr('style', 'padding-left: 0; padding-right: 10px;');
-			$('#search-text').parent().attr('style', 'padding-left: 0; padding-right: 10px;');
+			if ($(window).width()>=525) {
+				$('#adminNotes').attr('cols', '56');
+			}
 
+		/*
+      $('.nav-sub-container').css('min-width', '1170px');
+			$('#search-text').parent().attr('style', 'padding-left: 0; padding-right: 10px; margin-bottom: 0px !important;');
+		*/
     } else if ($(window).width()<769) {
+			// menu
+			$('#helpButton').hide();
+			$('#helpButtonMbl').show();
 			$('.show-name-list').show();
-      $('#listContactsMbl').show();
-      $('#listContacts').hide();
-      $('#selectAllChekboxMblShow').show();
-      $('#respShow').parent().css('margin-right', '8px');
-      $('#statusShow').parent().css('margin-right', '8px');
-      $('#maleShow').parent().css('margin-right', '8px');
-      $('#respShow').parent().css('margin-top', '8px');
-      $('#statusShow').parent().css('margin-top', '4px');
-      $('#maleShow').parent().css('margin-top', '4px');
-      $('#contactsBtnsBar').css('min-width', '100px');
-      $('.divider-vertical').css('height', '0px');
-      $('.divider-vertical').css('width', '120px');
-      $('.divider-vertical').css('border-top', '1px solid  #716f6f');
-      $('.divider-vertical').css('margin', '9px 9px');
-      $('.nav-sub-container').css('min-width', '100%');
-      $('#helpButton').hide();
-      $('#helpButtonMbl').show();
+			$('.divider-vertical').css('height', '0px');
+			$('.divider-vertical').css('width', '120px');
+			$('.divider-vertical').css('border-top', '1px solid  #716f6f');
+			$('.divider-vertical').css('margin', '9px 9px');
+			$('.nav-sub-container').css('min-width', '100%');
+
+			// Buttons bar & buttons
+			$('#contactsBtnsBar').css('min-width', '100px');
+			$('#addContact').html('<i class="fa fa-plus"></i>');
+	    $('#openUploadModal').html('<i class="fa fa-upload"></i>');
+			$('#deleteContactsShowModal').html('<i class="fa fa-trash"></i>');
+			$('#appointResponsibleShow').html('<i class="fa fa-exchange"></i>');
+			$('#appointStatusShow').html('<i class="fa fa-flag"></i>');
+			$('#respStatistic').html('<i class="fa fa-list"></i>');
+			$('#openFiltersPanelBtn').html('<i class="fa fa-filter"></i>');
+			$('#search-text').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px; margin-bottom: 0px !important;');
+			var searchWidth = $(window).width()-50;
+			searchWidth = String(searchWidth) + 'px';
+			$('#search-text').attr('style', 'max-width: '+searchWidth+' !important;');
+			$('#search-text').parent().hide();
+			$('#openSearchFieldBtn').show();
+			if ($(window).width()<=381 && $('#respStatistic').is(':visible')) {
+				$('#periodLabel').css('margin-left', '120px');
+				$('#listContactsMbl').css('padding-top', '80px');
+			} else {
+				$('#listContactsMbl').css('padding-top', '40px');
+			}
+			$('#contactsBtnsBar').css('width', (($(window).width()+15)+'px'));
+
+			// List
+			$('#listContactsMbl').show();
+			$('#listContacts').hide();
+			$('#selectAllChekboxMblShow').show();
+
+			// Blank
+			$('.cd-panel__header-watch').css('width', '100%');
+			$('.cd-panel__container-watch').css('width', '100%');
+			$('#orderSentToContact').css('margin-right', '40px');
+			if ($(window).width()<525 && $(window).width()>380) {
+				$('#adminNotes').attr('cols', '38');
+			} else if ($(window).width()<=380 && $(window).width()>314) {
+				$('#adminNotes').attr('cols', '30');
+			} else if ($(window).width()<=314) {
+				$('#adminNotes').attr('cols', '26');
+			}
+			/*
 			//mobile
 			if (data_page.admin_role === '0') {
 				$('#listContactsMbl').css('padding-top', '170px');
 			} else {
 				$('#listContactsMbl').css('padding-top', '210px');
 			}
-			$('.cd-panel__header-watch').css('width', '100%');
-			$('.cd-panel__container-watch').css('width', '100%');
-			$('#orderSentToContact').css('margin-right', '40px');
-			$('#myBlanks').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px;');
+
 			$('#search-text').parent().attr('style', 'padding-left: 8px; padding-right: 10px; margin-right: 8px; margin-top: 4px;');
+			*/
     }
+
   });
 // STOP Menu & resize

@@ -104,4 +104,16 @@ function db_getResponsibleContactsZero() {
 
 		return $responsiblesZero;
 }
+
+function db_checkLostContacts($adminsFirstAndSecondRoles='')
+{
+  $contacts =[];
+
+  $res=db_query ("SELECT `id`, `name`, `notice` FROM `contacts` WHERE (`responsible` <> '000005944' AND `responsible` <> '000001679') AND (`responsible_previous` <> '000001679' AND `responsible_previous` <> '000005944')");
+  while ($row = $res->fetch_assoc()) $contacts[]=$row['id'].' '.$row['name'].' '.$row['notice'];
+
+  return $contacts;
+}
+
+
 ?>

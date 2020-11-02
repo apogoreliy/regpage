@@ -1652,7 +1652,7 @@ setTimeout(function () {
             url: "/ajax/excelList.php",
             data: "members="+JSON.stringify(members)+req+doc,
             cache: false,
-            success: function(data) {              
+            success: function(data) {
                 document.location.href="./ajax/excelList.php?file="+data;
                 setTimeout(function(){
                     deleteFile(data);

@@ -21,6 +21,7 @@
     $listMyAdmins = db_getAdminResponsiblesGroup($memberId);
     $contactsAdminData = db_getContactsRoleAdmin($memberId);
     $contactsRoleAdmin = $contactsAdminData[0];
+    $projectFreeOption;
 
     function shortNameMember ($fullName='')
       {
@@ -44,102 +45,39 @@
   <div class="" style="background-color: #eee; margin-left: auto; margin-right: auto; height: 60px; max-width: 1170px">
     <div id="leftSidepanel" class="leftsidepanel">
       <a href="#" id="leftPanelCloseBtn" class="leftclosebtn">×</a>
-      <h5 style="padding-left: 10px;">Фильтры</h5>
-      <div class="left_panel-select" style="display: <?php if($adminRole === 0) echo 'none'?>">
-        <select id="respShow" class="form-control form-control-sm" name="">
-          <option value="_all_">Все ответственные</option>
-          <?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name))."</option>"; ?>
-        </select>
-      </div>
-      <div class="left_panel-select">
-        <select id="leftPanelCountryFilter" class="form-control form-control-sm" name="">
-          <option value="_all_">Все страны</option>
-          <option value="AM">Армения</option>
-          <option value="BY">Беларусь</option>
-          <option value="KZ">Казахстан</option>
-          <option value="LV">Латвия</option>
-          <option value="LT">Литва</option>
-          <option value="RU">Россия</option>
-          <option value="UA">Украина</option>
-          <option value="EE">Эстония</option>
-        </select>
-      </div>
-      <div class="left_panel-select">
-        <select id="leftPanelRegionFilter" class="form-control form-control-sm" name="">
-          <option value="_all_">Все регионы</option>
-          <?php foreach (db_getregionOfWork () as $id => $name) echo "<option value='$name'>".htmlspecialchars ($name)."</option>"; ?>
-        </select>
-      </div>
+      <h5 style="padding-left: 10px;">Админ панель</h5>
     </div>
   </div>
 <div class="container">
 <!-- Botton bar Statistic START -->
-  <div class="row contactsBtnsBar" style="" id="contactsBtnsBar">
-    <div class="" style="max-width:925px; min-width:900px; padding-right: 5px; padding-left: 0; margin-bottom: 10px;">
+  <div id="contactsBtnsBar" class="row contactsBtnsBar" style="">
+    <div class="row" style="max-width:1125px; min-width:1050px; padding-right: 5px; padding-left: 0; margin-bottom: 10px;">
+      <div class="col-md-10">
         <button id="addContact" class="btn btn-success btn-sm" type="button" title="Добавить новый контакт"><i class="fa fa-plus"> </i> Добавить</button>
         <button id="openUploadModal" class="btn btn-primary btn-sm" title="Загрузить контакты из файла" type="button" data-toggle="modal" data-target="#modalUploadItems"><i class="fa fa-upload"></i> Загрузить</button>
         <button id="deleteContactsShowModal" class="btn btn-danger btn-sm" title="Удалить выбранные контакты" type="button" data-toggle="modal" data-target="#deleteContactsModal" disabled ><i class="fa fa-trash"></i> Удалить</button>
         <button id="appointResponsibleShow" style="background-color: #ff8c00; color: #fff" class="btn btn-warning btn-sm" type="button" title="Передать выбранные контакты" disabled><i class="fa fa-exchange" aria-hidden="true"></i> Передать</button>
         <button id="appointStatusShow" class="btn btn-secondary btn-sm" type="button" title="Задать статус выбранным контакты" data-toggle="modal" data-target="#statusContactsModal" disabled><i class="fa fa-flag"></i> Изменить статус</button>
         <?php if($contactsRoleAdmin === '1' || $contactsRoleAdmin === '2') {?>
-          <button id="respStatistic" class="btn btn-info btn-sm" type="button" title="" data-toggle="modal" data-target="#respWindowStatistic"><i class="fa fa-list"></i> Распределение</button>
-          <button id="respAdmin" class="btn btn-info btn-sm" type="button" title="" data-toggle="modal" data-target="#respWindowAdminUsers"><i class="fa fa-users"></i></button>
+          <button id="respStatistic" class="btn btn-info btn-sm" type="button" title="" data-toggle="modal" data-target="#respWindowStatistic" title="Окно распределения"><i class="fa fa-list"></i> Распределение</button>
+          <button id="respAdmin" class="btn btn-info btn-sm" type="button" title="" data-toggle="modal" data-target="#respWindowAdminUsers" title="Управление ответственными"><i class="fa fa-users"></i></button>
         <?php }?>
-    </div>
-    <div class="">
-      <button id="openLeftPanelBtn" class="btn btn-secondary btn-sm" type="button" name="button">Больше фильтров</button>
-    </div>
-    <div class="" style="padding-left: 0; padding-right: 10px;">
-            <select id="statusShow" class="form-control form-control-sm" name="">
-              <option value="_all_">Все статусы</option>
-              <option value="7">В работе</option>
-              <option value="1">Недозвон</option>
-              <option value="2">Ошибка</option>
-              <option value="3">Отказ</option>
-              <option value="4">Заказ</option>
-              <option value="5">Продолжение</option>
-              <option value="6">Завершение</option>
-            </select>
-    </div>
-    <div class="" style="padding-left: 0; padding-right: 10px;">
-            <select id="maleShow" class="form-control form-control-sm" name="">
-              <option value="_all_">Все</option>
-              <option value="1">муж.</option>
-              <option value="0">жен.</option>
-            </select>
-    </div>
-    <div class="" style="padding-left: 0; padding-right: 10px;">
-            <select id="myBlanks" class="form-control form-control-sm" name="">
-              <?php if($adminRole !== 0) {?>
-                <option value="_all_">Все</option>
-                <?php }; ?>
-              <option value="1" selected>Мои контакты</option>
-              <option value="0">Переданные</option>
-            </select>
-    </div>
-
-    <div class="" style="padding-left: 0; padding-right: 10px;">
-            <select id="periodsCombobox" class="form-control form-control-sm" name="" style="width:180px;">
-                <option value="_all_">Все периоды</option>
-                <!--<option value="" style="">Не указан</option> Если регулярно появляются контакты без проекта то сделать вторым в списке -->
-                <?php foreach ($projects as $project) {
-                  if (!$project) {
-                    $project = 'Не указан';
-                    echo "<option value=''>".htmlspecialchars ($project)."</option>";
-                  } else {
-                    echo "<option value='$project'>".htmlspecialchars ($project)."</option>";
-                  };
-                }; ?>
-            </select>
-    </div>
-    <div class="" style="padding-left: 0; padding-right: 10px;">
-      <div class="input-group mb-3" style="margin-bottom: 0px!important;">
-          <input type="search" id="search-text" class="form-control form-control-sm" name="search-text"  style="width:100px;" placeholder="Поиск">
-          <div class="input-group-append">
-            <button id="searchBtn" class="btn btn-secondary btn-sm" type="submit"><i class="fa fa-search"></i></button>
+        <?php if($memberId === '000005716') {?>
+          <button id="openLeftPanelBtn" class="btn btn-secondary btn-sm" type="button"><i class="fa fa-cogs"></i></button>
+        <?php }?>
+          <button id="openFiltersPanelBtn" class="btn btn-secondary btn-sm" type="button" title="Показать фильтры" data-toggle="modal"  data-target="#modalFiltersPanel">Фильтры</button>
+          <button id="openSearchFieldBtn" class="btn btn-secondary btn-sm" type="button" style="display: none;"><i class="fa fa-search"></i></button>
+      </div>
+          <div class="col-md-2">
+            <div class="input-group mb-3 input-group-sm" style="margin-bottom: 0px !important;">
+              <input type="search" id="search-text" class="form-control form-control-sm" name="search-text"  style="width:100px;" placeholder="Поиск">
+              <div class="input-group-append">
+                <button id="searchBtn" class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+              </div>
+            </div>
           </div>
-        </div>
     </div>
+      <span id="textFiltersForUsers" class="textLineFilters"></span>
     <div style="text-align: left; margin-left: 10px; margin-top: 8px" id="selectAllChekboxMblShow"><label class="form-check-label font-weight-normal"><input id="" type="checkbox" class="checkAllStrings" name="" value=""> Выбрать все</label></div>
 <!-- Dropdown Menu START-->
     <div id="dropdownMenuContacts" class="dropdown" style="padding-top: 4px; margin-left: 10px; display: none;">
@@ -156,7 +94,7 @@
 <!-- Botton bar Statistic STOP -->
 <!-- List Statistic BEGIN -->
       <div class="" id="desctop_visible" style="margin-top: 60px;">
-        <div id="" class="" style="padding-top: 30px;">
+        <div id="" class="" style="">
           <div class="tab-pane">
             <a href="#0" class="cd-panel__close-watch js-cd-close-watch">Закрыть</a>
             <div class="cd-panel-watch cd-panel--from-right-watch js-cd-panel-main-watch">
@@ -332,7 +270,7 @@
           </div>
         </div>
       </div>
-      <div class="show-phone" id="listContactsMbl" style="padding-top: 150px;">
+      <div class="show-phone" id="listContactsMbl" style="padding-top: 150px;"><h3 style="text-align: center">Загрузка списка.</h3>
       </div>
 <!-- List & blank Contacts STOP -->
   </div>
@@ -504,7 +442,10 @@
                   <option value="_all_"></option>
                   <?php if($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
                 </select>
-              </div>
+             </div>
+             <div class="col-md-12" style="padding-left: 0; overflow-y: auto; max-height: 300px; margin-top: 20px;" id="listForSetRespAdminNoZero">
+
+             </div>
             </div>
             <div class="modal-footer">
               <button class="btn btn-sm btn-success" id="appointResponsible" data-dismiss="modal" aria-hidden="true" disabled>Передать</button>
@@ -622,8 +563,8 @@
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
         </div>
         <div class="modal-body">
-          <div class="row" style="max-height:400px; overflow-y: auto; padding-left: 7px;">
-            <table style="width:760px;">
+          <div id="tableStatPrint" class="row" style="max-height:400px; overflow-y: auto; padding-left: 7px;">
+            <table  style="width:760px;">
               <thead>
                 <tr class="tbl-statistics-header"><th style="text-align: left;">Имя</th><th class="bg-light" style="width:67px;">Все</th><th style="width:72px!important;">В работе</th><th style="width:67px;">Недозвон</th><th style="width:67px;">Ошибка</th>
                   <th style="width:67px;">Отказ</th><th style="width:67px;">Заказ</th><th style="width:67px;">Продолж.</th>
@@ -635,6 +576,7 @@
           </div>
         </div>
           <div class="modal-footer">
+            <button id="printStatistics" class="btn  btn-sm btn-warning">Печать</button>
             <button class="btn  btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Закрыть</button>
           </div>
         </div>
@@ -716,6 +658,132 @@
     </div>
 <!-- STOP Modal admin contact -->
 
+<!-- START Modal filters -->
+<div id="modalFiltersPanel" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Фильтры</h5>
+        <button id="cancelFiltersX" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+      </div>
+      <div class="modal-body">
+        <div id="filtersPanel" class="filtersPanel">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-5">
+                <h6 style="padding-top:10px;">Контакты</h6>
+              </div>
+              <div class="col-sm-7 left_panel-select">
+                      <select id="myBlanks" class="form-control form-control-sm" name="">
+                        <?php if($adminRole !== 0) {?>
+                          <option value="_all_">Все</option>
+                          <?php }; ?>
+                        <option value="1" selected>Мои контакты</option>
+                        <option value="0">Переданные</option>
+                      </select>
+              </div>
+            </div>
+            <div class="row" style="display: <?php if($adminRole === 0) echo 'none'?>">
+              <div class="col-sm-5">
+                <h6 style="padding-top:10px;">Ответственные</h6>
+              </div>
+              <div class="col-sm-7 left_panel-select" style="display: <?php if($adminRole === 0) echo 'none'?>">
+                <select id="respShow" class="form-control form-control-sm" name="">
+                  <option value="_all_">Все ответственные</option>
+                  <?php if ($adminRole !== 0) foreach ($membersForCombobox as $id => $name) echo "<option value='$id'>".htmlspecialchars (shortNameMember($name))."</option>"; ?>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-5">
+                <h6 style="padding-top:10px;">Статусы</h6>
+              </div>
+              <div class="col-sm-7 left_panel-select">
+                      <select id="statusShow" class="form-control form-control-sm" name="">
+                        <option value="_all_">Все статусы</option>
+                        <option value="7">В работе</option>
+                        <option value="1">Недозвон</option>
+                        <option value="2">Ошибка</option>
+                        <option value="3">Отказ</option>
+                        <option value="4">Заказ</option>
+                        <option value="5">Продолжение</option>
+                        <option value="6">Завершение</option>
+                      </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-5">
+                <h6 style="padding-top:10px;">Пол</h6>
+              </div>
+              <div class="col-sm-7 left_panel-select">
+                      <select id="maleShow" class="form-control form-control-sm" name="">
+                        <option value="_all_">Все</option>
+                        <option value="1">муж.</option>
+                        <option value="0">жен.</option>
+                      </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-5">
+                <h6 style="padding-top:10px;">Страны</h6>
+              </div>
+              <div class="col-sm-7 left_panel-select">
+                <select id="leftPanelCountryFilter" class="form-control form-control-sm" name="">
+                  <option value="_all_">Все страны</option>
+                  <option value="AM">Армения</option>
+                  <option value="BY">Беларусь</option>
+                  <option value="KZ">Казахстан</option>
+                  <option value="LV">Латвия</option>
+                  <option value="LT">Литва</option>
+                  <option value="RU">Россия</option>
+                  <option value="UA">Украина</option>
+                  <option value="EE">Эстония</option>
+                </select>
+              </div>
+            </div>
+          <div class="row">
+            <div class="col-sm-5">
+              <h6 style="padding-top:10px;">Регионы работы</h6>
+            </div>
+            <div class="col-sm-7 left_panel-select">
+              <select id="leftPanelRegionFilter" class="form-control form-control-sm" name="">
+                <option value="_all_">Все регионы</option>
+                <?php foreach (db_getregionOfWork () as $id => $name) echo "<option value='$name'>".htmlspecialchars ($name)."</option>"; ?>
+              </select>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-sm-5">
+              <h6 style="padding-top:10px;">Проекты</h6>
+            </div>
+            <div class="col-sm-7 left_panel-select">
+                    <select id="periodsCombobox" class="form-control form-control-sm" name="">
+                        <option value="_all_">Все периоды</option>
+                        <option id="freeOption"value="" style="display: none">Не указан</option>
+                        <?php foreach ($projects as $project) {
+                          if (!$project) {
+                            $projectFreeOption = 'Не указан';
+                          } else {
+                            echo "<option value='$project'>".htmlspecialchars ($project)."</option>";
+                          };
+                        }; ?>
+                    </select>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="applyFilters" class="btn btn-sm btn-success" aria-hidden="true" data-dismiss="modal">Применить</button>
+        <button id="cancelFilters" class="btn btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- STOP Modal filters -->
+
 <!-- START Modal SPINNER -->
 <div id="modalSpinner" class="modal" style="background-color: rgba(255, 255, 255, 0.3);" >
   <div class="modal-dialog">
@@ -730,6 +798,11 @@
 
     <script>
       var data_page = {};
+
+      var projectFreeOptions = '<?php echo $projectFreeOption; ?>';
+      if (projectFreeOptions === 'Не указан') {
+        $('#freeOption').show();
+      }
 
       data_page.admin_name = '<?php echo db_getAdminNameById($memberId);?>';
 
@@ -862,7 +935,7 @@
           };
         }
     </script>
-    <script src="/js/contacts.js?v33"></script>
+    <script src="/js/contacts.js?v39"></script>
     <script src="/js/contactsupload.js?v4"></script>
 <?php
     include_once "footer2.php";
