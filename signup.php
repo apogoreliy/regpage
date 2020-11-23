@@ -9,6 +9,12 @@
     $login = null;
     $password = null;
 
+    if (isset($_GET["redirect"]) && $_COOKIE["log_log"]) {
+      $redirect = true;
+      $log_log = $_COOKIE["log_log"];
+      $pas_pas = $_COOKIE["pas_pas"];
+    }
+
     if (isset($_GET["code"])){
         $user = UTILS::getUserInfoByRecoveryCode($_GET["code"], true);
 
@@ -25,7 +31,7 @@
     <form class="form-signup-full">
         <div class="control-group row-fluid alert alert-info" style="width: 100%; padding: 10px 0px 10px 0px; text-align: center; margin-bottom: 10px;">
             <span class="close" data-dismiss="alert" style="right: 0; padding-right: 10px;">&times;</span>
-            <strong>Для завершения создания учётной записи, заполните обязательные поля и нажмите кнопку "Сохранить"</strong>
+            <strong>Для завершения создания аккаунта, заполните обязательные поля и нажмите кнопку "Сохранить"</strong>
         </div>
         <div class="control-group row-fluid">
             <label class="span12">ФИО</label>
@@ -84,6 +90,7 @@
 
 <script>
 $(document).ready(function(){
+
     //window.location = '/profile';
     $("[valid|='required']").keyup (function () {
         handleSignUpFormBtn();
@@ -198,7 +205,7 @@ $(document).ready(function(){
             die();
         }
         else{
-            echo '<div class="container signup-container"><div class="alert alert-danger" role="alert">Эта ссылка недействительна или просрочена. Для создания учётной записи пройдите процедуру повторно.</div></div>';
+            echo '<div class="container signup-container"><div class="alert alert-danger" role="alert">Эта ссылка недействительна или просрочена. Для создания аккаунта пройдите процедуру повторно.</div></div>';
             include_once "footer.php";
         }
     }
@@ -213,7 +220,7 @@ $(document).ready(function(){
     <form class="form-signup">
         <div class="alert alert-warning" style="width: 100%; padding: 10px 7px 10px 10px; margin-bottom: 10px;">
             <span class="close" data-dismiss="alert" style="right: 0">&times;</span>
-            <span>Создавайте учётную запись только для себя. По всем вопросам обращайтесь в службу поддержки через чат (в правом нижнем углу экрана)</a>
+            <span>Создавайте учётную запись только для себя. По всем вопросам обращайтесь в <a href="#" data-toggle="modal" data-target="#messageAdmins" aria-hidden="true" title="Кликните, 0чтобы отправить сообщение службе поддержки">службу поддержки</a>.
             </span>
         </div>
         <label class="control-label" for="login">Логин (Электронная почта)</label>
@@ -232,13 +239,14 @@ $(document).ready(function(){
         <div id="ajaxError" class="alert alert-error" style="display:none; width: 100%; padding: 10px 7px 10px 10px; text-align: center; margin-bottom: 10px;">Ошибка сервера. Обратитесь к разработчикам.</div>
         <div class="alert alert-info" style="width: 100%; padding: 10px 7px 10px 10px; margin-bottom: 0;">
             <span class="close" data-dismiss="alert" style="right: 0">&times;</span>
-            <span>После нажатия кнопки "Создать" вам будет отправлено письмо со ссылкой для подтверждения адреса электронной почты. Ссылка действительна в течение 10 минут. При переходе по ссылке вам будет предложено заполнить данные для создания учётной записи.</span>
+            <span>После нажатия кнопки "Создать" вам будет отправлено письмо со ссылкой для подтверждения адреса электронной почты. Ссылка действительна в течение 10 минут. При переходе по ссылке вам будет предложено заполнить данные для создания аккаунта.</span>
         </div>
         <div style="margin-top: 10px">
             <input style="margin-top: 0" type="checkbox" id="btn-terms-use" class="terms-use" valid="required">
             <label style="display: inline; font-size: 12px" for="btn-terms-use">я принимаю условия<a href="https://drive.google.com/open?id=1krSycWkozm2Y-UNwHwG1OuMU81LgzbB76EVVfszgMYU" target="_blank"> Пользовательского соглашения</a> и даю <a href="https://drive.google.com/open?id=1-6shNo_9D-nrssOVo9SyLTEnjh0aql2pU7USypcdCj0" target="_blank">согласие</a> на обработку моих персональных данных</label>
         </div>
         <button style="margin-top: 10px;" id="loginFormBtn" class="btn btn-large btn-primary">Создать</button>
+        <div style="margin-left: 50px; margin-top: 20px;"><a href="/login" >У меня уже есть аккаунт <i class="fa fa-sign-in" aria-hidden="true"></i> Войти.</a></div>
     </form>
 </div>
 <?php
@@ -247,6 +255,31 @@ $(document).ready(function(){
 
 <script>
 $(document).ready(function(){
+
+  if ($(window).width()<551) {
+      $('.alert-warning').css('margin-top', '50px');
+  }
+
+  var redirect = '<?php echo $redirect; ?>';
+  var log_log = '<?php echo $log_log; ?>';
+  var pas_pas = '<?php echo $pas_pas; ?>';
+
+    if (redirect) {
+
+      setTimeout(function () {
+        $('.login').val(log_log);
+        $('.password').val(pas_pas);
+        $('.passwordConfirm').val('');
+        $('.login').removeClass('error');
+        $('.password').removeClass('error');
+        setCookie('log_log', '', 1);
+        setCookie('pas_pas', '', 1);
+
+      }, 500);
+
+      $('.alert-warning .close').next().text('Адрес, который вы ввели, не зарегистрирован в системе. Для создания нового аккаунта повторите пароль.');
+    }
+
     $(".login").focus();
 
     $('.login').keydown(function(){
@@ -353,6 +386,7 @@ $("#loginFormBtn").click (function (e){
     .fail(function() { $("#ajaxError").show (); });
     return false;
 });
+
 
 /*
 $("#btnDoSendEventMsgAdmins").click (function (){

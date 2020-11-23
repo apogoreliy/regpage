@@ -116,3 +116,36 @@ function handleFieldsByAdminRole(adminRole, isEventPrivate, regstate){
     }
 }
 // STOP DENY FOR REGISTRATION ON PRIVATE
+
+// MESSAGE TO TEAMS OR SITE ADMIN
+$('.send-message-support-phone').click(function(e) {
+  if (window.location.pathname === '/index') {
+    e.preventDefault();
+    e.stopPropagation();
+    $('#choiseHelpPoint').modal('show');
+    var html, teamEmail;
+    $('.list-events .event-row').each(function() {
+      html = '<input type="button" id="" class="btn btn-primary btn_event_id" value="Вопрос о мероприятии - '+$(this).attr("data-name")+'" data-id_event="'+$(this).attr("data-id")+'" style="margin-bottom: 15px;"><br>';
+    });
+    $('#listBtnsEvents').html(html);
+    $('.btn_event_id').click(function() {
+      window.currentEventId = $(this).attr('data-id_event');
+
+      $('#choiseHelpPoint').modal('hide');
+      $('#modalEventSendMsg').modal('show');
+    /* get.php get_team_email
+      $.ajax({type: "POST", url: "/ajax/get.php?get_team_email", data: { eventId: email}})
+      .done (function(data) {
+        console.log(data);
+        teamEmail = data.email;
+
+      });
+    */
+    });
+  }
+});
+
+$('#questionAboutWebsite').click(function() {
+  $('#choiseHelpPoint').modal('hide');
+  $('#messageAdmins').modal('show');
+});

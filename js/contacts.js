@@ -765,6 +765,7 @@ function historyBuilder(data) {
     data.status = $('#statusContact').val();
     data.responsible = currentResponsible;
     data.responsible_prev = prevResponsible;
+    data.project = $('#periodLabel').text();
 
     if ($('#orderDate').text()) {
       data.order_date = dateStrToddmmyyyyToyyyymmdd($('#orderDate').text(), false);
@@ -997,7 +998,7 @@ function historyBuilder(data) {
         $.get('/ajax/contacts.php?get_contacts_prev', {cont_role: data_page.admin_contacts_role})
               .done (function(data) {
                 blankCounter.blank_count_their = data.contacts;
-                blankCounter.counter;
+                //blankCounter.counter;
               })
       }, 300);
     }
@@ -1085,6 +1086,7 @@ function historyBuilder(data) {
         $('#responsibleContact').attr('data-responsible_previous', data.responsible_previous);
         $('#saveContact').attr('data-id', data.id);
         $('#statusContact').val(data.status);
+        $('#periodLabel').text(data.project);
 
 // string update
         $('.active_string').find('.data_name').text(data.name);
@@ -1102,6 +1104,8 @@ function historyBuilder(data) {
         $('.active_string').attr('data-responsible', data.responsible);
         $('.active_string').attr('data-responsible_previous', data.responsible_previous);
         $('.active_string').attr('data-id', data.id);
+        $('.active_string').attr('data-period', data.project);
+        $('.active_string').find('.data_status').next().next().text(data.project);
         $('.active_string').attr('data-status_key',data.status);
         $('.active_string').find('.data_status').text($('#statusContact option:selected').text());
         $('.active_string').find('.data_responsible_sort_name').text(fullNameToNoMiddleName(data.member_name));
@@ -1405,7 +1409,7 @@ function sendTheOrder(ua) {
 
 // checking changed any fields in the blank
     function checkChangedForSave() {
-      if ($('#nameContact').val() === $('.active_string').find('.data_name').text() && $('#countryContact').val() === $('.active_string').attr('data-country_key') && $('#phoneContact').val() === $('.active_string').find('.data_phone').text() && $('#emailContact').val() === $('.active_string').attr('data-email') && $('#maleContact').val() === $('.active_string').attr('data-male') && $('#regionContact').val() === $('.active_string').attr('data-region') && $('#areaContact').val() === $('.active_string').attr('data-area') && $('#localityContact').val() === $('.active_string').find('.data_locality').text() && $('#indexContact').val() === $('.active_string').attr('data-index_post') && $('#addressContact').val() === $('.active_string').attr('data-address') && $('#commentContact').val() === $('.active_string').attr('data-other') && $('#regionWorkContact').val() === $('.active_string').attr('data-region_work') && $('#responsibleContact').val() === $('.active_string').attr('data-responsible') && $('#responsibleContact').attr('data-responsible') === $('.active_string').attr('data-responsible') &&  $('#responsibleContact').attr('data-responsible_previous') === $('.active_string').attr('data-responsible_previous') &&  $('#saveContact').attr('data-id') === $('.active_string').attr('data-id') && ($('#statusContact').val() === $('.active_string').attr('data-status_key')) && (($('#orderDate').text() === $('.active_string').attr('data-order_date')) || ($('#orderDate').text() === '' &&  $(this).attr('data-order_date') === undefined))
+      if ($('#nameContact').val() === $('.active_string').find('.data_name').text() && $('#countryContact').val() === $('.active_string').attr('data-country_key') && $('#phoneContact').val() === $('.active_string').find('.data_phone').text() && $('#emailContact').val() === $('.active_string').attr('data-email') && $('#maleContact').val() === $('.active_string').attr('data-male') && $('#periodLabel').text() === $('.active_string').attr('data-period') && $('#regionContact').val() === $('.active_string').attr('data-region') && $('#areaContact').val() === $('.active_string').attr('data-area') && $('#localityContact').val() === $('.active_string').find('.data_locality').text() && $('#indexContact').val() === $('.active_string').attr('data-index_post') && $('#addressContact').val() === $('.active_string').attr('data-address') && $('#commentContact').val() === $('.active_string').attr('data-other') && $('#regionWorkContact').val() === $('.active_string').attr('data-region_work') && $('#responsibleContact').val() === $('.active_string').attr('data-responsible') && $('#responsibleContact').attr('data-responsible') === $('.active_string').attr('data-responsible') &&  $('#responsibleContact').attr('data-responsible_previous') === $('.active_string').attr('data-responsible_previous') &&  $('#saveContact').attr('data-id') === $('.active_string').attr('data-id') && ($('#statusContact').val() === $('.active_string').attr('data-status_key')) && (($('#orderDate').text() === $('.active_string').attr('data-order_date')) || ($('#orderDate').text() === '' &&  $(this).attr('data-order_date') === undefined))
       ){
         return false
       } else {
@@ -1421,6 +1425,7 @@ function sendTheOrder(ua) {
 
   function filtersOfString() {
     var filterBlank, text, fio, loc, region, searchResult, periods;
+    var counter = 0;
     text = $('#search-text').val().trim();
     $('.contacts_str').each(function() {
       // Search text
@@ -1451,6 +1456,7 @@ function sendTheOrder(ua) {
 
         if (($('#periodsCombobox').val() === '_all_' || $('#periodsCombobox').val() === $(this).attr('data-period')) && ($('#maleShow').val() === '_all_' || $('#maleShow').val() === $(this).attr('data-male')) && ($('#statusShow').val() === '_all_' || $('#statusShow').val() === $(this).attr('data-status_key')) && ($('#respShow').val() === '_all_' || ($('#respShow').val() === $(this).attr('data-responsible') || $('#respShow').val() === $(this).attr('data-responsible_previous'))) && ($('#leftPanelCountryFilter').val() === '_all_' || $('#leftPanelCountryFilter').val() === $(this).attr('data-country_key')) && ($('#leftPanelRegionFilter').val() === '_all_' || $('#leftPanelRegionFilter').val() === $(this).attr('data-region_work')) && filterBlank && searchResult) {
           $(this).show();
+          counter++;
           if ($('#myBlanks').val() === '0' &&  data_page.admin_role === '0') {
             $(this).find('.checkboxString').attr('disabled', true);
           } else {
@@ -1465,6 +1471,7 @@ function sendTheOrder(ua) {
           }
         }
     });
+    return counter
   }
 
 /*
@@ -1943,7 +1950,7 @@ function sendTheOrder(ua) {
       }
     }
   }
-
+// для второго ИД работает не устойчиво
   $('#selectAllAdminsStrs, #selectAllMyAdminsStrs').click(function () {
     selectAllRespAdmins($(this).attr('id'), $(this).parent().parent().next().attr('class'), $(this).parent().parent().parent().attr('id'));
   });
@@ -2084,6 +2091,7 @@ function sendTheOrder(ua) {
   }
 
   $('#fullAdminsListCombo').change(function() {
+    var listAdminResp2 =[];
     if ($(this).val() === '_all_') {
       $('#allLocalitisesListCombo').val('_all_');
       $('#roleListCombo').val('none');
@@ -2098,9 +2106,29 @@ function sendTheOrder(ua) {
             var arrayTmp100;
             if (data.result[1] && data.result[1] !== window.adminId) {
               arrayTmp100 = data.result[1].split(',');
+              for (var j = 0; j < arrayTmp100.length; j++) {
+                listAdminResp2[j] = arrayTmp100[j];
+              }
+              $('#fullListOfAdmins .list_admins_str').each(function () {
+                if (listAdminResp2.indexOf($(this).find('input').attr('data-admin_key')) === -1) {
+                  $(this).show();
+                } else {
+                  $(this).hide();
+                }
+              });
             } else if (data.result[1] === window.adminId) {
               arrayTmp100 = [window.adminId];
+              $('#fullListOfAdmins .list_admins_str').each(function () {
+                if (listAdminResp2.indexOf($(this).find('input').attr('data-admin_key')) !== window.adminId) {
+                  $(this).show();
+                } else {
+                  $(this).hide();
+                }
+              });
             } else if (!data.result[1]){
+              $('#fullListOfAdmins .list_admins_str').each(function () {
+                  $(this).show();
+              });
               arrayTmp100 = false;
             }
             if (arrayTmp100) {
@@ -2115,14 +2143,20 @@ function sendTheOrder(ua) {
           } else {
             $('#roleListCombo').val('none');
             $('#myListOfAdmins').html(listOfResp);
+            $('#fullListOfAdmins .list_admins_str').each(function () {
+                $(this).show();
+            });
           }
       });
+
+      $('#filterRespFullList').val('_all_');
 
       $('#filterRespFullList option').each(function() {
         if ($(this).hasClass('extra-option')) {
           $(this).remove();
         }
       });
+
       addOptionsToCommboRole2();
 
       //$('#allLocalitisesListCombo').val('_all_');
@@ -2254,7 +2288,7 @@ $('#applyFilters').html('<span class="spinner-border spinner-border-sm"></span>'
       $('#textFiltersForUsers').html(text);
     } else {
       if (filtersText !== 'Фильтры: ') {
-        filtersText = filtersText + '  <i id="clearTextFilters" class="fa fa-close h5 cursor-pointer"></i>';
+        filtersText = filtersOfString() + ' шт. ' + filtersText + ' <i id="clearTextFilters" class="fa fa-close h5 cursor-pointer"></i>';
         $('#textFiltersForUsers').html(filtersText);
       } else {
         $('#textFiltersForUsers').html('');
@@ -2276,7 +2310,6 @@ $('#applyFilters').html('<span class="spinner-border spinner-border-sm"></span>'
     $('#listContactsMbl').css('padding-top', xslice);
 
     $('#desctop_visible').css('padding-top', xdesk);
-    filtersOfString();
 
 /*
 $('#maleShow, #statusShow, #respShow, #myBlanks, #periodsCombobox, #leftPanelCountryFilter, #leftPanelRegionFilter').change(function (event) {
@@ -2354,5 +2387,13 @@ $('#maleShow, #statusShow, #respShow, #myBlanks, #periodsCombobox, #leftPanelCou
     printElem('#tableStatPrint');
   });
 //Print element
+
+  $('#periodLabelEdit').click(function () {
+    $('#fieldEditPeriod').val($('#periodLabel').text());
+  });
+
+  $('#saveEditPeriod').click(function () {
+    $('#periodLabel').text($('#fieldEditPeriod').val());
+  });
 
 });

@@ -2,6 +2,12 @@ renewComboLists('.members-lists-combo');
 $('#modalEditMember').on('show', function() {
   setTimeout(function () {
     showBlankEvents();
+    if ($('#inputEmLocalityId').val() === 'ПВОМ' && $('#selMemberLocality').find('option[value="001214"]').val()) {
+      $('#semestrPvom').parent().show();
+    } else {
+      $('#semestrPvom').parent().hide();
+      $('#semestrPvom').val('_none_');
+    }
   }, 50);
   setTimeout(function () {
     $('.emLocality').hide();

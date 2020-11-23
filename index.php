@@ -1469,6 +1469,11 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
 
     $("#btnDoSendEventMsg").click (function (){
         if ($(this).hasClass('disabled')) return;
+        console.log($('#sendMsgText').val().length);
+        if ($('#sendMsgText').val().length < 9) {
+          showError('Сообщение должно содержать как минимум 10 символов.');
+          return;
+        }
         $.ajax({type: "POST", url: "/ajax/set.php", data: { event: window.currentEventId, message: $("#sendMsgText").val(), name:$("#sendMsgName").val(), email:$("#sendMsgEmail").val()}})
         .done (function() {
             messageBox ('Ваше сообщение отправлено команде регистрации', $('#modalEventSendMsg'));

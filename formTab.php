@@ -52,7 +52,7 @@
         <div class="localityControlGroup">
             <input style="margin-bottom: 0" class="span12 locality-autocomplete emNewLocality" type="text" maxlength="50" valid="required">
             <i class="icon-pencil unblock-input" style="display: none; margin-top: -22px; margin-left: 0; margin-right: 10px; float: right;"></i>
-            <span style="margin-left: 0" class="example">Введите название. Если ваш населённый пункт появится в списке, выберите его</span>
+            <span style="margin-left: 0" class="example">Введите название. Если нужный населённый пункт появится в списке, выберите его</span>
         </div>
     </div>
     <?php } else { ?>
@@ -70,7 +70,7 @@
         </div>
     </div>
     <div style="margin-bottom: 10px; color: cadetblue; float:left;">
-        <span class="handle-new-locality">Вашего населённого пункта нет в списке?</span>
+        <span class="handle-new-locality">Нужного населённого пункта нет в списке?</span>
     </div>
     <div class="control-group row-fluid block-new-locality">
         <input class="span12 locality-autocomplete emNewLocality" placeholder="Введите название населённого пункта в этом поле" value="<?php echo $member['new_locality']; ?>" type="text" maxlength="50">
@@ -372,11 +372,23 @@ if ($noEvent) { ?>
         </div>
     </div>
     <div class="controls">
-        <div class="control-group row-fluid">
+        <div class="control-group row-fluid" style="width: 48%;">
             <label class="span12">Служащий</label>
             <select id="service_ones_pvom" class="" name="">
               <option value='' selected>&nbsp;</option>
               <?php foreach (db_getServiceonesPvom() as $id => $name) echo "<option value='$id'>".htmlspecialchars ($name)."</option>"; ?>
+            </select>
+        </div>
+        <div class="control-group row-fluid" style="width: 48%; float: right; display: none;">
+            <label class="span12">Семестр</label>
+            <select id="semestrPvom" class="" name="">
+              <option value="" selected>&nbsp;</option>
+              <option value="1">Первый</option>
+              <option value="2">Второй</option>
+              <option value="3">Третий</option>
+              <option value="4">Четвёртый</option>
+              <option value="5">Пятый</option>
+              <option value="6">Шестой</option>
             </select>
         </div>
     </div>

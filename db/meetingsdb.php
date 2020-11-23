@@ -619,6 +619,15 @@ function db_getDetailsOfMembers($meetingId){
     return $members;
 }
 
+function db_setAdminsToTemplate($templateId, $admins){
+  global $db;
+  $templateId = $db->real_escape_string($templateId);
+  $admins = $db->real_escape_string($admins);
+
+  db_query("UPDATE meeting_template SET admin = '$admins' WHERE id = '$templateId'");
+  return 1;
+}
+
 /*
 function db_getDetailsOfAllMembersAdmin ($adminId)
 {

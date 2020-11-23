@@ -1828,7 +1828,7 @@ setTimeout(function () {
         loadMembersList ();
         setTimeout(function () {
           hideExistingMemberRegistration();
-        }, 1000);
+        }, 1500);
     });
 
     $("#btnDoSaveMember").click (function (){
@@ -2555,7 +2555,8 @@ function checkStopEventRegistration(eventId){
           language: 'ru',
           autoclose : true,
           defaultViewDate: {
-              month: getDateArriveOrDepart[1]
+              month: getDateArriveOrDepart[1],
+              year: getDateArriveOrDepart[0]
             },
           format: {
               toDisplay: function (date) {

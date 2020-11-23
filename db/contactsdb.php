@@ -32,12 +32,13 @@ function db_newOrUpdateContactString($memberId, $data){
   $data['region_work'] ? $regionWork =  $db->real_escape_string($data['region_work']) : $regionWork ='';
   $data['country'] ? $countryKey =  $db->real_escape_string($data['country']) : $countryKey ='';
   $data['order_date'] ? $orderDate =  $db->real_escape_string($data['order_date']) : $orderDate = NULL;
+  $data['project'] ? $project = $db->real_escape_string($data['project']) : $project='';
   $newId = db_getNewContactId ();
   if ($Id) {
-    db_query("UPDATE contacts SET `name`='$name', `phone`='$phone', `locality`='$locality', `male`='$male', `status`='$status', `email`='$email', `responsible`='$responsible', `responsible_previous`='$responsiblePrev', `area`='$area', `address`= '$address', `comment`= '$comment', `index_post` = '$index', `region` = '$region', `region_work` = '$regionWork', `country_key`='$countryKey', `order_date`='$orderDate' WHERE `id` = '$Id'");
+    db_query("UPDATE contacts SET `name`='$name', `phone`='$phone', `locality`='$locality', `male`='$male', `status`='$status', `email`='$email', `responsible`='$responsible', `responsible_previous`='$responsiblePrev', `area`='$area', `address`= '$address', `comment`= '$comment', `index_post` = '$index', `region` = '$region', `region_work` = '$regionWork', `country_key`='$countryKey', `order_date`='$orderDate', `project` = '$project' WHERE `id` = '$Id'");
     return 'update';
   } else {
-    db_query("INSERT INTO contacts (`id`, `name`, `phone`, `locality`, `male`, `status`, `email`, `responsible`, `responsible_previous`, `area`, `address`, `comment`, `index_post`, `region`, `region_work`, `country_key`) VALUES ('$newId', '$name', '$phone', '$locality', '$male', '$status', '$email', '$responsible', '$responsiblePrev', '$area', '$address', '$comment', '$index', '$region', '$regionWork', '$countryKey')");
+    db_query("INSERT INTO contacts (`id`, `name`, `phone`, `locality`, `male`, `status`, `email`, `responsible`, `responsible_previous`, `area`, `address`, `comment`, `index_post`, `region`, `region_work`, `country_key`, `project`) VALUES ('$newId', '$name', '$phone', '$locality', '$male', '$status', '$email', '$responsible', '$responsiblePrev', '$area', '$address', '$comment', '$index', '$region', '$regionWork', '$countryKey', '$project')");
 
     $res=db_query ("SELECT `id`, `responsible`, `responsible_previous` FROM contacts ORDER BY `id` DESC LIMIT 1");
     $row = $res->fetch_object();
@@ -53,7 +54,7 @@ function db_getContactString ($id){
   $result = [];
 
     $res=db_query ("SELECT c.id,c.time_stamp,c.name,c.phone,c.locality,c.male,c.status,c.email,c.responsible, c.responsible_previous,c.area,c.address,c.comment,c.index_post,c.region,c.region_work,c.country_key,c.order_date,
-    c.sending_date, c.crm_id, m.name AS member_name, c.notice
+    c.sending_date, c.crm_id, m.name AS member_name, c.notice, c.project
     FROM contacts AS c
     INNER JOIN member m ON m.key = c.responsible
     WHERE c.id = '$id' AND c.notice <> 2");
@@ -465,6 +466,16 @@ if ($role === 'none' && $check !== '0') {
 
 // STOP responsibles group
 
+function db_checkRemoveAccount($adminId) {
+  global $db;
+  $adminId = $db->real_escape_string($adminId);
+  $counter = 0;
+
+  $res=db_query ("SELECT id FROM contacts WHERE (notice <> 2) AND (responsible = '$adminId')");
+  while ($row = $res->fetch_assoc()) $counter++;
+
+  return $counter;
+}
 
 /*
 function logFileWriter2($logMemberId, $info)

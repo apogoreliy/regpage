@@ -1,7 +1,5 @@
 <?php
-
 // LOG FILE
-
 function logFileWriter($logMemberId, $info, $type='INFO')
 {
   $logMemberId ? $logAdminName = db_getAdminNameById($logMemberId) : $logAdminName = 'SERVER REG-PAGE.RU';

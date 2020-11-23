@@ -1,4 +1,8 @@
 <?php
+include_once 'db.php';
+include_once 'logWriter.php';
+$memberId = db_getMemberIdBySessionId (session_id());
+$memberId ? '' : $memberId = false;
 
 $link = 'https://bibleforall.envycrm.com/crm/api/v1/lead/set/?api_key=ecdfd3e079da4ab92942a50d8dd67991b5878f21';
 $name = $_POST['name'];
@@ -14,7 +18,10 @@ $value6 = $_POST['value6'];
 $value7 = $_POST['value7'];
 $value8 = $_POST['value8'];
 
+logFileWriter($memberId, 'КОНТАКТЫ. Данные заказа для отправки в CRM. Переданы данные: '.$name.'; '.$phone.'; '.$email.'; '.$email.'; '.$info.'; '.$value1.'; '.$value2.'; '.$value3.'; '.$value4.'; '.$value5.'; '.$value6.'; '.$value7.'; '.$value8, 'DEBUG');
+
 if (!$name || !$phone || !$value8 || !$value6) {
+  logFileWriter($memberId, 'КОНТАКТЫ. Заказ НЕ передан в CRM. Обязательные данные не заполнены. Возможно файл был запущен без аргументов.', 'ERROR');
   return 'error: the fields has been empty';
 }
 
@@ -72,9 +79,17 @@ curl_close($curl);
 $answer = json_decode($out, true);
 
 if ($answer['message'] === 'success') {
+  logFileWriter($memberId, 'КОНТАКТЫ. Заказ передан в CRM. Присвоен ID '.$answer['id'], 'DEBUG');
   echo $answer['id'];
   //header("Location: https://www.bibleforall.ru/");
 } else {
+  if ($answer['id']) {
+    $textAnswer = $answer['id'];
+  } else {
+    $textAnswer = 'ЗНАЧЕНИЕ В ОТВЕТЕ ОТСУТСТВУЕТ';
+  }
+
+  logFileWriter($memberId, 'КОНТАКТЫ. Возможно заказ НЕ ПЕРЕДАН в CRM. НЕ ОТВЕТА С ID от сервера. Ответ: '.$textAnswer, 'ERROR');
   echo 'Failed';
   //header("Location: https://www.reg-page.ru/");
 }

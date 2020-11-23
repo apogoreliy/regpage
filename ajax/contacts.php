@@ -147,4 +147,9 @@ if(isset($_GET['get_localities_by_admin'])){
     exit();
 }
 
+if(isset($_GET['check_remove_account'])){
+    echo json_encode(["result" => db_checkRemoveAccount($_GET['member'])]);
+    exit();
+}
+
 ?>

@@ -149,7 +149,7 @@ class UTILS
             $code = urlencode(UTILS::getRecoveryCodeByUserInfoToChangeLogin($user));
 
             $htmlText = "<p>На сайте reg-page.ru получен запрос на изменение логина пользователя.</p>".
-                        "<p>Для подтверждения запроса перейдите <a href='{$appRootPath}'login?change_login=$code'>по этой ссылке</a>.</p>".
+                        "<p>Для подтверждения запроса перейдите <a href='{$appRootPath}login?change_login=$code'>по этой ссылке</a>.</p>".
                         "<p>Ссылка действительна в течение 10 минут.</p>".
                         "<p>Если вы получили это письмо по ошибке или не намерены изменять логин на сайте reg-page.ru, просто проигнорируйте это письмо.</p>".
                         "<p>Команда сайта регистрации</p>";

@@ -734,7 +734,7 @@ function db_registerNewMembers ($adminId, $eventId, $memberIds)
 }
 
 function db_getTeamAdmins(){
-    $res=db_query ("SELECT value FROM param WHERE name='support_email' ");
+    $res=db_query ("SELECT value FROM param WHERE name='support_email'");
     $row = $res->fetch_assoc();
     return $row ? $row['value'] : null;
 }
@@ -1249,6 +1249,7 @@ function db_setEventMember ($adminId, $get, $post){
     $private_event = $_page === '/index' || $_page === '/reg' ? $db->real_escape_string($post['private']) : DONT_CHANGE;
     $adminRole = $adminId ? db_getAdminRole($adminId) : '';
     $_serving = $_page === '/members' ? (isset($post['serving']) ? $db->real_escape_string($post['serving']) : '') : DONT_CHANGE;
+    $_semester = $_page === '/members' ? (isset($post['home_phone']) ? $db->real_escape_string($post['home_phone']) : '') : DONT_CHANGE;
 
     db_checkSync ();
 
@@ -1282,8 +1283,8 @@ function db_setEventMember ($adminId, $get, $post){
                                 `cell_phone`, `email`, `document_key`, `document_num`, `document_date`, `document_auth`,
                                 `tp_num`, `tp_date`, `tp_auth`, `tp_name`, `english`, `school_start`, `school_end`, `college_start`,
                                 `college_end`, `college_key`, `college_comment`, `school_comment`, `russian_lg`, `baptized`, `changed`,
-                                `new_locality`, `citizenship_key`, `admin_key` ".(!$_eventId ? ', `comment`, `serving` ' : '').")
-                                VALUES ('$newMemberId',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? ".(!$_eventId ? ',?,?' : '').")");
+                                `new_locality`, `citizenship_key`, `admin_key` ".(!$_eventId ? ', `comment`, `serving`, `home_phone`' : '').")
+                                VALUES ('$newMemberId',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? ".(!$_eventId ? ',?,?,?' : '').")");
 
         if ($_locality_key===DONT_CHANGE) $_locality_key=null;
         if ($_category_key===DONT_CHANGE) $_category_key='BL';
@@ -1387,7 +1388,7 @@ function db_setEventMember ($adminId, $get, $post){
                             `english` = ?, `school_start`=?, `school_end`=?, `college_start`=?,
                             `college_end`=?, `college_key`=?, `college_comment`=?, `school_comment`=?, `russian_lg`=?,
                             `baptized`=?, `changed` = ?, `new_locality` = ?, `citizenship_key` = ?,
-                            `admin_key` = ? ".(!$_eventId ? ', `comment`= ?, `serving`= ? ' : '')." WHERE `key`='$_memberId'");
+                            `admin_key` = ? ".(!$_eventId ? ', `comment`= ?, `serving`= ?, `home_phone`= ?' : '')." WHERE `key`='$_memberId'");
     }
 
     if ($memChanged){
@@ -1401,11 +1402,11 @@ function db_setEventMember ($adminId, $get, $post){
                 $_schoolStart, $_schoolEnd, $_collegeStart, $_collegeEnd, $_college, $_collegeComment, $_schoolComment,
                 $_russian_lg, $_baptized, $isMemberChanged, $_new_locality, $_citizenship_key, $_adminId);
         else
-            $stmt->bind_param ("ssssssssssssssssssssssssssssssss", $_name, $_male, $_birth_date, $_locality_key, $_category_key,
+            $stmt->bind_param ("sssssssssssssssssssssssssssssssss", $_name, $_male, $_birth_date, $_locality_key, $_category_key,
                 $_address, $_cell_phone, $_email, $_document_key, $_document_num, $_document_date,
                 $_document_auth, $_tp_num, $_tp_date, $_tp_auth, $_tp_name, $_english_level,
                 $_schoolStart, $_schoolEnd, $_collegeStart, $_collegeEnd, $_college, $_collegeComment, $_schoolComment,
-                $_russian_lg, $_baptized, $isMemberChanged, $_new_locality, $_citizenship_key, $_adminId, $_comment, $_serving);
+                $_russian_lg, $_baptized, $isMemberChanged, $_new_locality, $_citizenship_key, $_adminId, $_comment, $_serving, $_semester);
 
         if (!$stmt->execute ()) throw new Exception ($db->error);
         $stmt->close ();

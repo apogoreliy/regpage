@@ -138,3 +138,7 @@ elseif(isset ($_GET['get_member'])){
     echo json_encode(["members" => db_getMembersByLocality($_POST['localityId'])]);
     exit;
 }
+elseif(isset ($_GET['set_admins_to_template'])){
+    echo json_encode(["result" => db_setAdminsToTemplate($_GET['templateId'], $_GET['admins'])]);
+    exit;
+}

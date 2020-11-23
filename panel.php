@@ -3,6 +3,7 @@ include_once 'header2.php';
 include_once 'nav2.php';
 include_once 'panelsource/panelDB.php';
 include_once 'panelsource/adminpaneldb.php';
+include_once 'panelsource/panelModal.php';
 $pages = db_getPages();
 $customPages = db_getCustomPagesPanel();
 $ResponsibleContacts = db_getResponsibleContacts1And2();
@@ -195,6 +196,9 @@ if ($memberId !== '000001679'){
             <div class="row">
               <div class="col-sm-8">
                 <h3>Contacts</h3>
+                <hr>
+                <h4>Статистика по статусам</h4>
+                <button type="button" id="statusesStatisticsBtn" class="btn btn-info btn-sm" name="button" data-toggle="modal" data-target="#statuWindowStatistic">Октябрь 2020 г.</button>
                 <hr>
                 <h4>Responibles 1 & 2</h4>
                 <div class="" style="margin: 7px;">

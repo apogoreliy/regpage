@@ -26,7 +26,7 @@ switch ($h) {
         $res = 'Войти';
         break;
     case '/signup.php':
-        $res = 'Создать учётную запись';
+        $res = 'Создать аккаунт';
         break;
     case '/reference.php':
         $res = 'Справка';
@@ -93,8 +93,10 @@ switch ($h) {
                 ?>
             </ul>
         </div>
-        <!-- <span class="btn fa fa-envelope-o fa-lg send-message-support-phone" style="float: right;" data-toggle="modal" data-target="#messageAdmins" title="Отправить сообщение службе поддержки" aria-hidden="true"></span> -->
-
+        <?php
+         if ($h === "/signup.php" || $h === "/login.php" || $h === "/index.php") { ?>
+          <span class="btn fa fa-envelope-o fa-lg send-message-support-phone" style="float: right; margin-top: 6px; height: 19px;" data-toggle="modal" data-target="#messageAdmins" title="Отправить сообщение службе поддержки" aria-hidden="true"></span>
+        <?php } ?>
         <div class="nav-collapse collapse">
             <ul class="nav">
             <?php
@@ -183,7 +185,7 @@ switch ($h) {
             if(isset($memberId) && ($memberId == '000008601' || $memberId == '000001679' || $memberId == '000005716')){
               echo '<li class="btn-group">
                       <a class="user-name-field dropdown-toggle" data-toggle="dropdown"';
-                          echo 'href="#"><span class="user-name">Ещё</span>
+                          echo 'href="#"><span class="">Ещё</span>
                           <span class="caret"></span>
                       </a>';
                       echo '<ul class="dropdown-menu"><li';
@@ -240,7 +242,7 @@ switch ($h) {
                 echo '><a href="/index">Войти</a></li>';
                 echo '<li ';
                 if (strpos ($s,"/signup")!==FALSE) echo 'class="active"';
-                echo '><a href="/signup">Создать учётную запись</a></li>';
+                echo '><a href="/signup">Создать аккаунт</a></li>';
             }
             ?>
             <i class="fa fa-bell bell-alarm cursor-pointer" style="color: gold; font-size: 18px; margin-top: 12px; margin-left: 10px; <?php echo db_checkNotice($memberId); ?>" aria-hidden="true" title="У вас есть новые карточки"></i>
@@ -258,6 +260,9 @@ switch ($h) {
   </div>
 </div>
 <script>
+  if (window.location.pathname == '/login') {
+    $('.nav li:first-child').addClass('active')
+  }
 function referenceSysAnew() {
   var memberId = '<?php echo $memberId; ?>';
   if (window.location.pathname.length === 3 && memberId) {

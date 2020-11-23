@@ -107,7 +107,8 @@
             </header>
               <div class="row">
                 <div class="col-12" style="padding-left: 9px;">
-                  <label for="" class="required-for-label">ФИО</label><strong id="periodLabel" style="margin-left: 160px"></strong>
+                  <label for="" class="required-for-label">ФИО</label><strong id="periodLabel" style="margin-left: 160px"></strong> <?php if ($contactsRoleAdmin == 2) { ?> <strong id="periodLabelEdit" data-toggle="modal" data-target="#modalEditPeriod" style="margin-left: 7px"><i class="fa fa-pencil cursor-pointer"></i></strong>
+                  <?php } ?>
                   <input type="text" class="form-control form-control-sm" id="nameContact" placeholder="">
                 </div>
               </div>
@@ -784,10 +785,32 @@
 </div>
 <!-- STOP Modal filters -->
 
+<!-- START Modal edit period contact -->
+  <div id="modalEditPeriod" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Правка периода</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        </div>
+        <div class="modal-body">
+          <div class="">
+            <input type="text" id="fieldEditPeriod" name="" value="" maxlength="20">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="saveEditPeriod" class="btn  btn-sm btn-warning" aria-hidden="true" data-dismiss="modal">Сохранить</button>
+          <button class="btn  btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Отменить</button>
+        </div>
+        </div>
+      </div>
+    </div>
+<!-- STOP Modal edit period contact -->
+
 <!-- START Modal SPINNER -->
 <div id="modalSpinner" class="modal" style="background-color: rgba(255, 255, 255, 0.3);" >
   <div class="modal-dialog">
-    <div class="modal-content" style="border: none; background: none;" >
+    <div class="modal-content" style="border: none; background: none;">
       <div class="modal-body">
         <div id="saveSpinner" style="margin: 30% 50%; width: 3rem; height: 3rem;" class="spinner-border text-primary"></div>
       </div>
@@ -935,7 +958,7 @@
           };
         }
     </script>
-    <script src="/js/contacts.js?v39"></script>
+    <script src="/js/contacts.js?v40"></script>
     <script src="/js/contactsupload.js?v4"></script>
 <?php
     include_once "footer2.php";

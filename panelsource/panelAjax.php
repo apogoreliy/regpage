@@ -25,5 +25,9 @@ else if(isset($_GET['delete_old_sessions'])){
 else if(isset($_GET['set_practices_pvom'])){
     echo json_encode(["result"=>db_setPracticesForStudentsPVOM()]);
     exit();
+} else if(isset($_GET['get_statistics_status'])){
+    echo json_encode(["result"=>db_statusStatisticsContacts()]);
+    exit();
 }
+
 ?>
