@@ -82,10 +82,13 @@ var isFillTemplate = 0;
                 $.post('/ajax/meeting.php?get_available_members', {text: text})
                 .done(function(data){
                     var isAdminMode = false;
-                    getMeetingParticipantsToAdd(data.members, isAdminMode);
+                    if(data.members && data.members.length > 0){
+                      getMeetingParticipantsToAdd(data.members, isAdminMode);
+                    } else{
+                        $('.participants-available').html('');
+                    }
                 });
-            }
-            else{
+            } else{
                 $('.participants-available').html('');
             }
         });
@@ -114,6 +117,36 @@ var isFillTemplate = 0;
                 });
             }
         });
+
+        function getMeetingParticipantsToAdd(admins, isEditMode){
+            var list = buildTemplateAdminsList (admins, isEditMode);
+
+            $(!isEditMode ? '.participants-available' : '#modalParticipantsList tbody').html(list.join(''));
+            if(admins.length === 0){
+                $('.participants-available').html('');
+                //$('#modalParticipantsList tbody').html('');
+            }
+
+            $('.addTemplateAdmin').click(function(e){
+                e.stopPropagation();
+
+                var element = $(this).parents('div'), id = element.attr('data-id'), isNewId = !in_array(id, window.meetingTemplateAdmins);
+                var admin = buildTableTemplateAdminsList([{id : id, name : element.attr('data-name'), field : 'm'}], true);
+
+                if(isNewId){
+                    $('#modalParticipantsList tbody').append(admin);
+                    $('.participants-available').html('');
+                    $('.search-meeting-available-participants').val('').focus();
+                }
+                else{
+                    showError('Эти редакторы уже добавлены', true);
+                }
+
+                bindHandlerToRemoveAdminsFromTable();
+            });
+
+            bindHandlerToRemoveAdminsFromTable();
+        }
 
         function handleTemplateAdmins(admins, isEditMode){
             var list = buildTemplateAdminsList (admins, isEditMode);
@@ -165,6 +198,25 @@ var isFillTemplate = 0;
             return adminRows;
         }
 
+        function buildTableTemplateAdminsList (admins, isEditMode){
+
+            var adminRows = [];
+
+            for(var m in admins){
+                var admin = admins[m];
+
+                if(isEditMode){
+                    window.meetingTemplateAdmins.push(admin.id);
+                }
+
+                adminRows.push('<tr data-id="'+admin.id+'" data-name="'+admin.name+'">'+
+                                    '<td>'+ admin.name +'</td> '+
+                                    '<td></td>'+
+                                    '<td><i title="Удалить" class="fa fa-trash fa-lg btn-remove-item"></td></tr>');
+            }
+            return adminRows;
+        }
+
         function bindHandlerToRemoveAdmins(){
             $('.removeTemplateAdmin').click(function(e){
                 e.stopPropagation();
@@ -178,6 +230,42 @@ var isFillTemplate = 0;
                 $(this).parents('div [data-id='+id+']').remove();
             });
         }
+
+        function bindHandlerToRemoveAdminsFromTable(){
+            $('.btn-remove-item').click(function(){
+              var mode = $('#modalParticipantsList').attr('data-mode');
+              var templateId = $('#modalParticipantsList').attr('data-templateid');
+              var itemId = $(this).parents('tr').attr('data-id'),
+                  confirmationWindow = $("#modalConfirmDeleteParticipant"),
+                  name = $(this).parents('tr').attr('data-name');
+
+              confirmationWindow.find('.doDeleteParticipant').attr('data-id', itemId);
+              confirmationWindow.find('.doDeleteParticipant').attr('data-mode', mode);
+              confirmationWindow.find('.doDeleteParticipant').attr('data-template', templateId);
+
+              confirmationWindow.find('.modal-body').html('Вы действительно хотите удалить '+ name +' из списка ' + ( mode === 'participants' ? 'участников' : 'редакторов'));
+              confirmationWindow.find('.modal-header h3').html('Удаление '+ ( mode === 'participants' ? 'участника' : 'редактора'));
+              confirmationWindow.modal('show');
+            });
+        }
+
+        $("#saveAdminsForTemplate").click(function(){
+          var admins='';
+          $('#modalParticipantsList tbody').find('tr').each(function () {
+            if (admins) {
+              admins = admins+ ',' + $(this).attr('data-id');
+            } else {
+              admins = admins + $(this).attr('data-id');
+            }
+          });
+          $.get('/ajax/meeting.php?set_admins_to_template', {templateId: $('#modalParticipantsList').attr('data-templateid') , admins:admins})
+          .done(function(data){
+              //data.result
+              $('#modalTemplates').modal('hide');
+          });
+
+        });
+
 
         $(".show-templates").click(function(e){
             e.preventDefault();

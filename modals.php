@@ -485,3 +485,22 @@
         <button class="btn" id="btnRegDone" aria-hidden="true">OK</button>
     </div>
 </div>
+
+<!-- Choise help point -->
+<div id="choiseHelpPoint" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h4>Какой у вас вопрос?</h4>
+  </div>
+  <div class="modal-body">
+    <div class="">
+      <div id="listBtnsEvents" class="">
+
+      </div>
+      <div class="">
+        <input type="button" id="questionAboutWebsite" class="btn btn-info" name="" value="Вопрос о работе сайта">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">ОK</button></div>
+</div>

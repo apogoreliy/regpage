@@ -115,5 +115,14 @@ function db_checkLostContacts($adminsFirstAndSecondRoles='')
   return $contacts;
 }
 
+function db_statusStatisticsContacts()
+{
+  $strs =[];
+
+  $res=db_query ("SELECT * FROM `contacts_statistic` WHERE `date_changed` > '2020-09-30' AND `date_changed` < '2020-11-01'");
+  while ($row = $res->fetch_assoc()) $strs[]=[$row['date_changed'], $row['status']];
+
+  return $strs;
+}
 
 ?>

@@ -252,7 +252,7 @@
         </h4>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Ok</button>
+        <button id="modalShowChangeLoginInfoBtn" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Ok</button>
     </div>
 </div>
 
@@ -280,15 +280,14 @@ var memberId = '<?php echo $memberId; ?>';
             $("#modalShowChangeLoginInfo").modal('show');
             $("#modalShowChangeLoginInfo").parents('.modal-scrollable').css('z-index', 9999);
 
-            $.post('/ajax/set.php?set_login', {login : login})
-            .done(function(data){
-                if(data.result){
-                    //window.location = '/login';
-                }
-                else{
-                }
-                    showError("Укажите логин");
-            });
+              $.post('/ajax/set.php?set_login', {login : login})
+              .done(function(data){
+                  if(data.result){
+                      //window.location = '/login';
+                  } else{
+                      showError("Укажите логин");
+                  }
+              });
         }
     });
 </script>

@@ -218,13 +218,19 @@ $(document).ready(function(){
 
     $("#btnDoSendEventMsgAdmins").click (function (){
         if ($(this).hasClass('disabled')) return;
-
+        if ($('#sendMsgTextAdmin').val().length < 9) {
+          showError('Сообщение должно содержать как минимум 10 символов.');
+          return;
+        }
         var page = location.pathname.split('.')[0], eventId = page === "/reg" ? $("#events-list").val() : "";
 
         $.ajax({type: "POST", url: "/ajax/set.php", data: {event : eventId, message: $("#sendMsgTextAdmin").val(), name:$("#sendMsgNameAdmin").val(), email:$("#sendMsgEmailAdmin").val(), admins: page}})
         .done (function() {messageBox ('Ваше сообщение отправлено службе поддержки', $('#messageAdmins'));});
     });
 
+/*
+  $('#messageAdmins').modal('hide');
+*/
     var isTabletWidth = $(document).width() < 980;
 
     $('.datepicker').datepicker({
@@ -598,6 +604,12 @@ function handleAditionalMenu(){
 
     $(".emCategory").change(function(){
         handleBirthDateAndCategoryFields();
+        if ($(this).val() === 'FT' && $('#inputEmLocalityId').val() === 'ПВОМ') {
+          $('#semestrPvom').parent().show();
+        } else if ($('#semestrPvom').parent().is(':visible')) {
+          $('#semestrPvom').parent().hide();
+          $('#semestrPvom').val('');
+        }
     });
 
     $(".emBirthdate").keyup(function(){
@@ -1051,7 +1063,8 @@ function getValuesRegformFields(form, isIndexPage, isInvitation){
         isInvitation : isInvitation ? 1 : 0,
         regListName: form.find('.custom-list').val(),
         private: $('.event-row.theActiveEvent').attr('data-private') == 1 && page === '/index' ? 1 : '',
-        serving: $('#service_ones_pvom').val()
+        serving: $('#service_ones_pvom').val(),
+        home_phone: $('#semestrPvom').val()
     }
 }
 
@@ -1284,7 +1297,7 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
     $(".emDepDate").val (info["dep_date"] ? formatDDMM (info["dep_date"]) : "").attr('data-double_date', info["dep_date"]).keyup();
     $(".emDepTime").val (info["dep_time"] ? formatTime (info["dep_time"]) : "").keyup();
     $(".emEmail").val (info["email"] ? info["email"] : "").keyup();
-    //$(".emHomePhone").val (info["home_phone"] ? info["home_phone"] : "");
+    $(".semestrPvom").val (info["home_phone"] ? info["home_phone"] : "");
 
     if ($(".emLocality").size()==0){
 
@@ -1303,8 +1316,7 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
         //$(".emComment").val (info["admin_comment"] ? info["admin_comment"] : "");
         $(".emUserComment").val (info["comment"] ? info["comment"] : "");
         $("#emShowSharedComment").hide();
-    }
-    else{
+    } else{
     	// ADMIN
       if (newMemberBlank) {
         $('#modalEditMember').find('.emLocality').attr('style', 'background-color: #FCF4F4; border-color:#E08A88;')
@@ -1316,12 +1328,14 @@ function fillEditMember (memberId, info, localities, newMemberBlank) {
         $(".emComment").val (info["admin_comment"] ? info["admin_comment"] : "");
 
         $("#service_ones_pvom").val (info["serving"] ? info["serving"] : "");
+        $("#semestrPvom").val (info["home_phone"] ? info["home_phone"] : "");
 
-        if (glbRoleAdmin>0) {
+        if (info["locality_key"] === '001192' && $('#selMemberLocality').find('option[value="001214"]').val()) {
           $("#service_ones_pvom").parent('div').show();
         } else {
           $("#service_ones_pvom").parent('div').hide();
         }
+
         $(".emUserComment").val (info["comment"] ? info["comment"] : "").attr('disabled','disabled');
 
         /*

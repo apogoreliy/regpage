@@ -2,6 +2,16 @@
 $(".remove-account").click(function(e){
     e.preventDefault();
     $("#reasonDeleteAccountModal").modal('show');
+    $(".reason-remove-account").val('');
+    $(".reason-remove-account").attr('disabled', false);
+    $(".confirmRemoveAccount").attr('disabled', false);
+    $.get('/ajax/contacts.php?check_remove_account', {member: memberId}).done(function(data){
+      if (data.result > 0) {
+        $(".confirmRemoveAccount").attr('disabled', true);
+        $(".reason-remove-account").val('ПЕРЕД УДАЛЕНИЕМ ПЕРЕДАЙТЕ КАРТОЧКИ В РАЗДЕЛЕ КОНТАКТЫ');
+        $(".reason-remove-account").attr('disabled', true);
+      }
+    });
 });
 
 $(".confirmRemoveAccount").click(function(){
@@ -158,7 +168,20 @@ $('.saveProfile').click(function(){
         notice_reg : el.find('.emNotice').prop('checked') === true ? 1 : 0
     })
     .done (function(){
-        $('.user-name').text(el.find(".emName").val ());
+        var shortName;
+        var fullName = el.find(".emName").val();
+        fullName ? fullName = fullName.split(' ') : '';
+        if (fullName) {
+          shortName = fullName[0] + ' ' + fullName[1][0] + '. ';
+        }
+        if (fullName[2] && fullName[2] !== '-') {
+          shortName = shortName + fullName[2][0] + '. ';
+        }
+        $('.user-name').text(shortName);
         showHint("Ваши данные успешно сохранены!");
     });
+});
+
+$('#modalShowChangeLoginInfoBtn').click(function(){
+  window.location = '/login';
 });

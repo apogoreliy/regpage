@@ -69,7 +69,7 @@
         <div id="emailError" class="alert alert-error" style="display:none">Логином должен быть корректный email</div>
         <div id="ajaxError" class="alert alert-error" style="display:none">Ошибка сервера. Обратитесь к разработчикам.</div>
         <div id="passLengthError" class="alert alert-error" style="display:none">Длинна пароля должна быть не меньше 5 и не больше 15 символов</div>
-        <div><a href="/passrec">Забыли пароль?</a></div>
+        <div><a href="/passrec" style="margin-right: 90px;">Забыли пароль?</a> <a href="/signup" title="Если у вас нет учётной записи, зарегистрируйтесь пройдя по ссылке">Создать аккаунт</a></div>
         <button type="submit" id="loginFormBtn" class="btn btn-large btn-primary">Войти</button>
     </form>
 </div>
@@ -253,6 +253,11 @@ $(document).ready(function(){
     });
 });
 
+  if ($(window).width()<379) {
+    console.log($(window).width());
+      $("<br>").insertAfter("a[href='/passrec']");
+  }
+
 $("#loginFormBtn").click (function (e){
   var loginTrim = $('#login').val();
   loginTrim = loginTrim.trim();
@@ -273,6 +278,16 @@ $("#loginFormBtn").click (function (e){
         e.preventDefault();
         return;
     }
+
+      $.get('ajax/login.php', {checklogin: loginTrim})
+      .done (function(data) {
+        if (data === 'new') {
+            setCookie('log_log', loginTrim, 1);
+            setCookie('pas_pas', password, 1);
+
+          window.location = 'signup?redirect=yes';
+        }
+      });
 
     $.get('ajax/login.php', { login: loginTrim, password:$("#password").val() })
     .done (function(data) {

@@ -526,7 +526,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
         </table>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">OK</button>
+        <button id="saveAdminsForTemplate" class="btn btn-default" data-dismiss="modal" aria-hidden="true">OK</button>
     </div>
 </div>
 

@@ -45,4 +45,9 @@ else if (isset($_GET["signupLogin"])) {
         print !$memberId ? "success" : "error";
     }
 }
+else if(isset($_GET['checklogin'])){
+    $memberId = db_isAdminExist ($_GET['checklogin']);
+    print !$memberId ? "new" : "existing";
+    exit();
+}
 ?>
