@@ -115,14 +115,55 @@ function db_checkLostContacts($adminsFirstAndSecondRoles='')
   return $contacts;
 }
 
-function db_statusStatisticsContacts()
+function db_statusStatisticsContacts($from, $to)
 {
   $strs =[];
 
-  $res=db_query ("SELECT * FROM `contacts_statistic` WHERE `date_changed` > '2020-09-30' AND `date_changed` < '2020-11-01'");
-  while ($row = $res->fetch_assoc()) $strs[]=[$row['date_changed'], $row['status']];
+  $res=db_query ("SELECT * FROM `contacts_statistic` WHERE `date_changed` > '$from' AND `date_changed` < '$to'");
+  while ($row = $res->fetch_assoc()) $strs[]=[$row['date_changed'], $row['status'], $row['id_contact']];
 
   return $strs;
+}
+// ПЕРЕДЕЛАТЬ СКРИПТ В SQL СКРИПТ
+function db_deleteSameStrLogs() {
+  $members = [];
+  $res=db_query ("SELECT DISTINCT admin_key FROM activity_log");
+  while ($row = $res->fetch_assoc()) $members[]=$row['admin_key'];
+  $memberStrings = array();
+  foreach ($members as $a){
+    $res1=db_query ("SELECT * FROM activity_log WHERE `admin_key` = '$a'");
+    while ($row1 = $res1->fetch_assoc()) $memberStrings[]=$row1;
+
+      for ($i=0; $i < count($memberStrings); $i++) {
+        if (count($memberStrings) - 1 !== $i) {
+          $x = false;
+          $x = $memberStrings[$i+1]['page'] === $memberStrings[$i]['page'];
+          if ($x) {
+            $date1 = new DateTime($memberStrings[$i+1]['time_create']);
+            $date2 = new DateTime($memberStrings[$i]['time_create']);
+            $diff = $date1->diff($date2);
+
+            if ($diff->i < 24 && $diff->h === 0 && $diff->d === 0) {
+              $z = $memberStrings[$i+1]['id'];
+              db_query ("DELETE FROM activity_log WHERE `id` = '$z'");
+            }
+          }
+        }
+      }
+    }
+    //logFileWriter(false, 'АКТИВНОСТЬ АДМИНИСТРАТОРОВ. Автоматическое удаление близких по времени строк активности администраторов. Удалено '.$counter.' строк.', 'WARNING');
+}
+
+function dltStrLog99()
+{
+  db_query ("DELETE FROM activity_log WHERE `admin_key` LIKE '99%'");
+  //logFileWriter(false, 'АКТИВНОСТЬ АДМИНИСТРАТОРОВ. Автоматическое удаление строк 99 активности администраторов. Удаление завешено.', 'WARNING');
+}
+
+function dltStrLogDvlp()
+{
+  db_query ("DELETE FROM activity_log WHERE `admin_key` = '000005716'");
+  //logFileWriter(false, 'АКТИВНОСТЬ АДМИНИСТРАТОРОВ. Автоматическое удаление строк 99 активности администраторов. Удаление завешено.', 'WARNING');
 }
 
 ?>

@@ -541,7 +541,30 @@ var isFillTemplate = 0;
 
         $(".template-meeting-type").change(function(){
             var text = $('.template-meeting-type option:selected').text();
-            $(".template-name").val(text).keyup();
+            $(".template-name").val(text);
+            if ($(this).val() !== '_none_' && $('.template-locality').val() !== '_none_') {
+              $('.btn-handle-template').attr('disabled', false);
+              $('.template-name').parent().hasClass('error') ? $('.template-name').parent().removeClass('error') : '';
+            } else {
+              $('.btn-handle-template').attr('disabled', true);
+              $('.template-name').parent().hasClass('error') ? '' : $('.template-name').parent().addClass('error');
+            }
+        });
+
+        $('.template-name').keyup(function () {
+          if ($(this).val() && $('.template-meeting-type').val() !== '_none_' && $('.template-locality').val() !== '_none_') {
+            $('.btn-handle-template').attr('disabled', false);
+          } else {
+            $('.btn-handle-template').attr('disabled', true);
+          }
+        });
+
+        $('.template-name').change(function () {
+          if ($(this).val() && $('.template-meeting-type').val() !== '_none_' && $('.template-locality').val() !== '_none_') {
+            $('.btn-handle-template').attr('disabled', false);
+          } else {
+            $('.btn-handle-template').attr('disabled', true);
+          }
         });
 
         function handleTemplate(mode, template){
@@ -1632,6 +1655,11 @@ var isFillTemplate = 0;
 // ROMANS CODE 5.4
         $('#modalHandleTemplate').on('show', function (){
             setTimeout(membersCounterMeeting, 500);
+            if (!$('.btn-handle-template').attr('disabled') && (!$('.template-locality').val() || !$('.template-meeting-type').val() || !$('.template-name').val())) {
+              $('.btn-handle-template').attr('disabled', true);
+            } else if ($('.btn-handle-template').attr('disabled') && $('.template-locality').val() && $('.template-meeting-type').val() && $('.template-name').val()) {
+              $('.btn-handle-template').attr('disabled', false);
+            }
           });
 
         $('#addEditMeetingModal').on('hide', function (){
@@ -1640,6 +1668,29 @@ var isFillTemplate = 0;
           });
 
         $('#addEditMeetingModal').on('show', function (){
+          setTimeout(function () {
+            if (!$('#meetingLocalityModal').val() && !$('#meetingLocalityModal').parent().hasClass('error')) {
+              $('#meetingLocalityModal').parent().addClass('error');
+              $('.btnDoHandleMeeting').attr('disabled') ? '' : $('.btnDoHandleMeeting').attr('disabled', true);
+            } else if ($('#meetingLocalityModal').val() && $('#meetingLocalityModal').parent().hasClass('error')) {
+              $('#meetingLocalityModal').parent().removeClass('error');
+              $('.btnDoHandleMeeting').attr('disabled') ? $('.btnDoHandleMeeting').attr('disabled', false) : '';
+            }
+            if (!$('#meetingCategory').val() && !$('#meetingCategory').parent().hasClass('error')) {
+              $('#meetingCategory').parent().addClass('error');
+              $('.btnDoHandleMeeting').attr('disabled') ? '' : $('.btnDoHandleMeeting').attr('disabled', true);
+            } else if ($('#meetingCategory').val() && $('#meetingCategory').parent().hasClass('error')) {
+              $('#meetingCategory').parent().removeClass('error');
+              $('.btnDoHandleMeeting').attr('disabled') ? $('.btnDoHandleMeeting').attr('disabled', false) : '';
+            }
+            if (!$('.meetingName').val() && !$('.meetingName').parent().hasClass('error')) {
+              $('.meetingName').parent().addClass('error');
+              $('.btnDoHandleMeeting').attr('disabled') ? '' : $('.btnDoHandleMeeting').attr('disabled', true);
+            } else if ($('.meetingName').val() && $('.meetingName').parent().hasClass('error')) {
+              $('.meetingName').parent().removeClass('error');
+              $('.btnDoHandleMeeting').attr('disabled') ? $('.btnDoHandleMeeting').attr('disabled', false) : '';
+            }
+          }, 100);
           $('#selectAllMembers').prop('checked', false)
                 var dd = $('.meeting-count-fulltimers').text();
                 if (dd == false) {
@@ -1663,6 +1714,8 @@ var isFillTemplate = 0;
             if (isFillTemplate === 0) {
               var text = $('#meetingCategory option:selected').text();
               $(".meetingName").val(text);
+              $(".meetingName").parent().hasClass('error') ? $(".meetingName").parent().removeClass('error') : '' ;
+              $("#meetingLocalityModal").val() ? $(".btnDoHandleMeeting").attr('disabled', false) : '';
               update_members_list();
             } else {
               isFillTemplate = 0;
@@ -1671,6 +1724,23 @@ var isFillTemplate = 0;
           membersCounterMeeting();
         });
 
+        $(".meetingName").keyup(function () {
+          if (!$(this).val()) {
+            $(".btnDoHandleMeeting").attr('disabled') ? '' : $(".btnDoHandleMeeting").attr('disabled', true);
+            $(".meetingName").parent().hasClass('error') ? '' : $(".meetingName").parent().addClass('error');
+          } else if ($('#meetingCategory').val() && $('#meetingCategory').val()) {
+            $(".btnDoHandleMeeting").attr('disabled') ? $(".btnDoHandleMeeting").attr('disabled', false) : '';
+          }
+        });
+
+        $(".meetingName").change(function () {
+          if (!$(this).val()) {
+            $(".btnDoHandleMeeting").attr('disabled') ? '' : $(".btnDoHandleMeeting").attr('disabled', true);
+            $(".meetingName").parent().hasClass('error') ? '' : $(".meetingName").parent().addClass('error');
+          } else if ($('#meetingCategory').val() && $('#meetingCategory').val()) {
+            $(".btnDoHandleMeeting").attr('disabled') ? $(".btnDoHandleMeeting").attr('disabled', false) : '';
+          }
+        });
         var locOld = '';
         $("#meetingLocalityModal").click(function(){
           locOld = $("#meetingLocalityModal").val();
@@ -1686,9 +1756,18 @@ var isFillTemplate = 0;
                  moskow == '001009' || moskow == '001163' || moskow == '001164' || moskow == '001168' || moskow == '001165' || moskow == '001166' || moskow == '001167' ? $(".traineesClass").show() : $(".traineesClass").hide();
             }
           }
+          if ($('.btnDoHandleMeeting').attr('disabled') && ($('.meetingName').val() && $('#meetingCategory').val())) {
+            $('.btnDoHandleMeeting').attr('disabled', false);
+          }
+
         });
 //template modal
         $(".template-locality").change(function(){
+          if ($(this).val() !== '_none_' && $('.template-meeting-type').val() !== '_none_') {
+            $('.btn-handle-template').attr('disabled', false);
+          } else {
+            $('.btn-handle-template').attr('disabled', true);
+          }
             membersCounterMeeting();
         })
 

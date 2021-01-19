@@ -30,6 +30,7 @@ function handleScrollUp(){
 window.onscroll = function() {
 		handleScrollUp();
 };
+
 $(".scroll-up").click(function(e){
 		e.stopPropagation();
 
@@ -53,6 +54,8 @@ if ($(window).width()>=1200) {
 }
 */
 
+if (window.location.pathname === '/contacts') {
+
 	if ($(window).height()>=550) {
 		var windowScreenHeight = $(window).height();
 		var mainBlockHeight = windowScreenHeight;
@@ -63,8 +66,8 @@ if ($(window).width()>=1200) {
 		}else {
 			mainBlockHeight = mainBlockHeight - 298;
 		}
-		var commentBlockHeight = windowScreenHeight - 308;
-		var chatBlockHeight = windowScreenHeight - 401;
+		var commentBlockHeight = windowScreenHeight - 339;
+		var chatBlockHeight = windowScreenHeight - 370;
 
 		chatBlockHeight+= 'px';
 		commentBlockHeight+= 'px';
@@ -186,8 +189,7 @@ if ($(window).width()>=1200) {
 			$('#respStatistic').html('<i class="fa fa-list"></i> Распределение');
 			$('#openFiltersPanelBtn').html('Фильтры');
 			$('#search-text').attr('style', 'max-width: 100px !important;');
-			$('#search-text').parent().attr('style', 'padding-left: 0px; padding-right: 0px; margin-right: 0px; margin-top: 0px; margin-bottom: 0px !important;');
-			$('#search-text').parent().show();
+			$('#search-text').parent().attr('style', 'padding-left: 0px; padding-right: 0px; margin-right: 0px; margin-top: 0px; margin-bottom: 0px !important;');			
 			$('#openSearchFieldBtn').hide();
 
 			// List
@@ -232,7 +234,6 @@ if ($(window).width()>=1200) {
 			var searchWidth = $(window).width()-50;
 			searchWidth = String(searchWidth) + 'px';
 			$('#search-text').attr('style', 'max-width: '+searchWidth+' !important;');
-			$('#search-text').parent().hide();
 			$('#openSearchFieldBtn').show();
 			if ($(window).width()<=381 && $('#respStatistic').is(':visible')) {
 				$('#periodLabel').css('margin-left', '120px');
@@ -271,4 +272,5 @@ if ($(window).width()>=1200) {
     }
 
   });
+}
 // STOP Menu & resize

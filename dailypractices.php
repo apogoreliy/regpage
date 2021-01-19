@@ -5,7 +5,7 @@ include_once 'logWriter.php';
 
 function db_newDailyPractices(){
 
-  logFileWriter(false, 'ПРАКТИКИ. Автоматическое добавление строк учёта практик.', 'DEBUG');
+  logFileWriter(false, 'ПРАКТИКИ. Автоматическое добавление строк учёта практик.', 'WARNING');
 
   $currentDate = date("Y-m-d");
   $yesterday = date("Y-m-d", strtotime("-1 days"));
@@ -24,7 +24,7 @@ function db_newDailyPractices(){
       //$resultat
       echo "$aa, ";
       db_query("INSERT INTO practices (`date_create`, `member_id`, `date_practic`) VALUES (NOW(), '$aa', '$currentDate')");
-      logFileWriter($aa, 'ПРАКТИКИ. АВТОМАТИЧЕСКОЕ ОБСЛУЖИВАНИЕ СЕРВЕРА. Добавлена строка учёта практик для данного пользователя.', 'DEBUG');
+      logFileWriter($aa, 'ПРАКТИКИ. АВТОМАТИЧЕСКОЕ ОБСЛУЖИВАНИЕ СЕРВЕРА. Добавлена строка учёта практик для данного пользователя.', 'WARNING');
     }
   }
 }

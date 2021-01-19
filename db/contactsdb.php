@@ -68,6 +68,7 @@ function db_deleteContactString($id, $adminId){
     db_query ("UPDATE contacts SET `notice` = 2 WHERE `id`='$value'");
     logFileWriter($adminId, 'КОНТАКТЫ. Перемещён в корзину контакт '.$value);
   }
+  return 1;
 }
 // Delete contacts strings from DATABASE
 function db_deleteContactStringTotal($id, $adminId){
@@ -312,11 +313,21 @@ function db_getAdminMembersAdmins ($adminId)
     return $list;
 }
 
-function db_addStatusHistoryStr($status)
+function db_addStatusHistoryStr($status, $idContact)
 {
   global $db;
   $status = $db->real_escape_string($status);
-  db_query("INSERT INTO contacts_statistic (`date_changed`, `status`) VALUES (NOW(), '$status')");
+  $idContact = $db->real_escape_string($idContact);
+  $check = '';
+
+  $res=db_query ("SELECT * FROM contacts_statistic WHERE `status` = '$status' AND `id_contact` = '$idContact'");
+  while ($row = $res->fetch_assoc()) $check=$row['id_contact'];
+
+  if ($check) {
+    db_query("UPDATE contacts_statistic SET `date_changed` = NOW() WHERE `status` = '$status' AND `id_contact` = '$idContact'");
+  } else {
+    db_query("INSERT INTO contacts_statistic (`date_changed`, `status`, `id_contact`) VALUES (NOW(), '$status', '$idContact')");
+  }
 }
 
 function db_getMemberListAdminsForContacts ()
@@ -357,7 +368,7 @@ function db_statusMultipleSet($id, $statusNew){
   $statusNew = $db->real_escape_string($statusNew);
   foreach ($id as $value) {
     db_query ("UPDATE contacts SET `status` = '$statusNew' WHERE `id`='$value'");
-    db_addStatusHistoryStr($statusNew);
+    db_addStatusHistoryStr($statusNew, $value);
   }
 }
 
@@ -475,6 +486,25 @@ function db_checkRemoveAccount($adminId) {
   while ($row = $res->fetch_assoc()) $counter++;
 
   return $counter;
+}
+
+function db_getTrashStrings() {
+  $strings;
+  $res=db_query ("SELECT * FROM contacts WHERE `notice` = 2");
+  while ($row = $res->fetch_assoc()) $strings[]=$row;
+  return $strings;
+}
+
+function db_setRecoverStrings($id) {
+  global $db;
+  $id = $db->real_escape_string($id);
+  $result;
+  db_query ("UPDATE contacts SET `notice` = 1 WHERE `id` = '$id'");
+
+  $res=db_query ("SELECT `notice` FROM contacts WHERE `id` = '$id'");
+  while ($row = $res->fetch_assoc()) $result=$row['notice'];
+
+  return $result;
 }
 
 /*

@@ -52,11 +52,11 @@ switch ($h) {
        $res = 'Контакты';
        break;
     case '/panel.php':
-      $res = 'Панель';
-      break;
+       $res = 'Панель';
+       break;
     default:
-        $res = '';
-        break;
+       $res = '';
+       break;
 }
 ?>
     <nav class="navbar navbarmain navbar-expand-md bg-dark navbar-dark fixed-top" style="background-color: #1b1b1b !important; height: 43px;">
@@ -112,9 +112,9 @@ switch ($h) {
             }
 
             if(!isset($isGuest) && db_isAdmin($memberId)) {
-                echo '<li class="nav-item"';
-                if (strpos ($s,"/members")!==FALSE || strpos($s,"/youth")!==FALSE || strpos($s,"/list")!==FALSE) {echo " class='active'";}
-                echo"><a class='nav-link' href='/members'>Списки</a></li>";
+                echo '<li class="nav-item ';
+                if (strpos($s,"/members")!==FALSE || strpos($s,"/youth")!==FALSE || strpos($s,"/list")!==FALSE) {echo ' active"';} else {echo ' "';}
+                echo'><a class="nav-link" href="/members">Списки</a></li>';
             }
 
             if((!isset($isGuest) && db_isAdmin($memberId) && (!in_array('8', db_getUserSettings($memberId)))) || (db_hasAdminFullAccess($memberId) && (!in_array('8', db_getUserSettings($memberId))))) {
@@ -130,7 +130,7 @@ switch ($h) {
             }
             if(isset($memberId) && ((in_array('14', db_getUserSettings($memberId))) || db_getAnyActiveContactStr($memberId)) && !isset($isGuest)) {
                 echo '<li ';
-                if (strpos ($s,"/contacts") ==FALSE) {echo "class='nav-item active'";}else{echo "class='nav-item'";}
+                if ($res === 'Контакты') {echo "class='nav-item active'";}else{echo "class='nav-item'";}
                 echo"><a class='nav-link' href='/contacts'>Контакты</a></li>";
             }
 

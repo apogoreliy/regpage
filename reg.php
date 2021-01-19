@@ -73,7 +73,7 @@
                 $activeIsSet=true;
             }
             ?>
-        </select>
+        </select><!--<i id="tblPresents" class="fa fa-table cursor-pointer" aria-hidden="true" style="font-size: 20px; margin-left: 20px;"></i>-->
     <?php
     $activeIsSet = false;
 
@@ -185,8 +185,8 @@
                                     }
                                 ?>
                             <th class="hide-tablet">Телефон</th>
-
-
+                            <th class="table_present" style="display: none;">Кат.</th><th class="table_present" style="display: none;">*</th><th class="table_present" style="display: none;">*</th>
+                            <th class="table_present" style="display: none;">*</th><th class="table_present" style="display: none;">*</th>
                             <th class="hide-tablet"><a id="sort-status" href='#' title="сортировать">Статус</a>&nbsp;<i class="<?php echo $sort_field=='status' ? ($sort_type=='desc' ? 'icon-chevron-up' : 'icon-chevron-down') : 'icon-none'; ?>"></i></th>
 
                             <th>Даты</th>
@@ -2578,7 +2578,7 @@ function checkStopEventRegistration(eventId){
   });
     // END Romans Code
 </script>
-<script src="/js/reg.js?v65"></script>
+<script src="/js/reg.js?v66"></script>
 <script src="/js/regupload.js?v5"></script>
 <?php
     include_once "footer.php";

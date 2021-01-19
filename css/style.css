@@ -1909,3 +1909,7 @@ input.error, .control-group.error select, textarea.error {
 .active_string, .active_string_mbl {
   font-weight: bold;
 }
+
+.table_present_activated {
+  color: green;
+}

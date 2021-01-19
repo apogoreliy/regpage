@@ -9,7 +9,7 @@ include_once 'logWriter.php';
 
 // PRACTICES
 function db_stopDailyPractices(){
-  logFileWriter(false, 'ПРАКТИКИ. Автоматическая проверка учёта практик.', 'DEBUG');
+  logFileWriter(false, 'ПРАКТИКИ. Автоматическая проверка учёта практик.', 'WARNING');
   $practicesMemberKeys=[];
 // get keys of members
   $res=db_query ("SELECT `member_key` FROM user_setting WHERE `setting_key` = '9'");

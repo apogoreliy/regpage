@@ -198,7 +198,29 @@ if ($memberId !== '000001679'){
                 <h3>Contacts</h3>
                 <hr>
                 <h4>Статистика по статусам</h4>
-                <button type="button" id="statusesStatisticsBtn" class="btn btn-info btn-sm" name="button" data-toggle="modal" data-target="#statuWindowStatistic">Октябрь 2020 г.</button>
+                <div class="row">
+                  <div id="InfoStatisticStatusesContainer" class="col-sm-12">
+
+                  </div>
+                  <div class="col-sm-6">
+                    <select id="statusesStatisticsSelect" class="form-control form-control form-control-sm" name="" title="Выберите месяц.">
+                      <option value="">Выберите месяц</option>
+                      <option value="" disabled>---- 2020 г. ----</option>
+                      <option value="2020-06-30_2020-08-01">Июль</option>
+                      <option value="2020-07-31_2020-09-01">Август</option>
+                      <option value="2020-08-31_2020-10-01">Сентябрь</option>
+                      <option value="2020-09-30_2020-11-01">Октябрь</option>
+                      <option value="2020-10-31_2020-12-01">Ноябрь</option>
+                      <option value="2020-11-30_2021-01-01">Декабрь</option>
+                      <option value="" disabled>---- 2021 г. ----</option>
+                      <option value="2020-12-31_2021-02-01">Январь</option>
+                      <option value="2021-01-31_2021-03-01">Февраль</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6">
+                    <button type="button" id="statusesStatisticsBtn" class="btn btn-info btn-sm" name="button" data-toggle="modal" data-target="#statuWindowStatistic">Статистика</button>
+                  </div>
+                </div>
                 <hr>
                 <h4>Responibles 1 & 2</h4>
                 <div class="" style="margin: 7px;">
@@ -234,12 +256,15 @@ if ($memberId !== '000001679'){
           </div>
           <div id="menu3" class="container tab-pane fade"><br>
             <h3>Other</h3>
-            <!--<div class="" style="margin: 7px;">
-              <input type="button" class="btn btn-danger btn-sm" id="" name="" value="button">
+            <div class="" style="margin: 7px;">
+              <input type="button" id="dltSameStrOfLog" class="btn btn-danger btn-sm" name="" value="Удалить схожие строки из лога администраторов">
             </div>
             <div class="" style="margin: 7px;">
-              <input type="button" class="btn btn-danger btn-sm" id="clearOldSessions" name="" value="Delete old session from admin session">
-            </div>-->
+              <input type="button" id="dlt99LogStr" class="btn btn-danger btn-sm" name="" value="Delete 99 strings from admins log">
+            </div>
+            <div class="" style="margin: 7px;">
+              <input type="button" id="dltDvlpLogStr" class="btn btn-danger btn-sm" name="" value="Delete developers strings from admins log">
+            </div>
             <div class=""style="border: 1px solid black; margin: 7px; padding: 7px;">
               <a href="panel">ADMIN PANEL</a>
             </div>

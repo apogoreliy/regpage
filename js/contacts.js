@@ -91,7 +91,7 @@ function contactsStringsLoad(x, idStr, sort) {
     }
 
 // STOP ADD new responsibles in the list
-
+// Режет только тут возможно как то влияет на источник.
     prevAdm ? prevAdm = fullNameToNoMiddleName(prevAdm) : prevAdm = '';
     statusSwitch(x[i].status);
     tempCom = x[i].comment;
@@ -303,7 +303,9 @@ function contactsStringsLoad(x, idStr, sort) {
         $('.cd-panel__close-watch').addClass('cd-panel__close-watch-visible');
       }
      } else {
-       $('#blankHistory').show();
+       if (data_page.admin_role !== '0') {
+         $('#blankHistory').show();
+       }
        $.get('/ajax/contacts.php?get_messages', {id: $(this).attr('data-id')})
          .done (function(data) {
            historyBuilder(data.messages);
@@ -534,12 +536,18 @@ function contactsStringsLoad(x, idStr, sort) {
          }
        });
      }
+     // УТОЧНИТЬ О РАБОТЕ СКРИПТА ПРИ ОТПРАВКЕ ЗАКАЗА
+     if ($('#modalSpinner').is(':visible')) {
+       $('#modalSpinner').hide();
+       $('#saveSpinner').hide();
+     }
    }, 50);
 }
 
 function historyBuilder(data) {
-  var readyMessages = [], name, nameTmp = '', author, edit;
-  for (var i = 0; i < data.length; i++) {
+  var readyMessages = [], name, nameTmp = '', author, edit, dataLength;
+  data ? dataLength = data.length : dataLength = 0;
+  for (var i = 0; i < dataLength; i++) {
     author='', edit='', name = '';
     if (data[i].member_key === window.adminId) {
       name = $('.user-name').text();
@@ -636,8 +644,8 @@ function historyBuilder(data) {
     }
   });
 }
-  function messageFunction(type, id, responsible) {
-    var text;
+  function messageFunction(type, id, responsible, updateChatNow) {
+    var text, url;
     if (type === 'responsible') {
       text = 'Назначен ответственный ' + responsible;
     }
@@ -645,16 +653,32 @@ function historyBuilder(data) {
       text: text,
       id: id
     };
+    url = '/ajax/contacts.php?new_message&data%5Btext%5D='+text+'&data%5Bid%5D='+id+'&list=false';
+    if (updateChatNow) {
+      fetch(url)
+      .then(response => response.json())
+      .then(commits => getMessages(commits.messages[0].group_id));
+    } else {
+      fetch(url);
+    }
+/*
     $.get('/ajax/contacts.php?new_message', {data: dataMsgFun, list: false})
       .done (function(data) {
       });
-    }
+*/
+  }
 
-    function getMessages(id) {
+  function getMessages(id) {
+      var url = 'ajax/contacts.php?get_messages&id='+id;
+      fetch(url)
+      .then(response => response.json())
+      .then(commits => historyBuilder(commits.messages));
+      /*
       $.get('/ajax/contacts.php?get_messages', {id: id})
       .done (function(data) {
         historyBuilder(data.messages);
       });
+      */
     }
 
 // notification
@@ -707,6 +731,7 @@ function historyBuilder(data) {
   }
 
   function saveEditContact() {
+// checking
 // check change of the responsible
   var currentResponsible = '', prevResponsible = '';
   if (($('#responsibleContact').val() && ($('#responsibleContact').val() === $('#responsibleContact').attr('data-responsible'))) || (!$('#responsibleContact').val() && $('#responsibleContact').attr('data-responsible'))) {
@@ -726,28 +751,18 @@ function historyBuilder(data) {
     if (currentResponsible !== window.adminId) {
       prevResponsible = window.adminId;
     }
-  } else if ($('#responsibleContact').val() && ($('#responsibleContact').val() !== $('#responsibleContact').attr('data-responsible'))) {
+  } else if ($('#responsibleContact').val() && $('#responsibleContact').attr('data-responsible') && ($('#responsibleContact').val() !== $('#responsibleContact').attr('data-responsible'))) {
     // responsible has been changed
-    if ($('#responsibleContact').attr('data-responsible_previous') && window.adminId === $('#responsibleContact').attr('data-responsible_previous')) {
-      currentResponsible = $('#responsibleContact').val();
-      prevResponsible = $('#responsibleContact').attr('data-responsible_previous');
-    } else {
-      currentResponsible = $('#responsibleContact').val();
-      prevResponsible = $('#responsibleContact').attr('data-responsible');
+      if ($('#responsibleContact').attr('data-responsible_previous') && window.adminId === $('#responsibleContact').attr('data-responsible_previous')) {
+        currentResponsible = $('#responsibleContact').val();
+        prevResponsible = $('#responsibleContact').attr('data-responsible_previous');
+      } else {
+        currentResponsible = $('#responsibleContact').val();
+        prevResponsible = $('#responsibleContact').attr('data-responsible');
     }
-    setTimeout(function () {
-      // add notice
-      if (currentResponsible !== window.adminId) {
-        addNoticeAboutContact(currentResponsible, $('#saveContact').attr('data-id'));
-      }
-      if (data_page.admin_role === '0') {
-          clearingBlankOfContact();
-          $('.cd-panel-watch').removeClass('cd-panel--is-visible-watch');
-          $('.cd-panel__close-watch').removeClass('cd-panel__close-watch-visible');
-          contactsListUpdate();
-      }
-    }, 350);
   }
+
+// get data
     var data = {};
     data.id = $('#saveContact').attr('data-id');
     data.name = $('#nameContact').val();
@@ -773,25 +788,32 @@ function historyBuilder(data) {
       data.order_date = null;
     }
 
-    if ($('#statusContact').val() && $('#statusContact').val() !== $('.active_string').attr('data-status_key')) {
-      $.get('/ajax/contacts.php?add_history_status', {status: $('#statusContact').val()})
+    $('#saveContact').attr('data-id_admin') ? data.admin = $('#saveContact').attr('data-id_admin') : data.admin = window.adminId;
+// add status statistic.
+    if ($('#saveContact').attr('data-id') && $('#statusContact').val() && $('#statusContact').val() !== $('.active_string').attr('data-status_key')) {
+      $.get('/ajax/contacts.php?add_history_status', {status: $('#statusContact').val(), id_contact: $('#saveContact').attr('data-id')})
       .done (function(data) {
       });
     }
-
-    $('#saveContact').attr('data-id_admin') ? data.admin = $('#saveContact').attr('data-id_admin') : data.admin = window.adminId;
-
-    $.post('/ajax/contacts.php', {type: 'save', blank_data: data})
+// save
+  let promise = $.post('/ajax/contacts.php', {type: 'save', blank_data: data})
       .done (function(data) {
         if (data.id && data.id !== 'update') {
+          $.get('/ajax/contacts.php?add_history_status', {status: $('#statusContact').val(), id_contact: data.id})
+          .done (function(data) {
+          });
+
           $('#saveContact').attr('data-id', data.id);
           $('#saveContact').attr('data-id_admin', window.adminId);
 
           if ($('#responsibleContact').val()) {
             if ($('#responsibleContact').val() !== window.adminId) {
-              // Проблема айакс внутри аякса, надо внешний переделать на пост.
-              //console.log('Im here mushkela!');
               addNoticeAboutContact($('#responsibleContact').val(), data.id);
+              if (data_page.admin_role === '0') {
+                messageFunction('responsible', data.id, fullNameToShortFirstMiddleNames($('#responsibleContact option:selected').text()));
+              } else {
+                messageFunction('responsible', data.id, fullNameToShortFirstMiddleNames($('#responsibleContact option:selected').text()), true);
+              }
             }
             $('#responsibleContact').attr('data-responsible', $('#responsibleContact').val());
           } else {
@@ -799,39 +821,64 @@ function historyBuilder(data) {
             $('#responsibleContact').val(window.adminId);
           }
 
-          contactsListUpdate(data.id);
-
-          setTimeout(function () {
-            if ((data.id !== $('.active_string').attr('data-id')) && ($('.active_string').find('.data_name').text().trim() !== $('#nameContact').val().trim())) {
+          // Page reload & don't update string & form
+          if (data_page.admin_role === '0') {
               clearingBlankOfContact();
               $('.cd-panel-watch').removeClass('cd-panel--is-visible-watch');
               $('.cd-panel__close-watch').removeClass('cd-panel__close-watch-visible');
-              $('.active_string') ? $('.active_string').removeClass('active_string') : '';
-            }
-          }, 2500);
+              contactsListUpdate();
+          } else {
+              contactsListUpdate(data.id);
+          }
 
         } else if (data.id === 'update') {
           if ($('#responsibleContact').val() !== $('#responsibleContact').attr('data-responsible') && $('#responsibleContact').val()) {
-            messageFunction('responsible', $('#saveContact').attr('data-id'), fullNameToShortFirstMiddleNames($('#responsibleContact option:selected').text()));
-            setTimeout(function () {
-              getMessages($('#saveContact').attr('data-id'));
-            }, 200);
+            // add notice
+            addNoticeAboutContact($('#responsibleContact').val(), $('#saveContact').attr('data-id'));
+
+            // add message
+            // !!!!!! THE PROMISE SOULD BE USE FROM HERE IF ROLE > 0
+            if (data_page.admin_role === '0') {
+              messageFunction('responsible', $('#saveContact').attr('data-id'), fullNameToShortFirstMiddleNames($('#responsibleContact option:selected').text()));
+            } else {
+              messageFunction('responsible', $('#saveContact').attr('data-id'), fullNameToShortFirstMiddleNames($('#responsibleContact option:selected').text()), true);
+            }
             $('#responsibleContact').attr('data-responsible_previous', $('#responsibleContact').attr('data-responsible'));
             $('#responsibleContact').attr('data-responsible', $('#responsibleContact').val());
           } else if (!$('#responsibleContact').val() && $('#responsibleContact').attr('data-responsible') != window.adminId) {
             $('#responsibleContact').attr('data-responsible_previous', $('#responsibleContact').attr('data-responsible'));
             $('#responsibleContact').attr('data-responsible', window.adminId);
           }
+          if (data_page.admin_role === '0') {
+              clearingBlankOfContact();
+              $('.cd-panel-watch').removeClass('cd-panel--is-visible-watch');
+              $('.cd-panel__close-watch').removeClass('cd-panel__close-watch-visible');
+              contactsListUpdate();
+          } else {
+            stringUpdater($('#saveContact').attr('data-id'));
+          }
         } else {
           console.log('Error. No any answer.');
         }
+        showHint('Карточка сохранена.');
       });
 
+      promise.then(function (e) {
+        console.log(e);
+      });
+/*
+// ??? Catch error OR string/list don't updated  and reload list
+// !!!!!! THE PROMISE SOULD BE USE FOR THIS IF ROLE > 0
+// Слишком много противоречий
       setTimeout(function () {
-        stringUpdater($('#saveContact').attr('data-id'));
-        //contactsListUpdate();
-        showHint('Карточка сохранена.')
-      }, 1250);
+          if ((data_page.admin_role !== '0') && ($('#saveContact').attr('data-id') !== $('.active_string').attr('data-id')) && ($('.active_string').find('.data_name').text().trim() !== $('#nameContact').val().trim())) {
+            clearingBlankOfContact();
+            $('.cd-panel-watch').removeClass('cd-panel--is-visible-watch');
+            $('.cd-panel__close-watch').removeClass('cd-panel__close-watch-visible');
+            contactsListUpdate();
+      }
+    }, 7450);
+*/
   }
 
   $('#nameContact').keyup(function () {
@@ -842,7 +889,7 @@ function historyBuilder(data) {
     $(this).css('border-color', '#ced4da');
   });
 
-  $('#saveContact').click(function() {
+  $('#saveContact').click(function(e) {
     if (!$('#nameContact').val()) {
       showError('Заполните поле ФИО.');
       $('#nameContact').css('border-color', 'red');
@@ -858,15 +905,44 @@ function historyBuilder(data) {
       $('#maleContact').css('border-color', 'red');
       return
     }
-    $('#blankHistory').show();
-    saveEditContact();
-    $('#modalSpinner').show();
-    $('#saveSpinner').show();
-    setTimeout(function () {
-      $('#modalSpinner').hide();
-    }, 2500);
+    if (data_page.admin_role !== '0') {
+      $('#blankHistory').show();
+    }
 
+    if ($('#statusContact').val() === '4' && $('#statusContact').val() !== $('.active_string').attr('data-status_key') && ( $('#orderSentToContact').attr('disabled') !== 'disabled' || !$('#saveContact').attr('data-id'))) {
+      !$('#phoneContact').val() ? $('#phoneContact').css('border-color', 'red') : $('#phoneContact').css('border-color', '#ced4da');
+      !$('#regionContact').val() ? $('#regionContact').css('border-color', 'red') : $('#regionContact').css('border-color', '#ced4da');
+      !$('#localityContact').val() ? $('#localityContact').css('border-color', 'red') : $('#localityContact').css('border-color', '#ced4da');
+      !$('#indexContact').val() ? $('#indexContact').css('border-color', 'red') : $('#indexContact').css('border-color', '#ced4da');
+      !$('#addressContact').val() ? $('#addressContact').css('border-color', 'red') : $('#addressContact').css('border-color', '#ced4da');
+      if (!$('#phoneContact').val() || !$('#regionContact').val() || !$('#localityContact').val() || !$('#indexContact').val() || !$('#addressContact').val()) {
+        showError('Заполните поля выделенные красным цветом.');
+        e.stopPropagation();
+        return
+      } else {
+        $('#addressContact').css('border-color', '#ced4da');
+        $('#indexContact').css('border-color', '#ced4da');
+        $('#localityContact').css('border-color', '#ced4da');
+        $('#regionContact').css('border-color', '#ced4da');
+        $('#phoneContact').css('border-color', '#ced4da');
+        $('#nameContact').css('border-color', '#ced4da');
+        $('#saveConfirm').show();
+      }
+      $('#saveConfirm').find('h6').html('<b style="color: red;">Для сохранения без отправки данных в CRM измените статус.</b><br><br>Примечание к заказу');
+      $('#adminNotes').val('');
+    } else {
+      saveEditContact();
+      $('#modalSpinner').show();
+      $('#saveSpinner').show();
+      setTimeout(function () {
+        if ($('#modalSpinner').is(':visible')) {
+          $('#modalSpinner').hide();
+          $('#saveSpinner').hide();
+        }
+      }, 7500);
+    }
   });
+
 // responsible delete
   function deleteContact() {
     var dataStr = [];
@@ -888,16 +964,26 @@ function historyBuilder(data) {
 
     $.post('/ajax/contacts.php', {type: 'delete_contact',delete_contacts_id: dataStr})
       .done (function(data) {
+        $('#modalSpinner').hide();
+        $('#saveSpinner').hide();
+        showHint('Удалено строк: '+dataStr.length);
       });
-
+/*
     setTimeout(function () {
       showHint('Удалено строк: '+dataStr.length)
       //contactsListUpdate();
     }, 100);
+*/
   }
 
   $('#deleteContact').click(function() {
-    deleteContact();
+    $('#modalSpinner').show();
+    $('#saveSpinner').show();
+
+    setTimeout(function () {
+      deleteContact();
+    }, 30);
+
     $('#deleteContactsShowModal').attr('disabled', true);
     $('#appointStatusShow').attr('disabled', true);
     //$('#deleteContact').attr('disabled', true);
@@ -960,7 +1046,7 @@ function historyBuilder(data) {
             contactsListUpdate();
           }, 300);
       } else {
-        showHint('Невозможно вернуть контакт, так как не указан предыдущий ответственный.');
+        showError('Невозможно вернуть контакт, так как не указан предыдущий ответственный.');
         contactsListUpdate();
       }
     } else {
@@ -1035,9 +1121,12 @@ function historyBuilder(data) {
   });
 
   function contactsListUpdate(idStr) {
-    $.get('/ajax/contacts.php?get_contacts', {role: data_page.admin_role})
+    let promise = $.get('/ajax/contacts.php?get_contacts', {role: data_page.admin_role})
       .done (function(data) {
         contactsStringsLoad(data.contacts, idStr);
+      });
+      promise.then(function (e) {
+        console.log(e);
       });
     }
 
@@ -1118,6 +1207,10 @@ function historyBuilder(data) {
           $('#orderDate').text(dateOrd);
         } else {
           $('.active_string').attr('');
+        }
+        if ($('#modalSpinner').is(':visible')) {
+          $('#modalSpinner').hide();
+          $('#saveSpinner').hide();
         }
     }
 
@@ -1297,55 +1390,31 @@ function sendTheOrder(ua) {
   }
 
   $('#orderSentToContact').click(function(e) {
-    if (!$('#nameContact').val()) {
-      showError('Заполните поле ФИО');
-      $('#nameContact').css('border-color', 'red');
-      e.stopPropagation();
-      return
-    } else if (!$('#phoneContact').val()) {
-      showError('Заполните поле Телефон');
-      $('#phoneContact').css('border-color', 'red');
-      e.stopPropagation();
-      return
-    } else if (!$('#regionContact').val()) {
-      showError('Заполните поле Область');
-      $('#regionContact').css('border-color', 'red');
-      e.stopPropagation();
-      return
-    } else if (!$('#localityContact').val()) {
-      showError('Заполните поле Населённый пункт');
-      $('#localityContact').css('border-color', 'red');
-      e.stopPropagation();
-      return
-    } else if (!$('#indexContact').val()) {
-      showError('Заполните поле Индекс');
-      $('#indexContact').css('border-color', 'red');
-      e.stopPropagation();
-      return
-    } else if (!$('#addressContact').val()) {
-      showError('Заполните поле Адрес');
-      $('#addressContact').css('border-color', 'red');
-      e.stopPropagation();
-      return
-    } else if (!$('#countryContact').val()) {
-      showError('Заполните поле Страна');
-      $('#countryContact').css('border-color', 'red');
-      e.stopPropagation();
-      return
-    } else if ($('#maleContact').val() === '_none_') {
-      showError('Заполните поле Пол');
-      $('#maleContact').css('border-color', 'red');
+
+    !$('#nameContact').val() ? $('#nameContact').css('border-color', 'red') : $('#nameContact').css('border-color', '#ced4da');
+    !$('#countryContact').val() ? $('#countryContact').css('border-color', 'red') : $('#countryContact').css('border-color', '#ced4da');
+    $('#maleContact').val() === '_none_' ? $('#maleContact').css('border-color', 'red') : $('#maleContact').css('border-color', '#ced4da');
+    !$('#phoneContact').val() ? $('#phoneContact').css('border-color', 'red') : $('#phoneContact').css('border-color', '#ced4da');
+    !$('#regionContact').val() ? $('#regionContact').css('border-color', 'red') : $('#regionContact').css('border-color', '#ced4da');
+    !$('#localityContact').val() ? $('#localityContact').css('border-color', 'red') : $('#localityContact').css('border-color', '#ced4da');
+    !$('#indexContact').val() ? $('#indexContact').css('border-color', 'red') : $('#indexContact').css('border-color', '#ced4da');
+    !$('#addressContact').val() ? $('#addressContact').css('border-color', 'red') : $('#addressContact').css('border-color', '#ced4da');
+    if (!$('#phoneContact').val() || !$('#regionContact').val() || !$('#localityContact').val() || !$('#indexContact').val() || !$('#addressContact').val()) {
+      showError('Заполните поля выделенные красным цветом.');
       e.stopPropagation();
       return
     } else {
+      $('#nameContact').css('border-color', '#ced4da');
+      $('#countryContact').css('border-color', '#ced4da');
+      $('#maleContact').css('border-color', '#ced4da');
       $('#addressContact').css('border-color', '#ced4da');
       $('#indexContact').css('border-color', '#ced4da');
       $('#localityContact').css('border-color', '#ced4da');
       $('#regionContact').css('border-color', '#ced4da');
       $('#phoneContact').css('border-color', '#ced4da');
-      $('#nameContact').css('border-color', '#ced4da');
       $('#saveConfirm').show();
     }
+    $('#saveConfirm').find('h6').html('Примечание к заказу');
     $('#adminNotes').val('');
   });
 
@@ -1355,25 +1424,94 @@ function sendTheOrder(ua) {
 
   $('#saveConfirmBtn').click(function() {
 
-    $('#blankHistory').show();
-    $('#orderSentToContact').attr('disabled', true);
-    $('#orderSentToContact').val('Заказ отправлен');
-
-    if ($('#countryContact').val() === 'UA') {
-        sendTheOrder('UA');
-        $('#saveConfirm').hide();
-    } else {
-        sendTheOrder();
-        $('#saveConfirm').hide();
+    function sendOrderToCRMExtra() {
+      if ($('#countryContact').val() === 'UA') {
+          sendTheOrder('UA');
+          $('#saveConfirm').hide();
+      } else {
+          sendTheOrder();
+          $('#saveConfirm').hide();
+      }
+      $('#orderSentToContact').val('Заказ отправлен');
+      $('#orderSentToContact').attr('disabled', true);
     }
-    setTimeout(function () {
-      saveEditContact();
-    }, 1200);
 
     $('#modalSpinner').show();
     $('#saveSpinner').show();
+    if (data_page.admin_role !== '0') {
+      $('#blankHistory').show();
+    }
+    $('#statusContact').val() !== '4' ? $('#statusContact').val('4') : '';
+
+    if (!$('#saveContact').attr('data-id')) {
+      saveEditContact();
+      function tmpTempTemp() {
+        sendOrderToCRMExtra();
+        console.log('I\m there!');
+        $('#modalSpinner').show();
+        $('#saveSpinner').show();
+        setTimeout(function () {
+          $('#modalSpinner').hide();
+          $('#saveSpinner').hide();
+        }, 2000);
+      }
+        setTimeout(function () {
+          if ($('#modalSpinner').is(':visible')) {
+            setTimeout(function () {
+              if ($('#modalSpinner').is(':visible')) {
+                setTimeout(function () {
+                  if ($('#modalSpinner').is(':visible')) {
+                    setTimeout(function () {
+                      if ($('#modalSpinner').is(':visible')) {
+                        setTimeout(function () {
+                          if ($('#modalSpinner').is(':visible')) {
+                            setTimeout(function () {
+                              if ($('#modalSpinner').is(':visible')) {
+                                setTimeout(function () {
+                                  if ($('#modalSpinner').is(':visible')) {
+                                    tmpTempTemp();
+                                  } else {
+                                    tmpTempTemp();
+                                  }
+                                }, 500);
+                              }else {
+                                tmpTempTemp();
+                              }
+                            }, 500);
+                          }else {
+                            tmpTempTemp();
+                          }
+                        }, 500);
+                      }else {
+                        tmpTempTemp();
+                      }
+                    }, 500);
+                  }else {
+                    tmpTempTemp();
+                  }
+                }, 500);
+              }else {
+                tmpTempTemp();
+              }
+            }, 500);
+          }else {
+            tmpTempTemp();
+          }
+          console.log('I\m here!');
+        }, 1000);
+
+    } else {
+      sendOrderToCRMExtra();
+      setTimeout(function () {
+        saveEditContact();
+      }, 2000);
+    }
+
     setTimeout(function () {
-      $('#modalSpinner').hide();
+      if ($('#modalSpinner').is(':visible')) {
+        $('#modalSpinner').hide();
+        $('#saveSpinner').hide();
+      }
     }, 2500);
   });
 
@@ -1506,11 +1644,13 @@ function sendTheOrder(ua) {
         return
       }
       $('#orderDateEdit').parent().show();
+      $('#commentContact').parent().parent().height($('#commentContact').parent().parent().height() - 50);
       $(this).hide();
     });
 
     $('#orderDateEditIcoCancel').click(function(){
       $('#orderDateEditIco').show();
+      $('#commentContact').parent().parent().height($('#commentContact').parent().parent().height() + 50);
       $(this).parent().hide();
     });
 
@@ -1526,6 +1666,7 @@ function sendTheOrder(ua) {
         $('#orderDate').text('');
       }
       $('#orderDateEditIco').show();
+      $('#commentContact').parent().parent().height($('#commentContact').parent().parent().height() + 50);
       $(this).parent().hide();
     });
 
@@ -2019,7 +2160,8 @@ function sendTheOrder(ua) {
 
     $.post('/ajax/contacts.php', {type: 'set_resp_for_admin', id: admin_id, keys: arrKeys, role: roleSet})
       .done (function(data) {
-    });setTimeout(function () {
+    });
+    setTimeout(function () {
       $.get('/ajax/contacts.php?get_resp_group', {id: admin_id})
         .done (function(data) {
         data_page.my_responsibles = data.result;
@@ -2193,6 +2335,45 @@ function sendTheOrder(ua) {
       .done (function(data) {
     });*/
   });
+
+// START TRASH BASKET
+  function getTrashBasketData() {
+    url = '/ajax/contacts.php?get_thash_string';
+      fetch(url)
+      .then(response => response.json())
+      .then(commits => renderThashString(commits));
+  }
+
+  function renderThashString(data) {
+    var html = [];
+    for (var i = 0; i < data.length; i++) {
+      html.push('<div>'+data[i].id+' - '+data[i].name+' - '+data[i].locality+' - '+data[i].region+' - '+data[i].country_key+' - '+data[i].phone+' - '+data[i].order_date+' - '+'<i class="fa fa-undo cursor-pointer" aria-hidden="true" data-id="'+data[i].id+'" title="Кликните здесь, чтобы восстановить контакт."></i></div>');
+    }
+    $('#listTrashStr').html(html);
+    $('.fa-undo').click(function functionName() {
+      $('#trashBasketContactsModal').attr('data-changed', '1');
+      currentString = $(this).parent();
+      urlDlt = '/ajax/contacts.php?set_recover_string&id='+$(this).attr('data-id');
+      fetch(urlDlt)
+      .then(response => response.json())
+      .then(result => result === '1' ? currentString.hide() : console.log(result));
+    });
+  }
+
+  $('#showTrashBasket').click(function() {
+    $('#modalFiltersPanel').modal('hide');
+    getTrashBasketData();
+  });
+
+  $('#trashBasketContactsModal').find('.btn-secondary').click(function () {
+    if ($('#trashBasketContactsModal').attr('data-changed') === '1') {
+      $('#trashBasketContactsModal').attr('data-changed','');
+
+      $('#saveContact').attr('data-id') && $('.cd-panel-watch').hasClass('cd-panel--is-visible-watch') ? contactsListUpdate($('#saveContact').attr('data-id')) : contactsListUpdate();
+    }
+  });
+
+// STOP TRASH BASKET
 
   $('#openLeftPanelBtn').click(function() {
     if ($('#leftSidepanel').css('width') === '200px') {
@@ -2395,5 +2576,9 @@ $('#maleShow, #statusShow, #respShow, #myBlanks, #periodsCombobox, #leftPanelCou
   $('#saveEditPeriod').click(function () {
     $('#periodLabel').text($('#fieldEditPeriod').val());
   });
+
+  if (data_page.admin_role === '0') {
+    $('#blankHistory').hide();
+  }
 
 });
