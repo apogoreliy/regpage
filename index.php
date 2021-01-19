@@ -1520,7 +1520,7 @@ console.log('stop is ', stopRegistration, 'close is ', closeRegistration, modalW
 var adminRole = '<?php echo db_getAdminRole($memberId); ?>';
 
 </script>
-<script src="/js/mainpage.js?v19"></script>
+<script src="/js/mainpage.js?v20"></script>
 
 <?php
 }

@@ -9,10 +9,10 @@ function db_deleteTrashFromContacts(){
   while ($row = $res->fetch_assoc()) $counter++;
 
   if ($counter > 0) {
-    logFileWriter(false, 'СЕССИИ АДМИНИСТРАТОРОВ. АВТОМАТИЧЕСКОЕ ОБСЛУЖИВАНИЕ СЕРВЕРА. Удалено '.$counter.' просроченных сессий.', 'WARNING');
+    logFileWriter(false, 'УДАЛЕНИЕ КОНТАКТОВ ИЗ КОРЗИНЫ. АВТОМАТИЧЕСКОЕ ОБСЛУЖИВАНИЕ СЕРВЕРА. Удалено '.$counter.' контактов из корзины.', 'WARNING');
     db_query ("DELETE FROM `contacts` WHERE `notice` = 2");
   } else {
-    logFileWriter(false, 'СЕССИИ АДМИНИСТРАТОРОВ. АВТОМАТИЧЕСКОЕ ОБСЛУЖИВАНИЕ СЕРВЕРА. Просроченные сессии отсутствуют.', 'WARNING');
+    logFileWriter(false, 'УДАЛЕНИЕ КОНТАКТОВ ИЗ КОРЗИНЫ. АВТОМАТИЧЕСКОЕ ОБСЛУЖИВАНИЕ СЕРВЕРА. Контакты в корзине отсутствуют.', 'WARNING');
   }
 }
 

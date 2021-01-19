@@ -291,4 +291,4 @@ var memberId = '<?php echo $memberId; ?>';
         }
     });
 </script>
-<script src="/js/profile.js?v3"></script>
+<script src="/js/profile.js?v4"></script>

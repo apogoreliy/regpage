@@ -217,6 +217,12 @@
               </div>
 
             <div class="tab-pane container fade" id="blankCommentTab" style="padding: 0;">
+              <div class="row" style="margin-top: 10px; margin-left: 0px; margin-right: 0px;">
+                <div class="col-6"><span id="labelOrderDate">Заказа НЗ не было</span><span id="orderDate"></span><i class="cursor-pointer fa fa-pencil" id="orderDateEditIco" style="padding-left: 0px; font-size:14px;"></i>
+                  <span style="display: none;"><input type="date" id="orderDateEdit"><i class="cursor-pointer fa fa-check-circle" id="orderDateEditIcoOk" style="padding-left: 80px; color: green; font-size:20px;"></i><i class="cursor-pointer fa fa-ban" id="orderDateEditIcoCancel" style="padding-left: 20px; color: red; font-size:20px;"></i></span>
+                  </div>
+                <div class="col-6"><span>Отправка: </span><span id="sendingDate"></span></div>
+              </div>
               <div class="row" style="margin-top: 20px;">
                 <div class="col-12" style="padding-left: 9px;">
                   <textarea id="commentContact" class="form-control form-control-sm" rows="15" cols="80" style="width: 100%;"></textarea>
@@ -225,12 +231,6 @@
             </div>
             <div class="tab-pane container fade" id="blankHistoryTab" style="padding: 0;">
             <!-- Прокрутка при переполнении для нижнего дива-->
-            <div class="row" style="margin-top: 10px; margin-left: 0px; margin-right: 0px;">
-              <div class="col-6"><span id="labelOrderDate">Заказа НЗ не было</span><span id="orderDate"></span><i class="cursor-pointer fa fa-pencil" id="orderDateEditIco" style="padding-left: 0px; font-size:14px;"></i>
-                <span style="display: none;"><input type="date" id="orderDateEdit"><i class="cursor-pointer fa fa-check-circle" id="orderDateEditIcoOk" style="padding-left: 10px; color: green; font-size:20px;"></i><i class="cursor-pointer fa fa-ban" id="orderDateEditIcoCancel" style="padding-left: 10px; color: red; font-size:20px;"></i></span>
-                </div>
-              <div class="col-6"><span>Отправка: </span><span id="sendingDate"></span></div>
-            </div>
             <hr>
               <div id="chatBlock" class="container" style="min-height: 200px; overflow-y: auto;">
               </div>
@@ -535,7 +535,7 @@
                 <option value="1">Недозвон</option>
                 <option value="2">Ошибка</option>
                 <option value="3">Отказ</option>
-                <option value="4">Заказ</option>
+                <!--<option value="4">Заказ</option>-->
                 <option value="5">Продолжение</option>
                 <option value="6">Завершение</option>
               </select>
@@ -753,8 +753,6 @@
               </select>
             </div>
           </div>
-
-
           <div class="row">
             <div class="col-sm-5">
               <h6 style="padding-top:10px;">Проекты</h6>
@@ -773,6 +771,16 @@
                     </select>
             </div>
           </div>
+            <?php if ($adminRole !== 0) { ?>
+            <div class="row">
+              <div class="col-sm-5">
+                <h6 style="padding-top:10px;">Корзина</h6>
+              </div>
+              <div class="col-sm-7">
+                <button type="button" id="showTrashBasket" class="btn btn-sm btn-info" data-toggle="modal" data-target="#trashBasketContactsModal">Показать удалённые контакты</button>
+              </div>
+            </div>
+          <?php } ?>
           </div>
         </div>
       </div>
@@ -818,6 +826,33 @@
   </div>
 </div>
 <!-- STOP Modal SPINNER -->
+
+<!-- START Modal trash basket contact -->
+  <div id="trashBasketContactsModal" data-width="400" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true" data-changed="0">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Корзина</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12" id="listTrashStr" style="max-height:400px; margin-top: 10px; overflow-y: auto;">
+            </div>
+          </div>
+        </div>
+          <div class="modal-footer">
+            <button class="btn  btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- STOP Modal trash basket contact -->
 
     <script>
       var data_page = {};
@@ -958,8 +993,8 @@
           };
         }
     </script>
-    <script src="/js/contacts.js?v40"></script>
-    <script src="/js/contactsupload.js?v4"></script>
+    <script src="/js/contacts.js?v49"></script>
+    <script src="/js/contactsupload.js?v5"></script>
 <?php
     include_once "footer2.php";
 ?>

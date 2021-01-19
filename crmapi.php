@@ -18,7 +18,7 @@ $value6 = $_POST['value6'];
 $value7 = $_POST['value7'];
 $value8 = $_POST['value8'];
 
-logFileWriter($memberId, 'КОНТАКТЫ. Данные заказа для отправки в CRM. Переданы данные: '.$name.'; '.$phone.'; '.$email.'; '.$email.'; '.$info.'; '.$value1.'; '.$value2.'; '.$value3.'; '.$value4.'; '.$value5.'; '.$value6.'; '.$value7.'; '.$value8, 'DEBUG');
+logFileWriter($memberId, 'КОНТАКТЫ. Данные заказа для отправки в CRM. Переданы данные: '.$name.'; '.$phone.'; '.$email.'; '.$info.'; '.$value1.'; '.$value2.'; '.$value3.'; '.$value4.'; '.$value5.'; '.$value6.'; '.$value7.'; '.$value8, 'DEBUG');
 
 if (!$name || !$phone || !$value8 || !$value6) {
   logFileWriter($memberId, 'КОНТАКТЫ. Заказ НЕ передан в CRM. Обязательные данные не заполнены. Возможно файл был запущен без аргументов.', 'ERROR');

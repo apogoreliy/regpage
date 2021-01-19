@@ -41,10 +41,10 @@ $(document).ready(function(){
     }
   });
 
-  function getSatusStatistics() {
-    $.get('panelsource/panelAjax.php?get_statistics_status', {})
+  function getSatusStatistics(from, to) {
+    $.get('panelsource/panelAjax.php?get_statistics_status', {from: from, to: to})
     .done(function(data){
-      var count = [];
+      var count = [], unique_id_contacts_arr = [], unique_id_contacts = 0, statistics_crush = false;
       count['Всего'] = 0;
       count['Недозвон'] = 0;
       count['Ошибка'] = 0;
@@ -75,14 +75,34 @@ $(document).ready(function(){
         } else {
           count['Безстатуса']++;
         }
+
+        if (unique_id_contacts_arr.indexOf(array[i][2]) === -1 && array[i][2]) {
+          unique_id_contacts_arr.push(array[i][2]);
+          unique_id_contacts++;
+        }
+        if (!array[i][2]) {
+          statistics_crush = true;
+        }
+      }
+      if (statistics_crush) {
+        console.log(unique_id_contacts);
+        unique_id_contacts = 'Не возможно посчитать.';
+        //console.log('Ошибка 1.');
       }
 
-      var html = '<tr><td style="text-align: right;">'+count['Всего']+'</td><td style="text-align: right;">'+count['Вработе']+'</td><td style="text-align: right;">'+count['Недозвон']+'</td><td style="text-align: right;">'+count['Ошибка']+'</td><td style="text-align: right;">'+count['Отказ']+'</td><td style="text-align: right;">'+count['Заказ']+'</td><td style="text-align: right;">'+count['Продолжение']+'</td><td style="text-align: right;">'+count['Завершение']+'</td><td style="text-align: right;">'+count['Безстатуса']+'</td></tr>';
+      var html = '<tr><td>Обработано контактов</td><td><strong>'+unique_id_contacts+'</strong></td></tr><tr><td>Всего контактов</td><td>'+count['Всего']+'</td></tr><tr><td>Контактов в работе</td><td>'+count['Вработе']+'</td></tr><tr><td>Недозвон</td><td>'+count['Недозвон']+'</td></tr><tr><td>Ошибка</td><td>'+count['Ошибка']+'</td></tr><tr><td>Отказ</td><td>'+count['Отказ']+'</td></tr><tr><td>Заказ</td><td>'+count['Заказ']+'</td></tr><tr><td>Продолжение</td><td>'+count['Продолжение']+'</td></tr><tr><td>Завершение</td><td>'+count['Завершение']+'</td></tr><tr><td>Без статуса</td><td>'+count['Безстатуса']+'</td></tr>';
       $('#listStatStatistics').html(html);
     });
   }
-  $('#statusesStatisticsBtn').click(function () {
-    getSatusStatistics();
+  $('#statusesStatisticsBtn').click(function (e) {
+    if (!$('#statusesStatisticsSelect').val()) {
+      e.stopPropagation();
+      $('#InfoStatisticStatusesContainer').html('<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button> <strong>Ошибка!</strong> Выберите месяц из списка.</div>');
+    } else {
+      var x = $('#statusesStatisticsSelect').val();
+      x = x.split('_')
+      getSatusStatistics(x[0], x[1]);
+    }
   });
 
   //Print element
@@ -93,14 +113,24 @@ $(document).ready(function(){
 
       function popup(data){
         var mywindow = window.open('', 'Статистика', 'height=400,width=600');
-        mywindow.document.write('<html><head><title>Октябрь</title>');
-        mywindow.document.write('</head><body > <style>th {border-bottom: 1px solid black; text-align: center; border-collapse: collapse;} table, td {border-bottom: 1px solid black; text-align: right; border-collapse: collapse;}</style>');
+        mywindow.document.write('<html><head><title>'+$('#statusesStatisticsSelect option:selected').text()+'</title>');
+        mywindow.document.write('</head><body > <style>th {border-bottom: 1px solid black; text-align: left; border-collapse: collapse;} table, td {border-bottom: 1px solid black; text-align: left; border-collapse: collapse;}</style>');
         mywindow.document.write(data);
         mywindow.document.write('</body></html>');
       }
       printElem('#tableStatStatisticsPrint');
     });
   //Print element
+  $('#dltSameStrOfLog').click(function () {
+    fetch('panelsource/panelAjax.php?dlt_same_logstr')
+  });
 
+  $('#dlt99LogStr').click(function () {
+    fetch('panelsource/panelAjax.php?dlt_99_logstr');
+  });
+
+  $('#dltDvlpLogStr').click(function () {
+    fetch('panelsource/panelAjax.php?dlt_dvlp_logstr');
+  });
 // ready page stop here
 });

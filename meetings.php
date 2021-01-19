@@ -212,7 +212,7 @@ $sort_type = isset ($_SESSION['sort_type-meetings']) ? $_SESSION['sort_type-meet
           <a id="button-people-meting" class="btn btn-success" type="button" data-field="m" value="Добавить участника"><i class="fa fa-plus icon-white" ></i> <span class="hide-name"> Добавить</span></a>
           <a id="clear-button-people-meeting" class="btn btn-warning" type="button" value="Очистить список"><i class="fa fa-minus icon-white" ></i> <span class="hide-name">Очистить список</span></a>
       </div>
-        <button class="btn btn-info btnDoHandleMeeting disable-on-invalid">Сохранить</button>
+        <button class="btn btn-info btnDoHandleMeeting">Сохранить</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
     </div>
 </div>
@@ -646,7 +646,7 @@ var gloIsSingleCity = parseInt('<?php echo $isSingleCity; ?>');
 var gloSingleLocality = gloIsSingleCity ? '<?php echo $singleLocality; ?>' : '';
 </script>
 
-<script src="/js/meetings.js?v131"></script>
+<script src="/js/meetings.js?v133"></script>
 <?php
     include_once './footer.php';
 ?>

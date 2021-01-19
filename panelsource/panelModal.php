@@ -24,8 +24,7 @@
           <div id="tableStatStatisticsPrint" class="row" style="max-height:400px; overflow-y: auto; padding-left: 7px;">
             <table  style="width:760px;">
               <thead>
-                <tr class="tbl-statistics-header"><th class="bg-light" style="text-align: right;">Все</th><th style="text-align: right;">В работе</th><th style="text-align: right;">Недозвон</th><th style="text-align: right;">Ошибка</th>
-                  <th style="text-align: right;">Отказ</th><th style="text-align: right;">Заказ</th><th style="text-align: right;">Продолж.</th><th style="text-align: right;">Заверш.</th><th style="text-align: right;">Без статуса</th></tr>
+                <tr class="tbl-statistics-header"><th class="bg-light">Что?</th><th>Сколько?</th></tr>
               </thead>
               <tbody id="listStatStatistics">
               </tbody>

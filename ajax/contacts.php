@@ -37,7 +37,7 @@ if(isset($_POST['type']) && $_POST['type'] === 'save'){
 }
 
 if(isset($_POST['type']) && $_POST['type'] === 'delete_contact'){
-    db_deleteContactString($_POST['delete_contacts_id'], $adminId);
+    echo json_encode([db_deleteContactString($_POST['delete_contacts_id'], $adminId)]);
     exit();
 }
 
@@ -58,7 +58,7 @@ if(isset($_GET['add_crm_id'])){
 
 // Statistic status
 if(isset($_GET['add_history_status'])){
-    db_addStatusHistoryStr($_GET['status']);
+    db_addStatusHistoryStr($_GET['status'], $_GET['id_contact']);
     exit();
 }
 
@@ -151,5 +151,16 @@ if(isset($_GET['check_remove_account'])){
     echo json_encode(["result" => db_checkRemoveAccount($_GET['member'])]);
     exit();
 }
+
+if(isset($_GET['get_thash_string'])){
+    echo json_encode(db_getTrashStrings());
+    exit();
+}
+
+if(isset($_GET['set_recover_string'])){
+    echo json_encode(db_setRecoverStrings($_GET['id']));
+    exit();
+}
+
 
 ?>
